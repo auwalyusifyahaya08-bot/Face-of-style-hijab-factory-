@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Payment Result | Face of Style</title>
+<style>body{font-family:Arial;background:#fcf8f1;display:grid;place-items:center;min-height:100vh;text-align:center}.box{background:#fff;padding:38px;border-radius:22px;max-width:560px;margin:20px;box-shadow:0 12px 35px #3b152022}.box h1{font-family:Georgia;color:#651630}.ok{font-size:48px}.btn{display:inline-block;background:#651630;color:#fff;padding:13px 22px;border-radius:25px;text-decoration:none;margin-top:12px}</style></head>
+<body><div class="box"><div class="ok" id="icon">⏳</div><h1 id="title">Checking payment...</h1><p id="msg">Please wait while we verify your Paystack transaction.</p><a class="btn" href="/">Back to Store</a></div>
+<script>
+(async()=>{
+ const ref=new URLSearchParams(location.search).get('reference');
+ if(!ref){document.getElementById('icon').textContent='⚠️';document.getElementById('title').textContent='Reference missing';document.getElementById('msg').textContent='We could not find the payment reference.';return}
+ try{
+  const r=await fetch('/api/paystack/verify/'+encodeURIComponent(ref));
+  const d=await r.json();
+  if(d.success){
+   document.getElementById('icon').textContent='✅';
+   document.getElementById('title').textContent='Payment Successful!';
+   document.getElementById('msg').textContent='Your payment has been verified. Your order reference is '+ref+'. We will contact you about delivery.';
+   localStorage.removeItem('faceOfStyleCart');
+  }else{
+   document.getElementById('icon').textContent='❌';
+   document.getElementById('title').textContent='Payment not confirmed';
+   document.getElementById('msg').textContent=d.message||'Please contact the store if you believe your payment was successful.';
+  }
+ }catch(e){document.getElementById('icon').textContent='⚠️';document.getElementById('title').textContent='Verification unavailable';document.getElementById('msg').textContent='Please contact the store with your payment reference: '+ref}
+})();
+</script></body></html>

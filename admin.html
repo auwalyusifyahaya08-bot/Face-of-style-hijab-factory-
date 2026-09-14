@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard | Face of Style</title>
+<style>
+:root{--wine:#651630;--gold:#c9a45b;--bg:#f7f2eb;--line:#e6dacf}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial;color:#292025}.top{background:#fff;border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}.top b{font:22px Georgia;color:var(--wine)}button{cursor:pointer}.logout{background:transparent;border:1px solid var(--line);padding:9px 14px;border-radius:20px}.layout{max-width:1200px;margin:auto;padding:25px 18px}.login{max-width:390px;margin:12vh auto;background:#fff;padding:30px;border-radius:20px;box-shadow:0 10px 30px #32121b14}.login h1{font:32px Georgia;color:var(--wine)}input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:7px 0 14px}.primary{width:100%;background:var(--wine);color:#fff;border:0;padding:13px;border-radius:22px;font-weight:bold}.error{color:#a33;font-size:13px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{background:#fff;border:1px solid var(--line);padding:18px;border-radius:16px}.stat small{color:#756a6f}.stat b{display:block;color:var(--wine);font-size:25px;margin-top:5px}.tabs{display:flex;gap:8px;margin:25px 0;flex-wrap:wrap}.tab{padding:10px 16px;border:1px solid var(--line);background:#fff;border-radius:22px}.tab.active{background:var(--wine);color:#fff}.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:20px;overflow:auto}.panel h2{font:25px Georgia;color:var(--wine)}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:12px;border-bottom:1px solid #eee;font-size:13px}.pill{padding:5px 8px;border-radius:14px;font-size:11px}.paid{background:#e5f5ea;color:#176a35}.pending{background:#fff1cf;color:#8a5a00}.failed{background:#fde7e7;color:#9a2222}.actions button{padding:7px 10px;border-radius:15px;border:1px solid var(--line);background:#fff}.notice{background:#fcf8f1;padding:12px;border-radius:10px;color:#665d60;font-size:13px;line-height:1.6}@media(max-width:800px){.cards{grid-template-columns:1fr 1fr}}@media(max-width:500px){.cards{grid-template-columns:1fr}.top b{font-size:18px}}
+</style></head><body>
+<div class="top"><b>FACE OF STYLE — ADMIN</b><button class="logout" onclick="logout()">Logout</button></div>
+<div id="app"></div>
+<script>
+const app=document.getElementById('app');
+let token=sessionStorage.getItem('adminToken')||'';
+function login(){
+ app.innerHTML=`<div class="login"><h1>Admin Login</h1><p>Face of Style Hijab Factory</p><label>Username</label><input id="u" value="admin"><label>Password</label><input id="p" type="password"><button class="primary" onclick="doLogin()">LOGIN</button><p id="err" class="error"></p><div class="notice">For the live store, change the default admin credentials in the server environment before publishing.</div></div>`;
+}
+async function doLogin(){
+ const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u.value,password:p.value})});
+ const d=await r.json(); if(d.token){token=d.token;sessionStorage.setItem('adminToken',token);dashboard()}else err.textContent=d.message||'Login failed';
+}
+function logout(){sessionStorage.removeItem('adminToken');token='';login()}
+async function api(url,opts={}){opts.headers={...(opts.headers||{}),Authorization:'Bearer '+token};const r=await fetch(url,opts);if(r.status===401){logout();return null}return r.json()}
+async function dashboard(){
+ const d=await api('/api/admin/dashboard'); if(!d)return;
+ app.innerHTML=`<div class="layout">
+ <div class="cards">
+  <div class="stat"><small>Total Orders</small><b>${d.stats.orders}</b></div>
+  <div class="stat"><small>Paid Orders</small><b>${d.stats.paid}</b></div>
+  <div class="stat"><small>Pending</small><b>${d.stats.pending}</b></div>
+  <div class="stat"><small>Revenue</small><b>₦${d.stats.revenue.toLocaleString('en-NG')}</b></div>
+ </div>
+ <div class="tabs"><button class="tab active" onclick="showOrders()">Orders</button><button class="tab" onclick="showProducts()">Products</button><button class="tab" onclick="showSettings()">Settings</button></div>
+ <div id="content"></div></div>`;
+ showOrders();
+}
+async function showOrders(){
+ const d=await api('/api/admin/orders'); if(!d)return;
+ content.innerHTML=`<div class="panel"><h2>Customer Orders</h2><table><thead><tr><th>Reference</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>${d.orders.map(o=>`<tr><td>${o.reference||'-'}</td><td>${o.customer.name}<br>${o.customer.phone}</td><td>₦${Number(o.total).toLocaleString('en-NG')}</td><td>${o.payment?.provider||'-'}</td><td><span class="pill ${o.status==='paid'?'paid':o.status==='failed'?'failed':'pending'}">${o.status}</span></td><td>${new Date(o.createdAt).toLocaleString()}</td><td class="actions"><button onclick="viewOrder('${o.id}')">View</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+async function viewOrder(id){
+ const d=await api('/api/admin/orders/'+id);if(!d)return;
+ alert(`Order ${d.order.reference||d.order.id}\\nCustomer: ${d.order.customer.name}\\nPhone: ${d.order.customer.phone}\\nTotal: ₦${Number(d.order.total).toLocaleString('en-NG')}\\nStatus: ${d.order.status}\\nAddress: ${d.order.customer.address}`);
+}
+async function showProducts(){
+ const d=await api('/api/admin/products');if(!d)return;
+ content.innerHTML=`<div class="panel"><h2>Products</h2><div class="notice">Product editing is ready as the next layer. Current catalogue items are loaded from the store configuration. You can use this dashboard to review orders and payments now.</div><table><thead><tr><th>Name</th><th>Category</th><th>Price</th></tr></thead><tbody>${d.products.map(p=>`<tr><td>${p.name}</td><td>${p.cat}</td><td>₦${Number(p.price).toLocaleString('en-NG')}</td></tr>`).join('')}</tbody></table></div>`;
+}
+async function showSettings(){
+ const d=await api('/api/admin/settings');if(!d)return;
+ content.innerHTML=`<div class="panel"><h2>Store Settings</h2><p><b>Payment:</b> Paystack ${d.paystackConfigured?'configured':'not configured'}</p><p><b>WhatsApp:</b> 0906 582 8886</p><div class="notice">Never place the Paystack Secret Key in the browser. Keep it in the server environment. Before going live, use HTTPS and configure the Paystack webhook URL shown in your server deployment.</div></div>`;
+}
+if(token)dashboard();else login();
+</script></body></html>
