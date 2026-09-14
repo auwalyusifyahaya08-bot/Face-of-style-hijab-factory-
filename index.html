@@ -115,13 +115,15 @@ function updateCart(){
 function removeItem(id){cart=cart.filter(x=>x.id!==id);updateCart()}
 function openCart(){document.getElementById("drawer").classList.add("open");updateCart()}
 function closeCart(){document.getElementById("drawer").classList.remove("open")}
-function order(id){const p=products.find(x=>x.id===id);const msg=`Assalamu alaikum, Ina son yin order: ${p.name} — ${money(p.price)}. Don Allah a bani bayani kan available colours/sizes.`;window.open("https://wa.me/2349065828886?text="+encodeURIComponent(msg),"_blank")}
-function checkout(){
- if(!cart.length){alert("Your cart is empty.");return}
- let msg="Assalamu alaikum, Ina son yin order daga Face of Style Hijab Factory:%0A";
- cart.forEach(x=>msg+=`• ${x.name} — ${x.qty} × ${money(x.price)}%0A`);
- msg+=`%0ATotal: ${money(cart.reduce((a,x)=>a+x.price*x.qty,0))}%0AIna bukatar bayani kan delivery da payment.`;
- window.open("https://wa.me/2349065828886?text="+encodeURIComponent(msg),"_blank");
+function order(id){
+ const p=products.find(x=>x.id===id);
+ const choice=confirm("How would you like to order?\n\nOK = Order via WhatsApp\nCancel = Add to Cart");
+ if(choice){
+   const msg=`Hello, I would like to order: ${p.name} — ${money(p.price)}. Please provide information about available colours and sizes.`;
+   window.open("https://wa.me/2349065828886?text="+encodeURIComponent(msg),"_blank");
+ }else{
+   add(id);
+ }
 }
 render();updateCart();
 </script>
