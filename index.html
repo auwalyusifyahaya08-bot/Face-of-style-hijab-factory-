@@ -117,12 +117,13 @@ function openCart(){document.getElementById("drawer").classList.add("open");upda
 function closeCart(){document.getElementById("drawer").classList.remove("open")}
 function order(id){
  const p=products.find(x=>x.id===id);
- const choice=confirm("How would you like to order?\n\nOK = Order via WhatsApp\nCancel = Add to Cart");
- if(choice){
+ const choice=prompt("How would you like to order?\n\nType 1 for Order via Cart\nType 2 for Order via WhatsApp");
+
+ if(choice==="1"){
+   add(id);
+ }else if(choice==="2"){
    const msg=`Hello, I would like to order: ${p.name} — ${money(p.price)}. Please provide information about available colours and sizes.`;
    window.open("https://wa.me/2349065828886?text="+encodeURIComponent(msg),"_blank");
- }else{
-   add(id);
  }
 }
 render();updateCart();
