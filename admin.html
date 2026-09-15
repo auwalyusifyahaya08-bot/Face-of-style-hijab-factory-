@@ -40,9 +40,84 @@ async function viewOrder(id){
  alert(`Order ${d.order.reference||d.order.id}\\nCustomer: ${d.order.customer.name}\\nPhone: ${d.order.customer.phone}\\nTotal: ₦${Number(d.order.total).toLocaleString('en-NG')}\\nStatus: ${d.order.status}\\nAddress: ${d.order.customer.address}`);
 }
 async function showProducts(){
- const d=await api('/api/admin/products');if(!d)return;
- content.innerHTML=`<div class="panel"><h2>Products</h2><div class="notice">Product editing is ready as the next layer. Current catalogue items are loaded from the store configuration. You can use this dashboard to review orders and payments now.</div><table><thead><tr><th>Name</th><th>Category</th><th>Price</th></tr></thead><tbody>${d.products.map(p=>`<tr><td>${p.name}</td><td>${p.cat}</td><td>₦${Number(p.price).toLocaleString('en-NG')}</td></tr>`).join('')}</tbody></table></div>`;
+ const d=await api('/api/admin/products');
+ if(!d)return;
+
+ content.innerHTML=`
+ <div class="panel">
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+     <div>
+       <h2>Products</h2>
+       <p style="color:#777">Manage your store products, prices, colors and photos.</p>
+     </div>
+     <button onclick="addProduct()" style="padding:12px 18px;border:0;border-radius:10px;cursor:pointer">
+       + Add New Product
+     </button>
+   </div>
+
+   <div style="overflow-x:auto;margin-top:20px">
+     <table>
+       <thead>
+         <tr>
+           <th>Photo</th>
+           <th>Name</th>
+           <th>Category</th>
+           <th>Color</th>
+           <th>Price</th>
+           <th>Action</th>
+         </tr>
+       </thead>
+       <tbody>
+         ${d.products.map(p=>`
+           <tr>
+             <td>
+               <img src="${p.img || ''}" alt="${p.name}"
+                    style="width:55px;height:65px;object-fit:cover;border-radius:8px">
+             </td>
+             <td>${p.name}</td>
+             <td>${p.cat}</td>
+             <td>${p.color || '-'}</td>
+             <td>₦${Number(p.price).toLocaleString('en-NG')}</td>
+             <td>
+               <button onclick="editProduct(${p.id})">Edit</button>
+               <button onclick="deleteProduct(${p.id})">Delete</button>
+             </td>
+           </tr>
+         `).join('')}
+       </tbody>
+     </table>
+   </div>
+ </div>`;
 }
+ function addProduct(){
+ const name=prompt("Product name:");
+ if(!name)return;
+
+ const cat=prompt("Category (Abaya, Gown, Hijab or Custom):");
+ if(!cat)return;
+
+ const price=prompt("Price in Naira:");
+ if(!price)return;
+
+ const color=prompt("Color:");
+ if(!color)return;
+
+ const img=prompt("Product image path (example: assets/product-7.jpg):");
+ if(!img)return;
+
+ const desc=prompt("Product description:");
+ if(!desc)return;
+
+ alert("The product form is ready. We will connect it to the server in the next step.");
+}
+
+function editProduct(id){
+ alert("Edit product: "+id+" — server connection will be added next.");
+}
+
+function deleteProduct(id){
+ alert("Delete product: "+id+" — server connection will be added next.");
+ }
 async function showSettings(){
  const d=await api('/api/admin/settings');if(!d)return;
  content.innerHTML=`<div class="panel"><h2>Store Settings</h2><p><b>Payment:</b> Paystack ${d.paystackConfigured?'configured':'not configured'}</p><p><b>WhatsApp:</b> 0906 582 8886</p><div class="notice">Never place the Paystack Secret Key in the browser. Keep it in the server environment. Before going live, use HTTPS and configure the Paystack webhook URL shown in your server deployment.</div></div>`;
