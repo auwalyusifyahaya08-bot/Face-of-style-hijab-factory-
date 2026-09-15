@@ -1,239 +1,1782 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Admin Dashboard | Face of Style</title>
+
 <style>
-:root{--wine:#651630;--gold:#c9a45b;--bg:#f7f2eb;--line:#e6dacf}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial;color:#292025}.top{background:#fff;border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}.top b{font:22px Georgia;color:var(--wine)}button{cursor:pointer}.logout{background:transparent;border:1px solid var(--line);padding:9px 14px;border-radius:20px}.layout{max-width:1200px;margin:auto;padding:25px 18px}.login{max-width:390px;margin:12vh auto;background:#fff;padding:30px;border-radius:20px;box-shadow:0 10px 30px #32121b14}.login h1{font:32px Georgia;color:var(--wine)}input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:7px 0 14px}.primary{width:100%;background:var(--wine);color:#fff;border:0;padding:13px;border-radius:22px;font-weight:bold}.error{color:#a33;font-size:13px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{background:#fff;border:1px solid var(--line);padding:18px;border-radius:16px}.stat small{color:#756a6f}.stat b{display:block;color:var(--wine);font-size:25px;margin-top:5px}.tabs{display:flex;gap:8px;margin:25px 0;flex-wrap:wrap}.tab{padding:10px 16px;border:1px solid var(--line);background:#fff;border-radius:22px}.tab.active{background:var(--wine);color:#fff}.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:20px;overflow:auto}.panel h2{font:25px Georgia;color:var(--wine)}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:12px;border-bottom:1px solid #eee;font-size:13px}.pill{padding:5px 8px;border-radius:14px;font-size:11px}.paid{background:#e5f5ea;color:#176a35}.pending{background:#fff1cf;color:#8a5a00}.failed{background:#fde7e7;color:#9a2222}.actions button{padding:7px 10px;border-radius:15px;border:1px solid var(--line);background:#fff}.notice{background:#fcf8f1;padding:12px;border-radius:10px;color:#665d60;font-size:13px;line-height:1.6}@media(max-width:800px){.cards{grid-template-columns:1fr 1fr}}@media(max-width:500px){.cards{grid-template-columns:1fr}.top b{font-size:18px}}
-</style></head><body>
-<div class="top"><b>FACE OF STYLE — ADMIN</b><button class="logout" onclick="logout()">Logout</button></div>
+:root{
+  --wine:#651630;
+  --gold:#c9a45b;
+  --bg:#f7f2eb;
+  --line:#e6dacf;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:Arial,sans-serif;
+  color:#292025;
+}
+
+button{
+  cursor:pointer;
+}
+
+.top{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+
+.top b{
+  font:22px Georgia;
+  color:var(--wine);
+}
+
+.logout{
+  background:transparent;
+  border:1px solid var(--line);
+  padding:9px 14px;
+  border-radius:20px;
+}
+
+.layout{
+  max-width:1200px;
+  margin:auto;
+  padding:25px 18px;
+}
+
+.login{
+  max-width:390px;
+  margin:12vh auto;
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 10px 30px #32121b14;
+}
+
+.login h1{
+  font:32px Georgia;
+  color:var(--wine);
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:7px 0 14px;
+  font-family:Arial,sans-serif;
+}
+
+.primary{
+  width:100%;
+  background:var(--wine);
+  color:#fff;
+  border:0;
+  padding:13px;
+  border-radius:22px;
+  font-weight:bold;
+}
+
+.error{
+  color:#a33;
+  font-size:13px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.stat{
+  background:#fff;
+  border:1px solid var(--line);
+  padding:18px;
+  border-radius:16px;
+}
+
+.stat small{
+  color:#756a6f;
+}
+
+.stat b{
+  display:block;
+  color:var(--wine);
+  font-size:25px;
+  margin-top:5px;
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin:25px 0;
+  flex-wrap:wrap;
+}
+
+.tab{
+  padding:10px 16px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+}
+
+.tab.active{
+  background:var(--wine);
+  color:#fff;
+}
+
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:20px;
+  overflow:auto;
+}
+
+.panel h2{
+  font:25px Georgia;
+  color:var(--wine);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:720px;
+}
+
+th,
+td{
+  text-align:left;
+  padding:12px;
+  border-bottom:1px solid #eee;
+  font-size:13px;
+}
+
+.pill{
+  padding:5px 8px;
+  border-radius:14px;
+  font-size:11px;
+}
+
+.paid{
+  background:#e5f5ea;
+  color:#176a35;
+}
+
+.pending{
+  background:#fff1cf;
+  color:#8a5a00;
+}
+
+.failed{
+  background:#fde7e7;
+  color:#9a2222;
+}
+
+.actions button{
+  padding:7px 10px;
+  border-radius:15px;
+  border:1px solid var(--line);
+  background:#fff;
+  margin-right:5px;
+}
+
+.notice{
+  background:#fcf8f1;
+  padding:12px;
+  border-radius:10px;
+  color:#665d60;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.form-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.save-btn{
+  background:var(--wine);
+  color:#fff;
+  border:0;
+  padding:12px 20px;
+  border-radius:22px;
+  font-weight:bold;
+}
+
+.cancel-btn{
+  background:#fff;
+  color:#333;
+  border:1px solid var(--line);
+  padding:12px 20px;
+  border-radius:22px;
+}
+
+.photo-box{
+  border:2px dashed var(--line);
+  border-radius:15px;
+  padding:20px;
+  text-align:center;
+  background:#fcf8f1;
+}
+
+.photo-box input[type="file"]{
+  border:0;
+  background:transparent;
+  margin:5px 0;
+}
+
+.photo-preview{
+  display:none;
+  margin:15px auto 5px;
+  width:180px;
+  height:220px;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid var(--line);
+}
+
+.product-thumb{
+  width:55px;
+  height:65px;
+  object-fit:cover;
+  border-radius:8px;
+  background:#f5eee7;
+}
+
+.product-empty{
+  width:55px;
+  height:65px;
+  border-radius:8px;
+  background:#f5eee7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  color:#999;
+  text-align:center;
+}
+
+.loading{
+  padding:20px;
+  text-align:center;
+  color:#777;
+}
+
+@media(max-width:800px){
+  .cards{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:500px){
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  .top b{
+    font-size:18px;
+  }
+
+  .layout{
+    padding:18px 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <b>FACE OF STYLE — ADMIN</b>
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
 <div id="app"></div>
+
 <script>
-const app=document.getElementById('app');
-let token=sessionStorage.getItem('adminToken')||'';
+
+const app = document.getElementById('app');
+
+let token = sessionStorage.getItem('adminToken') || '';
+
+let editingProductId = null;
+let selectedImageData = '';
+
+/* =========================
+   LOGIN
+========================= */
+
 function login(){
- app.innerHTML=`<div class="login"><h1>Admin Login</h1><p>Face of Style Hijab Factory</p><label>Username</label><input id="u" value="admin"><label>Password</label><input id="p" type="password"><button class="primary" onclick="doLogin()">LOGIN</button><p id="err" class="error"></p><div class="notice">For the live store, change the default admin credentials in the server environment before publishing.</div></div>`;
+
+  app.innerHTML = `
+    <div class="login">
+
+      <h1>Admin Login</h1>
+
+      <p>Face of Style Hijab Factory</p>
+
+      <label>Username</label>
+
+      <input
+        id="u"
+        value="admin"
+        autocomplete="username"
+      >
+
+      <label>Password</label>
+
+      <input
+        id="p"
+        type="password"
+        autocomplete="current-password"
+      >
+
+      <button
+        class="primary"
+        onclick="doLogin()"
+      >
+        LOGIN
+      </button>
+
+      <p id="err" class="error"></p>
+
+      <div class="notice">
+        For the live store, change the admin credentials
+        in the server environment before publishing.
+      </div>
+
+    </div>
+  `;
 }
+
+
+/* =========================
+   LOGIN ACTION
+========================= */
+
 async function doLogin(){
- const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u.value,password:p.value})});
- const d=await r.json(); if(d.token){token=d.token;sessionStorage.setItem('adminToken',token);dashboard()}else err.textContent=d.message||'Login failed';
+
+  const username =
+    document.getElementById('u').value.trim();
+
+  const password =
+    document.getElementById('p').value;
+
+  try{
+
+    const r = await fetch(
+      '/api/admin/login',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+          username,
+          password
+        })
+      }
+    );
+
+    const d = await r.json();
+
+    if(d.token){
+
+      token = d.token;
+
+      sessionStorage.setItem(
+        'adminToken',
+        token
+      );
+
+      dashboard();
+
+    }else{
+
+      document.getElementById('err').textContent =
+        d.message || 'Login failed';
+
+    }
+
+  }catch(error){
+
+    document.getElementById('err').textContent =
+      'Unable to connect to server.';
+
+  }
 }
-function logout(){sessionStorage.removeItem('adminToken');token='';login()}
-async function api(url,opts={}){opts.headers={...(opts.headers||{}),Authorization:'Bearer '+token};const r=await fetch(url,opts);if(r.status===401){logout();return null}return r.json()}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout(){
+
+  sessionStorage.removeItem('adminToken');
+
+  token = '';
+
+  login();
+}
+
+
+/* =========================
+   API HELPER
+========================= */
+
+async function api(url,opts={}){
+
+  opts.headers = {
+    ...(opts.headers || {}),
+    Authorization:'Bearer ' + token
+  };
+
+  const r = await fetch(url,opts);
+
+  if(r.status === 401){
+
+    logout();
+
+    return null;
+  }
+
+  return r.json();
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
 async function dashboard(){
- const d=await api('/api/admin/dashboard'); if(!d)return;
- app.innerHTML=`<div class="layout">
- <div class="cards">
-  <div class="stat"><small>Total Orders</small><b>${d.stats.orders}</b></div>
-  <div class="stat"><small>Paid Orders</small><b>${d.stats.paid}</b></div>
-  <div class="stat"><small>Pending</small><b>${d.stats.pending}</b></div>
-  <div class="stat"><small>Revenue</small><b>₦${d.stats.revenue.toLocaleString('en-NG')}</b></div>
- </div>
- <div class="tabs"><button class="tab active" onclick="showOrders()">Orders</button><button class="tab" onclick="showProducts()">Products</button><button class="tab" onclick="showSettings()">Settings</button></div>
- <div id="content"></div></div>`;
- showOrders();
+
+  const d =
+    await api('/api/admin/dashboard');
+
+  if(!d) return;
+
+  app.innerHTML = `
+
+    <div class="layout">
+
+      <div class="cards">
+
+        <div class="stat">
+          <small>Total Orders</small>
+          <b>${d.stats.orders}</b>
+        </div>
+
+        <div class="stat">
+          <small>Paid Orders</small>
+          <b>${d.stats.paid}</b>
+        </div>
+
+        <div class="stat">
+          <small>Pending</small>
+          <b>${d.stats.pending}</b>
+        </div>
+
+        <div class="stat">
+          <small>Revenue</small>
+          <b>
+            ₦${Number(
+              d.stats.revenue
+            ).toLocaleString('en-NG')}
+          </b>
+        </div>
+
+      </div>
+
+      <div class="tabs">
+
+        <button
+          class="tab active"
+          onclick="showOrders()"
+        >
+          Orders
+        </button>
+
+        <button
+          class="tab"
+          onclick="showProducts()"
+        >
+          Products
+        </button>
+
+        <button
+          class="tab"
+          onclick="showSettings()"
+        >
+          Settings
+        </button>
+
+      </div>
+
+      <div id="content"></div>
+
+    </div>
+  `;
+
+  showOrders();
 }
+
+
+/* =========================
+   ORDERS
+========================= */
+
 async function showOrders(){
- const d=await api('/api/admin/orders'); if(!d)return;
- content.innerHTML=`<div class="panel"><h2>Customer Orders</h2><table><thead><tr><th>Reference</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>${d.orders.map(o=>`<tr><td>${o.reference||'-'}</td><td>${o.customer.name}<br>${o.customer.phone}</td><td>₦${Number(o.total).toLocaleString('en-NG')}</td><td>${o.payment?.provider||'-'}</td><td><span class="pill ${o.status==='paid'?'paid':o.status==='failed'?'failed':'pending'}">${o.status}</span></td><td>${new Date(o.createdAt).toLocaleString()}</td><td class="actions"><button onclick="viewOrder('${o.id}')">View</button></td></tr>`).join('')}</tbody></table></div>`;
+
+  const d =
+    await api('/api/admin/orders');
+
+  if(!d) return;
+
+  const content =
+    document.getElementById('content');
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <h2>Customer Orders</h2>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Reference</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${d.orders.map(o => `
+
+            <tr>
+
+              <td>
+                ${o.reference || '-'}
+              </td>
+
+              <td>
+                ${o.customer?.name || '-'}
+                <br>
+                ${o.customer?.phone || '-'}
+              </td>
+
+              <td>
+                ₦${Number(
+                  o.total
+                ).toLocaleString('en-NG')}
+              </td>
+
+              <td>
+                ${o.payment?.provider || '-'}
+              </td>
+
+              <td>
+
+                <span class="pill ${
+                  o.status === 'paid'
+                    ? 'paid'
+                    : o.status === 'failed'
+                      ? 'failed'
+                      : 'pending'
+                }">
+
+                  ${o.status}
+
+                </span>
+
+              </td>
+
+              <td>
+                ${new Date(
+                  o.createdAt
+                ).toLocaleString()}
+              </td>
+
+              <td class="actions">
+
+                <button
+                  onclick="viewOrder('${o.id}')"
+                >
+                  View
+                </button>
+
+              </td>
+
+            </tr>
+
+          `).join('')}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  `;
 }
+
+
+/* =========================
+   VIEW ORDER
+========================= */
+
 async function viewOrder(id){
- const d=await api('/api/admin/orders/'+id);if(!d)return;
- alert(`Order ${d.order.reference||d.order.id}\\nCustomer: ${d.order.customer.name}\\nPhone: ${d.order.customer.phone}\\nTotal: ₦${Number(d.order.total).toLocaleString('en-NG')}\\nStatus: ${d.order.status}\\nAddress: ${d.order.customer.address}`);
+
+  const d =
+    await api('/api/admin/orders/' + id);
+
+  if(!d) return;
+
+  const o = d.order;
+
+  alert(
+`Order: ${o.reference || o.id}
+
+Customer: ${o.customer.name}
+
+Phone: ${o.customer.phone}
+
+Total: ₦${Number(
+  o.total
+).toLocaleString('en-NG')}
+
+Status: ${o.status}
+
+Address:
+${o.customer.address}`
+  );
 }
+
+
+/* =========================
+   LOAD PRODUCTS
+========================= */
+
 async function showProducts(){
- const d=await api('/api/admin/products');
- if(!d)return;
 
- content.innerHTML=`
- <div class="panel">
-   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-     <div>
-       <h2>Products</h2>
-       <p style="color:#777">Manage your store products, prices, colors and photos.</p>
-     </div>
-     <button onclick="addProduct()" style="padding:12px 18px;border:0;border-radius:10px;cursor:pointer">
-       + Add New Product
-     </button>
-   </div>
+  const d =
+    await api('/api/admin/products');
 
-   <div style="overflow-x:auto;margin-top:20px">
-     <table>
-       <thead>
-         <tr>
-           <th>Photo</th>
-           <th>Name</th>
-           <th>Category</th>
-           <th>Color</th>
-           <th>Price</th>
-           <th>Action</th>
-         </tr>
-       </thead>
-       <tbody>
-         ${d.products.map(p=>`
-           <tr>
-             <td>
-               <img src="${p.img ? (p.img.startsWith('/') ? p.img : '/assets/' + p.img) : ''}" alt="${p.name}" style="width:55px;height:65px;object-fit:cover;border-radius:8px">
-             </td>
-             <td>${p.name}</td>
-             <td>${p.cat}</td>
-             <td>${p.color || '-'}</td>
-             <td>₦${Number(p.price).toLocaleString('en-NG')}</td>
-             <td>
-               <button onclick="editProduct(${p.id})">Edit</button>
-               <button onclick="deleteProduct(${p.id})">Delete</button>
-             </td>
-           </tr>
-         `).join('')}
-       </tbody>
-     </table>
-   </div>
- </div>`;
+  if(!d) return;
+
+  const content =
+    document.getElementById('content');
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+        flex-wrap:wrap;
+      ">
+
+        <div>
+
+          <h2>Products</h2>
+
+          <p style="color:#777">
+            Manage your store products,
+            prices, colors and photos.
+          </p>
+
+        </div>
+
+        <button
+          onclick="addProduct()"
+          style="
+            padding:12px 18px;
+            border:0;
+            border-radius:10px;
+            background:var(--wine);
+            color:#fff;
+            font-weight:bold;
+          "
+        >
+          + Add New Product
+        </button>
+
+      </div>
+
+      <div style="
+        overflow-x:auto;
+        margin-top:20px;
+      ">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Color</th>
+              <th>Price</th>
+              <th>Action</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${d.products.map(p => `
+
+              <tr>
+
+                <td>
+
+                  ${
+                    p.img
+                    ? `
+                      <img
+                        class="product-thumb"
+                        src="${escapeHtml(p.img)}"
+                        alt="${escapeHtml(p.name)}"
+                      >
+                    `
+                    : `
+                      <div class="product-empty">
+                        No Photo
+                      </div>
+                    `
+                  }
+
+                </td>
+
+                <td>
+                  ${escapeHtml(p.name)}
+                </td>
+
+                <td>
+                  ${escapeHtml(p.cat)}
+                </td>
+
+                <td>
+                  ${escapeHtml(p.color || '-')}
+                </td>
+
+                <td>
+                  ₦${Number(
+                    p.price
+                  ).toLocaleString('en-NG')}
+                </td>
+
+                <td class="actions">
+
+                  <button
+                    onclick="editProduct(${p.id})"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onclick="deleteProduct(${p.id})"
+                  >
+                    Delete
+                  </button>
+
+                </td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+  `;
 }
- function addProduct(){
- content.innerHTML=`
- <div class="panel">
-   <h2>Add New Product</h2>
-   <p style="color:#777">Add a new item to your Face of Style collection.</p>
 
-   <form id="productForm" style="display:grid;gap:14px;max-width:650px">
 
-     <label>
-       Product Name
-       <input id="pName" required placeholder="Example: Elegant Black Abaya">
-     </label>
+/* =========================
+   ADD PRODUCT
+========================= */
 
-     <label>
-       Category
-       <select id="pCat" required>
-         <option value="">Select category</option>
-         <option>Abaya</option>
-         <option>Gown</option>
-         <option>Hijab</option>
-         <option>Custom</option>
-       </select>
-     </label>
+function addProduct(){
 
-     <label>
-       Price (₦)
-       <input id="pPrice" type="number" min="0" required placeholder="25000">
-     </label>
+  editingProductId = null;
 
-     <label>
-       Color
-       <input id="pColor" required placeholder="Black, Navy Blue, Pink">
-     </label>
+  selectedImageData = '';
 
-     <label>
-       Product Photo
-       <input id="pImg" type="text" required placeholder="assets/product-7.jpg">
-     </label>
+  const content =
+    document.getElementById('content');
 
-     <label>
-       Description
-       <textarea id="pDesc" rows="4" placeholder="Describe the product..."></textarea>
-     </label>
+  content.innerHTML = `
 
-     <div style="display:flex;gap:10px;flex-wrap:wrap">
-       <button type="submit">Save Product</button>
-       <button type="button" onclick="showProducts()">Cancel</button>
-     </div>
+    <div class="panel">
 
-   </form>
- </div>`;
+      <h2>Add New Product</h2>
 
- document.getElementById("productForm").onsubmit=async function(e){
-   e.preventDefault();
+      <p style="color:#777">
+        Add a new item to your Face of Style collection.
+      </p>
 
-   const data={
-     name:document.getElementById("pName").value.trim(),
-     cat:document.getElementById("pCat").value,
-     price:Number(document.getElementById("pPrice").value),
-     color:document.getElementById("pColor").value.trim(),
-     img:document.getElementById("pImg").value.trim(),
-     desc:document.getElementById("pDesc").value.trim()
-   };
+      <form
+        id="productForm"
+        style="
+          display:grid;
+          gap:10px;
+          max-width:650px;
+        "
+      >
 
-   const result=await api('/api/admin/products',{
-     method:'POST',
-     headers:{'Content-Type':'application/json'},
-     body:JSON.stringify(data)
-   });
+        <label>
+          <b>Product Name</b>
 
-   if(result && result.ok){
-     alert("Product added successfully.");
-     showProducts();
-   }
- };
+          <input
+            id="pName"
+            required
+            placeholder="Example: Elegant Black Abaya"
+          >
+        </label>
+
+
+        <label>
+          <b>Category</b>
+
+          <select
+            id="pCat"
+            required
+          >
+
+            <option value="">
+              Select category
+            </option>
+
+            <option value="Abaya">
+              Abaya
+            </option>
+
+            <option value="Gown">
+              Gown
+            </option>
+
+            <option value="Hijab">
+              Hijab
+            </option>
+
+            <option value="Custom">
+              Custom
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label>
+          <b>Price (₦)</b>
+
+          <input
+            id="pPrice"
+            type="number"
+            min="0"
+            required
+            placeholder="25000"
+          >
+        </label>
+
+
+        <label>
+          <b>Color</b>
+
+          <input
+            id="pColor"
+            required
+            placeholder="Black, Navy Blue, Pink"
+          >
+        </label>
+
+
+        <label>
+
+          <b>Product Photo</b>
+
+          <div class="photo-box">
+
+            <p style="
+              margin-top:0;
+              color:#756a6f;
+            ">
+              Tap the button below to choose
+              a photo from your phone.
+            </p>
+
+            <input
+              id="pImgFile"
+              type="file"
+              accept="image/*"
+            >
+
+            <img
+              id="photoPreview"
+              class="photo-preview"
+              alt="Photo preview"
+            >
+
+            <p
+              id="photoStatus"
+              style="
+                font-size:12px;
+                color:#777;
+                margin-bottom:0;
+              "
+            >
+              No photo selected
+            </p>
+
+          </div>
+
+        </label>
+
+
+        <label>
+
+          <b>Description</b>
+
+          <textarea
+            id="pDesc"
+            rows="4"
+            placeholder="Describe the product..."
+          ></textarea>
+
+        </label>
+
+
+        <div class="form-actions">
+
+          <button
+            type="submit"
+            class="save-btn"
+          >
+            SAVE PRODUCT
+          </button>
+
+          <button
+            type="button"
+            class="cancel-btn"
+            onclick="showProducts()"
+          >
+            CANCEL
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  `;
+
+
+  document
+    .getElementById('pImgFile')
+    .addEventListener(
+      'change',
+      handleImageSelect
+    );
+
+
+  document
+    .getElementById('productForm')
+    .addEventListener(
+      'submit',
+      saveProduct
+    );
 }
+
+
+/* =========================
+   IMAGE SELECT
+========================= */
+
+async function handleImageSelect(event){
+
+  const file =
+    event.target.files?.[0];
+
+  if(!file) return;
+
+  if(!file.type.startsWith('image/')){
+
+    alert('Please choose an image file.');
+
+    event.target.value = '';
+
+    return;
+  }
+
+  try{
+
+    document.getElementById(
+      'photoStatus'
+    ).textContent =
+      'Preparing photo...';
+
+    selectedImageData =
+      await compressImage(file);
+
+
+    const preview =
+      document.getElementById(
+        'photoPreview'
+      );
+
+    preview.src =
+      selectedImageData;
+
+    preview.style.display =
+      'block';
+
+
+    document.getElementById(
+      'photoStatus'
+    ).textContent =
+      'Photo selected successfully ✓';
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      'Could not prepare this photo. Please choose another image.'
+    );
+
+  }
+}
+
+
+/* =========================
+   COMPRESS IMAGE
+========================= */
+
+function compressImage(file){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const reader =
+        new FileReader();
+
+      reader.onload = function(e){
+
+        const img =
+          new Image();
+
+        img.onload = function(){
+
+          const maxWidth = 900;
+
+          const scale =
+            Math.min(
+              1,
+              maxWidth / img.width
+            );
+
+          const width =
+            Math.round(
+              img.width * scale
+            );
+
+          const height =
+            Math.round(
+              img.height * scale
+            );
+
+
+          const canvas =
+            document.createElement(
+              'canvas'
+            );
+
+          canvas.width =
+            width;
+
+          canvas.height =
+            height;
+
+
+          const ctx =
+            canvas.getContext(
+              '2d'
+            );
+
+          ctx.drawImage(
+            img,
+            0,
+            0,
+            width,
+            height
+          );
+
+
+          const data =
+            canvas.toDataURL(
+              'image/jpeg',
+              0.78
+            );
+
+          resolve(data);
+
+        };
+
+        img.onerror =
+          reject;
+
+        img.src =
+          e.target.result;
+      };
+
+      reader.onerror =
+        reject;
+
+      reader.readAsDataURL(file);
+
+    }
+  );
+}
+
+
+/* =========================
+   SAVE PRODUCT
+========================= */
+
+async function saveProduct(e){
+
+  e.preventDefault();
+
+  const name =
+    document.getElementById(
+      'pName'
+    ).value.trim();
+
+  const cat =
+    document.getElementById(
+      'pCat'
+    ).value;
+
+  const price =
+    Number(
+      document.getElementById(
+        'pPrice'
+      ).value
+    );
+
+  const color =
+    document.getElementById(
+      'pColor'
+    ).value.trim();
+
+  const desc =
+    document.getElementById(
+      'pDesc'
+    ).value.trim();
+
+
+  if(
+    !name ||
+    !cat ||
+    !price ||
+    !color
+  ){
+
+    alert(
+      'Please complete all required fields.'
+    );
+
+    return;
+  }
+
+
+  if(
+    !selectedImageData &&
+    !editingProductId
+  ){
+
+    alert(
+      'Please choose a product photo.'
+    );
+
+    return;
+  }
+
+
+  const saveButton =
+    document.querySelector(
+      '#productForm .save-btn'
+    );
+
+  saveButton.disabled = true;
+
+  saveButton.textContent =
+    'SAVING...';
+
+
+  try{
+
+    let imageToSave =
+      selectedImageData;
+
+
+    /*
+      When editing and no new photo
+      was selected, keep the old image.
+    */
+
+    if(
+      editingProductId &&
+      !imageToSave
+    ){
+
+      const existing =
+        await api(
+          '/api/admin/products'
+        );
+
+      const product =
+        existing?.products?.find(
+          x =>
+            Number(x.id) ===
+            Number(editingProductId)
+        );
+
+      imageToSave =
+        product?.img || '';
+
+    }
+
+
+    const data = {
+
+      name,
+
+      cat,
+
+      price,
+
+      color,
+
+      img:imageToSave,
+
+      desc
+
+    };
+
+
+    let result;
+
+
+    if(editingProductId){
+
+      result =
+        await api(
+          '/api/admin/products/' +
+          editingProductId,
+          {
+            method:'PUT',
+
+            headers:{
+              'Content-Type':
+                'application/json'
+            },
+
+            body:
+              JSON.stringify(data)
+          }
+        );
+
+    }else{
+
+      result =
+        await api(
+          '/api/admin/products',
+          {
+            method:'POST',
+
+            headers:{
+              'Content-Type':
+                'application/json'
+            },
+
+            body:
+              JSON.stringify(data)
+          }
+        );
+
+    }
+
+
+    if(
+      result &&
+      result.ok
+    ){
+
+      alert(
+        editingProductId
+        ? 'Product updated successfully.'
+        : 'Product added successfully.'
+      );
+
+      editingProductId = null;
+
+      selectedImageData = '';
+
+      showProducts();
+
+    }else{
+
+      alert(
+        result?.message ||
+        'Could not save product.'
+      );
+
+      saveButton.disabled = false;
+
+      saveButton.textContent =
+        'SAVE PRODUCT';
+    }
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      'Server error. Product was not saved.'
+    );
+
+    saveButton.disabled = false;
+
+    saveButton.textContent =
+      'SAVE PRODUCT';
+  }
+}
+
+
+/* =========================
+   EDIT PRODUCT
+========================= */
 
 async function editProduct(id){
- const d=await api('/api/admin/products');
- if(!d)return;
 
- const p=d.products.find(x=>x.id===id);
- if(!p)return;
+  const d =
+    await api('/api/admin/products');
 
- const name=prompt("Product name:",p.name);
- if(name===null)return;
+  if(!d) return;
 
- const cat=prompt("Category:",p.cat);
- if(cat===null)return;
+  const p =
+    d.products.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
 
- const price=prompt("Price in Naira:",p.price);
- if(price===null)return;
+  if(!p) return;
 
- const color=prompt("Color:",p.color||"");
- if(color===null)return;
 
- const img=prompt("Product image path:",p.img||"");
- if(img===null)return;
+  editingProductId =
+    p.id;
 
- const desc=prompt("Description:",p.desc||"");
- if(desc===null)return;
+  selectedImageData = '';
 
- const result=await api('/api/admin/products/'+id,{
-   method:'PUT',
-   headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({
-     name:name.trim(),
-     cat:cat.trim(),
-     price:Number(price),
-     color:color.trim(),
-     img:img.trim(),
-     desc:desc.trim()
-   })
- });
 
- if(result && result.ok){
-   alert("Product updated successfully.");
-   showProducts();
- }
+  const content =
+    document.getElementById(
+      'content'
+    );
+
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <h2>Edit Product</h2>
+
+      <p style="color:#777">
+        Update your product information.
+      </p>
+
+
+      <form
+        id="productForm"
+        style="
+          display:grid;
+          gap:10px;
+          max-width:650px;
+        "
+      >
+
+        <label>
+          <b>Product Name</b>
+
+          <input
+            id="pName"
+            required
+            value="${escapeAttr(p.name)}"
+          >
+        </label>
+
+
+        <label>
+          <b>Category</b>
+
+          <select
+            id="pCat"
+            required
+          >
+
+            <option value="Abaya"
+              ${p.cat === 'Abaya' ? 'selected' : ''}>
+              Abaya
+            </option>
+
+            <option value="Gown"
+              ${p.cat === 'Gown' ? 'selected' : ''}>
+              Gown
+            </option>
+
+            <option value="Hijab"
+              ${p.cat === 'Hijab' ? 'selected' : ''}>
+              Hijab
+            </option>
+
+            <option value="Custom"
+              ${p.cat === 'Custom' ? 'selected' : ''}>
+              Custom
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label>
+          <b>Price (₦)</b>
+
+          <input
+            id="pPrice"
+            type="number"
+            min="0"
+            required
+            value="${Number(p.price)}"
+          >
+        </label>
+
+
+        <label>
+          <b>Color</b>
+
+          <input
+            id="pColor"
+            required
+            value="${escapeAttr(p.color || '')}"
+          >
+        </label>
+
+
+        <label>
+
+          <b>Product Photo</b>
+
+          <div class="photo-box">
+
+            <p style="
+              margin-top:0;
+              color:#756a6f;
+            ">
+              Choose a new photo if you want
+              to replace the current one.
+            </p>
+
+            <input
+              id="pImgFile"
+              type="file"
+              accept="image/*"
+            >
+
+            <img
+              id="photoPreview"
+              class="photo-preview"
+              src="${escapeAttr(p.img || '')}"
+              alt="Current photo"
+              style="
+                display:${p.img ? 'block' : 'none'};
+              "
+            >
+
+            <p
+              id="photoStatus"
+              style="
+                font-size:12px;
+                color:#777;
+                margin-bottom:0;
+              "
+            >
+              ${
+                p.img
+                ? 'Current product photo'
+                : 'No photo'
+              }
+            </p>
+
+          </div>
+
+        </label>
+
+
+        <label>
+
+          <b>Description</b>
+
+          <textarea
+            id="pDesc"
+            rows="4"
+            placeholder="Describe the product..."
+          >${escapeHtml(p.desc || '')}</textarea>
+
+        </label>
+
+
+        <div class="form-actions">
+
+          <button
+            type="submit"
+            class="save-btn"
+          >
+            UPDATE PRODUCT
+          </button>
+
+          <button
+            type="button"
+            class="cancel-btn"
+            onclick="showProducts()"
+          >
+            CANCEL
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  `;
+
+
+  document
+    .getElementById('pImgFile')
+    .addEventListener(
+      'change',
+      handleImageSelect
+    );
+
+
+  document
+    .getElementById('productForm')
+    .addEventListener(
+      'submit',
+      saveProduct
+    );
 }
+
+
+/* =========================
+   DELETE PRODUCT
+========================= */
 
 async function deleteProduct(id){
- const d=await api('/api/admin/products');
- if(!d)return;
 
- const p=d.products.find(x=>x.id===id);
- if(!p)return;
+  const d =
+    await api('/api/admin/products');
 
- const confirmed=confirm(
-   `Are you sure you want to delete "${p.name}"?`
- );
+  if(!d) return;
 
- if(!confirmed)return;
 
- const result=await api('/api/admin/products/'+id,{
-   method:'DELETE'
- });
+  const p =
+    d.products.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
 
- if(result && result.ok){
-   alert("Product deleted successfully.");
-   showProducts();
- }
+  if(!p) return;
+
+
+  const confirmed =
+    confirm(
+      `Are you sure you want to delete "${p.name}"?`
+    );
+
+
+  if(!confirmed) return;
+
+
+  const result =
+    await api(
+      '/api/admin/products/' + id,
+      {
+        method:'DELETE'
+      }
+    );
+
+
+  if(
+    result &&
+    result.ok
+  ){
+
+    alert(
+      'Product deleted successfully.'
+    );
+
+    showProducts();
+
+  }else{
+
+    alert(
+      result?.message ||
+      'Could not delete product.'
+    );
+
+  }
 }
+
+
+/* =========================
+   SETTINGS
+========================= */
+
 async function showSettings(){
- const d=await api('/api/admin/settings');if(!d)return;
- content.innerHTML=`<div class="panel"><h2>Store Settings</h2><p><b>Payment:</b> Paystack ${d.paystackConfigured?'configured':'not configured'}</p><p><b>WhatsApp:</b> 0906 582 8886</p><div class="notice">Never place the Paystack Secret Key in the browser. Keep it in the server environment. Before going live, use HTTPS and configure the Paystack webhook URL shown in your server deployment.</div></div>`;
+
+  const d =
+    await api('/api/admin/settings');
+
+  if(!d) return;
+
+
+  const content =
+    document.getElementById(
+      'content'
+    );
+
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <h2>Store Settings</h2>
+
+      <p>
+        <b>Payment:</b>
+        Paystack
+        ${
+          d.paystackConfigured
+          ? 'configured ✓'
+          : 'not configured'
+        }
+      </p>
+
+      <p>
+        <b>WhatsApp:</b>
+        0906 582 8886
+      </p>
+
+
+      <div class="notice">
+
+        Never place the Paystack Secret Key
+        in the browser.
+
+        Keep it in the server environment.
+
+        Before going live, use HTTPS and
+        configure the Paystack webhook URL
+        shown in your server deployment.
+
+      </div>
+
+    </div>
+  `;
 }
-if(token)dashboard();else login();
-</script></body></html>
+
+
+/* =========================
+   HTML SAFETY HELPERS
+========================= */
+
+function escapeHtml(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+function escapeAttr(value){
+
+  return escapeHtml(value);
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+if(token){
+
+  dashboard();
+
+}else{
+
+  login();
+
+}
+
+</script>
+
+</body>
+</html>
