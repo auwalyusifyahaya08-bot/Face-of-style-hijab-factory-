@@ -14,9 +14,7 @@
   --line:#e6dacf;
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -25,9 +23,7 @@ body{
   color:#292025;
 }
 
-button{
-  cursor:pointer;
-}
+button{cursor:pointer}
 
 .top{
   background:#fff;
@@ -47,7 +43,7 @@ button{
 }
 
 .logout{
-  background:transparent;
+  background:#fff;
   border:1px solid var(--line);
   padding:9px 14px;
   border-radius:20px;
@@ -73,9 +69,7 @@ button{
   color:var(--wine);
 }
 
-input,
-select,
-textarea{
+input,select,textarea{
   width:100%;
   padding:12px;
   border:1px solid var(--line);
@@ -112,9 +106,7 @@ textarea{
   border-radius:16px;
 }
 
-.stat small{
-  color:#756a6f;
-}
+.stat small{color:#756a6f}
 
 .stat b{
   display:block;
@@ -162,8 +154,7 @@ table{
   min-width:720px;
 }
 
-th,
-td{
+th,td{
   text-align:left;
   padding:12px;
   border-bottom:1px solid #eee;
@@ -223,6 +214,11 @@ td{
   font-weight:bold;
 }
 
+.save-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
 .cancel-btn{
   background:#fff;
   color:#333;
@@ -239,10 +235,18 @@ td{
   background:#fcf8f1;
 }
 
-.photo-box input[type="file"]{
-  border:0;
-  background:transparent;
-  margin:5px 0;
+.photo-button{
+  display:inline-block;
+  background:var(--wine);
+  color:#fff;
+  padding:12px 20px;
+  border-radius:22px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.photo-button input{
+  display:none;
 }
 
 .photo-preview{
@@ -283,19 +287,13 @@ td{
 }
 
 @media(max-width:800px){
-  .cards{
-    grid-template-columns:1fr 1fr;
-  }
+  .cards{grid-template-columns:1fr 1fr}
 }
 
 @media(max-width:500px){
-  .cards{
-    grid-template-columns:1fr;
-  }
+  .cards{grid-template-columns:1fr}
 
-  .top b{
-    font-size:18px;
-  }
+  .top b{font-size:18px}
 
   .layout{
     padding:18px 12px;
@@ -317,10 +315,12 @@ td{
 
 const app = document.getElementById('app');
 
-let token = sessionStorage.getItem('adminToken') || '';
+let token =
+  sessionStorage.getItem('adminToken') || '';
 
 let editingProductId = null;
 let selectedImageData = '';
+
 
 /* =========================
    LOGIN
@@ -361,8 +361,7 @@ function login(){
       <p id="err" class="error"></p>
 
       <div class="notice">
-        For the live store, change the admin credentials
-        in the server environment before publishing.
+        Login with your admin credentials.
       </div>
 
     </div>
@@ -381,6 +380,11 @@ async function doLogin(){
 
   const password =
     document.getElementById('p').value;
+
+  const errorBox =
+    document.getElementById('err');
+
+  errorBox.textContent = '';
 
   try{
 
@@ -413,14 +417,16 @@ async function doLogin(){
 
     }else{
 
-      document.getElementById('err').textContent =
+      errorBox.textContent =
         d.message || 'Login failed';
 
     }
 
   }catch(error){
 
-    document.getElementById('err').textContent =
+    console.error(error);
+
+    errorBox.textContent =
       'Unable to connect to server.';
 
   }
@@ -433,9 +439,14 @@ async function doLogin(){
 
 function logout(){
 
-  sessionStorage.removeItem('adminToken');
+  sessionStorage.removeItem(
+    'adminToken'
+  );
 
   token = '';
+
+  editingProductId = null;
+  selectedImageData = '';
 
   login();
 }
@@ -452,16 +463,44 @@ async function api(url,opts={}){
     Authorization:'Bearer ' + token
   };
 
-  const r = await fetch(url,opts);
+  try{
 
-  if(r.status === 401){
+    const r =
+      await fetch(url,opts);
 
-    logout();
+    if(r.status === 401){
+
+      logout();
+
+      return null;
+    }
+
+    const text =
+      await r.text();
+
+    if(!text){
+      return {};
+    }
+
+    try{
+      return JSON.parse(text);
+    }catch{
+      return {
+        ok:false,
+        message:text
+      };
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      'Could not connect to the server.'
+    );
 
     return null;
   }
-
-  return r.json();
 }
 
 
@@ -484,24 +523,30 @@ async function dashboard(){
 
         <div class="stat">
           <small>Total Orders</small>
-          <b>${d.stats.orders}</b>
+          <b>
+            ${d.stats?.orders || 0}
+          </b>
         </div>
 
         <div class="stat">
           <small>Paid Orders</small>
-          <b>${d.stats.paid}</b>
+          <b>
+            ${d.stats?.paid || 0}
+          </b>
         </div>
 
         <div class="stat">
           <small>Pending</small>
-          <b>${d.stats.pending}</b>
+          <b>
+            ${d.stats?.pending || 0}
+          </b>
         </div>
 
         <div class="stat">
           <small>Revenue</small>
           <b>
             ₦${Number(
-              d.stats.revenue
+              d.stats?.revenue || 0
             ).toLocaleString('en-NG')}
           </b>
         </div>
@@ -556,93 +601,122 @@ async function showOrders(){
   const content =
     document.getElementById('content');
 
+  const orders =
+    Array.isArray(d.orders)
+      ? d.orders
+      : [];
+
   content.innerHTML = `
 
     <div class="panel">
 
       <h2>Customer Orders</h2>
 
-      <table>
+      ${
+        orders.length
+        ? `
+          <table>
 
-        <thead>
+            <thead>
 
-          <tr>
-            <th>Reference</th>
-            <th>Customer</th>
-            <th>Total</th>
-            <th>Payment</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
+              <tr>
+                <th>Reference</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
 
-        </thead>
+            </thead>
 
-        <tbody>
+            <tbody>
 
-          ${d.orders.map(o => `
+              ${orders.map(o => `
 
-            <tr>
+                <tr>
 
-              <td>
-                ${o.reference || '-'}
-              </td>
+                  <td>
+                    ${escapeHtml(
+                      o.reference || '-'
+                    )}
+                  </td>
 
-              <td>
-                ${o.customer?.name || '-'}
-                <br>
-                ${o.customer?.phone || '-'}
-              </td>
+                  <td>
+                    ${escapeHtml(
+                      o.customer?.name || '-'
+                    )}
+                    <br>
+                    ${escapeHtml(
+                      o.customer?.phone || '-'
+                    )}
+                  </td>
 
-              <td>
-                ₦${Number(
-                  o.total
-                ).toLocaleString('en-NG')}
-              </td>
+                  <td>
+                    ₦${Number(
+                      o.total || 0
+                    ).toLocaleString('en-NG')}
+                  </td>
 
-              <td>
-                ${o.payment?.provider || '-'}
-              </td>
+                  <td>
+                    ${escapeHtml(
+                      o.payment?.provider || '-'
+                    )}
+                  </td>
 
-              <td>
+                  <td>
 
-                <span class="pill ${
-                  o.status === 'paid'
-                    ? 'paid'
-                    : o.status === 'failed'
-                      ? 'failed'
-                      : 'pending'
-                }">
+                    <span class="pill ${
+                      o.status === 'paid'
+                        ? 'paid'
+                        : o.status === 'failed'
+                          ? 'failed'
+                          : 'pending'
+                    }">
 
-                  ${o.status}
+                      ${escapeHtml(
+                        o.status || 'pending'
+                      )}
 
-                </span>
+                    </span>
 
-              </td>
+                  </td>
 
-              <td>
-                ${new Date(
-                  o.createdAt
-                ).toLocaleString()}
-              </td>
+                  <td>
+                    ${
+                      o.createdAt
+                      ? new Date(
+                          o.createdAt
+                        ).toLocaleString()
+                      : '-'
+                    }
+                  </td>
 
-              <td class="actions">
+                  <td class="actions">
 
-                <button
-                  onclick="viewOrder('${o.id}')"
-                >
-                  View
-                </button>
+                    <button
+                      onclick="viewOrder('${escapeAttr(o.id)}')"
+                    >
+                      View
+                    </button>
 
-              </td>
+                  </td>
 
-            </tr>
+                </tr>
 
-          `).join('')}
+              `).join('')}
 
-        </tbody>
+            </tbody>
 
-      </table>
+          </table>
+        `
+        : `
+          <div class="loading">
+            No customer orders yet.
+          </div>
+        `
+      }
 
     </div>
   `;
@@ -656,33 +730,37 @@ async function showOrders(){
 async function viewOrder(id){
 
   const d =
-    await api('/api/admin/orders/' + id);
+    await api(
+      '/api/admin/orders/' + id
+    );
 
   if(!d) return;
 
   const o = d.order;
 
+  if(!o) return;
+
   alert(
 `Order: ${o.reference || o.id}
 
-Customer: ${o.customer.name}
+Customer: ${o.customer?.name || '-'}
 
-Phone: ${o.customer.phone}
+Phone: ${o.customer?.phone || '-'}
 
 Total: ₦${Number(
-  o.total
+  o.total || 0
 ).toLocaleString('en-NG')}
 
-Status: ${o.status}
+Status: ${o.status || '-'}
 
 Address:
-${o.customer.address}`
+${o.customer?.address || '-'}`
   );
 }
 
 
 /* =========================
-   LOAD PRODUCTS
+   PRODUCTS
 ========================= */
 
 async function showProducts(){
@@ -694,6 +772,11 @@ async function showProducts(){
 
   const content =
     document.getElementById('content');
+
+  const products =
+    Array.isArray(d.products)
+      ? d.products
+      : [];
 
   content.innerHTML = `
 
@@ -712,7 +795,7 @@ async function showProducts(){
           <h2>Products</h2>
 
           <p style="color:#777">
-            Manage your store products,
+            Manage your products,
             prices, colors and photos.
           </p>
 
@@ -739,88 +822,104 @@ async function showProducts(){
         margin-top:20px;
       ">
 
-        <table>
+        ${
+          products.length
+          ? `
+            <table>
 
-          <thead>
+              <thead>
 
-            <tr>
-              <th>Photo</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Color</th>
-              <th>Price</th>
-              <th>Action</th>
-            </tr>
+                <tr>
+                  <th>Photo</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Color</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
 
-          </thead>
+              </thead>
 
-          <tbody>
+              <tbody>
 
-            ${d.products.map(p => `
+                ${products.map(p => `
 
-              <tr>
+                  <tr>
 
-                <td>
+                    <td>
 
-                  ${
-                    p.img
-                    ? `
-                      <img
-                        class="product-thumb"
-                        src="${escapeHtml(p.img)}"
-                        alt="${escapeHtml(p.name)}"
+                      ${
+                        p.img
+                        ? `
+                          <img
+                            class="product-thumb"
+                            src="${escapeAttr(
+                              p.img
+                            )}"
+                            alt="${escapeAttr(
+                              p.name
+                            )}"
+                          >
+                        `
+                        : `
+                          <div class="product-empty">
+                            No Photo
+                          </div>
+                        `
+                      }
+
+                    </td>
+
+                    <td>
+                      ${escapeHtml(p.name)}
+                    </td>
+
+                    <td>
+                      ${escapeHtml(p.cat)}
+                    </td>
+
+                    <td>
+                      ${escapeHtml(
+                        p.color || '-'
+                      )}
+                    </td>
+
+                    <td>
+                      ₦${Number(
+                        p.price || 0
+                      ).toLocaleString('en-NG')}
+                    </td>
+
+                    <td class="actions">
+
+                      <button
+                        onclick="editProduct(${Number(p.id)})"
                       >
-                    `
-                    : `
-                      <div class="product-empty">
-                        No Photo
-                      </div>
-                    `
-                  }
+                        Edit
+                      </button>
 
-                </td>
+                      <button
+                        onclick="deleteProduct(${Number(p.id)})"
+                      >
+                        Delete
+                      </button>
 
-                <td>
-                  ${escapeHtml(p.name)}
-                </td>
+                    </td>
 
-                <td>
-                  ${escapeHtml(p.cat)}
-                </td>
+                  </tr>
 
-                <td>
-                  ${escapeHtml(p.color || '-')}
-                </td>
+                `).join('')}
 
-                <td>
-                  ₦${Number(
-                    p.price
-                  ).toLocaleString('en-NG')}
-                </td>
+              </tbody>
 
-                <td class="actions">
-
-                  <button
-                    onclick="editProduct(${p.id})"
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    onclick="deleteProduct(${p.id})"
-                  >
-                    Delete
-                  </button>
-
-                </td>
-
-              </tr>
-
-            `).join('')}
-
-          </tbody>
-
-        </table>
+            </table>
+          `
+          : `
+            <div class="loading">
+              No products yet.
+            </div>
+          `
+        }
 
       </div>
 
@@ -836,7 +935,6 @@ async function showProducts(){
 function addProduct(){
 
   editingProductId = null;
-
   selectedImageData = '';
 
   const content =
@@ -849,7 +947,8 @@ function addProduct(){
       <h2>Add New Product</h2>
 
       <p style="color:#777">
-        Add a new item to your Face of Style collection.
+        Add a new item to your
+        Face of Style collection.
       </p>
 
       <form
@@ -862,6 +961,7 @@ function addProduct(){
       >
 
         <label>
+
           <b>Product Name</b>
 
           <input
@@ -869,10 +969,12 @@ function addProduct(){
             required
             placeholder="Example: Elegant Black Abaya"
           >
+
         </label>
 
 
         <label>
+
           <b>Category</b>
 
           <select
@@ -906,19 +1008,22 @@ function addProduct(){
 
 
         <label>
+
           <b>Price (₦)</b>
 
           <input
             id="pPrice"
             type="number"
-            min="0"
+            min="1"
             required
             placeholder="25000"
           >
+
         </label>
 
 
         <label>
+
           <b>Color</b>
 
           <input
@@ -926,6 +1031,7 @@ function addProduct(){
             required
             placeholder="Black, Navy Blue, Pink"
           >
+
         </label>
 
 
@@ -939,15 +1045,21 @@ function addProduct(){
               margin-top:0;
               color:#756a6f;
             ">
-              Tap the button below to choose
-              a photo from your phone.
+              Tap the button below to
+              choose a photo from your phone.
             </p>
 
-            <input
-              id="pImgFile"
-              type="file"
-              accept="image/*"
-            >
+            <label class="photo-button">
+
+              CHOOSE PHOTO
+
+              <input
+                id="pImgFile"
+                type="file"
+                accept="image/*"
+              >
+
+            </label>
 
             <img
               id="photoPreview"
@@ -1039,7 +1151,9 @@ async function handleImageSelect(event){
 
   if(!file.type.startsWith('image/')){
 
-    alert('Please choose an image file.');
+    alert(
+      'Please choose an image file.'
+    );
 
     event.target.value = '';
 
@@ -1078,8 +1192,10 @@ async function handleImageSelect(event){
 
     console.error(error);
 
+    selectedImageData = '';
+
     alert(
-      'Could not prepare this photo. Please choose another image.'
+      'Could not prepare this photo.'
     );
 
   }
@@ -1087,7 +1203,7 @@ async function handleImageSelect(event){
 
 
 /* =========================
-   COMPRESS IMAGE
+   IMAGE COMPRESSION
 ========================= */
 
 function compressImage(file){
@@ -1129,17 +1245,12 @@ function compressImage(file){
               'canvas'
             );
 
-          canvas.width =
-            width;
-
-          canvas.height =
-            height;
+          canvas.width = width;
+          canvas.height = height;
 
 
           const ctx =
-            canvas.getContext(
-              '2d'
-            );
+            canvas.getContext('2d');
 
           ctx.drawImage(
             img,
@@ -1160,15 +1271,13 @@ function compressImage(file){
 
         };
 
-        img.onerror =
-          reject;
+        img.onerror = reject;
 
-        img.src =
-          e.target.result;
+        img.src = e.target.result;
+
       };
 
-      reader.onerror =
-        reject;
+      reader.onerror = reject;
 
       reader.readAsDataURL(file);
 
@@ -1213,12 +1322,7 @@ async function saveProduct(e){
     ).value.trim();
 
 
-  if(
-    !name ||
-    !cat ||
-    !price ||
-    !color
-  ){
+  if(!name || !cat || !price || !color){
 
     alert(
       'Please complete all required fields.'
@@ -1249,7 +1353,9 @@ async function saveProduct(e){
   saveButton.disabled = true;
 
   saveButton.textContent =
-    'SAVING...';
+    editingProductId
+      ? 'UPDATING...'
+      : 'SAVING...';
 
 
   try{
@@ -1259,8 +1365,9 @@ async function saveProduct(e){
 
 
     /*
-      When editing and no new photo
-      was selected, keep the old image.
+      EDIT PRODUCT:
+      If no new photo is selected,
+      keep the existing photo.
     */
 
     if(
@@ -1288,17 +1395,17 @@ async function saveProduct(e){
 
     const data = {
 
-      name,
+      name:name,
 
-      cat,
+      cat:cat,
 
-      price,
+      price:price,
 
-      color,
+      color:color,
 
       img:imageToSave,
 
-      desc
+      desc:desc
 
     };
 
@@ -1353,12 +1460,11 @@ async function saveProduct(e){
 
       alert(
         editingProductId
-        ? 'Product updated successfully.'
-        : 'Product added successfully.'
+          ? 'Product updated successfully.'
+          : 'Product added successfully.'
       );
 
       editingProductId = null;
-
       selectedImageData = '';
 
       showProducts();
@@ -1373,7 +1479,9 @@ async function saveProduct(e){
       saveButton.disabled = false;
 
       saveButton.textContent =
-        'SAVE PRODUCT';
+        editingProductId
+          ? 'UPDATE PRODUCT'
+          : 'SAVE PRODUCT';
     }
 
 
@@ -1388,7 +1496,9 @@ async function saveProduct(e){
     saveButton.disabled = false;
 
     saveButton.textContent =
-      'SAVE PRODUCT';
+      editingProductId
+        ? 'UPDATE PRODUCT'
+        : 'SAVE PRODUCT';
   }
 }
 
@@ -1405,7 +1515,7 @@ async function editProduct(id){
   if(!d) return;
 
   const p =
-    d.products.find(
+    d.products?.find(
       x =>
         Number(x.id) ===
         Number(id)
@@ -1447,6 +1557,7 @@ async function editProduct(id){
       >
 
         <label>
+
           <b>Product Name</b>
 
           <input
@@ -1454,10 +1565,12 @@ async function editProduct(id){
             required
             value="${escapeAttr(p.name)}"
           >
+
         </label>
 
 
         <label>
+
           <b>Category</b>
 
           <select
@@ -1466,22 +1579,30 @@ async function editProduct(id){
           >
 
             <option value="Abaya"
-              ${p.cat === 'Abaya' ? 'selected' : ''}>
+              ${p.cat === 'Abaya'
+                ? 'selected'
+                : ''}>
               Abaya
             </option>
 
             <option value="Gown"
-              ${p.cat === 'Gown' ? 'selected' : ''}>
+              ${p.cat === 'Gown'
+                ? 'selected'
+                : ''}>
               Gown
             </option>
 
             <option value="Hijab"
-              ${p.cat === 'Hijab' ? 'selected' : ''}>
+              ${p.cat === 'Hijab'
+                ? 'selected'
+                : ''}>
               Hijab
             </option>
 
             <option value="Custom"
-              ${p.cat === 'Custom' ? 'selected' : ''}>
+              ${p.cat === 'Custom'
+                ? 'selected'
+                : ''}>
               Custom
             </option>
 
@@ -1491,26 +1612,32 @@ async function editProduct(id){
 
 
         <label>
+
           <b>Price (₦)</b>
 
           <input
             id="pPrice"
             type="number"
-            min="0"
+            min="1"
             required
             value="${Number(p.price)}"
           >
+
         </label>
 
 
         <label>
+
           <b>Color</b>
 
           <input
             id="pColor"
             required
-            value="${escapeAttr(p.color || '')}"
+            value="${escapeAttr(
+              p.color || ''
+            )}"
           >
+
         </label>
 
 
@@ -1524,23 +1651,33 @@ async function editProduct(id){
               margin-top:0;
               color:#756a6f;
             ">
-              Choose a new photo if you want
-              to replace the current one.
+              Choose a new photo if you
+              want to replace the current one.
             </p>
 
-            <input
-              id="pImgFile"
-              type="file"
-              accept="image/*"
-            >
+            <label class="photo-button">
+
+              CHOOSE NEW PHOTO
+
+              <input
+                id="pImgFile"
+                type="file"
+                accept="image/*"
+              >
+
+            </label>
 
             <img
               id="photoPreview"
               class="photo-preview"
-              src="${escapeAttr(p.img || '')}"
+              src="${escapeAttr(
+                p.img || ''
+              )}"
               alt="Current photo"
               style="
-                display:${p.img ? 'block' : 'none'};
+                display:${p.img
+                  ? 'block'
+                  : 'none'};
               "
             >
 
@@ -1554,8 +1691,8 @@ async function editProduct(id){
             >
               ${
                 p.img
-                ? 'Current product photo'
-                : 'No photo'
+                  ? 'Current product photo'
+                  : 'No photo'
               }
             </p>
 
@@ -1572,7 +1709,9 @@ async function editProduct(id){
             id="pDesc"
             rows="4"
             placeholder="Describe the product..."
-          >${escapeHtml(p.desc || '')}</textarea>
+          >${escapeHtml(
+            p.desc || ''
+          )}</textarea>
 
         </label>
 
@@ -1632,7 +1771,7 @@ async function deleteProduct(id){
 
 
   const p =
-    d.products.find(
+    d.products?.find(
       x =>
         Number(x.id) ===
         Number(id)
@@ -1710,8 +1849,8 @@ async function showSettings(){
         Paystack
         ${
           d.paystackConfigured
-          ? 'configured ✓'
-          : 'not configured'
+            ? 'configured ✓'
+            : 'not configured'
         }
       </p>
 
@@ -1719,7 +1858,6 @@ async function showSettings(){
         <b>WhatsApp:</b>
         0906 582 8886
       </p>
-
 
       <div class="notice">
 
@@ -1740,7 +1878,7 @@ async function showSettings(){
 
 
 /* =========================
-   HTML SAFETY HELPERS
+   HTML SAFETY
 ========================= */
 
 function escapeHtml(value){
