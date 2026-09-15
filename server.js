@@ -4,6 +4,16 @@ import path from 'path';
 import crypto from 'crypto';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import pg from 'pg';
+
+const { Pool } = pg;
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -118,83 +128,131 @@ app.get('/api/admin/orders/:id', adminAuth, (req, res) => {
   const order = readOrders().find(x => x.id === req.params.id);
   order ? res.json({ order }) : res.status(404).json({ message: 'Order not found' });
 });
-app.get('/api/admin/products', adminAuth, (req, res) => res.json({ products: PRODUCTS }));
-app.post('/api/admin/products', adminAuth, (req, res) => {
-  const { name, cat, price, color, img, desc } = req.body || {};
+app.get('/api/admin/products', adminAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM products ORDER BY id ASC'
+    );
 
-  if (!name || !cat || !price || !color || !img) {
-    return res.status(400).json({
-      message: 'Name, category, price, color and image are required.'
+    res.json({ products: result.rows });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Failed to load products.'
     });
   }
-
-  const newId = PRODUCTS.length
-    ? Math.max(...PRODUCTS.map(p => p.id)) + 1
-    : 1;
-
-  const product = {
-    id: newId,
-    name: String(name).trim(),
-    cat: String(cat).trim(),
-    price: Number(price),
-    color: String(color).trim(),
-    img: String(img).trim(),
-    desc: String(desc || '').trim()
-  };
-
-  PRODUCTS.push(product);
-
-  res.json({
-    ok: true,
-    product
-  });
 });
-app.delete('/api/admin/products/:id', adminAuth, (req, res) => {
-  const id = Number(req.params.id);
-  const index = PRODUCTS.findIndex(p => p.id === id);
+app.post('/api/admin/products', adminAuth, async (req, res) => {
+  try {
+    const { name, cat, price, color, img, desc } = req.body || {};
 
-  if (index === -1) {
-    return res.status(404).json({
-      message: 'Product not found.'
+    if (!name || !cat || !price || !color || !img) {
+      return res.status(400).json({
+        message: 'Name, category, price, color and image are required.'
+      });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO products (name, cat, price, color, img, desc)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        String(name).trim(),
+        String(cat).trim(),
+        Number(price),
+        String(color).trim(),
+        String(img).trim(),
+        String(desc || '').trim()
+      ]
+    );
+
+    res.json({
+      ok: true,
+      product: result.rows[0]
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Failed to add product.'
     });
   }
-
-  const removed = PRODUCTS.splice(index, 1)[0];
-
-  res.json({
-    ok: true,
-    product: removed
-  });
+  
 });
-app.put('/api/admin/products/:id', adminAuth, (req, res) => {
-  const id = Number(req.params.id);
-  const product = PRODUCTS.find(p => p.id === id);
+app.delete('/api/admin/products/:id', adminAuth, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
 
-  if (!product) {
-    return res.status(404).json({
-      message: 'Product not found.'
+    const result = await pool.query(
+      'DELETE FROM products WHERE id = $1 RETURNING *',
+      [id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({
+        message: 'Product not found.'
+      });
+    }
+
+    res.json({
+      ok: true,
+      product: result.rows[0]
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Failed to delete product.'
     });
   }
 
-  const { name, cat, price, color, img, desc } = req.body || {};
+});
+app.put('/api/admin/products/:id', adminAuth, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { name, cat, price, color, img, desc } = req.body || {};
 
-  if (!name || !cat || !price || !color || !img) {
-    return res.status(400).json({
-      message: 'Name, category, price, color and image are required.'
+    if (!name || !cat || !price || !color || !img) {
+      return res.status(400).json({
+        message: 'Name, category, price, color and image are required.'
+      });
+    }
+
+    const result = await pool.query(
+      `UPDATE products
+       SET name = $1,
+           cat = $2,
+           price = $3,
+           color = $4,
+           img = $5,
+           desc = $6
+       WHERE id = $7
+       RETURNING *`,
+      [
+        String(name).trim(),
+        String(cat).trim(),
+        Number(price),
+        String(color).trim(),
+        String(img).trim(),
+        String(desc || '').trim(),
+        id
+      ]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({
+        message: 'Product not found.'
+      });
+    }
+
+    res.json({
+      ok: true,
+      product: result.rows[0]
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Failed to update product.'
     });
   }
-
-  product.name = String(name).trim();
-  product.cat = String(cat).trim();
-  product.price = Number(price);
-  product.color = String(color).trim();
-  product.img = String(img).trim();
-  product.desc = String(desc || '').trim();
-
-  res.json({
-    ok: true,
-    product
-  });
 });
 app.get('/api/admin/settings', adminAuth, (req, res) => res.json({
   paystackConfigured: Boolean(process.env.PAYSTACK_SECRET_KEY),
@@ -328,4 +386,45 @@ app.post('/api/paystack/webhook', (req, res) => {
 
 app.get('/api/health', (req, res) => res.json({ ok: true, paystackConfigured: Boolean(process.env.PAYSTACK_SECRET_KEY) }));
 
-app.listen(PORT, () => console.log(`Face of Style store running at ${BASE_URL}`));
+async function initDatabase() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS products (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL,
+      cat TEXT NOT NULL,
+      price NUMERIC NOT NULL,
+      color TEXT NOT NULL,
+      img TEXT NOT NULL,
+      desc TEXT DEFAULT ''
+    )
+  `);
+
+  const count = await pool.query(
+    'SELECT COUNT(*)::int AS count FROM products'
+  );
+
+  if (count.rows[0].count === 0) {
+    await pool.query(
+      `INSERT INTO products (id, name, cat, price, color, img, desc)
+       VALUES
+       (1, 'Elegant Zip Abaya', 'Abaya', 25000, 'Black', 'product-1.jpg', 'Flowing full-length abaya with refined finishing.'),
+       (2, 'Two-Tone Signature Gown', 'Gown', 22000, 'Two-Tone', 'product-2.jpg', 'Elegant two-tone modest gown design.'),
+       (3, 'Teal Classic Hijab Dress', 'Gown', 20000, 'Teal', 'product-3.jpg', 'Comfortable modest dress with clean detailing.'),
+       (4, 'Premium Black & White', 'Abaya', 28000, 'Black & White', 'product-4.jpg', 'Statement modest outfit with premium contrast.'),
+       (5, 'Ruffle Hijab Collection', 'Hijab', 12000, 'Multiple Colors', 'product-5.jpg', 'Soft, colourful hijab styles with beautiful ruffles.'),
+       (6, 'Rose Signature Gown', 'Custom', 24000, 'Rose', 'product-6.jpg', 'Elegant flowing gown; custom colours available.')
+       `
+    );
+  }
+}
+
+initDatabase()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Face of Style store running at ${BASE_URL}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Database initialization failed:', error);
+    process.exit(1);
+  });
