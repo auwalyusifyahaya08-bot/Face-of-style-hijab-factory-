@@ -127,6 +127,23 @@ app.post('/api/admin/products', adminAuth, (req, res) => {
     product
   });
 });
+app.delete('/api/admin/products/:id', adminAuth, (req, res) => {
+  const id = Number(req.params.id);
+  const index = PRODUCTS.findIndex(p => p.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({
+      message: 'Product not found.'
+    });
+  }
+
+  const removed = PRODUCTS.splice(index, 1)[0];
+
+  res.json({
+    ok: true,
+    product: removed
+  });
+});
 app.put('/api/admin/products/:id', adminAuth, (req, res) => {
   const id = Number(req.params.id);
   const product = PRODUCTS.find(p => p.id === id);
