@@ -166,13 +166,72 @@ async function showProducts(){
  };
 }
 
-function editProduct(id){
- alert("Edit product: "+id+" — server connection will be added next.");
+async function editProduct(id){
+ const d=await api('/api/admin/products');
+ if(!d)return;
+
+ const p=d.products.find(x=>x.id===id);
+ if(!p)return;
+
+ const name=prompt("Product name:",p.name);
+ if(name===null)return;
+
+ const cat=prompt("Category:",p.cat);
+ if(cat===null)return;
+
+ const price=prompt("Price in Naira:",p.price);
+ if(price===null)return;
+
+ const color=prompt("Color:",p.color||"");
+ if(color===null)return;
+
+ const img=prompt("Product image path:",p.img||"");
+ if(img===null)return;
+
+ const desc=prompt("Description:",p.desc||"");
+ if(desc===null)return;
+
+ const result=await api('/api/admin/products/'+id,{
+   method:'PUT',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+     name:name.trim(),
+     cat:cat.trim(),
+     price:Number(price),
+     color:color.trim(),
+     img:img.trim(),
+     desc:desc.trim()
+   })
+ });
+
+ if(result && result.ok){
+   alert("Product updated successfully.");
+   showProducts();
+ }
 }
 
-function deleteProduct(id){
- alert("Delete product: "+id+" — server connection will be added next.");
+async function deleteProduct(id){
+ const d=await api('/api/admin/products');
+ if(!d)return;
+
+ const p=d.products.find(x=>x.id===id);
+ if(!p)return;
+
+ const confirmed=confirm(
+   `Are you sure you want to delete "${p.name}"?`
+ );
+
+ if(!confirmed)return;
+
+ const result=await api('/api/admin/products/'+id,{
+   method:'DELETE'
+ });
+
+ if(result && result.ok){
+   alert("Product deleted successfully.");
+   showProducts();
  }
+}
 async function showSettings(){
  const d=await api('/api/admin/settings');if(!d)return;
  content.innerHTML=`<div class="panel"><h2>Store Settings</h2><p><b>Payment:</b> Paystack ${d.paystackConfigured?'configured':'not configured'}</p><p><b>WhatsApp:</b> 0906 582 8886</p><div class="notice">Never place the Paystack Secret Key in the browser. Keep it in the server environment. Before going live, use HTTPS and configure the Paystack webhook URL shown in your server deployment.</div></div>`;
