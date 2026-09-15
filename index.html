@@ -1520,28 +1520,144 @@ function addToCart(id){
   }
 
 
-  updateCart();
+  <script>
 
-  openCart();
+function updateCart(){
+
+  document.getElementById("count").textContent =
+    cart.reduce((a,x) => a + x.qty,0);
+
+  document.getElementById("cartItems").innerHTML =
+    cart.length
+
+    ?
+
+    cart.map(x => `
+
+      <div class="cartItem">
+
+        <img
+          src="${x.img}"
+          alt="${x.name}"
+          onerror="this.style.display='none'"
+        >
+
+        <div style="flex:1">
+
+          <b>${x.name}</b>
+
+          <br>
+
+          <small>
+            ${money(x.price)} × ${x.qty}
+          </small>
+
+          <div
+            style="
+              display:flex;
+              align-items:center;
+              gap:8px;
+              margin-top:10px
+            "
+          >
+
+            <button
+              onclick="changeQty(${x.id}, -1)"
+              style="
+                width:32px;
+                height:32px;
+                border:1px solid #eadfd4;
+                background:#fff;
+                border-radius:8px;
+                font-size:20px;
+                cursor:pointer
+              "
+            >
+              −
+            </button>
+
+            <strong
+              style="
+                min-width:25px;
+                text-align:center;
+                color:#651630
+              "
+            >
+              ${x.qty}
+            </strong>
+
+            <button
+              onclick="changeQty(${x.id}, 1)"
+              style="
+                width:32px;
+                height:32px;
+                border:1px solid #651630;
+                background:#651630;
+                color:#fff;
+                border-radius:8px;
+                font-size:20px;
+                cursor:pointer
+              "
+            >
+              +
+            </button>
+
+          </div>
+
+          <span
+            class="remove"
+            onclick="removeItem(${x.id})"
+            style="display:block;margin-top:8px"
+          >
+            Remove
+          </span>
+
+        </div>
+
+      </div>
+
+    `).join("")
+
+    :
+
+    "<p>Your cart is empty.</p>";
+
+  document.getElementById("total").textContent =
+    "Total: " +
+    money(
+      cart.reduce(
+        (a,x) => a + x.price * x.qty,
+        0
+      )
+    );
 
 }
 
 
 /* =========================================================
-   REMOVE CART ITEM
-========================================================= */
+   CHANGE PRODUCT QUANTITY
+   Minimum quantity = 1
+   ========================================================= */
 
-function removeItem(id){
+function changeQty(id, amount){
 
-  cart =
-    cart.filter(
-      item =>
-        String(item.id) !==
-        String(id)
-    );
+  const item =
+    cart.find(x => x.id === id);
 
+  if(!item) return;
+
+  item.qty += amount;
+
+  /* Kada ya kai 1, ba zai ƙara raguwa ba */
+  if(item.qty < 1){
+    item.qty = 1;
+  }
 
   updateCart();
+
+}
+
+</script>
 
 }
 
