@@ -97,6 +97,36 @@ app.get('/api/admin/orders/:id', adminAuth, (req, res) => {
   order ? res.json({ order }) : res.status(404).json({ message: 'Order not found' });
 });
 app.get('/api/admin/products', adminAuth, (req, res) => res.json({ products: PRODUCTS }));
+app.post('/api/admin/products', adminAuth, (req, res) => {
+  const { name, cat, price, color, img, desc } = req.body || {};
+
+  if (!name || !cat || !price || !color || !img) {
+    return res.status(400).json({
+      message: 'Name, category, price, color and image are required.'
+    });
+  }
+
+  const newId = PRODUCTS.length
+    ? Math.max(...PRODUCTS.map(p => p.id)) + 1
+    : 1;
+
+  const product = {
+    id: newId,
+    name: String(name).trim(),
+    cat: String(cat).trim(),
+    price: Number(price),
+    color: String(color).trim(),
+    img: String(img).trim(),
+    desc: String(desc || '').trim()
+  };
+
+  PRODUCTS.push(product);
+
+  res.json({
+    ok: true,
+    product
+  });
+});
 app.get('/api/admin/settings', adminAuth, (req, res) => res.json({
   paystackConfigured: Boolean(process.env.PAYSTACK_SECRET_KEY),
   whatsapp: '09065828886'
