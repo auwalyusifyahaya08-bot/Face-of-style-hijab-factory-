@@ -12,10 +12,19 @@ const PORT = Number(process.env.PORT || 3000);
 const BASE_URL = (process.env.BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
 const DATA = path.join(__dirname, 'data');
 const ORDERS = path.join(DATA, 'orders.json');
-
+const PRODUCTS_FILE = path.join(DATA, 'products.json');
 fs.mkdirSync(DATA, { recursive: true });
 if (!fs.existsSync(ORDERS)) fs.writeFileSync(ORDERS, '[]');
-
+if (!fs.existsSync(PRODUCTS_FILE)) {
+  fs.writeFileSync(PRODUCTS_FILE, JSON.stringify([
+    { id: 1, name: 'Elegant Zip Abaya', cat: 'Abaya', price: 25000, color: 'Black', img: 'product-1.jpg', desc: 'Flowing full-length abaya with refined finishing.' },
+    { id: 2, name: 'Two-Tone Signature Gown', cat: 'Gown', price: 22000, color: 'Two-Tone', img: 'product-2.jpg', desc: 'Elegant two-tone modest gown design.' },
+    { id: 3, name: 'Teal Classic Hijab Dress', cat: 'Gown', price: 20000, color: 'Teal', img: 'product-3.jpg', desc: 'Comfortable modest dress with clean detailing.' },
+    { id: 4, name: 'Premium Black & White', cat: 'Abaya', price: 28000, color: 'Black & White', img: 'product-4.jpg', desc: 'Statement modest outfit with premium contrast.' },
+    { id: 5, name: 'Ruffle Hijab Collection', cat: 'Hijab', price: 12000, color: 'Multiple Colors', img: 'product-5.jpg', desc: 'Soft, colourful hijab styles with beautiful ruffles.' },
+    { id: 6, name: 'Rose Signature Gown', cat: 'Custom', price: 24000, color: 'Rose', img: 'product-6.jpg', desc: 'Elegant flowing gown; custom colours available.' }
+  ], null, 2));
+}
 const PRODUCTS = [
   { id: 1, name: 'Elegant Zip Abaya', cat: 'Abaya', price: 25000 },
   { id: 2, name: 'Two-Tone Signature Gown', cat: 'Gown', price: 22000 },
@@ -26,7 +35,20 @@ const PRODUCTS = [
 ];
 
 let adminSessions = new Set();
+function readProducts() {
+  try {
+    return JSON.parse(fs.readFileSync(PRODUCTS_FILE, 'utf8'));
+  } catch {
+    return [];
+  }
+}
 
+function writeProducts(products) {
+  fs.writeFileSync(
+    PRODUCTS_FILE,
+    JSON.stringify(products, null, 2)
+  );
+}
 function readOrders() {
   return JSON.parse(fs.readFileSync(ORDERS, 'utf8') || '[]');
 }
