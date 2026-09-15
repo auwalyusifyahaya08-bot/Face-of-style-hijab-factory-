@@ -3,226 +3,1648 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Face of Style Hijab Factory | Online Store</title>
-<meta name="description" content="Shop elegant hijabs, abayas, gowns and modest fashion from Face of Style Hijab Factory.">
+
+<meta name="description"
+content="Shop elegant hijabs, abayas, gowns and modest fashion from Face of Style Hijab Factory.">
+
 <style>
-:root{--wine:#651630;--wine2:#4d1024;--gold:#c9a45b;--cream:#fcf8f1;--paper:#fff;--text:#251c20;--muted:#756a6f;--line:#eadfd4}
-*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif}a{text-decoration:none;color:inherit}
-.top{background:var(--wine2);color:#fff;text-align:center;padding:8px;font-size:12px;letter-spacing:.5px}.nav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:10px max(18px,calc((100% - 1200px)/2))}
-.logo{height:56px;width:auto}.brand{font-family:Georgia,serif;color:var(--wine);font-size:17px;font-weight:bold;line-height:1.05}.brand small{display:block;color:var(--gold);font:10px Arial;letter-spacing:3px;margin-top:3px}
-.navlinks{display:flex;gap:20px;margin-left:auto;font-size:14px}.navlinks a:hover{color:var(--wine)}.icons{display:flex;gap:8px}.iconbtn{border:1px solid var(--line);background:#fff;border-radius:50%;width:40px;height:40px;cursor:pointer}.count{background:var(--wine);color:#fff;border-radius:50%;font-size:10px;padding:3px 6px;position:absolute;margin:-7px 0 0 -10px}
-.hero{max-width:1200px;margin:auto;padding:25px 18px;display:grid;grid-template-columns:1fr 1.05fr;gap:25px;align-items:stretch}.heroText{background:var(--wine);border-radius:20px;padding:clamp(28px,5vw,65px);color:#fff;display:flex;flex-direction:column;justify-content:center}.heroText .tag{color:#e6c979;letter-spacing:4px;font-size:12px;font-weight:bold}.heroText h1{font:clamp(40px,6vw,68px) Georgia,serif;line-height:1.02;margin:15px 0}.heroText p{color:#f3e8eb;line-height:1.7;max-width:500px}.heroBtn{background:#fff;color:var(--wine);padding:14px 20px;border-radius:28px;font-weight:bold;display:inline-block;width:max-content;margin-top:10px}.heroImg{border-radius:20px;overflow:hidden;min-height:430px}.heroImg img{width:100%;height:100%;object-fit:cover;display:block}
-.wrap{max-width:1200px;margin:auto;padding:35px 18px}.sectionTitle{text-align:center;margin:10px 0 30px}.sectionTitle h2{font:38px Georgia,serif;color:var(--wine);margin:8px}.sectionTitle p{color:var(--muted)}
-.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap}.cats{display:flex;gap:8px;overflow:auto}.cat{padding:9px 14px;border:1px solid var(--line);background:#fff;border-radius:22px;cursor:pointer;white-space:nowrap}.cat.active,.cat:hover{background:var(--wine);color:#fff;border-color:var(--wine)}.search{padding:11px 14px;border:1px solid var(--line);border-radius:22px;background:#fff;min-width:220px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;position:relative;box-shadow:0 7px 20px rgba(65,24,38,.05)}.pic{position:relative}.pic img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}.badge{position:absolute;top:10px;left:10px;background:var(--wine);color:#fff;padding:6px 9px;border-radius:15px;font-size:10px}.heart{position:absolute;right:10px;top:10px;background:#fff;border:0;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:18px}.body{padding:14px}.body h3{font:20px Georgia,serif;color:var(--wine);margin:0 0 6px}.body p{font-size:13px;color:var(--muted);margin:0 0 12px}.price{font-weight:bold;font-size:18px;margin-bottom:11px}.actions{display:flex;gap:7px}.add{flex:1;border:0;background:var(--wine);color:#fff;border-radius:22px;padding:11px;cursor:pointer;font-weight:bold}.view{border:1px solid var(--wine);color:var(--wine);background:#fff;border-radius:22px;padding:10px 12px;cursor:pointer}
-.features{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:50px}.feature{background:#fff;border:1px solid var(--line);padding:20px;border-radius:15px;text-align:center}.feature b{display:block;color:var(--wine);margin-bottom:5px}.feature span{font-size:12px;color:var(--muted)}
-.custom{background:var(--wine2);color:#fff;border-radius:20px;padding:42px;text-align:center;margin-top:45px}.custom h2{font:34px Georgia,serif;margin:0 0 10px}.custom p{color:#eadde1;line-height:1.7}.custom a{display:inline-block;background:var(--gold);color:#2e1b16;padding:13px 22px;border-radius:25px;font-weight:bold;margin-top:8px}
-footer{margin-top:55px;background:#24151b;color:#eee;padding:40px 18px}.foot{max-width:1200px;margin:auto;display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:30px}.foot h3{font-family:Georgia,serif}.foot p,.foot a{color:#cfc1c6;font-size:13px;line-height:1.8}.copy{text-align:center;border-top:1px solid #49363d;margin-top:25px;padding-top:18px;color:#aaa;font-size:12px}
-.drawer{position:fixed;right:-420px;top:0;width:min(400px,100%);height:100%;background:#fff;z-index:50;box-shadow:-10px 0 35px #0002;transition:.3s;padding:20px;display:flex;flex-direction:column}.drawer.open{right:0}.drawer h2{font:28px Georgia,serif;color:var(--wine)}.close{margin-left:auto;border:0;background:none;font-size:25px;cursor:pointer}.cartItems{flex:1;overflow:auto}.cartItem{display:flex;gap:10px;border-bottom:1px solid var(--line);padding:12px 0}.cartItem img{width:65px;height:75px;object-fit:cover;border-radius:8px}.cartItem b{color:var(--wine)}.remove{font-size:11px;color:#a33;cursor:pointer}.checkout{background:var(--wine);color:#fff;border:0;padding:14px;border-radius:25px;font-weight:bold;cursor:pointer;width:100%}.total{padding:15px 0;font-size:18px;font-weight:bold}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.heroImg{min-height:380px}.navlinks{display:none}.brand{margin-right:auto}.foot{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.grid{grid-template-columns:1fr 1fr;gap:10px}.body h3{font-size:17px}.price{font-size:16px}.features{grid-template-columns:1fr}.hero{padding:14px}.wrap{padding:25px 12px}.search{width:100%}.heroImg{min-height:300px}.foot{grid-template-columns:1fr}}
+:root{
+  --wine:#651630;
+  --wine2:#4d1024;
+  --gold:#c9a45b;
+  --cream:#fcf8f1;
+  --paper:#fff;
+  --text:#251c20;
+  --muted:#756a6f;
+  --line:#eadfd4
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--text);
+  font-family:Arial,sans-serif
+}
+
+a{
+  text-decoration:none;
+  color:inherit
+}
+
+.top{
+  background:var(--wine2);
+  color:#fff;
+  text-align:center;
+  padding:8px;
+  font-size:12px;
+  letter-spacing:.5px
+}
+
+.nav{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:10px max(18px,calc((100% - 1200px)/2))
+}
+
+.logo{
+  height:56px;
+  width:auto
+}
+
+.brand{
+  font-family:Georgia,serif;
+  color:var(--wine);
+  font-size:17px;
+  font-weight:bold;
+  line-height:1.05
+}
+
+.brand small{
+  display:block;
+  color:var(--gold);
+  font:10px Arial;
+  letter-spacing:3px;
+  margin-top:3px
+}
+
+.navlinks{
+  display:flex;
+  gap:20px;
+  margin-left:auto;
+  font-size:14px
+}
+
+.navlinks a:hover{
+  color:var(--wine)
+}
+
+.icons{
+  display:flex;
+  gap:8px
+}
+
+.iconbtn{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+  cursor:pointer
+}
+
+.count{
+  background:var(--wine);
+  color:#fff;
+  border-radius:50%;
+  font-size:10px;
+  padding:3px 6px;
+  position:absolute;
+  margin:-7px 0 0 -10px
+}
+
+.hero{
+  max-width:1200px;
+  margin:auto;
+  padding:25px 18px;
+  display:grid;
+  grid-template-columns:1fr 1.05fr;
+  gap:25px;
+  align-items:stretch
+}
+
+.heroText{
+  background:var(--wine);
+  border-radius:20px;
+  padding:clamp(28px,5vw,65px);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  justify-content:center
+}
+
+.heroText .tag{
+  color:#e6c979;
+  letter-spacing:4px;
+  font-size:12px;
+  font-weight:bold
+}
+
+.heroText h1{
+  font:clamp(40px,6vw,68px) Georgia,serif;
+  line-height:1.02;
+  margin:15px 0
+}
+
+.heroText p{
+  color:#f3e8eb;
+  line-height:1.7;
+  max-width:500px
+}
+
+.heroBtn{
+  background:#fff;
+  color:var(--wine);
+  padding:14px 20px;
+  border-radius:28px;
+  font-weight:bold;
+  display:inline-block;
+  width:max-content;
+  margin-top:10px
+}
+
+.heroImg{
+  border-radius:20px;
+  overflow:hidden;
+  min-height:430px
+}
+
+.heroImg img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block
+}
+
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:35px 18px
+}
+
+.sectionTitle{
+  text-align:center;
+  margin:10px 0 30px
+}
+
+.sectionTitle h2{
+  font:38px Georgia,serif;
+  color:var(--wine);
+  margin:8px
+}
+
+.sectionTitle p{
+  color:var(--muted)
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+  flex-wrap:wrap
+}
+
+.cats{
+  display:flex;
+  gap:8px;
+  overflow:auto
+}
+
+.cat{
+  padding:9px 14px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+  cursor:pointer;
+  white-space:nowrap
+}
+
+.cat.active,
+.cat:hover{
+  background:var(--wine);
+  color:#fff;
+  border-color:var(--wine)
+}
+
+.search{
+  padding:11px 14px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:#fff;
+  min-width:220px
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 7px 20px rgba(65,24,38,.05)
+}
+
+.pic{
+  position:relative
+}
+
+.pic img{
+  width:100%;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  display:block
+}
+
+.badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:var(--wine);
+  color:#fff;
+  padding:6px 9px;
+  border-radius:15px;
+  font-size:10px
+}
+
+.heart{
+  position:absolute;
+  right:10px;
+  top:10px;
+  background:#fff;
+  border:0;
+  border-radius:50%;
+  width:36px;
+  height:36px;
+  cursor:pointer;
+  font-size:18px
+}
+
+.body{
+  padding:14px
+}
+
+.body h3{
+  font:20px Georgia,serif;
+  color:var(--wine);
+  margin:0 0 6px
+}
+
+.body p{
+  font-size:13px;
+  color:var(--muted);
+  margin:0 0 12px
+}
+
+.price{
+  font-weight:bold;
+  font-size:18px;
+  margin-bottom:11px
+}
+
+.actions{
+  display:flex;
+  gap:7px
+}
+
+.add{
+  flex:1;
+  border:0;
+  background:var(--wine);
+  color:#fff;
+  border-radius:22px;
+  padding:11px;
+  cursor:pointer;
+  font-weight:bold
+}
+
+.view{
+  border:1px solid var(--wine);
+  color:var(--wine);
+  background:#fff;
+  border-radius:22px;
+  padding:10px 12px;
+  cursor:pointer
+}
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:50px
+}
+
+.feature{
+  background:#fff;
+  border:1px solid var(--line);
+  padding:20px;
+  border-radius:15px;
+  text-align:center
+}
+
+.feature b{
+  display:block;
+  color:var(--wine);
+  margin-bottom:5px
+}
+
+.feature span{
+  font-size:12px;
+  color:var(--muted)
+}
+
+.custom{
+  background:var(--wine2);
+  color:#fff;
+  border-radius:20px;
+  padding:42px;
+  text-align:center;
+  margin-top:45px
+}
+
+.custom h2{
+  font:34px Georgia,serif;
+  margin:0 0 10px
+}
+
+.custom p{
+  color:#eadde1;
+  line-height:1.7
+}
+
+.custom a{
+  display:inline-block;
+  background:var(--gold);
+  color:#2e1b16;
+  padding:13px 22px;
+  border-radius:25px;
+  font-weight:bold;
+  margin-top:8px
+}
+
+footer{
+  margin-top:55px;
+  background:#24151b;
+  color:#eee;
+  padding:40px 18px
+}
+
+.foot{
+  max-width:1200px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr;
+  gap:30px
+}
+
+.foot h3{
+  font-family:Georgia,serif
+}
+
+.foot p,
+.foot a{
+  color:#cfc1c6;
+  font-size:13px;
+  line-height:1.8
+}
+
+.copy{
+  text-align:center;
+  border-top:1px solid #49363d;
+  margin-top:25px;
+  padding-top:18px;
+  color:#aaa;
+  font-size:12px
+}
+
+.drawer{
+  position:fixed;
+  right:-420px;
+  top:0;
+  width:min(400px,100%);
+  height:100%;
+  background:#fff;
+  z-index:50;
+  box-shadow:-10px 0 35px #0002;
+  transition:.3s;
+  padding:20px;
+  display:flex;
+  flex-direction:column
+}
+
+.drawer.open{
+  right:0
+}
+
+.drawer h2{
+  font:28px Georgia,serif;
+  color:var(--wine)
+}
+
+.close{
+  margin-left:auto;
+  border:0;
+  background:none;
+  font-size:25px;
+  cursor:pointer
+}
+
+.cartItems{
+  flex:1;
+  overflow:auto
+}
+
+.cartItem{
+  display:flex;
+  gap:10px;
+  border-bottom:1px solid var(--line);
+  padding:12px 0
+}
+
+.cartItem img{
+  width:65px;
+  height:75px;
+  object-fit:cover;
+  border-radius:8px
+}
+
+.cartItem b{
+  color:var(--wine)
+}
+
+.remove{
+  font-size:11px;
+  color:#a33;
+  cursor:pointer
+}
+
+.checkout{
+  background:var(--wine);
+  color:#fff;
+  border:0;
+  padding:14px;
+  border-radius:25px;
+  font-weight:bold;
+  cursor:pointer;
+  width:100%
+}
+
+.total{
+  padding:15px 0;
+  font-size:18px;
+  font-weight:bold
+}
+
+.pay-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0008;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  padding:15px
+}
+
+.pay-modal.open{
+  display:flex
+}
+
+.pay-box{
+  background:#fff;
+  border-radius:20px;
+  max-width:520px;
+  width:100%;
+  max-height:92vh;
+  overflow:auto;
+  padding:25px
+}
+
+.pay-box h2{
+  font:30px Georgia,serif;
+  color:#651630;
+  margin-top:0
+}
+
+.pay-close{
+  float:right;
+  border:0;
+  background:none;
+  font-size:25px;
+  cursor:pointer
+}
+
+.pay-box label{
+  font-size:13px;
+  font-weight:bold;
+  display:block;
+  margin:12px 0 6px
+}
+
+.pay-box input,
+.pay-box select{
+  width:100%;
+  padding:12px;
+  border:1px solid #eadfd4;
+  border-radius:10px
+}
+
+.methods{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:15px 0
+}
+
+.method{
+  border:1px solid #eadfd4;
+  border-radius:12px;
+  padding:13px;
+  cursor:pointer
+}
+
+.method.selected{
+  border:2px solid #651630;
+  background:#fbf3f5
+}
+
+.method b{
+  display:block;
+  color:#651630
+}
+
+.pay-now{
+  width:100%;
+  border:0;
+  background:#651630;
+  color:#fff;
+  padding:14px;
+  border-radius:25px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:12px
+}
+
+.notice{
+  font-size:12px;
+  color:#756a6f;
+  line-height:1.6;
+  background:#fcf8f1;
+  padding:10px;
+  border-radius:10px
+}
+
+@media(max-width:900px){
+
+  .grid{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .features{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .hero{
+    grid-template-columns:1fr
+  }
+
+  .heroImg{
+    min-height:380px
+  }
+
+  .navlinks{
+    display:none
+  }
+
+  .brand{
+    margin-right:auto
+  }
+
+  .foot{
+    grid-template-columns:1fr 1fr
+  }
+}
+
+@media(max-width:520px){
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px
+  }
+
+  .body h3{
+    font-size:17px
+  }
+
+  .price{
+    font-size:16px
+  }
+
+  .features{
+    grid-template-columns:1fr
+  }
+
+  .hero{
+    padding:14px
+  }
+
+  .wrap{
+    padding:25px 12px
+  }
+
+  .search{
+    width:100%
+  }
+
+  .heroImg{
+    min-height:300px
+  }
+
+  .foot{
+    grid-template-columns:1fr
+  }
+}
 </style>
 </head>
+
 <body>
-<div class="top">✨ QUALITY MODEST FASHION • ORDER DIRECT ON WHATSAPP • 0906 582 8886</div>
+
+<div class="top">
+✨ QUALITY MODEST FASHION • ORDER DIRECT ON WHATSAPP • 0906 582 8886
+</div>
+
 <header class="nav">
-  <a href="#home"><img class="logo" src="logo.png" alt="Face of Style Hijab Factory"></a>
-  <div class="brand">FACE OF STYLE<small>HIJAB FACTORY</small></div>
-  <nav class="navlinks"><a href="#shop">Shop</a><a href="#custom">Custom Order</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
-  <div class="icons"><button class="iconbtn" onclick="openCart()">🛍️<span class="count" id="count">0</span></button></div>
+
+  <a href="#home">
+    <img class="logo" src="logo.png" alt="Face of Style Hijab Factory">
+  </a>
+
+  <div class="brand">
+    FACE OF STYLE
+    <small>HIJAB FACTORY</small>
+  </div>
+
+  <nav class="navlinks">
+    <a href="#shop">Shop</a>
+    <a href="#custom">Custom Order</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="icons">
+    <button class="iconbtn" onclick="openCart()">
+      🛍️
+      <span class="count" id="count">0</span>
+    </button>
+  </div>
+
 </header>
 
 <main id="home">
+
 <section class="hero">
-  <div class="heroText"><div class="tag">FACE OF STYLE</div><h1>Modesty, Elegance & Style.</h1><p>Discover carefully crafted hijabs, abayas, gowns and modest outfits. Choose your style and order directly from us.</p><a class="heroBtn" href="#shop">SHOP COLLECTION →</a></div>
-  <div class="heroImg"><img src="product-1.jpg" alt="Face of Style collection"></div>
+
+  <div class="heroText">
+
+    <div class="tag">FACE OF STYLE</div>
+
+    <h1>
+      Modesty, Elegance & Style.
+    </h1>
+
+    <p>
+      Discover carefully crafted hijabs, abayas, gowns and modest outfits.
+      Choose your style and order directly from us.
+    </p>
+
+    <a class="heroBtn" href="#shop">
+      SHOP COLLECTION →
+    </a>
+
+  </div>
+
+  <div class="heroImg">
+    <img src="product-1.jpg" alt="Face of Style collection">
+  </div>
+
 </section>
 
 <section class="wrap" id="shop">
-  <div class="sectionTitle"><div style="color:var(--gold);letter-spacing:4px;font-size:11px;font-weight:bold">SHOP ONLINE</div><h2>Our Latest Collection</h2><p>Browse our styles and add your favourites to your cart.</p></div>
-  <div class="toolbar">
-    <div class="cats">
-      <button class="cat active" onclick="filter('All',this)">All</button>
-      <button class="cat" onclick="filter('Abaya',this)">Abayas</button>
-      <button class="cat" onclick="filter('Gown',this)">Gowns</button>
-      <button class="cat" onclick="filter('Hijab',this)">Hijabs</button>
-      <button class="cat" onclick="filter('Custom',this)">Custom</button>
+
+  <div class="sectionTitle">
+
+    <div style="color:var(--gold);letter-spacing:4px;font-size:11px;font-weight:bold">
+      SHOP ONLINE
     </div>
-    <input class="search" id="search" oninput="render()" placeholder="Search products...">
+
+    <h2>Our Latest Collection</h2>
+
+    <p>
+      Browse our styles and add your favourites to your cart.
+    </p>
+
   </div>
+
+  <div class="toolbar">
+
+    <div class="cats">
+
+      <button class="cat active" onclick="filter('All',this)">
+        All
+      </button>
+
+      <button class="cat" onclick="filter('Abaya',this)">
+        Abayas
+      </button>
+
+      <button class="cat" onclick="filter('Gown',this)">
+        Gowns
+      </button>
+
+      <button class="cat" onclick="filter('Hijab',this)">
+        Hijabs
+      </button>
+
+      <button class="cat" onclick="filter('Custom',this)">
+        Custom
+      </button>
+
+    </div>
+
+    <input
+      class="search"
+      id="search"
+      oninput="render()"
+      placeholder="Search products..."
+    >
+
+  </div>
+
   <div class="grid" id="products"></div>
 
   <div class="features">
-    <div class="feature">🧵<b>Quality Sewing</b><span>Neat finishing and careful craftsmanship.</span></div>
-    <div class="feature">🎨<b>Choose Your Style</b><span>Colours, fabrics and designs to suit you.</span></div>
-    <div class="feature">📱<b>Easy Ordering</b><span>Order quickly through WhatsApp.</span></div>
-    <div class="feature">✨<b>Made With Care</b><span>Modest fashion with a refined finish.</span></div>
+
+    <div class="feature">
+      🧵
+      <b>Quality Sewing</b>
+      <span>Neat finishing and careful craftsmanship.</span>
+    </div>
+
+    <div class="feature">
+      🎨
+      <b>Choose Your Style</b>
+      <span>Colours, fabrics and designs to suit you.</span>
+    </div>
+
+    <div class="feature">
+      📱
+      <b>Easy Ordering</b>
+      <span>Order quickly through WhatsApp.</span>
+    </div>
+
+    <div class="feature">
+      ✨
+      <b>Made With Care</b>
+      <span>Modest fashion with a refined finish.</span>
+    </div>
+
   </div>
 
   <div class="custom" id="custom">
-    <h2>Want Something Made Just For You?</h2>
-    <p>Send us your preferred style, fabric, colour and measurements. We also accept custom sewing requests.</p>
-    <a href="https://wa.me/2349065828886?text=Assalamu%20alaikum%2C%20Ina%20son%20custom%20order.%20Ga%20style%2C%20fabric%2C%20colour%20da%20measurements%20na.">START CUSTOM ORDER</a>
+
+    <h2>
+      Want Something Made Just For You?
+    </h2>
+
+    <p>
+      Send us your preferred style, fabric, colour and measurements.
+      We also accept custom sewing requests.
+    </p>
+
+    <a href="https://wa.me/2349065828886?text=Assalamu%20alaikum%2C%20Ina%20son%20custom%20order.%20Ga%20style%2C%20fabric%2C%20colour%20da%20measurements%20na.">
+      START CUSTOM ORDER
+    </a>
+
   </div>
+
 </section>
 
 <section class="wrap" id="about">
-  <div class="sectionTitle"><h2>About Face of Style</h2><p>We create modest fashion that feels comfortable, elegant and personal.</p></div>
+
+  <div class="sectionTitle">
+
+    <h2>About Face of Style</h2>
+
+    <p>
+      We create modest fashion that feels comfortable, elegant and personal.
+    </p>
+
+  </div>
+
 </section>
+
 </main>
 
 <footer id="contact">
+
 <div class="foot">
-  <div><h3>Face of Style Hijab Factory</h3><p>Elegant hijabs, abayas, gowns and custom modest wear.</p></div>
-  <div><h3>Quick Links</h3><p><a href="#shop">Shop Collection</a><br><a href="#custom">Custom Order</a><br><a href="#about">About Us</a></p></div>
-  <div><h3>Contact</h3><p>WhatsApp: 0906 582 8886<br>Orders & enquiries welcome.</p></div>
+
+  <div>
+    <h3>Face of Style Hijab Factory</h3>
+    <p>
+      Elegant hijabs, abayas, gowns and custom modest wear.
+    </p>
+  </div>
+
+  <div>
+    <h3>Quick Links</h3>
+
+    <p>
+      <a href="#shop">Shop Collection</a><br>
+      <a href="#custom">Custom Order</a><br>
+      <a href="#about">About Us</a>
+    </p>
+
+  </div>
+
+  <div>
+
+    <h3>Contact</h3>
+
+    <p>
+      WhatsApp: 0906 582 8886<br>
+      Orders & enquiries welcome.
+    </p>
+
+  </div>
+
 </div>
-<div class="copy">© 2026 Face of Style Hijab Factory. All rights reserved.</div>
-<p style="text-align:center;margin-top:15px"><a href="/admin.html" style="color:#d8b96b">Admin Dashboard</a></p></footer>
+
+<div class="copy">
+© 2026 Face of Style Hijab Factory. All rights reserved.
+</div>
+
+<p style="text-align:center;margin-top:15px">
+  <a href="/admin.html" style="color:#d8b96b">
+    Admin Dashboard
+  </a>
+</p>
+
+</footer>
 
 <aside class="drawer" id="drawer">
-<button class="close" onclick="closeCart()">×</button><h2>Your Cart</h2>
-<div class="cartItems" id="cartItems"></div>
-<div class="total" id="total">Total: ₦0</div>
-<button class="checkout" onclick="openPayment()">CHECKOUT & PAY</button>
+
+  <button class="close" onclick="closeCart()">×</button>
+
+  <h2>Your Cart</h2>
+
+  <div class="cartItems" id="cartItems"></div>
+
+  <div class="total" id="total">
+    Total: ₦0
+  </div>
+
+  <button class="checkout" onclick="openPayment()">
+    CHECKOUT & PAY
+  </button>
+
 </aside>
 
 <script>
-const products=[
- {id:1,name:"Elegant Zip Abaya",cat:"Abaya",price:25000,img:"assets/product-1.jpg",desc:"Flowing full-length abaya with refined finishing."},
- {id:2,name:"Two-Tone Signature Gown",cat:"Gown",price:22000,img:"assets/product-2.jpg",desc:"Elegant two-tone modest gown design."},
- {id:3,name:"Teal Classic Hijab Dress",cat:"Gown",price:20000,img:"assets/product-3.jpg",desc:"Comfortable modest dress with clean detailing."},
- {id:4,name:"Premium Black & White",cat:"Abaya",price:28000,img:"assets/product-4.jpg",desc:"Statement modest outfit with premium contrast."},
- {id:5,name:"Ruffle Hijab Collection",cat:"Hijab",price:12000,img:"assets/product-5.jpg",desc:"Soft, colourful hijab styles with beautiful ruffles."},
- {id:6,name:"Rose Signature Gown",cat:"Custom",price:24000,img:"assets/product-6.jpg",desc:"Elegant flowing gown; custom colours available."}
+
+/* =========================================================
+   PRODUCTS
+   IMPORTANT:
+   Hotuna suna cikin babban folder ne, ba cikin /assets/
+   ========================================================= */
+
+const products = [
+
+  {
+    id:1,
+    name:"Elegant Zip Abaya",
+    cat:"Abaya",
+    price:25000,
+    img:"product-1.jpg",
+    desc:"Flowing full-length abaya with refined finishing."
+  },
+
+  {
+    id:2,
+    name:"Two-Tone Signature Gown",
+    cat:"Gown",
+    price:22000,
+    img:"product-2.jpg",
+    desc:"Elegant two-tone modest gown design."
+  },
+
+  {
+    id:3,
+    name:"Teal Classic Hijab Dress",
+    cat:"Gown",
+    price:20000,
+    img:"product-3.jpg",
+    desc:"Comfortable modest dress with clean detailing."
+  },
+
+  {
+    id:4,
+    name:"Premium Black & White",
+    cat:"Abaya",
+    price:28000,
+    img:"product-4.jpg",
+    desc:"Statement modest outfit with premium contrast."
+  },
+
+  {
+    id:5,
+    name:"Ruffle Hijab Collection",
+    cat:"Hijab",
+    price:12000,
+    img:"product-5.jpg",
+    desc:"Soft, colourful hijab styles with beautiful ruffles."
+  },
+
+  {
+    id:6,
+    name:"Rose Signature Gown",
+    cat:"Custom",
+    price:24000,
+    img:"product-6.jpg",
+    desc:"Elegant flowing gown; custom colours available."
+  }
+
 ];
-let selected="All",cart=[];
-function money(n){return "₦"+n.toLocaleString("en-NG")}
+
+let selected = "All";
+let cart = [];
+
+function money(n){
+  return "₦" + Number(n).toLocaleString("en-NG");
+}
+
 function render(){
- const q=document.getElementById("search").value.toLowerCase();
- const list=products.filter(p=>(selected==="All"||p.cat===selected)&&(p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)));
- document.getElementById("products").innerHTML=list.map(p=>`
- <article class="card"><div class="pic"><img src="${p.img.startsWith("assets/") ? p.img : "assets/"+p.img}" alt="${p.name}"><span class="badge">${p.cat}</span><button class="heart" onclick="add(${p.id})">♡</button></div>
- <div class="body"><h3>${p.name}</h3><p>${p.desc}</p><div class="price">${money(p.price)}</div><div class="actions"><button class="add" onclick="add(${p.id})">Add to Cart</button><button class="view" onclick="order(${p.id})">Order</button></div></div></article>`).join("");
+
+  const searchInput = document.getElementById("search");
+
+  const q = searchInput
+    ? searchInput.value.toLowerCase()
+    : "";
+
+  const list = products.filter(p =>
+
+    (selected === "All" || p.cat === selected)
+
+    &&
+
+    (
+      p.name.toLowerCase().includes(q)
+      ||
+      p.desc.toLowerCase().includes(q)
+    )
+
+  );
+
+  document.getElementById("products").innerHTML = list.map(p => `
+
+    <article class="card">
+
+      <div class="pic">
+
+        <img
+          src="${p.img}"
+          alt="${p.name}"
+          onerror="this.style.display='none'"
+        >
+
+        <span class="badge">
+          ${p.cat}
+        </span>
+
+        <button
+          class="heart"
+          onclick="add(${p.id})"
+        >
+          ♡
+        </button>
+
+      </div>
+
+      <div class="body">
+
+        <h3>
+          ${p.name}
+        </h3>
+
+        <p>
+          ${p.desc}
+        </p>
+
+        <div class="price">
+          ${money(p.price)}
+        </div>
+
+        <div class="actions">
+
+          <button
+            class="add"
+            onclick="add(${p.id})"
+          >
+            Add to Cart
+          </button>
+
+          <button
+            class="view"
+            onclick="order(${p.id})"
+          >
+            Order
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  `).join("");
+
 }
-function filter(x,el){selected=x;document.querySelectorAll(".cat").forEach(b=>b.classList.remove("active"));el.classList.add("active");render()}
-function add(id){const p=products.find(x=>x.id===id);const item=cart.find(x=>x.id===id);item?item.qty++:cart.push({...p,qty:1});updateCart();openCart()}
+
+function filter(x,el){
+
+  selected = x;
+
+  document
+    .querySelectorAll(".cat")
+    .forEach(b => b.classList.remove("active"));
+
+  el.classList.add("active");
+
+  render();
+}
+
+function add(id){
+
+  const p = products.find(x => x.id === id);
+
+  if(!p) return;
+
+  const item = cart.find(x => x.id === id);
+
+  if(item){
+    item.qty++;
+  }else{
+    cart.push({
+      ...p,
+      qty:1
+    });
+  }
+
+  updateCart();
+  openCart();
+}
+
 function updateCart(){
- document.getElementById("count").textContent=cart.reduce((a,x)=>a+x.qty,0);
- document.getElementById("cartItems").innerHTML=cart.length?cart.map(x=>`<div class="cartItem"><img src="${x.img}"><div style="flex:1"><b>${x.name}</b><br><small>${money(x.price)} × ${x.qty}</small><br><span class="remove" onclick="removeItem(${x.id})">Remove</span></div></div>`).join(""):"<p>Your cart is empty.</p>";
- document.getElementById("total").textContent="Total: "+money(cart.reduce((a,x)=>a+x.price*x.qty,0));
+
+  document.getElementById("count").textContent =
+    cart.reduce((a,x) => a + x.qty,0);
+
+  document.getElementById("cartItems").innerHTML =
+    cart.length
+
+    ?
+
+    cart.map(x => `
+
+      <div class="cartItem">
+
+        <img
+          src="${x.img}"
+          alt="${x.name}"
+          onerror="this.style.display='none'"
+        >
+
+        <div style="flex:1">
+
+          <b>
+            ${x.name}
+          </b>
+
+          <br>
+
+          <small>
+            ${money(x.price)} × ${x.qty}
+          </small>
+
+          <br>
+
+          <span
+            class="remove"
+            onclick="removeItem(${x.id})"
+          >
+            Remove
+          </span>
+
+        </div>
+
+      </div>
+
+    `).join("")
+
+    :
+
+    "<p>Your cart is empty.</p>";
+
+  document.getElementById("total").textContent =
+    "Total: " +
+    money(
+      cart.reduce(
+        (a,x) => a + x.price * x.qty,
+        0
+      )
+    );
+
 }
-function removeItem(id){cart=cart.filter(x=>x.id!==id);updateCart()}
-function openCart(){document.getElementById("drawer").classList.add("open");updateCart()}
-function closeCart(){document.getElementById("drawer").classList.remove("open")}
+
+function removeItem(id){
+
+  cart = cart.filter(x => x.id !== id);
+
+  updateCart();
+
+}
+
+function openCart(){
+
+  document
+    .getElementById("drawer")
+    .classList.add("open");
+
+  updateCart();
+
+}
+
+function closeCart(){
+
+  document
+    .getElementById("drawer")
+    .classList.remove("open");
+
+}
+
 function order(id){
- const p=products.find(x=>x.id===id);
 
- const modal=document.createElement("div");
- modal.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px";
+  const p = products.find(x => x.id === id);
 
- modal.innerHTML=`
- <div style="background:white;border-radius:18px;padding:25px;max-width:360px;width:100%;text-align:center">
-   <h2 style="margin-top:0">How would you like to order?</h2>
-   <p style="color:#666">${p.name}</p>
-   <button id="cartOrderBtn" style="width:100%;padding:14px;margin:8px 0;border:0;border-radius:10px;background:#222;color:white;font-size:16px">
-     🛒 Order via Cart
-   </button>
-   <button id="whatsappOrderBtn" style="width:100%;padding:14px;margin:8px 0;border:0;border-radius:10px;background:#25D366;color:white;font-size:16px">
-     💬 Order via WhatsApp
-   </button>
-   <button id="closeOrderBtn" style="margin-top:10px;border:0;background:none;color:#777">
-     Cancel
-   </button>
- </div>`;
+  if(!p) return;
 
- document.body.appendChild(modal);
+  const modal = document.createElement("div");
 
- document.getElementById("cartOrderBtn").onclick=()=>{
-   add(id);
-   modal.remove();
- };
+  modal.style.cssText =
+    "position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px";
 
- document.getElementById("whatsappOrderBtn").onclick=()=>{
-   const msg=`Hello, I would like to order: ${p.name} — ${money(p.price)}. Please provide information about available colours and sizes.`;
-   window.open("https://wa.me/2349065828886?text="+encodeURIComponent(msg),"_blank");
-   modal.remove();
- };
+  modal.innerHTML = `
 
- document.getElementById("closeOrderBtn").onclick=()=>{
-   modal.remove();
- };
+    <div
+      style="
+        background:white;
+        border-radius:18px;
+        padding:25px;
+        max-width:360px;
+        width:100%;
+        text-align:center
+      "
+    >
+
+      <h2 style="margin-top:0">
+        How would you like to order?
+      </h2>
+
+      <p style="color:#666">
+        ${p.name}
+      </p>
+
+      <button
+        id="cartOrderBtn"
+        style="
+          width:100%;
+          padding:14px;
+          margin:8px 0;
+          border:0;
+          border-radius:10px;
+          background:#222;
+          color:white;
+          font-size:16px
+        "
+      >
+        🛒 Order via Cart
+      </button>
+
+      <button
+        id="whatsappOrderBtn"
+        style="
+          width:100%;
+          padding:14px;
+          margin:8px 0;
+          border:0;
+          border-radius:10px;
+          background:#25D366;
+          color:white;
+          font-size:16px
+        "
+      >
+        💬 Order via WhatsApp
+      </button>
+
+      <button
+        id="closeOrderBtn"
+        style="
+          margin-top:10px;
+          border:0;
+          background:none;
+          color:#777
+        "
+      >
+        Cancel
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document.getElementById("cartOrderBtn").onclick = () => {
+
+    add(id);
+
+    modal.remove();
+
+  };
+
+  document.getElementById("whatsappOrderBtn").onclick = () => {
+
+    const msg =
+      `Hello, I would like to order: ${p.name} — ${money(p.price)}. Please provide information about available colours and sizes.`;
+
+    window.open(
+      "https://wa.me/2349065828886?text=" +
+      encodeURIComponent(msg),
+      "_blank"
+    );
+
+    modal.remove();
+
+  };
+
+  document.getElementById("closeOrderBtn").onclick = () => {
+
+    modal.remove();
+
+  };
+
 }
-render();updateCart();
+
+render();
+updateCart();
+
 </script>
 
 <div class="pay-modal" id="payModal">
- <div class="pay-box">
-  <button class="pay-close" onclick="closePayment()">×</button>
-  <h2>Secure Checkout</h2>
-  <p id="paySummary"></p>
-  <label>Full Name</label><input id="customerName" placeholder="Your full name">
-  <label>Email</label><input id="customerEmail" type="email" placeholder="you@example.com">
-  <label>Phone</label><input id="customerPhone" placeholder="0906...">
-  <label>Delivery Address</label><input id="customerAddress" placeholder="Address / area">
-  <label>Choose Payment Method</label>
-  <div class="methods">
-   <div class="method selected" id="mPaystack" onclick="selectMethod('paystack')"><b>Paystack</b><small>Card, bank & supported channels</small></div>
-   <div class="method" id="mFlutterwave" onclick="selectMethod('flutterwave')"><b>Flutterwave</b><small>Coming soon</small></div>
-   <div class="method" id="mBank" onclick="selectMethod('bank')"><b>Bank Transfer</b><small>Pay manually to business account</small></div>
-   <div class="method" id="mWhatsapp" onclick="selectMethod('whatsapp')"><b>WhatsApp Order</b><small>Confirm order with us</small></div>
+
+  <div class="pay-box">
+
+    <button
+      class="pay-close"
+      onclick="closePayment()"
+    >
+      ×
+    </button>
+
+    <h2>
+      Secure Checkout
+    </h2>
+
+    <p id="paySummary"></p>
+
+    <label>
+      Full Name
+    </label>
+
+    <input
+      id="customerName"
+      placeholder="Your full name"
+    >
+
+    <label>
+      Email
+    </label>
+
+    <input
+      id="customerEmail"
+      type="email"
+      placeholder="you@example.com"
+    >
+
+    <label>
+      Phone
+    </label>
+
+    <input
+      id="customerPhone"
+      placeholder="0906..."
+    >
+
+    <label>
+      Delivery Address
+    </label>
+
+    <input
+      id="customerAddress"
+      placeholder="Address / area"
+    >
+
+    <label>
+      Choose Payment Method
+    </label>
+
+    <div class="methods">
+
+      <div
+        class="method selected"
+        id="mPaystack"
+        onclick="selectMethod('paystack')"
+      >
+        <b>Paystack</b>
+        <small>
+          Card, bank & supported channels
+        </small>
+      </div>
+
+      <div
+        class="method"
+        id="mFlutterwave"
+        onclick="selectMethod('flutterwave')"
+      >
+        <b>Flutterwave</b>
+        <small>
+          Coming soon
+        </small>
+      </div>
+
+      <div
+        class="method"
+        id="mBank"
+        onclick="selectMethod('bank')"
+      >
+        <b>Bank Transfer</b>
+        <small>
+          Pay manually to business account
+        </small>
+      </div>
+
+      <div
+        class="method"
+        id="mWhatsapp"
+        onclick="selectMethod('whatsapp')"
+      >
+        <b>WhatsApp Order</b>
+        <small>
+          Confirm order with us
+        </small>
+      </div>
+
+    </div>
+
+    <div class="notice">
+
+      Paystack is the active online gateway.
+      Your payment is marked <b>PAID</b> only after
+      the server verifies the transaction with Paystack.
+
+    </div>
+
+    <button
+      class="pay-now"
+      onclick="startPayment()"
+    >
+      CONTINUE PAYMENT
+    </button>
+
   </div>
-  <div class="notice">Paystack is the active online gateway. Your payment is marked <b>PAID</b> only after the server verifies the transaction with Paystack.</div>
-  <button class="pay-now" onclick="startPayment()">CONTINUE PAYMENT</button>
- </div>
+
 </div>
 
-<style>
-.pay-modal{display:none;position:fixed;inset:0;background:#0008;z-index:100;align-items:center;justify-content:center;padding:15px}
-.pay-modal.open{display:flex}.pay-box{background:#fff;border-radius:20px;max-width:520px;width:100%;max-height:92vh;overflow:auto;padding:25px}.pay-box h2{font:30px Georgia,serif;color:#651630;margin-top:0}.pay-close{float:right;border:0;background:none;font-size:25px;cursor:pointer}.pay-box label{font-size:13px;font-weight:bold;display:block;margin:12px 0 6px}.pay-box input,.pay-box select{width:100%;padding:12px;border:1px solid #eadfd4;border-radius:10px}.methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.method{border:1px solid #eadfd4;border-radius:12px;padding:13px;cursor:pointer}.method.selected{border:2px solid #651630;background:#fbf3f5}.method b{display:block;color:#651630}.pay-now{width:100%;border:0;background:#651630;color:#fff;padding:14px;border-radius:25px;font-weight:bold;cursor:pointer;margin-top:12px}.notice{font-size:12px;color:#756a6f;line-height:1.6;background:#fcf8f1;padding:10px;border-radius:10px}
-</style>
-
 <script>
-let paymentMethod='paystack';
+
+let paymentMethod = 'paystack';
+
 function openPayment(){
- if(!cart.length){alert("Your cart is empty.");return}
- document.getElementById("paySummary").textContent="Order total: "+money(cart.reduce((a,x)=>a+x.price*x.qty,0));
- document.getElementById("payModal").classList.add("open");
+
+  if(!cart.length){
+
+    alert("Your cart is empty.");
+
+    return;
+  }
+
+  document.getElementById("paySummary").textContent =
+    "Order total: " +
+    money(
+      cart.reduce(
+        (a,x) => a + x.price * x.qty,
+        0
+      )
+    );
+
+  document
+    .getElementById("payModal")
+    .classList.add("open");
+
 }
-function closePayment(){document.getElementById("payModal").classList.remove("open")}
+
+function closePayment(){
+
+  document
+    .getElementById("payModal")
+    .classList.remove("open");
+
+}
+
 function selectMethod(m){
- paymentMethod=m;
- document.querySelectorAll('.method').forEach(x=>x.classList.remove('selected'));
- const el=document.getElementById('m'+m.charAt(0).toUpperCase()+m.slice(1));
- if(el) el.classList.add('selected');
+
+  paymentMethod = m;
+
+  document
+    .querySelectorAll(".method")
+    .forEach(x => x.classList.remove("selected"));
+
+  const el =
+    document.getElementById(
+      "m" +
+      m.charAt(0).toUpperCase() +
+      m.slice(1)
+    );
+
+  if(el){
+    el.classList.add("selected");
+  }
+
 }
+
 async function startPayment(){
- const name=document.getElementById('customerName').value.trim();
- const email=document.getElementById('customerEmail').value.trim();
- const phone=document.getElementById('customerPhone').value.trim();
- const address=document.getElementById('customerAddress').value.trim();
- if(!name||!email||!phone||!address){alert("Please complete your name, email, phone and delivery address.");return}
- const order={customer:{name,email,phone,address},items:cart.map(x=>({id:x.id,name:x.name,price:x.price,qty:x.qty})),total:cart.reduce((a,x)=>a+x.price*x.qty,0)};
- if(paymentMethod==='whatsapp'){
-   let msg=`Assalamu alaikum, Ina son yin order:%0A`;
-   order.items.forEach(x=>msg+=`• ${x.name} — ${x.qty} × ${money(x.price)}%0A`);
-   msg+=`%0ATotal: ${money(order.total)}%0AName: ${name}%0APhone: ${phone}%0AAddress: ${address}`;
-   window.open("https://wa.me/2349065828886?text="+encodeURIComponent(msg),"_blank"); return;
- }
- if(paymentMethod==='bank'){
-   alert("Bank-transfer details can be added in the Admin Settings.");
-   return;
- }
- if(paymentMethod!=='paystack'){alert("Paystack is the active online payment gateway.");return}
- try{
-   const res=await fetch('/api/paystack/initialize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)});
-   const data=await res.json();
-   if(data.authorization_url){window.location.href=data.authorization_url}
-   else alert(data.message||"Payment could not be started.");
- }catch(e){
-   alert("Payment server is not connected yet. Please contact the store.");
- }
+
+  const name =
+    document
+      .getElementById("customerName")
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById("customerEmail")
+      .value
+      .trim();
+
+  const phone =
+    document
+      .getElementById("customerPhone")
+      .value
+      .trim();
+
+  const address =
+    document
+      .getElementById("customerAddress")
+      .value
+      .trim();
+
+  if(!name || !email || !phone || !address){
+
+    alert(
+      "Please complete your name, email, phone and delivery address."
+    );
+
+    return;
+  }
+
+  const order = {
+
+    customer:{
+      name,
+      email,
+      phone,
+      address
+    },
+
+    items:
+      cart.map(x => ({
+        id:x.id,
+        name:x.name,
+        price:x.price,
+        qty:x.qty
+      })),
+
+    total:
+      cart.reduce(
+        (a,x) => a + x.price * x.qty,
+        0
+      )
+
+  };
+
+  if(paymentMethod === "whatsapp"){
+
+    let msg =
+      `Assalamu alaikum, Ina son yin order:\n`;
+
+    order.items.forEach(x => {
+
+      msg +=
+        `• ${x.name} — ${x.qty} × ${money(x.price)}\n`;
+
+    });
+
+    msg +=
+      `\nTotal: ${money(order.total)}` +
+      `\nName: ${name}` +
+      `\nPhone: ${phone}` +
+      `\nAddress: ${address}`;
+
+    window.open(
+      "https://wa.me/2349065828886?text=" +
+      encodeURIComponent(msg),
+      "_blank"
+    );
+
+    return;
+  }
+
+  if(paymentMethod === "bank"){
+
+    alert(
+      "Bank-transfer details can be added in the Admin Settings."
+    );
+
+    return;
+  }
+
+  if(paymentMethod !== "paystack"){
+
+    alert(
+      "Paystack is the active online payment gateway."
+    );
+
+    return;
+  }
+
+  try{
+
+    const res = await fetch(
+      "/api/paystack/initialize",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(order)
+      }
+    );
+
+    const data = await res.json();
+
+    if(data.authorization_url){
+
+      window.location.href =
+        data.authorization_url;
+
+    }else{
+
+      alert(
+        data.message ||
+        "Payment could not be started."
+      );
+
+    }
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "Payment server is not connected yet. Please contact the store."
+    );
+
+  }
+
 }
+
 </script>
+
 </body>
 </html>
