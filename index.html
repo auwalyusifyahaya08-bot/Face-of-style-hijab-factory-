@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ghyhhttps://github.com/auwalyusifyahaya08-<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -33,6 +33,10 @@ body{
 a{
   text-decoration:none;
   color:inherit
+}
+
+button{
+  cursor:pointer
 }
 
 .top{
@@ -94,6 +98,7 @@ a{
 }
 
 .iconbtn{
+  position:relative;
   border:1px solid var(--line);
   background:#fff;
   border-radius:50%;
@@ -258,7 +263,8 @@ a{
   width:100%;
   aspect-ratio:4/5;
   object-fit:cover;
-  display:block
+  display:block;
+  background:#f5eee7
 }
 
 .badge{
@@ -298,7 +304,8 @@ a{
 .body p{
   font-size:13px;
   color:var(--muted);
-  margin:0 0 12px
+  margin:0 0 12px;
+  line-height:1.5
 }
 
 .price{
@@ -599,6 +606,28 @@ footer{
   border-radius:10px
 }
 
+.loading{
+  text-align:center;
+  padding:40px 20px;
+  color:#756a6f
+}
+
+.loading strong{
+  display:block;
+  color:var(--wine);
+  font-size:18px;
+  margin-bottom:7px
+}
+
+.error-box{
+  background:#fff0f0;
+  border:1px solid #f0cccc;
+  color:#9a2222;
+  padding:18px;
+  border-radius:12px;
+  text-align:center;
+}
+
 @media(max-width:900px){
 
   .grid{
@@ -754,23 +783,23 @@ footer{
 
     <div class="cats">
 
-      <button class="cat active" onclick="filter('All',this)">
+      <button class="cat active" onclick="filterProducts('All',this)">
         All
       </button>
 
-      <button class="cat" onclick="filter('Abaya',this)">
+      <button class="cat" onclick="filterProducts('Abaya',this)">
         Abayas
       </button>
 
-      <button class="cat" onclick="filter('Gown',this)">
+      <button class="cat" onclick="filterProducts('Gown',this)">
         Gowns
       </button>
 
-      <button class="cat" onclick="filter('Hijab',this)">
+      <button class="cat" onclick="filterProducts('Hijab',this)">
         Hijabs
       </button>
 
-      <button class="cat" onclick="filter('Custom',this)">
+      <button class="cat" onclick="filterProducts('Custom',this)">
         Custom
       </button>
 
@@ -779,13 +808,20 @@ footer{
     <input
       class="search"
       id="search"
-      oninput="render()"
+      oninput="renderProducts()"
       placeholder="Search products..."
     >
 
   </div>
 
-  <div class="grid" id="products"></div>
+  <div class="grid" id="products">
+
+    <div class="loading">
+      <strong>Loading products...</strong>
+      Please wait.
+    </div>
+
+  </div>
 
   <div class="features">
 
@@ -915,404 +951,8 @@ footer{
 
 </aside>
 
-<script>
 
-/* =========================================================
-   PRODUCTS
-   IMPORTANT:
-   Hotuna suna cikin babban folder ne, ba cikin /assets/
-   ========================================================= */
-
-const products = [
-
-  {
-    id:1,
-    name:"Elegant Zip Abaya",
-    cat:"Abaya",
-    price:25000,
-    img:"product-1.jpg",
-    desc:"Flowing full-length abaya with refined finishing."
-  },
-
-  {
-    id:2,
-    name:"Two-Tone Signature Gown",
-    cat:"Gown",
-    price:22000,
-    img:"product-2.jpg",
-    desc:"Elegant two-tone modest gown design."
-  },
-
-  {
-    id:3,
-    name:"Teal Classic Hijab Dress",
-    cat:"Gown",
-    price:20000,
-    img:"product-3.jpg",
-    desc:"Comfortable modest dress with clean detailing."
-  },
-
-  {
-    id:4,
-    name:"Premium Black & White",
-    cat:"Abaya",
-    price:28000,
-    img:"product-4.jpg",
-    desc:"Statement modest outfit with premium contrast."
-  },
-
-  {
-    id:5,
-    name:"Ruffle Hijab Collection",
-    cat:"Hijab",
-    price:12000,
-    img:"product-5.jpg",
-    desc:"Soft, colourful hijab styles with beautiful ruffles."
-  },
-
-  {
-    id:6,
-    name:"Rose Signature Gown",
-    cat:"Custom",
-    price:24000,
-    img:"product-6.jpg",
-    desc:"Elegant flowing gown; custom colours available."
-  }
-
-];
-
-let selected = "All";
-let cart = [];
-
-function money(n){
-  return "₦" + Number(n).toLocaleString("en-NG");
-}
-
-function render(){
-
-  const searchInput = document.getElementById("search");
-
-  const q = searchInput
-    ? searchInput.value.toLowerCase()
-    : "";
-
-  const list = products.filter(p =>
-
-    (selected === "All" || p.cat === selected)
-
-    &&
-
-    (
-      p.name.toLowerCase().includes(q)
-      ||
-      p.desc.toLowerCase().includes(q)
-    )
-
-  );
-
-  document.getElementById("products").innerHTML = list.map(p => `
-
-    <article class="card">
-
-      <div class="pic">
-
-        <img
-          src="${p.img}"
-          alt="${p.name}"
-          onerror="this.style.display='none'"
-        >
-
-        <span class="badge">
-          ${p.cat}
-        </span>
-
-        <button
-          class="heart"
-          onclick="add(${p.id})"
-        >
-          ♡
-        </button>
-
-      </div>
-
-      <div class="body">
-
-        <h3>
-          ${p.name}
-        </h3>
-
-        <p>
-          ${p.desc}
-        </p>
-
-        <div class="price">
-          ${money(p.price)}
-        </div>
-
-        <div class="actions">
-
-          <button
-            class="add"
-            onclick="add(${p.id})"
-          >
-            Add to Cart
-          </button>
-
-          <button
-            class="view"
-            onclick="order(${p.id})"
-          >
-            Order
-          </button>
-
-        </div>
-
-      </div>
-
-    </article>
-
-  `).join("");
-
-}
-
-function filter(x,el){
-
-  selected = x;
-
-  document
-    .querySelectorAll(".cat")
-    .forEach(b => b.classList.remove("active"));
-
-  el.classList.add("active");
-
-  render();
-}
-
-function add(id){
-
-  const p = products.find(x => x.id === id);
-
-  if(!p) return;
-
-  const item = cart.find(x => x.id === id);
-
-  if(item){
-    item.qty++;
-  }else{
-    cart.push({
-      ...p,
-      qty:1
-    });
-  }
-
-  updateCart();
-  openCart();
-}
-
-function updateCart(){
-
-  document.getElementById("count").textContent =
-    cart.reduce((a,x) => a + x.qty,0);
-
-  document.getElementById("cartItems").innerHTML =
-    cart.length
-
-    ?
-
-    cart.map(x => `
-
-      <div class="cartItem">
-
-        <img
-          src="${x.img}"
-          alt="${x.name}"
-          onerror="this.style.display='none'"
-        >
-
-        <div style="flex:1">
-
-          <b>
-            ${x.name}
-          </b>
-
-          <br>
-
-          <small>
-            ${money(x.price)} × ${x.qty}
-          </small>
-
-          <br>
-
-          <span
-            class="remove"
-            onclick="removeItem(${x.id})"
-          >
-            Remove
-          </span>
-
-        </div>
-
-      </div>
-
-    `).join("")
-
-    :
-
-    "<p>Your cart is empty.</p>";
-
-  document.getElementById("total").textContent =
-    "Total: " +
-    money(
-      cart.reduce(
-        (a,x) => a + x.price * x.qty,
-        0
-      )
-    );
-
-}
-
-function removeItem(id){
-
-  cart = cart.filter(x => x.id !== id);
-
-  updateCart();
-
-}
-
-function openCart(){
-
-  document
-    .getElementById("drawer")
-    .classList.add("open");
-
-  updateCart();
-
-}
-
-function closeCart(){
-
-  document
-    .getElementById("drawer")
-    .classList.remove("open");
-
-}
-
-function order(id){
-
-  const p = products.find(x => x.id === id);
-
-  if(!p) return;
-
-  const modal = document.createElement("div");
-
-  modal.style.cssText =
-    "position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px";
-
-  modal.innerHTML = `
-
-    <div
-      style="
-        background:white;
-        border-radius:18px;
-        padding:25px;
-        max-width:360px;
-        width:100%;
-        text-align:center
-      "
-    >
-
-      <h2 style="margin-top:0">
-        How would you like to order?
-      </h2>
-
-      <p style="color:#666">
-        ${p.name}
-      </p>
-
-      <button
-        id="cartOrderBtn"
-        style="
-          width:100%;
-          padding:14px;
-          margin:8px 0;
-          border:0;
-          border-radius:10px;
-          background:#222;
-          color:white;
-          font-size:16px
-        "
-      >
-        🛒 Order via Cart
-      </button>
-
-      <button
-        id="whatsappOrderBtn"
-        style="
-          width:100%;
-          padding:14px;
-          margin:8px 0;
-          border:0;
-          border-radius:10px;
-          background:#25D366;
-          color:white;
-          font-size:16px
-        "
-      >
-        💬 Order via WhatsApp
-      </button>
-
-      <button
-        id="closeOrderBtn"
-        style="
-          margin-top:10px;
-          border:0;
-          background:none;
-          color:#777
-        "
-      >
-        Cancel
-      </button>
-
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  document.getElementById("cartOrderBtn").onclick = () => {
-
-    add(id);
-
-    modal.remove();
-
-  };
-
-  document.getElementById("whatsappOrderBtn").onclick = () => {
-
-    const msg =
-      `Hello, I would like to order: ${p.name} — ${money(p.price)}. Please provide information about available colours and sizes.`;
-
-    window.open(
-      "https://wa.me/2349065828886?text=" +
-      encodeURIComponent(msg),
-      "_blank"
-    );
-
-    modal.remove();
-
-  };
-
-  document.getElementById("closeOrderBtn").onclick = () => {
-
-    modal.remove();
-
-  };
-
-}
-
-render();
-updateCart();
-
-</script>
+<!-- PAYMENT MODAL -->
 
 <div class="pay-modal" id="payModal">
 
@@ -1439,33 +1079,788 @@ updateCart();
 
 </div>
 
+
 <script>
 
-let paymentMethod = 'paystack';
+/* =========================================================
+   FACE OF STYLE - CUSTOMER STORE
+   PRODUCTS NOW COME FROM SERVER
+========================================================= */
+
+let products = [];
+
+let selectedCategory = "All";
+
+let cart = [];
+
+let paymentMethod = "paystack";
+
+
+/* =========================================================
+   MONEY
+========================================================= */
+
+function money(n){
+
+  return "₦" +
+    Number(n || 0).toLocaleString("en-NG");
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   LOAD PRODUCTS FROM SERVER
+========================================================= */
+
+async function loadProducts(){
+
+  const box =
+    document.getElementById("products");
+
+  box.innerHTML = `
+    <div class="loading">
+      <strong>Loading products...</strong>
+      Please wait.
+    </div>
+  `;
+
+  try{
+
+    /*
+      IMPORTANT:
+
+      Products added from admin are requested
+      from the public products API.
+    */
+
+    const response =
+      await fetch(
+        "/api/products",
+        {
+          method:"GET",
+          cache:"no-store",
+          headers:{
+            "Accept":"application/json"
+          }
+        }
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "Products API returned " +
+        response.status
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    /*
+      Accept either:
+
+      { products:[...] }
+
+      OR
+
+      [...]
+    */
+
+    if(Array.isArray(data)){
+
+      products = data;
+
+    }else if(
+      data &&
+      Array.isArray(data.products)
+    ){
+
+      products = data.products;
+
+    }else{
+
+      products = [];
+
+    }
+
+
+    /*
+      Normalize products coming from server.
+    */
+
+    products =
+      products.map((p,index) => ({
+
+        id:
+          p.id ??
+          p._id ??
+          index + 1,
+
+        name:
+          p.name ||
+          "Unnamed Product",
+
+        cat:
+          p.cat ||
+          p.category ||
+          "Custom",
+
+        price:
+          Number(p.price || 0),
+
+        color:
+          p.color ||
+          "",
+
+        img:
+          p.img ||
+          p.image ||
+          p.imageUrl ||
+          "",
+
+        desc:
+          p.desc ||
+          p.description ||
+          ""
+
+      }));
+
+
+    renderProducts();
+
+
+  }catch(error){
+
+    console.error(
+      "Could not load products:",
+      error
+    );
+
+
+    box.innerHTML = `
+      <div class="error-box">
+        <strong>Unable to load products.</strong>
+        <br>
+        Please refresh the page or try again later.
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER PRODUCTS
+========================================================= */
+
+function renderProducts(){
+
+  const box =
+    document.getElementById("products");
+
+  const searchInput =
+    document.getElementById("search");
+
+  const query =
+    searchInput
+      ? searchInput.value.trim().toLowerCase()
+      : "";
+
+
+  const list =
+    products.filter(p => {
+
+      const categoryMatch =
+        selectedCategory === "All" ||
+        String(p.cat).toLowerCase() ===
+        selectedCategory.toLowerCase();
+
+
+      const searchMatch =
+        !query ||
+
+        String(p.name)
+          .toLowerCase()
+          .includes(query)
+
+        ||
+
+        String(p.desc)
+          .toLowerCase()
+          .includes(query)
+
+        ||
+
+        String(p.color)
+          .toLowerCase()
+          .includes(query);
+
+
+      return categoryMatch && searchMatch;
+
+    });
+
+
+  if(!list.length){
+
+    box.innerHTML = `
+      <div class="loading">
+        <strong>No products found.</strong>
+        Products added from the Admin Dashboard will appear here.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    list.map(p => {
+
+      const image =
+        p.img ||
+        "product-1.jpg";
+
+
+      return `
+
+        <article class="card">
+
+          <div class="pic">
+
+            <img
+              src="${escapeHtml(image)}"
+              alt="${escapeHtml(p.name)}"
+              onerror="this.onerror=null;this.src='product-1.jpg'"
+            >
+
+            <span class="badge">
+              ${escapeHtml(p.cat)}
+            </span>
+
+            <button
+              class="heart"
+              onclick="addToCart('${String(p.id).replace(/'/g,"\\'")}')"
+            >
+              ♡
+            </button>
+
+          </div>
+
+
+          <div class="body">
+
+            <h3>
+              ${escapeHtml(p.name)}
+            </h3>
+
+
+            <p>
+
+              ${
+                p.desc
+                  ? escapeHtml(p.desc)
+                  : (
+                      p.color
+                        ? "Color: " +
+                          escapeHtml(p.color)
+                        : "Beautiful modest fashion design."
+                    )
+              }
+
+            </p>
+
+
+            <div class="price">
+              ${money(p.price)}
+            </div>
+
+
+            <div class="actions">
+
+              <button
+                class="add"
+                onclick="addToCart('${String(p.id).replace(/'/g,"\\'")}')"
+              >
+                Add to Cart
+              </button>
+
+
+              <button
+                class="view"
+                onclick="orderProduct('${String(p.id).replace(/'/g,"\\'")}')"
+              >
+                Order
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================================================
+   CATEGORY FILTER
+========================================================= */
+
+function filterProducts(category,element){
+
+  selectedCategory =
+    category;
+
+
+  document
+    .querySelectorAll(".cat")
+    .forEach(button => {
+
+      button.classList.remove("active");
+
+    });
+
+
+  if(element){
+
+    element.classList.add("active");
+
+  }
+
+
+  renderProducts();
+
+}
+
+
+/* =========================================================
+   FIND PRODUCT
+========================================================= */
+
+function findProduct(id){
+
+  return products.find(
+    p =>
+      String(p.id) ===
+      String(id)
+  );
+
+}
+
+
+/* =========================================================
+   ADD TO CART
+========================================================= */
+
+function addToCart(id){
+
+  const product =
+    findProduct(id);
+
+
+  if(!product){
+
+    alert(
+      "Product could not be found."
+    );
+
+    return;
+
+  }
+
+
+  const existing =
+    cart.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
+
+
+  if(existing){
+
+    existing.qty++;
+
+  }else{
+
+    cart.push({
+
+      ...product,
+
+      qty:1
+
+    });
+
+  }
+
+
+  updateCart();
+
+  openCart();
+
+}
+
+
+/* =========================================================
+   REMOVE CART ITEM
+========================================================= */
+
+function removeItem(id){
+
+  cart =
+    cart.filter(
+      item =>
+        String(item.id) !==
+        String(id)
+    );
+
+
+  updateCart();
+
+}
+
+
+/* =========================================================
+   UPDATE CART
+========================================================= */
+
+function updateCart(){
+
+  const count =
+    document.getElementById("count");
+
+
+  const cartItems =
+    document.getElementById("cartItems");
+
+
+  const totalBox =
+    document.getElementById("total");
+
+
+  const totalQty =
+    cart.reduce(
+      (sum,item) =>
+        sum + Number(item.qty || 0),
+      0
+    );
+
+
+  count.textContent =
+    totalQty;
+
+
+  if(!cart.length){
+
+    cartItems.innerHTML =
+      "<p>Your cart is empty.</p>";
+
+  }else{
+
+    cartItems.innerHTML =
+
+      cart.map(item => `
+
+        <div class="cartItem">
+
+          <img
+            src="${escapeHtml(item.img || "product-1.jpg")}"
+            alt="${escapeHtml(item.name)}"
+            onerror="this.onerror=null;this.src='product-1.jpg'"
+          >
+
+          <div style="flex:1">
+
+            <b>
+              ${escapeHtml(item.name)}
+            </b>
+
+            <br>
+
+            <small>
+              ${money(item.price)}
+              ×
+              ${item.qty}
+            </small>
+
+            <br>
+
+            <span
+              class="remove"
+              onclick="removeItem('${String(item.id).replace(/'/g,"\\'")}')"
+            >
+              Remove
+            </span>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }
+
+
+  const total =
+    cart.reduce(
+      (sum,item) =>
+        sum +
+        Number(item.price || 0) *
+        Number(item.qty || 0),
+      0
+    );
+
+
+  totalBox.textContent =
+    "Total: " +
+    money(total);
+
+}
+
+
+/* =========================================================
+   OPEN CART
+========================================================= */
+
+function openCart(){
+
+  document
+    .getElementById("drawer")
+    .classList.add("open");
+
+
+  updateCart();
+
+}
+
+
+/* =========================================================
+   CLOSE CART
+========================================================= */
+
+function closeCart(){
+
+  document
+    .getElementById("drawer")
+    .classList.remove("open");
+
+}
+
+
+/* =========================================================
+   DIRECT ORDER
+========================================================= */
+
+function orderProduct(id){
+
+  const p =
+    findProduct(id);
+
+
+  if(!p){
+
+    alert(
+      "Product could not be found."
+    );
+
+    return;
+
+  }
+
+
+  const modal =
+    document.createElement("div");
+
+
+  modal.style.cssText =
+    "position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px";
+
+
+  modal.innerHTML = `
+
+    <div
+      style="
+        background:white;
+        border-radius:18px;
+        padding:25px;
+        max-width:360px;
+        width:100%;
+        text-align:center
+      "
+    >
+
+      <h2 style="margin-top:0">
+        How would you like to order?
+      </h2>
+
+      <p style="color:#666">
+        ${escapeHtml(p.name)}
+      </p>
+
+      <button
+        id="cartOrderBtn"
+        style="
+          width:100%;
+          padding:14px;
+          margin:8px 0;
+          border:0;
+          border-radius:10px;
+          background:#222;
+          color:white;
+          font-size:16px
+        "
+      >
+        🛒 Order via Cart
+      </button>
+
+      <button
+        id="whatsappOrderBtn"
+        style="
+          width:100%;
+          padding:14px;
+          margin:8px 0;
+          border:0;
+          border-radius:10px;
+          background:#25D366;
+          color:white;
+          font-size:16px
+        "
+      >
+        💬 Order via WhatsApp
+      </button>
+
+      <button
+        id="closeOrderBtn"
+        style="
+          margin-top:10px;
+          border:0;
+          background:none;
+          color:#777
+        "
+      >
+        Cancel
+      </button>
+
+    </div>
+
+  `;
+
+
+  document.body.appendChild(modal);
+
+
+  document
+    .getElementById("cartOrderBtn")
+    .onclick = () => {
+
+      addToCart(id);
+
+      modal.remove();
+
+    };
+
+
+  document
+    .getElementById("whatsappOrderBtn")
+    .onclick = () => {
+
+      const msg =
+        `Hello, I would like to order: ${p.name} — ${money(p.price)}. Please provide information about available colours and sizes.`;
+
+
+      window.open(
+        "https://wa.me/2349065828886?text=" +
+        encodeURIComponent(msg),
+        "_blank"
+      );
+
+
+      modal.remove();
+
+    };
+
+
+  document
+    .getElementById("closeOrderBtn")
+    .onclick = () => {
+
+      modal.remove();
+
+    };
+
+}
+
+
+/* =========================================================
+   OPEN PAYMENT
+========================================================= */
 
 function openPayment(){
 
   if(!cart.length){
 
-    alert("Your cart is empty.");
+    alert(
+      "Your cart is empty."
+    );
 
     return;
+
   }
 
-  document.getElementById("paySummary").textContent =
-    "Order total: " +
-    money(
-      cart.reduce(
-        (a,x) => a + x.price * x.qty,
-        0
-      )
+
+  const total =
+    cart.reduce(
+      (sum,item) =>
+        sum +
+        Number(item.price || 0) *
+        Number(item.qty || 0),
+      0
     );
+
+
+  document
+    .getElementById("paySummary")
+    .textContent =
+      "Order total: " +
+      money(total);
+
 
   document
     .getElementById("payModal")
     .classList.add("open");
 
 }
+
+
+/* =========================================================
+   CLOSE PAYMENT
+========================================================= */
 
 function closePayment(){
 
@@ -1475,26 +1870,47 @@ function closePayment(){
 
 }
 
-function selectMethod(m){
 
-  paymentMethod = m;
+/* =========================================================
+   PAYMENT METHOD
+========================================================= */
+
+function selectMethod(method){
+
+  paymentMethod =
+    method;
+
 
   document
     .querySelectorAll(".method")
-    .forEach(x => x.classList.remove("selected"));
-
-  const el =
-    document.getElementById(
-      "m" +
-      m.charAt(0).toUpperCase() +
-      m.slice(1)
+    .forEach(
+      x =>
+        x.classList.remove("selected")
     );
 
-  if(el){
-    el.classList.add("selected");
+
+  const id =
+    "m" +
+    method.charAt(0).toUpperCase() +
+    method.slice(1);
+
+
+  const element =
+    document.getElementById(id);
+
+
+  if(element){
+
+    element.classList.add("selected");
+
   }
 
 }
+
+
+/* =========================================================
+   START PAYMENT
+========================================================= */
 
 async function startPayment(){
 
@@ -1504,11 +1920,13 @@ async function startPayment(){
       .value
       .trim();
 
+
   const email =
     document
       .getElementById("customerEmail")
       .value
       .trim();
+
 
   const phone =
     document
@@ -1516,72 +1934,122 @@ async function startPayment(){
       .value
       .trim();
 
+
   const address =
     document
       .getElementById("customerAddress")
       .value
       .trim();
 
-  if(!name || !email || !phone || !address){
+
+  if(
+    !name ||
+    !email ||
+    !phone ||
+    !address
+  ){
 
     alert(
       "Please complete your name, email, phone and delivery address."
     );
 
     return;
+
   }
+
 
   const order = {
 
     customer:{
-      name,
-      email,
-      phone,
-      address
+
+      name:name,
+
+      email:email,
+
+      phone:phone,
+
+      address:address
+
     },
 
+
     items:
-      cart.map(x => ({
-        id:x.id,
-        name:x.name,
-        price:x.price,
-        qty:x.qty
+
+      cart.map(item => ({
+
+        id:item.id,
+
+        name:item.name,
+
+        price:Number(item.price || 0),
+
+        qty:Number(item.qty || 0)
+
       })),
 
+
     total:
+
       cart.reduce(
-        (a,x) => a + x.price * x.qty,
+        (sum,item) =>
+          sum +
+          Number(item.price || 0) *
+          Number(item.qty || 0),
         0
       )
 
   };
 
+
+  /* WHATSAPP */
+
   if(paymentMethod === "whatsapp"){
 
-    let msg =
-      `Assalamu alaikum, Ina son yin order:\n`;
+    let message =
+      "Assalamu alaikum, Ina son yin order:\n\n";
 
-    order.items.forEach(x => {
 
-      msg +=
-        `• ${x.name} — ${x.qty} × ${money(x.price)}\n`;
+    order.items.forEach(item => {
+
+      message +=
+        "• " +
+        item.name +
+        " — " +
+        item.qty +
+        " × " +
+        money(item.price) +
+        "\n";
 
     });
 
-    msg +=
-      `\nTotal: ${money(order.total)}` +
-      `\nName: ${name}` +
-      `\nPhone: ${phone}` +
-      `\nAddress: ${address}`;
+
+    message +=
+      "\nTotal: " +
+      money(order.total) +
+
+      "\nName: " +
+      name +
+
+      "\nPhone: " +
+      phone +
+
+      "\nAddress: " +
+      address;
+
 
     window.open(
       "https://wa.me/2349065828886?text=" +
-      encodeURIComponent(msg),
+      encodeURIComponent(message),
       "_blank"
     );
 
+
     return;
+
   }
+
+
+  /* BANK */
 
   if(paymentMethod === "bank"){
 
@@ -1590,7 +2058,11 @@ async function startPayment(){
     );
 
     return;
+
   }
+
+
+  /* OTHER */
 
   if(paymentMethod !== "paystack"){
 
@@ -1599,26 +2071,40 @@ async function startPayment(){
     );
 
     return;
+
   }
+
+
+  /* PAYSTACK */
 
   try{
 
-    const res = await fetch(
-      "/api/paystack/initialize",
-      {
-        method:"POST",
+    const response =
+      await fetch(
+        "/api/paystack/initialize",
+        {
+          method:"POST",
 
-        headers:{
-          "Content-Type":"application/json"
-        },
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
 
-        body:JSON.stringify(order)
-      }
-    );
+          body:
+            JSON.stringify(order)
 
-    const data = await res.json();
+        }
+      );
 
-    if(data.authorization_url){
+
+    const data =
+      await response.json();
+
+
+    if(
+      data &&
+      data.authorization_url
+    ){
 
       window.location.href =
         data.authorization_url;
@@ -1626,15 +2112,20 @@ async function startPayment(){
     }else{
 
       alert(
-        data.message ||
+        data?.message ||
         "Payment could not be started."
       );
 
     }
 
-  }catch(e){
 
-    console.error(e);
+  }catch(error){
+
+    console.error(
+      "Payment error:",
+      error
+    );
+
 
     alert(
       "Payment server is not connected yet. Please contact the store."
@@ -1643,6 +2134,15 @@ async function startPayment(){
   }
 
 }
+
+
+/* =========================================================
+   START WEBSITE
+========================================================= */
+
+loadProducts();
+
+updateCart();
 
 </script>
 
