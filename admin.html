@@ -71,8 +71,7 @@ async function showProducts(){
          ${d.products.map(p=>`
            <tr>
              <td>
-               <img src="${p.img || ''}" alt="${p.name}"
-                    style="width:55px;height:65px;object-fit:cover;border-radius:8px">
+               <img src="${p.img ? (p.img.startsWith('/') ? p.img : '/assets/' + p.img) : ''}" alt="${p.name}" style="width:55px;height:65px;object-fit:cover;border-radius:8px">
              </td>
              <td>${p.name}</td>
              <td>${p.cat}</td>
