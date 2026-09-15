@@ -90,25 +90,80 @@ async function showProducts(){
  </div>`;
 }
  function addProduct(){
- const name=prompt("Product name:");
- if(!name)return;
+ content.innerHTML=`
+ <div class="panel">
+   <h2>Add New Product</h2>
+   <p style="color:#777">Add a new item to your Face of Style collection.</p>
 
- const cat=prompt("Category (Abaya, Gown, Hijab or Custom):");
- if(!cat)return;
+   <form id="productForm" style="display:grid;gap:14px;max-width:650px">
 
- const price=prompt("Price in Naira:");
- if(!price)return;
+     <label>
+       Product Name
+       <input id="pName" required placeholder="Example: Elegant Black Abaya">
+     </label>
 
- const color=prompt("Color:");
- if(!color)return;
+     <label>
+       Category
+       <select id="pCat" required>
+         <option value="">Select category</option>
+         <option>Abaya</option>
+         <option>Gown</option>
+         <option>Hijab</option>
+         <option>Custom</option>
+       </select>
+     </label>
 
- const img=prompt("Product image path (example: assets/product-7.jpg):");
- if(!img)return;
+     <label>
+       Price (₦)
+       <input id="pPrice" type="number" min="0" required placeholder="25000">
+     </label>
 
- const desc=prompt("Product description:");
- if(!desc)return;
+     <label>
+       Color
+       <input id="pColor" required placeholder="Black, Navy Blue, Pink">
+     </label>
 
- alert("The product form is ready. We will connect it to the server in the next step.");
+     <label>
+       Product Photo
+       <input id="pImg" type="text" required placeholder="assets/product-7.jpg">
+     </label>
+
+     <label>
+       Description
+       <textarea id="pDesc" rows="4" placeholder="Describe the product..."></textarea>
+     </label>
+
+     <div style="display:flex;gap:10px;flex-wrap:wrap">
+       <button type="submit">Save Product</button>
+       <button type="button" onclick="showProducts()">Cancel</button>
+     </div>
+
+   </form>
+ </div>`;
+
+ document.getElementById("productForm").onsubmit=async function(e){
+   e.preventDefault();
+
+   const data={
+     name:document.getElementById("pName").value.trim(),
+     cat:document.getElementById("pCat").value,
+     price:Number(document.getElementById("pPrice").value),
+     color:document.getElementById("pColor").value.trim(),
+     img:document.getElementById("pImg").value.trim(),
+     desc:document.getElementById("pDesc").value.trim()
+   };
+
+   const result=await api('/api/admin/products',{
+     method:'POST',
+     headers:{'Content-Type':'application/json'},
+     body:JSON.stringify(data)
+   });
+
+   if(result && result.ok){
+     alert("Product added successfully.");
+     showProducts();
+   }
+ };
 }
 
 function editProduct(id){
