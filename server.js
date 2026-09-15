@@ -662,7 +662,35 @@ app.get(
     }
   }
 );
+/* =========================================================
+   PUBLIC PRODUCTS
+   Customer website uses this endpoint to load products
+   directly from PostgreSQL.
+   ========================================================= */
 
+app.get(
+  '/api/products',
+  async (req, res) => {
+    try {
+      const products = await getProducts();
+
+      res.json({
+        products
+      });
+
+    } catch (error) {
+      console.error(
+        'PUBLIC PRODUCTS ERROR:',
+        error
+      );
+
+      res.status(500).json({
+        message:
+          'Failed to load products.'
+      });
+    }
+  }
+);
 /* =========================================================
    ADMIN PRODUCTS - GET
    ========================================================= */
