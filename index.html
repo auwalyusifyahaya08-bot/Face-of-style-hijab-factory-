@@ -21,7 +21,9 @@ content="Shop elegant hijabs, abayas, gowns and modest fashion from Face of Styl
   --line:#eadfd4
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box
+}
 
 body{
   margin:0;
@@ -482,6 +484,47 @@ footer{
 
 .cartItem b{
   color:var(--wine)
+}
+
+/* =========================
+   CART QUANTITY CONTROLS
+========================= */
+
+.qtyControl{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+  margin-bottom:6px
+}
+
+.qtyBtn{
+  width:32px;
+  height:32px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--wine);
+  border-radius:8px;
+  font-size:20px;
+  font-weight:bold;
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center
+}
+
+.qtyBtn:hover{
+  background:var(--wine);
+  color:#fff;
+  border-color:var(--wine)
+}
+
+.qtyValue{
+  min-width:28px;
+  text-align:center;
+  font-weight:bold;
+  font-size:15px
 }
 
 .remove{
@@ -1084,7 +1127,7 @@ footer{
 
 /* =========================================================
    FACE OF STYLE - CUSTOMER STORE
-   PRODUCTS NOW COME FROM SERVER
+   PRODUCTS COME FROM SERVER
 ========================================================= */
 
 let products = [];
@@ -1142,13 +1185,6 @@ async function loadProducts(){
 
   try{
 
-    /*
-      IMPORTANT:
-
-      Products added from admin are requested
-      from the public products API.
-    */
-
     const response =
       await fetch(
         "/api/products",
@@ -1176,16 +1212,6 @@ async function loadProducts(){
       await response.json();
 
 
-    /*
-      Accept either:
-
-      { products:[...] }
-
-      OR
-
-      [...]
-    */
-
     if(Array.isArray(data)){
 
       products = data;
@@ -1203,10 +1229,6 @@ async function loadProducts(){
 
     }
 
-
-    /*
-      Normalize products coming from server.
-    */
 
     products =
       products.map((p,index) => ({
@@ -1505,7 +1527,8 @@ function addToCart(id){
 
   if(existing){
 
-    existing.qty++;
+    existing.qty =
+      Number(existing.qty || 1) + 1;
 
   }else{
 
@@ -1520,144 +1543,72 @@ function addToCart(id){
   }
 
 
-  <script>
+  updateCart();
 
-function updateCart(){
-
-  document.getElementById("count").textContent =
-    cart.reduce((a,x) => a + x.qty,0);
-
-  document.getElementById("cartItems").innerHTML =
-    cart.length
-
-    ?
-
-    cart.map(x => `
-
-      <div class="cartItem">
-
-        <img
-          src="${x.img}"
-          alt="${x.name}"
-          onerror="this.style.display='none'"
-        >
-
-        <div style="flex:1">
-
-          <b>${x.name}</b>
-
-          <br>
-
-          <small>
-            ${money(x.price)} × ${x.qty}
-          </small>
-
-          <div
-            style="
-              display:flex;
-              align-items:center;
-              gap:8px;
-              margin-top:10px
-            "
-          >
-
-            <button
-              onclick="changeQty(${x.id}, -1)"
-              style="
-                width:32px;
-                height:32px;
-                border:1px solid #eadfd4;
-                background:#fff;
-                border-radius:8px;
-                font-size:20px;
-                cursor:pointer
-              "
-            >
-              −
-            </button>
-
-            <strong
-              style="
-                min-width:25px;
-                text-align:center;
-                color:#651630
-              "
-            >
-              ${x.qty}
-            </strong>
-
-            <button
-              onclick="changeQty(${x.id}, 1)"
-              style="
-                width:32px;
-                height:32px;
-                border:1px solid #651630;
-                background:#651630;
-                color:#fff;
-                border-radius:8px;
-                font-size:20px;
-                cursor:pointer
-              "
-            >
-              +
-            </button>
-
-          </div>
-
-          <span
-            class="remove"
-            onclick="removeItem(${x.id})"
-            style="display:block;margin-top:8px"
-          >
-            Remove
-          </span>
-
-        </div>
-
-      </div>
-
-    `).join("")
-
-    :
-
-    "<p>Your cart is empty.</p>";
-
-  document.getElementById("total").textContent =
-    "Total: " +
-    money(
-      cart.reduce(
-        (a,x) => a + x.price * x.qty,
-        0
-      )
-    );
+  openCart();
 
 }
 
 
 /* =========================================================
-   CHANGE PRODUCT QUANTITY
-   Minimum quantity = 1
-   ========================================================= */
+   CHANGE CART QUANTITY
+========================================================= */
 
-function changeQty(id, amount){
+function changeQty(id,delta){
 
   const item =
-    cart.find(x => x.id === id);
+    cart.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
 
-  if(!item) return;
 
-  item.qty += amount;
+  if(!item){
 
-  /* Kada ya kai 1, ba zai ƙara raguwa ba */
-  if(item.qty < 1){
-    item.qty = 1;
+    return;
+
   }
+
+
+  const currentQty =
+    Number(item.qty || 1);
+
+
+  const newQty =
+    currentQty +
+    Number(delta || 0);
+
+
+  /*
+    CUSTOMER CANNOT REDUCE
+    QUANTITY BELOW 1
+  */
+
+  item.qty =
+    Math.max(1,newQty);
+
 
   updateCart();
 
 }
 
-</script>
+
+/* =========================================================
+   REMOVE CART ITEM
+========================================================= */
+
+function removeItem(id){
+
+  cart =
+    cart.filter(
+      item =>
+        String(item.id) !==
+        String(id)
+    );
+
+
+  updateCart();
 
 }
 
@@ -1683,7 +1634,8 @@ function updateCart(){
   const totalQty =
     cart.reduce(
       (sum,item) =>
-        sum + Number(item.qty || 0),
+        sum +
+        Number(item.qty || 0),
       0
     );
 
@@ -1725,7 +1677,33 @@ function updateCart(){
               ${item.qty}
             </small>
 
-            <br>
+
+            <div class="qtyControl">
+
+              <button
+                class="qtyBtn"
+                onclick="changeQty('${String(item.id).replace(/'/g,"\\'")}',-1)"
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+
+
+              <span class="qtyValue">
+                ${item.qty}
+              </span>
+
+
+              <button
+                class="qtyBtn"
+                onclick="changeQty('${String(item.id).replace(/'/g,"\\'")}',1)"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+
+            </div>
+
 
             <span
               class="remove"
