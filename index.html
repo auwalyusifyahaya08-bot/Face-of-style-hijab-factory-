@@ -89,12 +89,12 @@ footer{margin-top:55px;background:#24151b;color:#eee;padding:40px 18px}.foot{max
 
 <script>
 const products=[
- {id:1,name:"Elegant Zip Abaya",cat:"Abaya",price:25000,img:"product-1.jpg",desc:"Flowing full-length abaya with refined finishing."},
- {id:2,name:"Two-Tone Signature Gown",cat:"Gown",price:22000,img:"product-2.jpg",desc:"Elegant two-tone modest gown design."},
- {id:3,name:"Teal Classic Hijab Dress",cat:"Gown",price:20000,img:"product-3.jpg",desc:"Comfortable modest dress with clean detailing."},
- {id:4,name:"Premium Black & White",cat:"Abaya",price:28000,img:"product-4.jpg",desc:"Statement modest outfit with premium contrast."},
- {id:5,name:"Ruffle Hijab Collection",cat:"Hijab",price:12000,img:"product-5.jpg",desc:"Soft, colourful hijab styles with beautiful ruffles."},
- {id:6,name:"Rose Signature Gown",cat:"Custom",price:24000,img:"product-6.jpg",desc:"Elegant flowing gown; custom colours available."}
+ {id:1,name:"Elegant Zip Abaya",cat:"Abaya",price:25000,img:"assets/product-1.jpg",desc:"Flowing full-length abaya with refined finishing."},
+ {id:2,name:"Two-Tone Signature Gown",cat:"Gown",price:22000,img:"assets/product-2.jpg",desc:"Elegant two-tone modest gown design."},
+ {id:3,name:"Teal Classic Hijab Dress",cat:"Gown",price:20000,img:"assets/product-3.jpg",desc:"Comfortable modest dress with clean detailing."},
+ {id:4,name:"Premium Black & White",cat:"Abaya",price:28000,img:"assets/product-4.jpg",desc:"Statement modest outfit with premium contrast."},
+ {id:5,name:"Ruffle Hijab Collection",cat:"Hijab",price:12000,img:"assets/product-5.jpg",desc:"Soft, colourful hijab styles with beautiful ruffles."},
+ {id:6,name:"Rose Signature Gown",cat:"Custom",price:24000,img:"assets/product-6.jpg",desc:"Elegant flowing gown; custom colours available."}
 ];
 let selected="All",cart=[];
 function money(n){return "₦"+n.toLocaleString("en-NG")}
@@ -102,7 +102,7 @@ function render(){
  const q=document.getElementById("search").value.toLowerCase();
  const list=products.filter(p=>(selected==="All"||p.cat===selected)&&(p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)));
  document.getElementById("products").innerHTML=list.map(p=>`
- <article class="card"><div class="pic"><img src="${p.img}" alt="${p.name}"><span class="badge">${p.cat}</span><button class="heart" onclick="add(${p.id})">♡</button></div>
+ <article class="card"><div class="pic"><img src="${p.img.startsWith("assets/") ? p.img : "assets/"+p.img}" alt="${p.name}"><span class="badge">${p.cat}</span><button class="heart" onclick="add(${p.id})">♡</button></div>
  <div class="body"><h3>${p.name}</h3><p>${p.desc}</p><div class="price">${money(p.price)}</div><div class="actions"><button class="add" onclick="add(${p.id})">Add to Cart</button><button class="view" onclick="order(${p.id})">Order</button></div></div></article>`).join("");
 }
 function filter(x,el){selected=x;document.querySelectorAll(".cat").forEach(b=>b.classList.remove("active"));el.classList.add("active");render()}
