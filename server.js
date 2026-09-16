@@ -153,13 +153,18 @@ function requireAdmin(req, res, next) {
 ========================================================= */
 
 async function initDatabase() {
+
+async function initDatabase() {
   if (!pool) {
     console.warn(
       'DATABASE_URL is not configured. Database features are disabled.'
     );
-
     return;
   }
+
+  /*
+    Create the tables if they do not exist.
+  */
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS products (
@@ -176,6 +181,98 @@ async function initDatabase() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
+
+  /*
+    IMPORTANT:
+    The database may already contain an older products table.
+    CREATE TABLE IF NOT EXISTS does NOT add new columns.
+    These migrations safely add missing columns.
+  */
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Fashion'
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS description TEXT DEFAULT ''
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS price NUMERIC(12,2) DEFAULT 0
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS color TEXT DEFAULT ''
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS image TEXT DEFAULT ''
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS stock INTEGER DEFAULT 0
+  `);
+
+  /*
+    THIS FIXES THE CURRENT RENDER ERROR:
+    column "active" does not exist
+  */
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT TRUE
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS created_at
+    TIMESTAMPTZ DEFAULT NOW()
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS updated_at
+    TIMESTAMPTZ DEFAULT NOW()
+  `);
+
+  /*
+    Make sure old rows have valid values.
+  */
+
+  await pool.query(`
+    UPDATE products
+    SET active = TRUE
+    WHERE active IS NULL
+  `);
+
+  await pool.query(`
+    UPDATE products
+    SET stock = 0
+    WHERE stock IS NULL
+  `);
+
+  await pool.query(`
+    UPDATE products
+    SET category = 'Fashion'
+    WHERE category IS NULL
+       OR TRIM(category) = ''
+  `);
+
+  await pool.query(`
+    UPDATE products
+    SET updated_at = NOW()
+    WHERE updated_at IS NULL
+  `);
+
+  /*
+    Orders table
+  */
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS orders (
@@ -196,6 +293,10 @@ async function initDatabase() {
     )
   `);
 
+  /*
+    Order items table
+  */
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS order_items (
       id BIGSERIAL PRIMARY KEY,
@@ -209,6 +310,10 @@ async function initDatabase() {
       subtotal NUMERIC(12,2) NOT NULL
     )
   `);
+
+  /*
+    Indexes
+  */
 
   await pool.query(`
     CREATE INDEX IF NOT EXISTS idx_products_active
