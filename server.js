@@ -15,79 +15,107 @@ const __dirname = path.dirname(__filename);
 
 /* =========================================================
    BASIC CONFIGURATION
-   ========================================================= */
+========================================================= */
 
 const PORT = Number(process.env.PORT || 3000);
 
 const BASE_URL = (
   process.env.BASE_URL ||
   `http://localhost:${PORT}`
-).replace(/\/$/, '');
+).replace(/\/+$/, '');
 
 const DATA = path.join(__dirname, 'data');
 
-const ORDERS = path.join(
-  DATA,
-  'orders.json'
-);
+const ORDERS_FILE = path.join(DATA, 'orders.json');
+const PRODUCTS_BACKUP_FILE = path.join(DATA, 'products.json');
+const SETTINGS_FILE = path.join(DATA, 'settings.json');
 
-const PRODUCTS_FILE = path.join(
-  DATA,
-  'products.json'
-);
+fs.mkdirSync(DATA, { recursive: true });
 
-fs.mkdirSync(DATA, {
-  recursive: true
-});
+if (!fs.existsSync(ORDERS_FILE)) {
+  fs.writeFileSync(ORDERS_FILE, '[]');
+}
 
-if (!fs.existsSync(ORDERS)) {
+if (!fs.existsSync(PRODUCTS_BACKUP_FILE)) {
   fs.writeFileSync(
-    ORDERS,
-    '[]'
+    PRODUCTS_BACKUP_FILE,
+    JSON.stringify([], null, 2)
   );
 }
 
-if (!fs.existsSync(PRODUCTS_FILE)) {
+if (!fs.existsSync(SETTINGS_FILE)) {
   fs.writeFileSync(
-    PRODUCTS_FILE,
-    JSON.stringify([], null, 2)
+    SETTINGS_FILE,
+    JSON.stringify(
+      {
+        primaryColor: '#651630',
+        accentColor: '#c9a45b',
+        backgroundColor: '#f7f2eb',
+        textColor: '#292025'
+      },
+      null,
+      2
+    )
   );
 }
 
 /* =========================================================
    DATABASE
-   ========================================================= */
+========================================================= */
 
 if (!process.env.DATABASE_URL) {
-  console.error(
-    'DATABASE_URL is not configured.'
-  );
+  console.error('DATABASE_URL is not configured.');
 }
 
 const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL,
 
   ssl: process.env.DATABASE_URL
-    ? {
-        rejectUnauthorized: false
-      }
-    : undefined
+    ? { rejectUnauthorized: false }
+    : undefined,
+
+  max: 10,
+
+  idleTimeoutMillis: 30000,
+
+  connectionTimeoutMillis: 10000
 });
 
 /* =========================================================
    EXPRESS
-   ========================================================= */
+========================================================= */
+
+app.disable('x-powered-by');
+
+app.use((req, res, next) => {
+  res.setHeader(
+    'X-Content-Type-Options',
+    'nosniff'
+  );
+
+  res.setHeader(
+    'X-Frame-Options',
+    'SAMEORIGIN'
+  );
+
+  res.setHeader(
+    'Referrer-Policy',
+    'strict-origin-when-cross-origin'
+  );
+
+  res.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=()'
+  );
+
+  next();
+});
 
 app.use(
   express.json({
     limit: '12mb',
 
-    verify: (
-      req,
-      res,
-      buf
-    ) => {
+    verify: (req, res, buf) => {
       req.rawBody = buf;
     }
   })
@@ -100,50 +128,172 @@ app.use(
   })
 );
 
-app.use(
-  express.static(__dirname)
-);
+app.use(express.static(__dirname));
 
 /* =========================================================
-   ADMIN SESSIONS
-   ========================================================= */
+   ADMIN SESSION SYSTEM
+========================================================= */
 
-const adminSessions = new Set();
+const adminSessions = new Map();
 
-function adminAuth(
-  req,
-  res,
-  next
-) {
+const SESSION_DURATION =
+  Number(process.env.ADMIN_SESSION_MINUTES || 240) *
+  60 *
+  1000;
+
+function createAdminSession() {
+  const token = crypto
+    .randomBytes(48)
+    .toString('hex');
+
+  adminSessions.set(token, {
+    createdAt: Date.now(),
+    expiresAt:
+      Date.now() + SESSION_DURATION
+  });
+
+  return token;
+}
+
+function cleanupSessions() {
+  const now = Date.now();
+
+  for (const [token, session] of adminSessions) {
+    if (
+      !session ||
+      session.expiresAt <= now
+    ) {
+      adminSessions.delete(token);
+    }
+  }
+}
+
+setInterval(
+  cleanupSessions,
+  10 * 60 * 1000
+).unref();
+
+function getAdminToken(req) {
   const header =
     req.headers.authorization || '';
 
-  const token =
-    header.startsWith('Bearer ')
-      ? header.slice(7)
-      : '';
+  if (!header.startsWith('Bearer ')) {
+    return '';
+  }
 
-  if (
-    !token ||
-    !adminSessions.has(token)
-  ) {
+  return header.slice(7).trim();
+}
+
+function adminAuth(req, res, next) {
+  cleanupSessions();
+
+  const token = getAdminToken(req);
+
+  if (!token) {
     return res.status(401).json({
-      message: 'Unauthorized'
+      ok: false,
+      message: 'Unauthorized.'
     });
   }
+
+  const session =
+    adminSessions.get(token);
+
+  if (!session) {
+    return res.status(401).json({
+      ok: false,
+      message: 'Session expired. Please login again.'
+    });
+  }
+
+  if (
+    session.expiresAt <= Date.now()
+  ) {
+    adminSessions.delete(token);
+
+    return res.status(401).json({
+      ok: false,
+      message: 'Session expired. Please login again.'
+    });
+  }
+
+  req.adminSession = session;
 
   next();
 }
 
 /* =========================================================
-   ORDERS FILE
-   ========================================================= */
+   LOGIN RATE LIMIT
+========================================================= */
+
+const loginAttempts = new Map();
+
+const LOGIN_WINDOW = 15 * 60 * 1000;
+const MAX_LOGIN_ATTEMPTS = 8;
+
+function getClientKey(req) {
+  return (
+    req.ip ||
+    req.headers['x-forwarded-for'] ||
+    'unknown'
+  );
+}
+
+function loginRateLimited(req) {
+  const key = getClientKey(req);
+
+  const current =
+    loginAttempts.get(key);
+
+  if (!current) {
+    return false;
+  }
+
+  if (
+    Date.now() - current.firstAttempt >
+    LOGIN_WINDOW
+  ) {
+    loginAttempts.delete(key);
+    return false;
+  }
+
+  return (
+    current.count >=
+    MAX_LOGIN_ATTEMPTS
+  );
+}
+
+function recordFailedLogin(req) {
+  const key = getClientKey(req);
+
+  const current =
+    loginAttempts.get(key);
+
+  if (
+    !current ||
+    Date.now() - current.firstAttempt >
+      LOGIN_WINDOW
+  ) {
+    loginAttempts.set(key, {
+      count: 1,
+      firstAttempt: Date.now()
+    });
+
+    return;
+  }
+
+  current.count += 1;
+}
+
+/* =========================================================
+   JSON FILE HELPERS
+========================================================= */
 
 function readOrders() {
   try {
     return JSON.parse(
       fs.readFileSync(
-        ORDERS,
+        ORDERS_FILE,
         'utf8'
       ) || '[]'
     );
@@ -153,11 +303,11 @@ function readOrders() {
 }
 
 function writeOrders(orders) {
-  const tmp =
-    `${ORDERS}.tmp`;
+  const temp =
+    `${ORDERS_FILE}.tmp`;
 
   fs.writeFileSync(
-    tmp,
+    temp,
     JSON.stringify(
       orders,
       null,
@@ -166,56 +316,98 @@ function writeOrders(orders) {
   );
 
   fs.renameSync(
-    tmp,
-    ORDERS
+    temp,
+    ORDERS_FILE
   );
 }
 
-/* =========================================================
-   OLD PRODUCTS FILE
-   ========================================================= */
-
-function readProductsFile() {
+function readSettings() {
   try {
     return JSON.parse(
       fs.readFileSync(
-        PRODUCTS_FILE,
+        SETTINGS_FILE,
         'utf8'
-      ) || '[]'
+      ) || '{}'
     );
   } catch {
-    return [];
+    return {
+      primaryColor: '#651630',
+      accentColor: '#c9a45b',
+      backgroundColor: '#f7f2eb',
+      textColor: '#292025'
+    };
   }
 }
 
-function writeProductsFile(
-  products
-) {
+function writeSettings(settings) {
+  const temp =
+    `${SETTINGS_FILE}.tmp`;
+
   fs.writeFileSync(
-    PRODUCTS_FILE,
+    temp,
     JSON.stringify(
-      products,
+      settings,
       null,
       2
     )
   );
+
+  fs.renameSync(
+    temp,
+    SETTINGS_FILE
+  );
 }
 
 /* =========================================================
-   REFERENCE
-   ========================================================= */
+   SECURITY HELPERS
+========================================================= */
+
+function safeString(
+  value,
+  maxLength = 500
+) {
+  return String(value ?? '')
+    .trim()
+    .slice(0, maxLength);
+}
 
 function createReference() {
   return (
     `FS-${Date.now()}-${crypto
-      .randomBytes(3)
+      .randomBytes(4)
       .toString('hex')}`
   ).toUpperCase();
 }
 
+function timingSafeEqualText(a, b) {
+  const aBuffer =
+    Buffer.from(String(a));
+
+  const bBuffer =
+    Buffer.from(String(b));
+
+  if (
+    aBuffer.length !==
+    bBuffer.length
+  ) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(
+    aBuffer,
+    bBuffer
+  );
+}
+
+function isValidHexColor(value) {
+  return /^#[0-9A-Fa-f]{6}$/.test(
+    String(value || '')
+  );
+}
+
 /* =========================================================
-   PRODUCT DATABASE HELPERS
-   ========================================================= */
+   PRODUCTS
+========================================================= */
 
 async function getProducts() {
   const result =
@@ -237,14 +429,11 @@ async function getProducts() {
 
 /* =========================================================
    PUBLIC PRODUCTS
-   ========================================================= */
+========================================================= */
 
 app.get(
   '/api/products',
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       const products =
         await getProducts();
@@ -253,7 +442,6 @@ app.get(
         ok: true,
         products
       });
-
     } catch (error) {
       console.error(
         'PUBLIC PRODUCTS ERROR:',
@@ -271,22 +459,18 @@ app.get(
 
 /* =========================================================
    SINGLE PUBLIC PRODUCT
-   ========================================================= */
+========================================================= */
 
 app.get(
   '/api/products/:id',
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       const id =
         Number(req.params.id);
 
-      if (
-        !Number.isInteger(id)
-      ) {
+      if (!Number.isInteger(id)) {
         return res.status(400).json({
+          ok: false,
           message:
             'Invalid product ID.'
         });
@@ -309,10 +493,9 @@ app.get(
           [id]
         );
 
-      if (
-        !result.rows.length
-      ) {
+      if (!result.rows.length) {
         return res.status(404).json({
+          ok: false,
           message:
             'Product not found.'
         });
@@ -323,7 +506,6 @@ app.get(
         product:
           result.rows[0]
       });
-
     } catch (error) {
       console.error(
         'SINGLE PRODUCT ERROR:',
@@ -331,6 +513,7 @@ app.get(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Failed to load product.'
       });
@@ -340,11 +523,9 @@ app.get(
 
 /* =========================================================
    CALCULATE ORDER
-   ========================================================= */
+========================================================= */
 
-async function calculateOrder(
-  items
-) {
+async function calculateOrder(items) {
   if (
     !Array.isArray(items) ||
     !items.length
@@ -359,9 +540,7 @@ async function calculateOrder(
 
   const clean = [];
 
-  for (
-    const item of items
-  ) {
+  for (const item of items) {
     const product =
       products.find(
         p =>
@@ -384,17 +563,12 @@ async function calculateOrder(
     }
 
     total +=
-      Number(product.price) *
-      qty;
+      Number(product.price) * qty;
 
     clean.push({
       id: product.id,
-
       name: product.name,
-
-      price:
-        Number(product.price),
-
+      price: Number(product.price),
       qty
     });
   }
@@ -407,18 +581,24 @@ async function calculateOrder(
 
 /* =========================================================
    ADMIN LOGIN
-   ========================================================= */
+========================================================= */
 
 app.post(
   '/api/admin/login',
-  (
-    req,
-    res
-  ) => {
+  (req, res) => {
+    if (loginRateLimited(req)) {
+      return res.status(429).json({
+        ok: false,
+        message:
+          'Too many login attempts. Please wait and try again.'
+      });
+    }
+
     const username =
-      String(
-        req.body?.username || ''
-      ).trim();
+      safeString(
+        req.body?.username,
+        120
+      );
 
     const password =
       String(
@@ -436,77 +616,114 @@ app.post(
       !expectedPassword
     ) {
       return res.status(503).json({
+        ok: false,
         message:
           'Admin credentials are not configured on the server.'
       });
     }
 
+    const validUser =
+      timingSafeEqualText(
+        username,
+        expectedUser
+      );
+
+    const validPassword =
+      timingSafeEqualText(
+        password,
+        expectedPassword
+      );
+
     if (
-      username !== expectedUser ||
-      password !== expectedPassword
+      !validUser ||
+      !validPassword
     ) {
+      recordFailedLogin(req);
+
       return res.status(401).json({
+        ok: false,
         message:
-          'Invalid username or password'
+          'Invalid username or password.'
       });
     }
 
-    const token =
-      crypto.randomBytes(32)
-        .toString('hex');
+    loginAttempts.delete(
+      getClientKey(req)
+    );
 
-    adminSessions.add(token);
+    const token =
+      createAdminSession();
 
     res.json({
       ok: true,
-      token
+      token,
+      expiresAt:
+        Date.now() +
+        SESSION_DURATION
     });
   }
 );
 
 /* =========================================================
    ADMIN LOGOUT
-   ========================================================= */
+========================================================= */
 
 app.post(
   '/api/admin/logout',
   adminAuth,
-  (
-    req,
-    res
-  ) => {
-    const header =
-      req.headers.authorization || '';
-
+  (req, res) => {
     const token =
-      header.startsWith('Bearer ')
-        ? header.slice(7)
-        : '';
+      getAdminToken(req);
 
-    adminSessions.delete(
-      token
-    );
+    adminSessions.delete(token);
 
     res.json({
-      ok: true
+      ok: true,
+      message:
+        'Logged out successfully.'
     });
   }
 );
 
 /* =========================================================
    ADMIN DASHBOARD
-   ========================================================= */
+========================================================= */
 
 app.get(
   '/api/admin/dashboard',
   adminAuth,
-  (
-    req,
-    res
-  ) => {
+  (req, res) => {
     try {
       const orders =
         readOrders();
+
+      const paid =
+        orders.filter(
+          x =>
+            x.status === 'paid'
+        );
+
+      const pending =
+        orders.filter(
+          x =>
+            x.status === 'pending'
+        );
+
+      const failed =
+        orders.filter(
+          x =>
+            x.status === 'failed'
+        );
+
+      const revenue =
+        paid.reduce(
+          (total, order) =>
+            total +
+            Number(
+              order.total || 0
+            ),
+          0
+        );
 
       res.json({
         ok: true,
@@ -516,48 +733,17 @@ app.get(
             orders.length,
 
           paid:
-            orders.filter(
-              x =>
-                x.status ===
-                'paid'
-            ).length,
+            paid.length,
 
           pending:
-            orders.filter(
-              x =>
-                x.status ===
-                'pending'
-            ).length,
+            pending.length,
 
           failed:
-            orders.filter(
-              x =>
-                x.status ===
-                'failed'
-            ).length,
+            failed.length,
 
-          revenue:
-            orders
-              .filter(
-                x =>
-                  x.status ===
-                  'paid'
-              )
-              .reduce(
-                (
-                  total,
-                  order
-                ) =>
-                  total +
-                  Number(
-                    order.total ||
-                    0
-                  ),
-                0
-              )
+          revenue
         }
       });
-
     } catch (error) {
       console.error(
         'DASHBOARD ERROR:',
@@ -565,6 +751,7 @@ app.get(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Failed to load dashboard.'
       });
@@ -574,23 +761,17 @@ app.get(
 
 /* =========================================================
    ADMIN ORDERS
-   ========================================================= */
+========================================================= */
 
 app.get(
   '/api/admin/orders',
   adminAuth,
-  (
-    req,
-    res
-  ) => {
+  (req, res) => {
     try {
       const orders =
         readOrders()
           .sort(
-            (
-              a,
-              b
-            ) =>
+            (a, b) =>
               new Date(
                 b.createdAt
               ) -
@@ -603,7 +784,6 @@ app.get(
         ok: true,
         orders
       });
-
     } catch (error) {
       console.error(
         'ADMIN ORDERS ERROR:',
@@ -611,6 +791,7 @@ app.get(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Failed to load orders.'
       });
@@ -620,15 +801,12 @@ app.get(
 
 /* =========================================================
    ADMIN SINGLE ORDER
-   ========================================================= */
+========================================================= */
 
 app.get(
   '/api/admin/orders/:id',
   adminAuth,
-  (
-    req,
-    res
-  ) => {
+  (req, res) => {
     try {
       const order =
         readOrders().find(
@@ -639,6 +817,7 @@ app.get(
 
       if (!order) {
         return res.status(404).json({
+          ok: false,
           message:
             'Order not found.'
         });
@@ -648,7 +827,6 @@ app.get(
         ok: true,
         order
       });
-
     } catch (error) {
       console.error(
         'SINGLE ORDER ERROR:',
@@ -656,52 +834,22 @@ app.get(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Failed to load order.'
       });
     }
   }
 );
-/* =========================================================
-   PUBLIC PRODUCTS
-   Customer website uses this endpoint to load products
-   directly from PostgreSQL.
-   ========================================================= */
 
-app.get(
-  '/api/products',
-  async (req, res) => {
-    try {
-      const products = await getProducts();
-
-      res.json({
-        products
-      });
-
-    } catch (error) {
-      console.error(
-        'PUBLIC PRODUCTS ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        message:
-          'Failed to load products.'
-      });
-    }
-  }
-);
 /* =========================================================
    ADMIN PRODUCTS - GET
-   ========================================================= */
+========================================================= */
 
 app.get(
   '/api/admin/products',
   adminAuth,
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       const products =
         await getProducts();
@@ -710,7 +858,6 @@ app.get(
         ok: true,
         products
       });
-
     } catch (error) {
       console.error(
         'GET PRODUCTS ERROR:',
@@ -718,6 +865,7 @@ app.get(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Failed to load products.'
       });
@@ -727,15 +875,12 @@ app.get(
 
 /* =========================================================
    ADMIN PRODUCTS - ADD
-   ========================================================= */
+========================================================= */
 
 app.post(
   '/api/admin/products',
   adminAuth,
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       const {
         name,
@@ -748,37 +893,31 @@ app.post(
       } = req.body || {};
 
       const cleanName =
-        String(
-          name || ''
-        ).trim();
+        safeString(name, 150);
 
       const cleanCat =
-        String(
-          cat || ''
-        ).trim();
+        safeString(cat, 80);
 
       const cleanColor =
-        String(
-          color || ''
-        ).trim();
+        safeString(color, 100);
 
       const cleanImg =
-        String(
-          img || ''
-        ).trim();
+        safeString(img, 12000000);
 
       const cleanDescription =
-        String(
+        safeString(
           description ??
           desc ??
-          ''
-        ).trim();
+          '',
+          2000
+        );
 
       const cleanPrice =
         Number(price);
 
       if (!cleanName) {
         return res.status(400).json({
+          ok: false,
           message:
             'Product name is required.'
         });
@@ -786,6 +925,7 @@ app.post(
 
       if (!cleanCat) {
         return res.status(400).json({
+          ok: false,
           message:
             'Category is required.'
         });
@@ -798,6 +938,7 @@ app.post(
         cleanPrice <= 0
       ) {
         return res.status(400).json({
+          ok: false,
           message:
             'Enter a valid product price.'
         });
@@ -805,6 +946,7 @@ app.post(
 
       if (!cleanColor) {
         return res.status(400).json({
+          ok: false,
           message:
             'Product color is required.'
         });
@@ -812,6 +954,7 @@ app.post(
 
       if (!cleanImg) {
         return res.status(400).json({
+          ok: false,
           message:
             'Product photo is required.'
         });
@@ -855,7 +998,6 @@ app.post(
         product:
           result.rows[0]
       });
-
     } catch (error) {
       console.error(
         'ADD PRODUCT ERROR:',
@@ -863,6 +1005,7 @@ app.post(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Failed to add product. Please try again.'
       });
@@ -872,23 +1015,19 @@ app.post(
 
 /* =========================================================
    ADMIN PRODUCTS - EDIT
-   ========================================================= */
+========================================================= */
 
 app.put(
   '/api/admin/products/:id',
   adminAuth,
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       const id =
         Number(req.params.id);
 
-      if (
-        !Number.isInteger(id)
-      ) {
+      if (!Number.isInteger(id)) {
         return res.status(400).json({
+          ok: false,
           message:
             'Invalid product ID.'
         });
@@ -905,37 +1044,31 @@ app.put(
       } = req.body || {};
 
       const cleanName =
-        String(
-          name || ''
-        ).trim();
+        safeString(name, 150);
 
       const cleanCat =
-        String(
-          cat || ''
-        ).trim();
+        safeString(cat, 80);
 
       const cleanColor =
-        String(
-          color || ''
-        ).trim();
+        safeString(color, 100);
 
       const cleanImg =
-        String(
-          img || ''
-        ).trim();
+        safeString(img, 12000000);
 
       const cleanDescription =
-        String(
+        safeString(
           description ??
           desc ??
-          ''
-        ).trim();
+          '',
+          2000
+        );
 
       const cleanPrice =
         Number(price);
 
       if (!cleanName) {
         return res.status(400).json({
+          ok: false,
           message:
             'Product name is required.'
         });
@@ -943,6 +1076,7 @@ app.put(
 
       if (!cleanCat) {
         return res.status(400).json({
+          ok: false,
           message:
             'Category is required.'
         });
@@ -955,6 +1089,7 @@ app.put(
         cleanPrice <= 0
       ) {
         return res.status(400).json({
+          ok: false,
           message:
             'Enter a valid product price.'
         });
@@ -962,6 +1097,7 @@ app.put(
 
       if (!cleanColor) {
         return res.status(400).json({
+          ok: false,
           message:
             'Product color is required.'
         });
@@ -969,6 +1105,7 @@ app.put(
 
       if (!cleanImg) {
         return res.status(400).json({
+          ok: false,
           message:
             'Product photo is required.'
         });
@@ -1006,10 +1143,9 @@ app.put(
           ]
         );
 
-      if (
-        !result.rows.length
-      ) {
+      if (!result.rows.length) {
         return res.status(404).json({
+          ok: false,
           message:
             'Product not found.'
         });
@@ -1020,7 +1156,6 @@ app.put(
         product:
           result.rows[0]
       });
-
     } catch (error) {
       console.error(
         'EDIT PRODUCT ERROR:',
@@ -1028,6 +1163,7 @@ app.put(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Failed to update product.'
       });
@@ -1037,23 +1173,19 @@ app.put(
 
 /* =========================================================
    ADMIN PRODUCTS - DELETE
-   ========================================================= */
+========================================================= */
 
 app.delete(
   '/api/admin/products/:id',
   adminAuth,
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       const id =
         Number(req.params.id);
 
-      if (
-        !Number.isInteger(id)
-      ) {
+      if (!Number.isInteger(id)) {
         return res.status(400).json({
+          ok: false,
           message:
             'Invalid product ID.'
         });
@@ -1071,10 +1203,9 @@ app.delete(
           [id]
         );
 
-      if (
-        !result.rows.length
-      ) {
+      if (!result.rows.length) {
         return res.status(404).json({
+          ok: false,
           message:
             'Product not found.'
         });
@@ -1085,7 +1216,6 @@ app.delete(
         product:
           result.rows[0]
       });
-
     } catch (error) {
       console.error(
         'DELETE PRODUCT ERROR:',
@@ -1093,6 +1223,7 @@ app.delete(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Failed to delete product.'
       });
@@ -1101,45 +1232,447 @@ app.delete(
 );
 
 /* =========================================================
-   ADMIN SETTINGS
-   ========================================================= */
+   ADMIN SETTINGS - GET
+========================================================= */
 
 app.get(
   '/api/admin/settings',
   adminAuth,
-  (
-    req,
-    res
-  ) => {
+  (req, res) => {
+    try {
+      const settings =
+        readSettings();
+
+      res.json({
+        ok: true,
+
+        paystackConfigured:
+          Boolean(
+            process.env
+              .PAYSTACK_SECRET_KEY
+          ),
+
+        whatsapp:
+          '09065828886',
+
+        theme: settings,
+
+        biometric:
+          Boolean(
+            process.env
+              .WEBAUTHN_RP_ID
+          )
+      });
+    } catch (error) {
+      console.error(
+        'SETTINGS ERROR:',
+        error
+      );
+
+      res.status(500).json({
+        ok: false,
+        message:
+          'Failed to load settings.'
+      });
+    }
+  }
+);
+
+/* =========================================================
+   ADMIN SETTINGS - SAVE THEME
+========================================================= */
+
+app.put(
+  '/api/admin/settings/theme',
+  adminAuth,
+  (req, res) => {
+    try {
+      const current =
+        readSettings();
+
+      const primaryColor =
+        safeString(
+          req.body?.primaryColor,
+          20
+        );
+
+      const accentColor =
+        safeString(
+          req.body?.accentColor,
+          20
+        );
+
+      const backgroundColor =
+        safeString(
+          req.body?.backgroundColor,
+          20
+        );
+
+      const textColor =
+        safeString(
+          req.body?.textColor,
+          20
+        );
+
+      const values = {
+        primaryColor,
+        accentColor,
+        backgroundColor,
+        textColor
+      };
+
+      for (const [key, value] of Object.entries(values)) {
+        if (
+          value &&
+          !isValidHexColor(value)
+        ) {
+          return res.status(400).json({
+            ok: false,
+            message:
+              `${key} must be a valid HEX colour.`
+          });
+        }
+      }
+
+      const updated = {
+        ...current,
+
+        primaryColor:
+          primaryColor ||
+          current.primaryColor,
+
+        accentColor:
+          accentColor ||
+          current.accentColor,
+
+        backgroundColor:
+          backgroundColor ||
+          current.backgroundColor,
+
+        textColor:
+          textColor ||
+          current.textColor
+      };
+
+      writeSettings(updated);
+
+      res.json({
+        ok: true,
+        theme: updated
+      });
+    } catch (error) {
+      console.error(
+        'SAVE THEME ERROR:',
+        error
+      );
+
+      res.status(500).json({
+        ok: false,
+        message:
+          'Failed to save website colours.'
+      });
+    }
+  }
+);
+
+/* =========================================================
+   PUBLIC THEME
+========================================================= */
+
+app.get(
+  '/api/theme',
+  (req, res) => {
+    try {
+      res.json({
+        ok: true,
+        theme:
+          readSettings()
+      });
+    } catch {
+      res.status(500).json({
+        ok: false,
+        message:
+          'Failed to load website theme.'
+      });
+    }
+  }
+);
+
+/* =========================================================
+   CHANGE ADMIN PASSWORD
+========================================================= */
+
+app.put(
+  '/api/admin/change-password',
+  adminAuth,
+  (req, res) => {
+    try {
+      const currentPassword =
+        String(
+          req.body?.currentPassword ||
+          ''
+        );
+
+      const newPassword =
+        String(
+          req.body?.newPassword ||
+          ''
+        );
+
+      const configuredPassword =
+        process.env.ADMIN_PASSWORD;
+
+      if (!configuredPassword) {
+        return res.status(503).json({
+          ok: false,
+          message:
+            'Admin password is not configured.'
+        });
+      }
+
+      if (
+        !timingSafeEqualText(
+          currentPassword,
+          configuredPassword
+        )
+      ) {
+        return res.status(401).json({
+          ok: false,
+          message:
+            'Current password is incorrect.'
+        });
+      }
+
+      if (
+        newPassword.length < 10
+      ) {
+        return res.status(400).json({
+          ok: false,
+          message:
+            'New password must contain at least 10 characters.'
+        });
+      }
+
+      /*
+        IMPORTANT:
+        Render environment variables are normally
+        changed from the Render dashboard.
+
+        Therefore this endpoint does not pretend
+        to permanently change process.env.ADMIN_PASSWORD.
+
+        It invalidates all sessions and tells the
+        admin to update ADMIN_PASSWORD in Render.
+
+        Full database-backed admin credentials can
+        be added in the next security stage.
+      */
+
+      for (const token of adminSessions.keys()) {
+        adminSessions.delete(token);
+      }
+
+      res.json({
+        ok: true,
+
+        requiresEnvironmentUpdate:
+          true,
+
+        message:
+          'Password validation completed. Update ADMIN_PASSWORD in your Render environment variables, then login again.'
+      });
+    } catch (error) {
+      console.error(
+        'CHANGE PASSWORD ERROR:',
+        error
+      );
+
+      res.status(500).json({
+        ok: false,
+        message:
+          'Failed to change password.'
+      });
+    }
+  }
+);
+
+/* =========================================================
+   FORGOT PASSWORD / RECOVERY
+========================================================= */
+
+app.post(
+  '/api/admin/forgot-password',
+  (req, res) => {
+    const recoveryCode =
+      String(
+        req.body?.recoveryCode ||
+        ''
+      );
+
+    const configuredRecoveryCode =
+      process.env
+        .ADMIN_RECOVERY_CODE;
+
+    if (
+      !configuredRecoveryCode
+    ) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Admin recovery is not configured. Add ADMIN_RECOVERY_CODE on Render.'
+      });
+    }
+
+    if (
+      !timingSafeEqualText(
+        recoveryCode,
+        configuredRecoveryCode
+      )
+    ) {
+      return res.status(401).json({
+        ok: false,
+        message:
+          'Invalid recovery code.'
+      });
+    }
+
+    const resetToken =
+      crypto
+        .randomBytes(32)
+        .toString('hex');
+
+    const resetHash =
+      crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    const resetExpires =
+      Date.now() +
+      10 * 60 * 1000;
+
+    /*
+      Store temporary reset information
+      in memory only.
+    */
+
+    globalThis.__adminReset = {
+      hash: resetHash,
+      expiresAt: resetExpires
+    };
+
     res.json({
       ok: true,
 
-      paystackConfigured:
-        Boolean(
-          process.env.PAYSTACK_SECRET_KEY
-        ),
+      resetToken,
 
-      whatsapp:
-        '09065828886'
+      expiresAt:
+        resetExpires,
+
+      message:
+        'Recovery verified. Use the reset token within 10 minutes.'
+    });
+  }
+);
+
+/* =========================================================
+   RESET PASSWORD
+========================================================= */
+
+app.post(
+  '/api/admin/reset-password',
+  (req, res) => {
+    const resetToken =
+      String(
+        req.body?.resetToken ||
+        ''
+      );
+
+    const newPassword =
+      String(
+        req.body?.newPassword ||
+        ''
+      );
+
+    const reset =
+      globalThis.__adminReset;
+
+    if (
+      !reset ||
+      reset.expiresAt <= Date.now()
+    ) {
+      globalThis.__adminReset =
+        null;
+
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Reset token has expired. Start again.'
+      });
+    }
+
+    const resetHash =
+      crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    if (
+      !timingSafeEqualText(
+        resetHash,
+        reset.hash
+      )
+    ) {
+      return res.status(401).json({
+        ok: false,
+        message:
+          'Invalid reset token.'
+      });
+    }
+
+    if (
+      newPassword.length < 10
+    ) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'New password must contain at least 10 characters.'
+      });
+    }
+
+    globalThis.__adminReset =
+      null;
+
+    for (const token of adminSessions.keys()) {
+      adminSessions.delete(token);
+    }
+
+    res.json({
+      ok: true,
+
+      requiresEnvironmentUpdate:
+        true,
+
+      message:
+        'Reset verified. Now update ADMIN_PASSWORD in Render with the new password, then login again.'
     });
   }
 );
 
 /* =========================================================
    PAYSTACK INITIALIZE
-   ========================================================= */
+========================================================= */
 
 app.post(
   '/api/paystack/initialize',
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       if (
-        !process.env.PAYSTACK_SECRET_KEY
+        !process.env
+          .PAYSTACK_SECRET_KEY
       ) {
         return res.status(500).json({
+          ok: false,
           message:
             'Paystack is not configured. Add PAYSTACK_SECRET_KEY on the server.'
         });
@@ -1161,6 +1694,7 @@ app.post(
         !calculated
       ) {
         return res.status(400).json({
+          ok: false,
           message:
             'Incomplete order details.'
         });
@@ -1182,34 +1716,26 @@ app.post(
 
         customer: {
           name:
-            String(
-              customer.name
-            ).slice(
-              0,
+            safeString(
+              customer.name,
               120
             ),
 
           email:
-            String(
-              customer.email
-            ).slice(
-              0,
+            safeString(
+              customer.email,
               200
             ),
 
           phone:
-            String(
-              customer.phone
-            ).slice(
-              0,
+            safeString(
+              customer.phone,
               40
             ),
 
           address:
-            String(
-              customer.address
-            ).slice(
-              0,
+            safeString(
+              customer.address,
               500
             )
         },
@@ -1228,27 +1754,21 @@ app.post(
         },
 
         createdAt:
-          new Date()
-            .toISOString()
+          new Date().toISOString()
       };
 
       const orders =
         readOrders();
 
-      orders.push(
-        order
-      );
+      orders.push(order);
 
-      writeOrders(
-        orders
-      );
+      writeOrders(orders);
 
       const response =
         await fetch(
           'https://api.paystack.co/transaction/initialize',
           {
-            method:
-              'POST',
+            method: 'POST',
 
             headers: {
               Authorization:
@@ -1261,14 +1781,11 @@ app.post(
             body:
               JSON.stringify({
                 email:
-                  order
-                    .customer
-                    .email,
+                  order.customer.email,
 
                 amount:
                   Math.round(
-                    calculated.total *
-                    100
+                    calculated.total * 100
                   ),
 
                 currency:
@@ -1292,9 +1809,7 @@ app.post(
                         'customer_name',
 
                       value:
-                        order
-                          .customer
-                          .name
+                        order.customer.name
                     },
 
                     {
@@ -1305,9 +1820,7 @@ app.post(
                         'customer_phone',
 
                       value:
-                        order
-                          .customer
-                          .phone
+                        order.customer.phone
                     }
                   ]
                 }
@@ -1330,11 +1843,10 @@ app.post(
           data.message ||
           'Paystack initialization failed';
 
-        writeOrders(
-          orders
-        );
+        writeOrders(orders);
 
         return res.status(400).json({
+          ok: false,
           message:
             data.message ||
             'Paystack initialization failed.'
@@ -1350,7 +1862,6 @@ app.post(
 
         reference
       });
-
     } catch (error) {
       console.error(
         'PAYSTACK INIT ERROR:',
@@ -1358,6 +1869,7 @@ app.post(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Payment service error.'
       });
@@ -1367,27 +1879,27 @@ app.post(
 
 /* =========================================================
    PAYSTACK VERIFY
-   ========================================================= */
+========================================================= */
 
 app.get(
   '/api/paystack/verify/:reference',
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       if (
-        !process.env.PAYSTACK_SECRET_KEY
+        !process.env
+          .PAYSTACK_SECRET_KEY
       ) {
         return res.status(500).json({
+          ok: false,
           message:
             'Paystack is not configured.'
         });
       }
 
       const reference =
-        String(
-          req.params.reference
+        safeString(
+          req.params.reference,
+          200
         );
 
       const orders =
@@ -1402,6 +1914,7 @@ app.get(
 
       if (!order) {
         return res.status(404).json({
+          ok: false,
           message:
             'Order not found.'
         });
@@ -1411,8 +1924,7 @@ app.get(
         await fetch(
           `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
           {
-            method:
-              'GET',
+            method: 'GET',
 
             headers: {
               Authorization:
@@ -1429,8 +1941,7 @@ app.get(
 
       const expectedAmount =
         Math.round(
-          Number(order.total) *
-          100
+          Number(order.total) * 100
         );
 
       if (
@@ -1439,8 +1950,7 @@ app.get(
           'success' &&
         Number(
           transaction.amount
-        ) ===
-          expectedAmount &&
+        ) === expectedAmount &&
         transaction.currency ===
           'NGN'
       ) {
@@ -1457,13 +1967,11 @@ app.get(
         order.payment.paidAt =
           transaction.paid_at;
 
-        writeOrders(
-          orders
-        );
+        writeOrders(orders);
 
         return res.json({
+          ok: true,
           success: true,
-
           reference
         });
       }
@@ -1479,17 +1987,16 @@ app.get(
           'pending';
       }
 
-      writeOrders(
-        orders
-      );
+      writeOrders(orders);
 
       res.json({
+        ok: true,
+
         success: false,
 
         message:
           'Payment has not been verified as successful.'
       });
-
     } catch (error) {
       console.error(
         'PAYSTACK VERIFY ERROR:',
@@ -1497,6 +2004,7 @@ app.get(
       );
 
       res.status(500).json({
+        ok: false,
         message:
           'Verification error.'
       });
@@ -1506,14 +2014,11 @@ app.get(
 
 /* =========================================================
    PAYSTACK WEBHOOK
-   ========================================================= */
+========================================================= */
 
 app.post(
   '/api/paystack/webhook',
-  (
-    req,
-    res
-  ) => {
+  (req, res) => {
     try {
       const signature =
         req.headers[
@@ -1522,30 +2027,26 @@ app.post(
 
       if (
         !signature ||
-        !process.env.PAYSTACK_SECRET_KEY ||
+        !process.env
+          .PAYSTACK_SECRET_KEY ||
         !req.rawBody
       ) {
-        return res.sendStatus(
-          401
-        );
+        return res.sendStatus(401);
       }
 
       const expected =
         crypto
           .createHmac(
             'sha512',
-            process.env.PAYSTACK_SECRET_KEY
+            process.env
+              .PAYSTACK_SECRET_KEY
           )
-          .update(
-            req.rawBody
-          )
+          .update(req.rawBody)
           .digest('hex');
 
       const receivedBuffer =
         Buffer.from(
-          String(
-            signature
-          ),
+          String(signature),
           'utf8'
         );
 
@@ -1557,15 +2058,13 @@ app.post(
 
       if (
         receivedBuffer.length !==
-        expectedBuffer.length ||
+          expectedBuffer.length ||
         !crypto.timingSafeEqual(
           receivedBuffer,
           expectedBuffer
         )
       ) {
-        return res.sendStatus(
-          401
-        );
+        return res.sendStatus(401);
       }
 
       const event =
@@ -1594,9 +2093,7 @@ app.post(
             transaction.amount
           ) ===
             Math.round(
-              Number(
-                order.total
-              ) * 100
+              Number(order.total) * 100
             ) &&
           transaction.currency ===
             'NGN'
@@ -1614,39 +2111,29 @@ app.post(
           order.payment.paidAt =
             transaction.paid_at;
 
-          writeOrders(
-            orders
-          );
+          writeOrders(orders);
         }
       }
 
-      res.sendStatus(
-        200
-      );
-
+      res.sendStatus(200);
     } catch (error) {
       console.error(
         'WEBHOOK ERROR:',
         error
       );
 
-      res.sendStatus(
-        500
-      );
+      res.sendStatus(500);
     }
   }
 );
 
 /* =========================================================
    HEALTH CHECK
-   ========================================================= */
+========================================================= */
 
 app.get(
   '/api/health',
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
     try {
       await pool.query(
         'SELECT 1'
@@ -1660,10 +2147,10 @@ app.get(
 
         paystackConfigured:
           Boolean(
-            process.env.PAYSTACK_SECRET_KEY
+            process.env
+              .PAYSTACK_SECRET_KEY
           )
       });
-
     } catch (error) {
       console.error(
         'HEALTH DATABASE ERROR:',
@@ -1678,7 +2165,8 @@ app.get(
 
         paystackConfigured:
           Boolean(
-            process.env.PAYSTACK_SECRET_KEY
+            process.env
+              .PAYSTACK_SECRET_KEY
           )
       });
     }
@@ -1687,7 +2175,7 @@ app.get(
 
 /* =========================================================
    DATABASE INITIALIZATION
-   ========================================================= */
+========================================================= */
 
 async function initDatabase() {
   if (!process.env.DATABASE_URL) {
@@ -1695,12 +2183,6 @@ async function initDatabase() {
       'DATABASE_URL is missing.'
     );
   }
-
-  /*
-   * STEP 1
-   * Create products table using the safe column name
-   * "description".
-   */
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS products (
@@ -1713,12 +2195,6 @@ async function initDatabase() {
       description TEXT DEFAULT ''
     )
   `);
-
-  /*
-   * STEP 2
-   * If an older version of the table already exists with
-   * the SQL-sensitive column "desc", migrate it safely.
-   */
 
   const oldDesc =
     await pool.query(`
@@ -1748,14 +2224,13 @@ async function initDatabase() {
     `);
   }
 
-  if (
-    oldDesc.rows.length
-  ) {
+  if (oldDesc.rows.length) {
     await pool.query(`
       UPDATE products
-      SET description = COALESCE("desc", '')
+      SET description =
+        COALESCE("desc", '')
       WHERE description IS NULL
-         OR description = ''
+      OR description = ''
     `);
 
     await pool.query(`
@@ -1763,11 +2238,6 @@ async function initDatabase() {
       DROP COLUMN IF EXISTS "desc"
     `);
   }
-
-  /*
-   * STEP 3
-   * Make sure description exists.
-   */
 
   const verifyDescription =
     await pool.query(`
@@ -1787,28 +2257,16 @@ async function initDatabase() {
     `);
   }
 
-  /*
-   * STEP 4
-   * Count existing products.
-   */
-
   const countResult =
-    await pool.query(
-      `
+    await pool.query(`
       SELECT COUNT(*)::int AS count
       FROM products
-      `
-    );
+    `);
 
   const count =
     Number(
       countResult.rows[0].count
     );
-
-  /*
-   * STEP 5
-   * Only create demo products if database is empty.
-   */
 
   if (count === 0) {
     await pool.query(`
@@ -1879,12 +2337,6 @@ async function initDatabase() {
     `);
   }
 
-  /*
-   * STEP 6
-   * Keep the old JSON products file only as a backup.
-   * We do NOT automatically duplicate it into PostgreSQL.
-   */
-
   console.log(
     `Database ready. Products in database: ${count}`
   );
@@ -1892,15 +2344,13 @@ async function initDatabase() {
 
 /* =========================================================
    404 API HANDLER
-   ========================================================= */
+========================================================= */
 
 app.use(
   '/api',
-  (
-    req,
-    res
-  ) => {
+  (req, res) => {
     res.status(404).json({
+      ok: false,
       message:
         'API endpoint not found.'
     });
@@ -1909,29 +2359,21 @@ app.use(
 
 /* =========================================================
    GLOBAL ERROR HANDLER
-   ========================================================= */
+========================================================= */
 
 app.use(
-  (
-    error,
-    req,
-    res,
-    next
-  ) => {
+  (error, req, res, next) => {
     console.error(
       'GLOBAL SERVER ERROR:',
       error
     );
 
-    if (
-      res.headersSent
-    ) {
-      return next(
-        error
-      );
+    if (res.headersSent) {
+      return next(error);
     }
 
     res.status(500).json({
+      ok: false,
       message:
         'Internal server error.'
     });
@@ -1940,30 +2382,24 @@ app.use(
 
 /* =========================================================
    START SERVER
-   ========================================================= */
+========================================================= */
 
 initDatabase()
-  .then(
-    () => {
-      app.listen(
-        PORT,
-        () => {
-          console.log(
-            `Face of Style store running at ${BASE_URL}`
-          );
-        }
-      );
-    }
-  )
-  .catch(
-    error => {
-      console.error(
-        'Database initialization failed:',
-        error
-      );
+  .then(() => {
+    app.listen(
+      PORT,
+      () => {
+        console.log(
+          `Face of Style Hijab Factory running at ${BASE_URL}`
+        );
+      }
+    );
+  })
+  .catch(error => {
+    console.error(
+      'Database initialization failed:',
+      error
+    );
 
-      process.exit(
-        1
-      );
-    }
-  );
+    process.exit(1);
+  });
