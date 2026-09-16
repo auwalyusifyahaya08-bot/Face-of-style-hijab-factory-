@@ -11,22 +11,57 @@
   --wine:#651630;
   --gold:#c9a45b;
   --bg:#f7f2eb;
+  --card:#fff;
   --line:#e6dacf;
+  --text:#292025;
+  --muted:#756a6f;
+  --danger:#a33;
 }
 
 *{
   box-sizing:border-box;
 }
 
+html{
+  scroll-behavior:smooth;
+}
+
 body{
   margin:0;
   background:var(--bg);
+  color:var(--text);
   font-family:Arial,sans-serif;
-  color:#292025;
 }
 
 button{
   cursor:pointer;
+  font-family:inherit;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:7px 0 14px;
+  font-family:inherit;
+  font-size:14px;
+  outline:none;
+  background:#fff;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px #c9a45b20;
 }
 
 .top{
@@ -36,52 +71,80 @@ button{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:15px;
   position:sticky;
   top:0;
-  z-index:5;
+  z-index:20;
 }
 
 .top b{
-  font:22px Georgia;
+  font:22px Georgia,serif;
   color:var(--wine);
+}
+
+.top small{
+  display:block;
+  color:var(--muted);
+  margin-top:3px;
 }
 
 .logout{
   background:#fff;
   border:1px solid var(--line);
-  padding:9px 14px;
+  padding:9px 15px;
   border-radius:20px;
+  color:var(--wine);
+  font-weight:bold;
 }
 
 .layout{
-  max-width:1200px;
+  max-width:1250px;
   margin:auto;
-  padding:25px 18px;
+  padding:25px 18px 50px;
+}
+
+.login-wrap{
+  min-height:calc(100vh - 70px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:25px 15px;
 }
 
 .login{
-  max-width:390px;
-  margin:12vh auto;
+  width:100%;
+  max-width:410px;
   background:#fff;
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 10px 30px #32121b14;
+  padding:32px;
+  border-radius:22px;
+  box-shadow:0 15px 45px #32121b14;
+  border:1px solid var(--line);
+}
+
+.login-logo{
+  width:68px;
+  height:68px;
+  border-radius:50%;
+  margin:0 auto 15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--wine);
+  color:#fff;
+  font:bold 22px Georgia,serif;
 }
 
 .login h1{
-  font:32px Georgia;
+  text-align:center;
+  font:32px Georgia,serif;
   color:var(--wine);
+  margin:5px 0;
 }
 
-input,
-select,
-textarea{
-  width:100%;
-  padding:12px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  margin:7px 0 14px;
-  font-family:Arial,sans-serif;
+.login-sub{
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:25px;
 }
 
 .primary{
@@ -92,11 +155,37 @@ textarea{
   padding:13px;
   border-radius:22px;
   font-weight:bold;
+  font-size:14px;
+}
+
+.secondary{
+  background:#fff;
+  color:var(--wine);
+  border:1px solid var(--line);
+  padding:11px 16px;
+  border-radius:22px;
+  font-weight:bold;
 }
 
 .error{
-  color:#a33;
+  color:var(--danger);
   font-size:13px;
+  min-height:18px;
+}
+
+.success{
+  color:#176a35;
+  font-size:13px;
+}
+
+.notice{
+  background:#fcf8f1;
+  padding:13px;
+  border-radius:11px;
+  color:#665d60;
+  font-size:13px;
+  line-height:1.6;
+  margin-top:15px;
 }
 
 .cards{
@@ -106,14 +195,14 @@ textarea{
 }
 
 .stat{
-  background:#fff;
+  background:var(--card);
   border:1px solid var(--line);
   padding:18px;
   border-radius:16px;
 }
 
 .stat small{
-  color:#756a6f;
+  color:var(--muted);
 }
 
 .stat b{
@@ -131,35 +220,52 @@ textarea{
 }
 
 .tab{
-  padding:10px 16px;
+  padding:10px 17px;
   border:1px solid var(--line);
   background:#fff;
   border-radius:22px;
+  color:var(--text);
+  font-weight:bold;
 }
 
 .tab.active{
   background:var(--wine);
   color:#fff;
+  border-color:var(--wine);
 }
 
 .panel{
   background:#fff;
   border:1px solid var(--line);
   border-radius:18px;
-  padding:18px;
+  padding:20px;
   margin-bottom:20px;
   overflow:auto;
 }
 
 .panel h2{
-  font:25px Georgia;
+  font:25px Georgia,serif;
   color:var(--wine);
+  margin-top:0;
+}
+
+.panel h3{
+  color:var(--wine);
+  font-family:Georgia,serif;
+}
+
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
 }
 
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:720px;
+  min-width:760px;
 }
 
 th,
@@ -168,12 +274,20 @@ td{
   padding:12px;
   border-bottom:1px solid #eee;
   font-size:13px;
+  vertical-align:middle;
+}
+
+th{
+  color:var(--wine);
+  background:#fcf8f1;
 }
 
 .pill{
-  padding:5px 8px;
+  padding:5px 9px;
   border-radius:14px;
   font-size:11px;
+  font-weight:bold;
+  display:inline-block;
 }
 
 .paid{
@@ -191,27 +305,39 @@ td{
   color:#9a2222;
 }
 
+.actions{
+  white-space:nowrap;
+}
+
 .actions button{
   padding:7px 10px;
   border-radius:15px;
   border:1px solid var(--line);
   background:#fff;
   margin-right:5px;
+  color:var(--wine);
 }
 
-.notice{
-  background:#fcf8f1;
-  padding:12px;
-  border-radius:10px;
-  color:#665d60;
-  font-size:13px;
-  line-height:1.6;
+.actions .delete-btn{
+  color:#a33;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px 15px;
+  max-width:850px;
+}
+
+.full{
+  grid-column:1 / -1;
 }
 
 .form-actions{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
+  margin-top:5px;
 }
 
 .save-btn{
@@ -221,11 +347,6 @@ td{
   padding:12px 20px;
   border-radius:22px;
   font-weight:bold;
-}
-
-.save-btn:disabled{
-  opacity:.6;
-  cursor:not-allowed;
 }
 
 .cancel-btn{
@@ -289,40 +410,163 @@ td{
   text-align:center;
 }
 
-.loading{
-  padding:20px;
-  text-align:center;
-  color:#777;
-}
-
+.loading,
 .empty-message{
   padding:25px;
   text-align:center;
   color:#777;
 }
 
-@media(max-width:800px){
+.color-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
 
+.color-row input[type="color"]{
+  width:60px;
+  height:45px;
+  padding:3px;
+  margin:0;
+}
+
+.color-code{
+  flex:1;
+  margin:0;
+}
+
+.preview-box{
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  margin-top:15px;
+}
+
+.preview-header{
+  padding:12px 15px;
+  background:var(--wine);
+  color:#fff;
+  font-weight:bold;
+}
+
+.preview-body{
+  padding:20px;
+  background:#f7f2eb;
+}
+
+.preview-button{
+  display:inline-block;
+  background:var(--wine);
+  color:#fff;
+  padding:10px 17px;
+  border-radius:20px;
+  font-weight:bold;
+}
+
+.settings-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.setting-card{
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:18px;
+  background:#fff;
+}
+
+.setting-card h3{
+  margin-top:0;
+}
+
+.password-wrap{
+  position:relative;
+}
+
+.password-wrap input{
+  padding-right:55px;
+}
+
+.show-pass{
+  position:absolute;
+  right:8px;
+  top:10px;
+  border:0;
+  background:transparent;
+  color:var(--wine);
+  font-size:12px;
+  font-weight:bold;
+}
+
+.two-buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:12px;
+  background:#e5f5ea;
+  color:#176a35;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.danger-box{
+  border:1px solid #efd0d0;
+  background:#fff7f7;
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+}
+
+@media(max-width:850px){
   .cards{
     grid-template-columns:1fr 1fr;
   }
 
+  .settings-grid,
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .full{
+    grid-column:auto;
+  }
 }
 
 @media(max-width:500px){
-
   .cards{
     grid-template-columns:1fr;
   }
 
+  .top{
+    padding:12px 14px;
+  }
+
   .top b{
-    font-size:18px;
+    font-size:17px;
+  }
+
+  .top small{
+    font-size:10px;
   }
 
   .layout{
-    padding:18px 12px;
+    padding:18px 12px 40px;
   }
 
+  .login{
+    padding:25px 20px;
+  }
+
+  .panel{
+    padding:15px;
+  }
 }
 </style>
 </head>
@@ -331,9 +575,10 @@ td{
 
 <div class="top">
 
-  <b>
-    FACE OF STYLE — ADMIN
-  </b>
+  <div>
+    <b>FACE OF STYLE — ADMIN</b>
+    <small>Hijab Factory Management Panel</small>
+  </div>
 
   <button
     class="logout"
@@ -358,6 +603,9 @@ let editingProductId = null;
 
 let selectedImageData = '';
 
+let settingsData = {};
+
+
 /* =====================================================
    LOGIN
 ===================================================== */
@@ -366,55 +614,99 @@ function login(){
 
   app.innerHTML = `
 
-    <div class="login">
+    <div class="login-wrap">
 
-      <h1>
-        Admin Login
-      </h1>
+      <div class="login">
 
-      <p>
-        Face of Style Hijab Factory
-      </p>
+        <div class="login-logo">
+          FS
+        </div>
 
-      <label>
-        Username
-      </label>
+        <h1>
+          Admin Login
+        </h1>
 
-      <input
-        id="u"
-        value="admin"
-        autocomplete="username"
-      >
+        <div class="login-sub">
+          Face of Style Hijab Factory
+        </div>
 
-      <label>
-        Password
-      </label>
+        <label>
+          <b>Username</b>
+        </label>
 
-      <input
-        id="p"
-        type="password"
-        autocomplete="current-password"
-      >
+        <input
+          id="u"
+          autocomplete="username"
+          placeholder="Admin username"
+        >
 
-      <button
-        class="primary"
-        onclick="doLogin()"
-      >
-        LOGIN
-      </button>
+        <label>
+          <b>Password</b>
+        </label>
 
-      <p
-        id="err"
-        class="error"
-      ></p>
+        <div class="password-wrap">
 
-      <div class="notice">
-        Login with your admin credentials.
+          <input
+            id="p"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Admin password"
+          >
+
+          <button
+            type="button"
+            class="show-pass"
+            onclick="togglePassword('p',this)"
+          >
+            SHOW
+          </button>
+
+        </div>
+
+        <button
+          class="primary"
+          id="loginButton"
+          onclick="doLogin()"
+        >
+          LOGIN
+        </button>
+
+        <p
+          id="err"
+          class="error"
+        ></p>
+
+        <button
+          type="button"
+          class="secondary"
+          style="width:100%;margin-top:5px"
+          onclick="forgotPassword()"
+        >
+          FORGOT PASSWORD?
+        </button>
+
+        <div class="notice">
+          Your admin credentials are protected
+          on the server. Never share your admin
+          password or secret keys.
+        </div>
+
       </div>
 
     </div>
 
   `;
+
+  const username =
+    localStorage.getItem('rememberAdminUser');
+
+  if(username){
+
+    document.getElementById('u').value =
+      username;
+
+  }
+
 }
 
 
@@ -436,7 +728,24 @@ async function doLogin(){
   const errorBox =
     document.getElementById('err');
 
+  const button =
+    document.getElementById('loginButton');
+
   errorBox.textContent = '';
+
+  if(!username || !password){
+
+    errorBox.textContent =
+      'Please enter your username and password.';
+
+    return;
+
+  }
+
+  button.disabled = true;
+
+  button.textContent =
+    'LOGGING IN...';
 
   try{
 
@@ -471,13 +780,23 @@ async function doLogin(){
         token
       );
 
+      localStorage.setItem(
+        'rememberAdminUser',
+        username
+      );
+
       dashboard();
 
     }else{
 
       errorBox.textContent =
         d.message ||
-        'Login failed';
+        'Invalid login details.';
+
+      button.disabled = false;
+
+      button.textContent =
+        'LOGIN';
 
     }
 
@@ -488,7 +807,109 @@ async function doLogin(){
     errorBox.textContent =
       'Unable to connect to server.';
 
+    button.disabled = false;
+
+    button.textContent =
+      'LOGIN';
+
   }
+
+}
+
+
+/* =====================================================
+   FORGOT PASSWORD
+===================================================== */
+
+function forgotPassword(){
+
+  app.innerHTML = `
+
+    <div class="login-wrap">
+
+      <div class="login">
+
+        <div class="login-logo">
+          🔐
+        </div>
+
+        <h1>
+          Password Recovery
+        </h1>
+
+        <div class="login-sub">
+          Secure Admin Password Reset
+        </div>
+
+        <div class="notice">
+
+          For security, password recovery
+          must be completed through the
+          server environment.
+
+          <br><br>
+
+          If you have access to Render,
+          update the environment variable:
+
+          <br><br>
+
+          <b>ADMIN_PASSWORD</b>
+
+          <br><br>
+
+          Then redeploy the service.
+
+        </div>
+
+        <button
+          class="primary"
+          style="margin-top:18px"
+          onclick="login()"
+        >
+          BACK TO LOGIN
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   PASSWORD TOGGLE
+===================================================== */
+
+function togglePassword(id,button){
+
+  const input =
+    document.getElementById(id);
+
+  if(!input){
+
+    return;
+
+  }
+
+  if(input.type === 'password'){
+
+    input.type = 'text';
+
+    button.textContent =
+      'HIDE';
+
+  }else{
+
+    input.type = 'password';
+
+    button.textContent =
+      'SHOW';
+
+  }
+
 }
 
 
@@ -496,7 +917,30 @@ async function doLogin(){
    LOGOUT
 ===================================================== */
 
-function logout(){
+async function logout(){
+
+  if(token){
+
+    try{
+
+      await fetch(
+        '/api/admin/logout',
+        {
+          method:'POST',
+          headers:{
+            Authorization:
+              'Bearer ' + token
+          }
+        }
+      );
+
+    }catch(error){
+
+      console.error(error);
+
+    }
+
+  }
 
   sessionStorage.removeItem(
     'adminToken'
@@ -509,6 +953,7 @@ function logout(){
   selectedImageData = '';
 
   login();
+
 }
 
 
@@ -540,6 +985,7 @@ async function api(
       logout();
 
       return null;
+
     }
 
     const text =
@@ -575,6 +1021,7 @@ async function api(
     return null;
 
   }
+
 }
 
 
@@ -602,80 +1049,57 @@ async function dashboard(){
       <div class="cards">
 
         <div class="stat">
-
-          <small>
-            Total Orders
-          </small>
-
+          <small>Total Orders</small>
           <b>
             ${d.stats?.orders || 0}
           </b>
-
         </div>
 
-
         <div class="stat">
-
-          <small>
-            Paid Orders
-          </small>
-
+          <small>Paid Orders</small>
           <b>
             ${d.stats?.paid || 0}
           </b>
-
         </div>
 
-
         <div class="stat">
-
-          <small>
-            Pending
-          </small>
-
+          <small>Pending Orders</small>
           <b>
             ${d.stats?.pending || 0}
           </b>
-
         </div>
 
-
         <div class="stat">
-
-          <small>
-            Revenue
-          </small>
-
+          <small>Total Revenue</small>
           <b>
             ₦${Number(
               d.stats?.revenue || 0
             ).toLocaleString('en-NG')}
           </b>
-
         </div>
 
       </div>
 
-
       <div class="tabs">
 
         <button
+          id="tabOrders"
           class="tab active"
           onclick="showOrders()"
         >
           Orders
         </button>
 
-
         <button
+          id="tabProducts"
           class="tab"
           onclick="showProducts()"
         >
           Products
         </button>
 
-
         <button
+          id="tabSettings"
           class="tab"
           onclick="showSettings()"
         >
@@ -683,7 +1107,6 @@ async function dashboard(){
         </button>
 
       </div>
-
 
       <div id="content"></div>
 
@@ -697,10 +1120,40 @@ async function dashboard(){
 
 
 /* =====================================================
+   ACTIVE TAB
+===================================================== */
+
+function activeTab(name){
+
+  document
+    .querySelectorAll('.tab')
+    .forEach(
+      x =>
+        x.classList.remove('active')
+    );
+
+  const tab =
+    document.getElementById(
+      'tab' +
+      name
+    );
+
+  if(tab){
+
+    tab.classList.add('active');
+
+  }
+
+}
+
+
+/* =====================================================
    ORDERS
 ===================================================== */
 
 async function showOrders(){
+
+  activeTab('Orders');
 
   const d =
     await api(
@@ -723,18 +1176,35 @@ async function showOrders(){
       ? d.orders
       : [];
 
-
   content.innerHTML = `
 
     <div class="panel">
 
-      <h2>
-        Customer Orders
-      </h2>
+      <div class="panel-header">
+
+        <div>
+
+          <h2>
+            Customer Orders
+          </h2>
+
+          <p style="color:#777">
+            View customer orders and payment status.
+          </p>
+
+        </div>
+
+        <button
+          class="secondary"
+          onclick="showOrders()"
+        >
+          ↻ Refresh
+        </button>
+
+      </div>
 
       ${
         orders.length
-
         ? `
 
           <table>
@@ -743,38 +1213,17 @@ async function showOrders(){
 
               <tr>
 
-                <th>
-                  Reference
-                </th>
-
-                <th>
-                  Customer
-                </th>
-
-                <th>
-                  Total
-                </th>
-
-                <th>
-                  Payment
-                </th>
-
-                <th>
-                  Status
-                </th>
-
-                <th>
-                  Date
-                </th>
-
-                <th>
-                  Action
-                </th>
+                <th>Reference</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
 
               </tr>
 
             </thead>
-
 
             <tbody>
 
@@ -788,39 +1237,35 @@ async function showOrders(){
                     )}
                   </td>
 
-
                   <td>
 
-                    ${escapeHtml(
-                      o.customer?.name || '-'
-                    )}
+                    <b>
+                      ${escapeHtml(
+                        o.customer?.name || '-'
+                      )}
+                    </b>
 
                     <br>
 
-                    ${escapeHtml(
-                      o.customer?.phone || '-'
-                    )}
+                    <span style="color:#777">
+                      ${escapeHtml(
+                        o.customer?.phone || '-'
+                      )}
+                    </span>
 
                   </td>
 
-
                   <td>
-
                     ₦${Number(
                       o.total || 0
                     ).toLocaleString('en-NG')}
-
                   </td>
 
-
                   <td>
-
                     ${escapeHtml(
                       o.payment?.provider || '-'
                     )}
-
                   </td>
-
 
                   <td>
 
@@ -833,30 +1278,22 @@ async function showOrders(){
                             : 'pending'
                       }"
                     >
-
                       ${escapeHtml(
                         o.status || 'pending'
                       )}
-
                     </span>
 
                   </td>
 
-
                   <td>
-
                     ${
                       o.createdAt
-
                       ? new Date(
                           o.createdAt
                         ).toLocaleString()
-
                       : '-'
                     }
-
                   </td>
-
 
                   <td class="actions">
 
@@ -877,7 +1314,6 @@ async function showOrders(){
           </table>
 
         `
-
         : `
 
           <div class="empty-message">
@@ -890,6 +1326,7 @@ async function showOrders(){
     </div>
 
   `;
+
 }
 
 
@@ -916,26 +1353,49 @@ async function viewOrder(id){
 
   if(!o){
 
+    alert(
+      'Order not found.'
+    );
+
     return;
 
   }
 
+  const items =
+    Array.isArray(o.items)
+      ? o.items
+      : [];
+
   alert(
-`Order: ${o.reference || o.id}
+`ORDER DETAILS
 
-Customer: ${o.customer?.name || '-'}
+Reference:
+${o.reference || o.id}
 
-Phone: ${o.customer?.phone || '-'}
+Customer:
+${o.customer?.name || '-'}
 
-Email: ${o.customer?.email || '-'}
+Phone:
+${o.customer?.phone || '-'}
 
-Total: ₦${Number(
+Email:
+${o.customer?.email || '-'}
+
+Total:
+₦${Number(
   o.total || 0
 ).toLocaleString('en-NG')}
 
-Status: ${o.status || '-'}
+Status:
+${o.status || '-'}
 
-Address:
+Items:
+${items.map(
+  x =>
+    `${x.name || '-'} × ${x.qty || 0}`
+).join('\n') || '-'}
+
+Delivery Address:
 ${o.customer?.address || '-'}`
   );
 
@@ -947,6 +1407,8 @@ ${o.customer?.address || '-'}`
 ===================================================== */
 
 async function showProducts(){
+
+  activeTab('Products');
 
   const d =
     await api(
@@ -969,20 +1431,11 @@ async function showProducts(){
       ? d.products
       : [];
 
-
   content.innerHTML = `
 
     <div class="panel">
 
-      <div
-        style="
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          gap:12px;
-          flex-wrap:wrap;
-        "
-      >
+      <div class="panel-header">
 
         <div>
 
@@ -991,14 +1444,11 @@ async function showProducts(){
           </h2>
 
           <p style="color:#777">
-
-            Manage your products,
-            prices, colors and photos.
-
+            Manage products, prices, colours,
+            descriptions and photos.
           </p>
 
         </div>
-
 
         <button
           onclick="addProduct()"
@@ -1016,7 +1466,6 @@ async function showProducts(){
 
       </div>
 
-
       <div
         style="
           overflow-x:auto;
@@ -1026,7 +1475,6 @@ async function showProducts(){
 
         ${
           products.length
-
           ? `
 
             <table>
@@ -1034,35 +1482,15 @@ async function showProducts(){
               <thead>
 
                 <tr>
-
-                  <th>
-                    Photo
-                  </th>
-
-                  <th>
-                    Name
-                  </th>
-
-                  <th>
-                    Category
-                  </th>
-
-                  <th>
-                    Color
-                  </th>
-
-                  <th>
-                    Price
-                  </th>
-
-                  <th>
-                    Action
-                  </th>
-
+                  <th>Photo</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Color</th>
+                  <th>Price</th>
+                  <th>Action</th>
                 </tr>
 
               </thead>
-
 
               <tbody>
 
@@ -1074,38 +1502,31 @@ async function showProducts(){
 
                       ${
                         p.img
-
                         ? `
-
                           <img
                             class="product-thumb"
                             src="${escapeAttr(p.img)}"
                             alt="${escapeAttr(p.name)}"
                           >
-
                         `
-
                         : `
-
                           <div class="product-empty">
                             No Photo
                           </div>
-
                         `
                       }
 
                     </td>
 
-
                     <td>
-                      ${escapeHtml(p.name)}
+                      <b>
+                        ${escapeHtml(p.name)}
+                      </b>
                     </td>
-
 
                     <td>
                       ${escapeHtml(p.cat)}
                     </td>
-
 
                     <td>
                       ${escapeHtml(
@@ -1113,15 +1534,11 @@ async function showProducts(){
                       )}
                     </td>
 
-
                     <td>
-
                       ₦${Number(
                         p.price || 0
                       ).toLocaleString('en-NG')}
-
                     </td>
-
 
                     <td class="actions">
 
@@ -1131,8 +1548,8 @@ async function showProducts(){
                         Edit
                       </button>
 
-
                       <button
+                        class="delete-btn"
                         onclick="deleteProduct(${Number(p.id)})"
                       >
                         Delete
@@ -1149,13 +1566,10 @@ async function showProducts(){
             </table>
 
           `
-
           : `
-
             <div class="empty-message">
               No products yet.
             </div>
-
           `
         }
 
@@ -1183,7 +1597,6 @@ function addProduct(){
       'content'
     );
 
-
   content.innerHTML = `
 
     <div class="panel">
@@ -1192,44 +1605,27 @@ function addProduct(){
         Add New Product
       </h2>
 
-
       <p style="color:#777">
-
-        Add a new item to your
-        Face of Style collection.
-
+        Add a new item to your Face of Style collection.
       </p>
-
 
       <form
         id="productForm"
-        style="
-          display:grid;
-          gap:10px;
-          max-width:650px;
-        "
+        class="form-grid"
       >
 
         <label>
-
-          <b>
-            Product Name
-          </b>
+          <b>Product Name</b>
 
           <input
             id="pName"
             required
-            placeholder="Example: Elegant Black Abaya"
+            placeholder="Elegant Black Abaya"
           >
-
         </label>
 
-
         <label>
-
-          <b>
-            Category
-          </b>
+          <b>Category</b>
 
           <select
             id="pCat"
@@ -1260,12 +1656,8 @@ function addProduct(){
 
         </label>
 
-
         <label>
-
-          <b>
-            Price (₦)
-          </b>
+          <b>Price (₦)</b>
 
           <input
             id="pPrice"
@@ -1274,31 +1666,21 @@ function addProduct(){
             required
             placeholder="25000"
           >
-
         </label>
 
-
         <label>
-
-          <b>
-            Color
-          </b>
+          <b>Color</b>
 
           <input
             id="pColor"
             required
             placeholder="Black, Navy Blue, Pink"
           >
-
         </label>
 
+        <label class="full">
 
-        <label>
-
-          <b>
-            Product Photo
-          </b>
-
+          <b>Product Photo</b>
 
           <div class="photo-box">
 
@@ -1308,12 +1690,8 @@ function addProduct(){
                 color:#756a6f;
               "
             >
-
-              Tap the button below to
-              choose a photo from your phone.
-
+              Choose a product photo from your phone.
             </p>
-
 
             <label class="photo-button">
 
@@ -1327,13 +1705,11 @@ function addProduct(){
 
             </label>
 
-
             <img
               id="photoPreview"
               class="photo-preview"
               alt="Photo preview"
             >
-
 
             <p
               id="photoStatus"
@@ -1350,12 +1726,9 @@ function addProduct(){
 
         </label>
 
+        <label class="full">
 
-        <label>
-
-          <b>
-            Description
-          </b>
+          <b>Description</b>
 
           <textarea
             id="pDesc"
@@ -1365,8 +1738,7 @@ function addProduct(){
 
         </label>
 
-
-        <div class="form-actions">
+        <div class="form-actions full">
 
           <button
             type="submit"
@@ -1374,7 +1746,6 @@ function addProduct(){
           >
             SAVE PRODUCT
           </button>
-
 
           <button
             type="button"
@@ -1392,14 +1763,12 @@ function addProduct(){
 
   `;
 
-
   document
     .getElementById('pImgFile')
     .addEventListener(
       'change',
       handleImageSelect
     );
-
 
   document
     .getElementById('productForm')
@@ -1426,7 +1795,6 @@ async function handleImageSelect(event){
 
   }
 
-
   if(!file.type.startsWith('image/')){
 
     alert(
@@ -1438,7 +1806,6 @@ async function handleImageSelect(event){
     return;
 
   }
-
 
   try{
 
@@ -1454,10 +1821,8 @@ async function handleImageSelect(event){
 
     }
 
-
     selectedImageData =
       await compressImage(file);
-
 
     const preview =
       document.getElementById(
@@ -1473,7 +1838,6 @@ async function handleImageSelect(event){
         'block';
 
     }
-
 
     if(status){
 
@@ -1509,13 +1873,11 @@ function compressImage(file){
       const reader =
         new FileReader();
 
-
       reader.onload =
         function(e){
 
           const img =
             new Image();
-
 
           img.onload =
             function(){
@@ -1523,31 +1885,26 @@ function compressImage(file){
               const maxWidth =
                 900;
 
-
               const scale =
                 Math.min(
                   1,
                   maxWidth / img.width
                 );
 
-
               const width =
                 Math.round(
                   img.width * scale
                 );
-
 
               const height =
                 Math.round(
                   img.height * scale
                 );
 
-
               const canvas =
                 document.createElement(
                   'canvas'
                 );
-
 
               canvas.width =
                 width;
@@ -1555,12 +1912,10 @@ function compressImage(file){
               canvas.height =
                 height;
 
-
               const ctx =
                 canvas.getContext(
                   '2d'
                 );
-
 
               if(!ctx){
 
@@ -1574,7 +1929,6 @@ function compressImage(file){
 
               }
 
-
               ctx.drawImage(
                 img,
                 0,
@@ -1583,32 +1937,25 @@ function compressImage(file){
                 height
               );
 
-
-              const data =
+              resolve(
                 canvas.toDataURL(
                   'image/jpeg',
                   0.78
-                );
-
-
-              resolve(data);
+                )
+              );
 
             };
 
-
           img.onerror =
             reject;
-
 
           img.src =
             e.target.result;
 
         };
 
-
       reader.onerror =
         reject;
-
 
       reader.readAsDataURL(file);
 
@@ -1626,18 +1973,15 @@ async function saveProduct(e){
 
   e.preventDefault();
 
-
   const name =
     document.getElementById(
       'pName'
     ).value.trim();
 
-
   const cat =
     document.getElementById(
       'pCat'
     ).value;
-
 
   const price =
     Number(
@@ -1646,18 +1990,15 @@ async function saveProduct(e){
       ).value
     );
 
-
   const color =
     document.getElementById(
       'pColor'
     ).value.trim();
 
-
   const desc =
     document.getElementById(
       'pDesc'
     ).value.trim();
-
 
   if(
     !name ||
@@ -1674,7 +2015,6 @@ async function saveProduct(e){
 
   }
 
-
   if(
     !selectedImageData &&
     !editingProductId
@@ -1688,12 +2028,10 @@ async function saveProduct(e){
 
   }
 
-
   const saveButton =
     document.querySelector(
       '#productForm .save-btn'
     );
-
 
   if(!saveButton){
 
@@ -1701,28 +2039,18 @@ async function saveProduct(e){
 
   }
 
-
   saveButton.disabled =
     true;
-
 
   saveButton.textContent =
     editingProductId
       ? 'UPDATING...'
       : 'SAVING...';
 
-
   try{
 
     let imageToSave =
       selectedImageData;
-
-
-    /*
-      EDIT PRODUCT:
-      If no new photo is selected,
-      keep the existing photo.
-    */
 
     if(
       editingProductId &&
@@ -1734,7 +2062,6 @@ async function saveProduct(e){
           '/api/admin/products'
         );
 
-
       const product =
         existing?.products?.find(
           x =>
@@ -1742,34 +2069,23 @@ async function saveProduct(e){
             Number(editingProductId)
         );
 
-
       imageToSave =
         product?.img || '';
 
     }
 
-
     const data = {
 
-      name:name,
-
-      cat:cat,
-
-      price:price,
-
-      color:color,
-
+      name,
+      cat,
+      price,
+      color,
       img:imageToSave,
-
-      desc:desc
+      desc
 
     };
 
-
     let result;
-
-
-    /* EDIT PRODUCT */
 
     if(editingProductId){
 
@@ -1792,10 +2108,7 @@ async function saveProduct(e){
           }
         );
 
-
     }else{
-
-      /* ADD PRODUCT */
 
       result =
         await api(
@@ -1817,7 +2130,6 @@ async function saveProduct(e){
 
     }
 
-
     if(
       result &&
       result.ok
@@ -1829,16 +2141,13 @@ async function saveProduct(e){
           : 'Product added successfully.'
       );
 
-
       editingProductId =
         null;
 
       selectedImageData =
         '';
 
-
       showProducts();
-
 
     }else{
 
@@ -1847,10 +2156,8 @@ async function saveProduct(e){
         'Could not save product.'
       );
 
-
       saveButton.disabled =
         false;
-
 
       saveButton.textContent =
         editingProductId
@@ -1859,20 +2166,16 @@ async function saveProduct(e){
 
     }
 
-
   }catch(error){
 
     console.error(error);
-
 
     alert(
       'Server error. Product was not saved.'
     );
 
-
     saveButton.disabled =
       false;
-
 
     saveButton.textContent =
       editingProductId
@@ -1895,13 +2198,11 @@ async function editProduct(id){
       '/api/admin/products'
     );
 
-
   if(!d){
 
     return;
 
   }
-
 
   const p =
     d.products?.find(
@@ -1909,7 +2210,6 @@ async function editProduct(id){
         Number(x.id) ===
         Number(id)
     );
-
 
   if(!p){
 
@@ -1921,19 +2221,16 @@ async function editProduct(id){
 
   }
 
-
   editingProductId =
     p.id;
 
   selectedImageData =
     '';
 
-
   const content =
     document.getElementById(
       'content'
     );
-
 
   content.innerHTML = `
 
@@ -1943,43 +2240,27 @@ async function editProduct(id){
         Edit Product
       </h2>
 
-
       <p style="color:#777">
-
         Update your product information.
-
       </p>
-
 
       <form
         id="productForm"
-        style="
-          display:grid;
-          gap:10px;
-          max-width:650px;
-        "
+        class="form-grid"
       >
 
         <label>
-
-          <b>
-            Product Name
-          </b>
+          <b>Product Name</b>
 
           <input
             id="pName"
             required
             value="${escapeAttr(p.name)}"
           >
-
         </label>
 
-
         <label>
-
-          <b>
-            Category
-          </b>
+          <b>Category</b>
 
           <select
             id="pCat"
@@ -1993,7 +2274,6 @@ async function editProduct(id){
               Abaya
             </option>
 
-
             <option value="Gown"
               ${p.cat === 'Gown'
                 ? 'selected'
@@ -2001,14 +2281,12 @@ async function editProduct(id){
               Gown
             </option>
 
-
             <option value="Hijab"
               ${p.cat === 'Hijab'
                 ? 'selected'
                 : ''}>
               Hijab
             </option>
-
 
             <option value="Custom"
               ${p.cat === 'Custom'
@@ -2018,15 +2296,10 @@ async function editProduct(id){
             </option>
 
           </select>
-
         </label>
 
-
         <label>
-
-          <b>
-            Price (₦)
-          </b>
+          <b>Price (₦)</b>
 
           <input
             id="pPrice"
@@ -2035,15 +2308,10 @@ async function editProduct(id){
             required
             value="${Number(p.price)}"
           >
-
         </label>
 
-
         <label>
-
-          <b>
-            Color
-          </b>
+          <b>Color</b>
 
           <input
             id="pColor"
@@ -2052,16 +2320,11 @@ async function editProduct(id){
               p.color || ''
             )}"
           >
-
         </label>
 
+        <label class="full">
 
-        <label>
-
-          <b>
-            Product Photo
-          </b>
-
+          <b>Product Photo</b>
 
           <div class="photo-box">
 
@@ -2071,12 +2334,9 @@ async function editProduct(id){
                 color:#756a6f;
               "
             >
-
-              Choose a new photo if you
-              want to replace the current one.
-
+              Choose a new photo if you want
+              to replace the current one.
             </p>
-
 
             <label class="photo-button">
 
@@ -2089,7 +2349,6 @@ async function editProduct(id){
               >
 
             </label>
-
 
             <img
               id="photoPreview"
@@ -2105,7 +2364,6 @@ async function editProduct(id){
               "
             >
 
-
             <p
               id="photoStatus"
               style="
@@ -2114,39 +2372,34 @@ async function editProduct(id){
                 margin-bottom:0;
               "
             >
-
               ${
                 p.img
                   ? 'Current product photo'
                   : 'No photo'
               }
-
             </p>
 
           </div>
 
         </label>
 
+        <label class="full">
 
-        <label>
-
-          <b>
-            Description
-          </b>
-
+          <b>Description</b>
 
           <textarea
             id="pDesc"
             rows="4"
             placeholder="Describe the product..."
           >${escapeHtml(
-            p.desc || ''
+            p.description ||
+            p.desc ||
+            ''
           )}</textarea>
 
         </label>
 
-
-        <div class="form-actions">
+        <div class="form-actions full">
 
           <button
             type="submit"
@@ -2154,7 +2407,6 @@ async function editProduct(id){
           >
             UPDATE PRODUCT
           </button>
-
 
           <button
             type="button"
@@ -2172,14 +2424,12 @@ async function editProduct(id){
 
   `;
 
-
   document
     .getElementById('pImgFile')
     .addEventListener(
       'change',
       handleImageSelect
     );
-
 
   document
     .getElementById('productForm')
@@ -2202,13 +2452,11 @@ async function deleteProduct(id){
       '/api/admin/products'
     );
 
-
   if(!d){
 
     return;
 
   }
-
 
   const p =
     d.products?.find(
@@ -2216,7 +2464,6 @@ async function deleteProduct(id){
         Number(x.id) ===
         Number(id)
     );
-
 
   if(!p){
 
@@ -2228,19 +2475,16 @@ async function deleteProduct(id){
 
   }
 
-
   const confirmed =
     confirm(
       `Are you sure you want to delete "${p.name}"?`
     );
-
 
   if(!confirmed){
 
     return;
 
   }
-
 
   const result =
     await api(
@@ -2250,7 +2494,6 @@ async function deleteProduct(id){
         method:'DELETE'
       }
     );
-
 
   if(
     result &&
@@ -2281,11 +2524,12 @@ async function deleteProduct(id){
 
 async function showSettings(){
 
+  activeTab('Settings');
+
   const d =
     await api(
       '/api/admin/settings'
     );
-
 
   if(!d){
 
@@ -2293,12 +2537,13 @@ async function showSettings(){
 
   }
 
+  settingsData =
+    d;
 
   const content =
     document.getElementById(
       'content'
     );
-
 
   content.innerHTML = `
 
@@ -2308,51 +2553,493 @@ async function showSettings(){
         Store Settings
       </h2>
 
-
-      <p>
-
-        <b>
-          Payment:
-        </b>
-
-        Paystack
-
-        ${
-          d.paystackConfigured
-            ? 'configured ✓'
-            : 'not configured'
-        }
-
+      <p style="color:#777">
+        Manage the appearance and important
+        store information from the admin area.
       </p>
 
+      <div class="settings-grid">
 
-      <p>
+        <div class="setting-card">
 
-        <b>
-          WhatsApp:
-        </b>
+          <h3>
+            🎨 Website Colours
+          </h3>
 
-        0906 582 8886
+          <p style="color:#777;font-size:13px">
+            Choose the main colours used across
+            the customer website.
+          </p>
 
-      </p>
+          <label>
+            <b>Wine / Primary Colour</b>
+          </label>
+
+          <div class="color-row">
+
+            <input
+              id="wineColor"
+              type="color"
+              value="#651630"
+              oninput="updateColorPreview()"
+            >
+
+            <input
+              id="wineCode"
+              class="color-code"
+              value="#651630"
+              oninput="syncColorInput('wine')"
+            >
+
+          </div>
+
+          <label>
+            <b>Gold / Accent Colour</b>
+          </label>
+
+          <div class="color-row">
+
+            <input
+              id="goldColor"
+              type="color"
+              value="#c9a45b"
+              oninput="updateColorPreview()"
+            >
+
+            <input
+              id="goldCode"
+              class="color-code"
+              value="#c9a45b"
+              oninput="syncColorInput('gold')"
+            >
+
+          </div>
+
+          <button
+            class="save-btn"
+            onclick="saveColours()"
+          >
+            SAVE COLOURS
+          </button>
+
+          <div
+            id="colourMessage"
+            style="margin-top:10px"
+          ></div>
+
+          <div class="preview-box">
+
+            <div class="preview-header">
+              Face of Style Preview
+            </div>
+
+            <div class="preview-body">
+
+              <h3 style="margin-top:0">
+                Modesty, Elegance & Style
+              </h3>
+
+              <p>
+                Your new colour selection will
+                appear on the customer website
+                after it is saved.
+              </p>
+
+              <span
+                id="previewButton"
+                class="preview-button"
+              >
+                SHOP COLLECTION
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
 
 
-      <div class="notice">
+        <div class="setting-card">
 
-        Never place the Paystack Secret Key
-        in the browser.
+          <h3>
+            💳 Payment
+          </h3>
 
-        Keep it in the server environment.
+          <p>
 
-        Before going live, use HTTPS and
-        configure the Paystack webhook URL
-        in your Paystack dashboard.
+            Paystack:
+
+            ${
+              d.paystackConfigured
+              ? '<span class="badge">CONFIGURED ✓</span>'
+              : '<span style="color:#a33">Not configured</span>'
+            }
+
+          </p>
+
+          <div class="notice">
+
+            Paystack Secret Key must remain
+            on the server.
+
+            Never put the secret key inside
+            index.html or admin.html.
+
+          </div>
+
+          <h3 style="margin-top:22px">
+            📱 WhatsApp
+          </h3>
+
+          <p>
+            <b>0906 582 8886</b>
+          </p>
+
+          <div class="notice">
+
+            Customers can use WhatsApp for
+            direct enquiries and custom orders.
+
+          </div>
+
+        </div>
+
+
+        <div class="setting-card">
+
+          <h3>
+            🔐 Admin Security
+          </h3>
+
+          <p>
+            Current admin session:
+            <span class="badge">
+              ACTIVE
+            </span>
+          </p>
+
+          <div class="notice">
+
+            Always log out after using the
+            admin dashboard on a shared device.
+
+            <br><br>
+
+            For stronger protection, use a
+            strong unique admin password.
+
+          </div>
+
+          <div
+            class="two-buttons"
+            style="margin-top:15px"
+          >
+
+            <button
+              class="secondary"
+              onclick="forgotPassword()"
+            >
+              PASSWORD RECOVERY
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="setting-card">
+
+          <h3>
+            🛡️ Security Status
+          </h3>
+
+          <p>
+            Admin API:
+            <span class="badge">
+              PROTECTED
+            </span>
+          </p>
+
+          <p>
+            Payment verification:
+            <span class="badge">
+              SERVER VERIFIED
+            </span>
+          </p>
+
+          <p>
+            Product management:
+            <span class="badge">
+              ADMIN ONLY
+            </span>
+          </p>
+
+          <div class="danger-box">
+
+            <b>Important</b>
+
+            <p style="font-size:13px;line-height:1.6">
+
+              Do not share your Render
+              environment variables, Paystack
+              secret key or admin password.
+
+            </p>
+
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
   `;
+
+  updateColorPreview();
+
+}
+
+
+/* =====================================================
+   COLOUR PREVIEW
+===================================================== */
+
+function updateColorPreview(){
+
+  const wine =
+    document.getElementById(
+      'wineColor'
+    )?.value ||
+    '#651630';
+
+  const gold =
+    document.getElementById(
+      'goldColor'
+    )?.value ||
+    '#c9a45b';
+
+  const header =
+    document.querySelector(
+      '.preview-header'
+    );
+
+  const button =
+    document.getElementById(
+      'previewButton'
+    );
+
+  if(header){
+
+    header.style.background =
+      wine;
+
+  }
+
+  if(button){
+
+    button.style.background =
+      wine;
+
+  }
+
+}
+
+
+/* =====================================================
+   SYNC COLOUR INPUT
+===================================================== */
+
+function syncColorInput(type){
+
+  if(type === 'wine'){
+
+    const text =
+      document.getElementById(
+        'wineCode'
+      );
+
+    const color =
+      document.getElementById(
+        'wineColor'
+      );
+
+    if(
+      text &&
+      color &&
+      /^#[0-9a-fA-F]{6}$/.test(
+        text.value.trim()
+      )
+    ){
+
+      color.value =
+        text.value.trim();
+
+    }
+
+  }
+
+  if(type === 'gold'){
+
+    const text =
+      document.getElementById(
+        'goldCode'
+      );
+
+    const color =
+      document.getElementById(
+        'goldColor'
+      );
+
+    if(
+      text &&
+      color &&
+      /^#[0-9a-fA-F]{6}$/.test(
+        text.value.trim()
+      )
+    ){
+
+      color.value =
+        text.value.trim();
+
+    }
+
+  }
+
+  updateColorPreview();
+
+}
+
+
+/* =====================================================
+   SAVE COLOURS
+===================================================== */
+
+async function saveColours(){
+
+  const wine =
+    document.getElementById(
+      'wineCode'
+    )?.value
+      .trim();
+
+  const gold =
+    document.getElementById(
+      'goldCode'
+    )?.value
+      .trim();
+
+  const message =
+    document.getElementById(
+      'colourMessage'
+    );
+
+  if(
+    !/^#[0-9a-fA-F]{6}$/.test(wine) ||
+    !/^#[0-9a-fA-F]{6}$/.test(gold)
+  ){
+
+    if(message){
+
+      message.innerHTML =
+        '<span class="error">Enter valid HEX colours.</span>';
+
+    }
+
+    return;
+
+  }
+
+  const button =
+    document.querySelector(
+      '[onclick="saveColours()"]'
+    );
+
+  if(button){
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      'SAVING...';
+
+  }
+
+  try{
+
+    const result =
+      await api(
+        '/api/admin/settings/colors',
+        {
+
+          method:'PUT',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify({
+              wine,
+              gold
+            })
+
+        }
+      );
+
+    if(
+      result &&
+      result.ok
+    ){
+
+      if(message){
+
+        message.innerHTML =
+          '<span class="success">Colours saved successfully ✓</span>';
+
+      }
+
+    }else{
+
+      if(message){
+
+        message.innerHTML =
+          `<span class="error">${
+            escapeHtml(
+              result?.message ||
+              'Could not save colours.'
+            )
+          }</span>`;
+
+      }
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    if(message){
+
+      message.innerHTML =
+        '<span class="error">Could not save colours.</span>';
+
+    }
+
+  }finally{
+
+    if(button){
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        'SAVE COLOURS';
+
+    }
+
+  }
 
 }
 
@@ -2378,6 +3065,28 @@ function escapeAttr(value){
   return escapeHtml(value);
 
 }
+
+
+/* =====================================================
+   ENTER KEY LOGIN
+===================================================== */
+
+document.addEventListener(
+  'keydown',
+  function(event){
+
+    if(
+      event.key === 'Enter' &&
+      document.getElementById('p') &&
+      document.activeElement?.id === 'p'
+    ){
+
+      doLogin();
+
+    }
+
+  }
+);
 
 
 /* =====================================================
