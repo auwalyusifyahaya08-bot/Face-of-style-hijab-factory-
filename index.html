@@ -1,911 +1,1424 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#651630">
 
-<title>Face of Style Hijab Factory | Online Store</title>
-
-<meta name="description"
-content="Shop elegant hijabs, abayas, gowns and modest fashion from Face of Style Hijab Factory.">
+<title>Face of Style Hijab Factory | Modest Fashion</title>
 
 <style>
 :root{
   --wine:#651630;
-  --wine2:#4d1024;
+  --wine-dark:#471020;
   --gold:#c9a45b;
-  --cream:#fcf8f1;
-  --paper:#fff;
-  --text:#251c20;
+  --cream:#f7f2eb;
+  --white:#fff;
+  --text:#292025;
   --muted:#756a6f;
-  --line:#eadfd4
+  --line:#e6dacf;
+  --success:#176a35;
+  --shadow:0 15px 45px rgba(45,18,28,.10);
 }
 
 *{
-  box-sizing:border-box
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
 }
 
 body{
   margin:0;
   background:var(--cream);
   color:var(--text);
-  font-family:Arial,sans-serif
+  font-family:Arial,sans-serif;
 }
 
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button,
 a{
-  text-decoration:none;
-  color:inherit
+  -webkit-tap-highlight-color:transparent;
 }
 
 button{
-  cursor:pointer
+  cursor:pointer;
 }
 
-.top{
-  background:var(--wine2);
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+img{
+  max-width:100%;
+  display:block;
+}
+
+/* ================= HEADER ================= */
+
+.topbar{
+  background:var(--wine);
   color:#fff;
   text-align:center;
-  padding:8px;
+  padding:9px 15px;
   font-size:12px;
-  letter-spacing:.5px
+  letter-spacing:.6px;
+}
+
+.topbar b{
+  color:#f4d995;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
 }
 
 .nav{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:#fff;
-  border-bottom:1px solid var(--line);
+  max-width:1250px;
+  margin:auto;
+  min-height:76px;
+  padding:12px 20px;
   display:flex;
   align-items:center;
-  gap:18px;
-  padding:10px max(18px,calc((100% - 1200px)/2))
-}
-
-.logo{
-  height:56px;
-  width:auto
+  justify-content:space-between;
+  gap:20px;
 }
 
 .brand{
-  font-family:Georgia,serif;
-  color:var(--wine);
-  font-size:17px;
-  font-weight:bold;
-  line-height:1.05
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:230px;
 }
 
-.brand small{
+.logo{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:var(--wine);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font:20px Georgia,serif;
+  border:2px solid var(--gold);
+}
+
+.brand-text strong{
   display:block;
-  color:var(--gold);
-  font:10px Arial;
-  letter-spacing:3px;
-  margin-top:3px
+  color:var(--wine);
+  font:20px Georgia,serif;
+  line-height:1.1;
+}
+
+.brand-text small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:2px;
 }
 
 .navlinks{
   display:flex;
-  gap:20px;
-  margin-left:auto;
-  font-size:14px
+  align-items:center;
+  gap:24px;
+}
+
+.navlinks a{
+  font-size:13px;
+  font-weight:bold;
 }
 
 .navlinks a:hover{
-  color:var(--wine)
+  color:var(--wine);
 }
 
-.icons{
-  display:flex;
-  gap:8px
-}
-
-.iconbtn{
+.cartBtn{
   position:relative;
   border:1px solid var(--line);
   background:#fff;
+  width:46px;
+  height:46px;
   border-radius:50%;
-  width:40px;
-  height:40px;
-  cursor:pointer
+  font-size:20px;
 }
 
-.count{
+.cartCount{
+  position:absolute;
+  top:-4px;
+  right:-3px;
+  min-width:19px;
+  height:19px;
+  padding:0 5px;
+  border-radius:20px;
   background:var(--wine);
   color:#fff;
-  border-radius:50%;
   font-size:10px;
-  padding:3px 6px;
-  position:absolute;
-  margin:-7px 0 0 -10px
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
 }
+
+.menuBtn{
+  display:none;
+  border:1px solid var(--line);
+  background:#fff;
+  width:44px;
+  height:44px;
+  border-radius:10px;
+  font-size:20px;
+}
+
+/* ================= HERO ================= */
 
 .hero{
-  max-width:1200px;
+  max-width:1250px;
   margin:auto;
-  padding:25px 18px;
+  padding:75px 20px 60px;
   display:grid;
-  grid-template-columns:1fr 1.05fr;
-  gap:25px;
-  align-items:stretch
+  grid-template-columns:1.05fr .95fr;
+  gap:55px;
+  align-items:center;
 }
 
-.heroText{
-  background:var(--wine);
-  border-radius:20px;
-  padding:clamp(28px,5vw,65px);
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-  justify-content:center
-}
-
-.heroText .tag{
-  color:#e6c979;
+.tag{
+  color:var(--gold);
+  font-size:11px;
+  font-weight:bold;
   letter-spacing:4px;
-  font-size:12px;
-  font-weight:bold
+  margin-bottom:15px;
 }
 
-.heroText h1{
-  font:clamp(40px,6vw,68px) Georgia,serif;
-  line-height:1.02;
-  margin:15px 0
+.hero h1{
+  margin:0;
+  max-width:650px;
+  color:var(--wine);
+  font:clamp(42px,6vw,76px)/1.03 Georgia,serif;
 }
 
-.heroText p{
-  color:#f3e8eb;
-  line-height:1.7;
-  max-width:500px
+.hero p{
+  max-width:600px;
+  color:var(--muted);
+  line-height:1.8;
+  font-size:16px;
+  margin:22px 0 30px;
+}
+
+.heroActions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.heroBtn,
+.secondaryBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  padding:0 23px;
+  border-radius:28px;
+  font-weight:bold;
+  font-size:13px;
 }
 
 .heroBtn{
+  background:var(--wine);
+  color:#fff;
+}
+
+.heroBtn:hover{
+  background:var(--wine-dark);
+}
+
+.secondaryBtn{
+  border:1px solid var(--line);
   background:#fff;
-  color:var(--wine);
-  padding:14px 20px;
+}
+
+.heroVisual{
+  min-height:470px;
   border-radius:28px;
-  font-weight:bold;
-  display:inline-block;
-  width:max-content;
-  margin-top:10px
-}
-
-.heroImg{
-  border-radius:20px;
   overflow:hidden;
-  min-height:430px
+  background:
+    linear-gradient(145deg,#eadbd0,#f9f5f0);
+  position:relative;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  box-shadow:var(--shadow);
 }
 
-.heroImg img{
+.heroVisual img{
   width:100%;
   height:100%;
   object-fit:cover;
-  display:block
 }
 
-.wrap{
-  max-width:1200px;
-  margin:auto;
-  padding:35px 18px
-}
-
-.sectionTitle{
-  text-align:center;
-  margin:10px 0 30px
-}
-
-.sectionTitle h2{
-  font:38px Georgia,serif;
-  color:var(--wine);
-  margin:8px
-}
-
-.sectionTitle p{
-  color:var(--muted)
-}
-
-.toolbar{
+.heroPlaceholder{
+  width:100%;
+  height:100%;
+  min-height:470px;
   display:flex;
-  gap:10px;
   align-items:center;
-  justify-content:space-between;
-  margin-bottom:20px;
-  flex-wrap:wrap
+  justify-content:center;
+  text-align:center;
+  padding:30px;
+  color:var(--wine);
+  font:38px Georgia,serif;
 }
+
+/* ================= SECTIONS ================= */
+
+.section{
+  max-width:1250px;
+  margin:auto;
+  padding:65px 20px;
+}
+
+.sectionHead{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.eyebrow{
+  color:var(--gold);
+  letter-spacing:4px;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.section h2{
+  margin:9px 0;
+  color:var(--wine);
+  font:38px Georgia,serif;
+}
+
+.sectionHead p{
+  color:var(--muted);
+  margin:0 auto;
+  max-width:600px;
+  line-height:1.7;
+}
+
+/* ================= CATEGORIES ================= */
 
 .cats{
   display:flex;
+  justify-content:center;
   gap:8px;
-  overflow:auto
+  flex-wrap:wrap;
+  margin:28px 0 15px;
 }
 
 .cat{
-  padding:9px 14px;
   border:1px solid var(--line);
   background:#fff;
-  border-radius:22px;
-  cursor:pointer;
-  white-space:nowrap
+  color:var(--text);
+  padding:10px 17px;
+  border-radius:25px;
+  font-size:12px;
+  font-weight:bold;
 }
 
-.cat.active,
-.cat:hover{
+.cat.active{
   background:var(--wine);
   color:#fff;
-  border-color:var(--wine)
+  border-color:var(--wine);
+}
+
+.searchWrap{
+  max-width:500px;
+  margin:0 auto 30px;
+  position:relative;
 }
 
 .search{
-  padding:11px 14px;
+  width:100%;
+  padding:14px 18px;
   border:1px solid var(--line);
-  border-radius:22px;
+  border-radius:28px;
+  outline:none;
   background:#fff;
-  min-width:220px
 }
 
-.grid{
+.search:focus{
+  border-color:var(--gold);
+}
+
+/* ================= PRODUCTS ================= */
+
+.products{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:18px
+  gap:20px;
 }
 
-.card{
+.product{
   background:#fff;
   border:1px solid var(--line);
-  border-radius:16px;
+  border-radius:18px;
+  overflow:hidden;
+  transition:.2s;
+}
+
+.product:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow);
+}
+
+.productImage{
+  aspect-ratio:4/5;
+  background:#f3ebe4;
   overflow:hidden;
   position:relative;
-  box-shadow:0 7px 20px rgba(65,24,38,.05)
 }
 
-.pic{
-  position:relative
-}
-
-.pic img{
+.productImage img{
   width:100%;
-  aspect-ratio:4/5;
+  height:100%;
   object-fit:cover;
-  display:block;
-  background:#f5eee7
 }
 
-.badge{
-  position:absolute;
-  top:10px;
-  left:10px;
-  background:var(--wine);
-  color:#fff;
-  padding:6px 9px;
-  border-radius:15px;
-  font-size:10px
-}
-
-.heart{
-  position:absolute;
-  right:10px;
-  top:10px;
-  background:#fff;
-  border:0;
-  border-radius:50%;
-  width:36px;
-  height:36px;
-  cursor:pointer;
-  font-size:18px
-}
-
-.body{
-  padding:14px
-}
-
-.body h3{
-  font:20px Georgia,serif;
-  color:var(--wine);
-  margin:0 0 6px
-}
-
-.body p{
+.noImage{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#aaa;
   font-size:13px;
+}
+
+.productBody{
+  padding:15px;
+}
+
+.productCat{
+  color:var(--gold);
+  font-size:10px;
+  font-weight:bold;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+
+.productName{
+  color:var(--wine);
+  font:20px Georgia,serif;
+  margin:6px 0;
+}
+
+.productDesc{
   color:var(--muted);
-  margin:0 0 12px;
-  line-height:1.5
+  font-size:12px;
+  line-height:1.6;
+  min-height:38px;
+}
+
+.productBottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:13px;
 }
 
 .price{
+  color:var(--wine);
   font-weight:bold;
-  font-size:18px;
-  margin-bottom:11px
+  font-size:15px;
 }
 
-.actions{
-  display:flex;
-  gap:7px
-}
-
-.add{
-  flex:1;
+.addBtn{
   border:0;
   background:var(--wine);
   color:#fff;
-  border-radius:22px;
-  padding:11px;
-  cursor:pointer;
-  font-weight:bold
+  padding:9px 13px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:bold;
 }
 
-.view{
-  border:1px solid var(--wine);
-  color:var(--wine);
-  background:#fff;
-  border-radius:22px;
-  padding:10px 12px;
-  cursor:pointer
+.addBtn:hover{
+  background:var(--wine-dark);
 }
 
-.features{
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:50px;
+  color:var(--muted);
+}
+
+/* ================= FEATURES ================= */
+
+.featureGrid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-top:50px
+  gap:15px;
 }
 
 .feature{
   background:#fff;
   border:1px solid var(--line);
-  padding:20px;
-  border-radius:15px;
-  text-align:center
+  padding:22px;
+  border-radius:18px;
+}
+
+.featureIcon{
+  font-size:25px;
+  margin-bottom:12px;
 }
 
 .feature b{
   display:block;
   color:var(--wine);
-  margin-bottom:5px
+  font:18px Georgia,serif;
+  margin-bottom:6px;
 }
 
 .feature span{
+  color:var(--muted);
   font-size:12px;
-  color:var(--muted)
+  line-height:1.6;
 }
 
+/* ================= CUSTOM ================= */
+
 .custom{
-  background:var(--wine2);
+  max-width:1100px;
+  margin:30px auto;
+  padding:50px 30px;
+  border-radius:25px;
+  background:var(--wine);
   color:#fff;
-  border-radius:20px;
-  padding:42px;
   text-align:center;
-  margin-top:45px
 }
 
 .custom h2{
-  font:34px Georgia,serif;
-  margin:0 0 10px
+  color:#fff;
+  margin:0 0 10px;
 }
 
 .custom p{
-  color:#eadde1;
-  line-height:1.7
+  max-width:650px;
+  margin:0 auto 25px;
+  line-height:1.8;
+  color:#f3e9e9;
+  font-size:14px;
 }
 
-.custom a{
-  display:inline-block;
-  background:var(--gold);
-  color:#2e1b16;
-  padding:13px 22px;
+.whatsappBtn{
+  display:inline-flex;
+  padding:13px 23px;
+  background:#fff;
+  color:var(--wine);
   border-radius:25px;
   font-weight:bold;
-  margin-top:8px
+  font-size:12px;
 }
+
+/* ================= ABOUT ================= */
+
+.aboutGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
+}
+
+.aboutBox{
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  border:1px solid var(--line);
+}
+
+.aboutBox h3{
+  color:var(--wine);
+  font:28px Georgia,serif;
+  margin-top:0;
+}
+
+.aboutBox p{
+  color:var(--muted);
+  line-height:1.8;
+}
+
+/* ================= FOOTER ================= */
 
 footer{
-  margin-top:55px;
-  background:#24151b;
-  color:#eee;
-  padding:40px 18px
+  background:#35141f;
+  color:#fff;
+  margin-top:50px;
 }
 
-.foot{
-  max-width:1200px;
+.footerGrid{
+  max-width:1250px;
   margin:auto;
+  padding:50px 20px 30px;
   display:grid;
   grid-template-columns:1.5fr 1fr 1fr;
-  gap:30px
+  gap:35px;
 }
 
-.foot h3{
-  font-family:Georgia,serif
+footer h3{
+  margin-top:0;
+  color:#fff;
+  font:22px Georgia,serif;
 }
 
-.foot p,
-.foot a{
-  color:#cfc1c6;
+footer p,
+footer a{
+  color:#d9cdd0;
   font-size:13px;
-  line-height:1.8
+  line-height:1.8;
 }
 
-.copy{
+.footerBottom{
+  border-top:1px solid #ffffff20;
   text-align:center;
-  border-top:1px solid #49363d;
-  margin-top:25px;
-  padding-top:18px;
-  color:#aaa;
-  font-size:12px
+  padding:18px;
+  color:#cdbfc3;
+  font-size:11px;
 }
 
-.drawer{
+/* ================= CART ================= */
+
+.overlay{
   position:fixed;
-  right:-420px;
+  inset:0;
+  background:rgba(20,8,13,.55);
+  z-index:100;
+  display:none;
+}
+
+.overlay.show{
+  display:block;
+}
+
+.cartPanel{
+  position:absolute;
+  right:0;
   top:0;
-  width:min(400px,100%);
   height:100%;
+  width:min(430px,100%);
   background:#fff;
-  z-index:50;
+  padding:22px;
+  overflow:auto;
   box-shadow:-10px 0 35px #0002;
-  transition:.3s;
-  padding:20px;
-  display:flex;
-  flex-direction:column
 }
 
-.drawer.open{
-  right:0
-}
-
-.drawer h2{
-  font:28px Georgia,serif;
-  color:var(--wine)
-}
-
-.close{
-  margin-left:auto;
+.closeBtn{
   border:0;
-  background:none;
-  font-size:25px;
-  cursor:pointer
+  background:#f5eee8;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  float:right;
+  font-size:20px;
+}
+
+.cartPanel h2{
+  color:var(--wine);
+  font:30px Georgia,serif;
+  margin-top:8px;
 }
 
 .cartItems{
-  flex:1;
-  overflow:auto
+  margin-top:25px;
 }
 
 .cartItem{
-  display:flex;
+  display:grid;
+  grid-template-columns:65px 1fr auto;
   gap:10px;
-  border-bottom:1px solid var(--line);
-  padding:12px 0
+  align-items:center;
+  border-bottom:1px solid #eee;
+  padding:13px 0;
 }
 
 .cartItem img{
   width:65px;
-  height:75px;
+  height:78px;
   object-fit:cover;
-  border-radius:8px
+  border-radius:9px;
+  background:#f4ece5;
 }
 
-.cartItem b{
-  color:var(--wine)
+.cartItemName{
+  color:var(--wine);
+  font-weight:bold;
+  font-size:13px;
 }
 
-/* =========================
-   CART QUANTITY CONTROLS
-========================= */
+.cartItemPrice{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
 
-.qtyControl{
+.qty{
   display:flex;
   align-items:center;
-  gap:8px;
-  margin-top:8px;
-  margin-bottom:6px
+  gap:6px;
+  margin-top:7px;
 }
 
-.qtyBtn{
-  width:32px;
-  height:32px;
+.qty button{
   border:1px solid var(--line);
   background:#fff;
-  color:var(--wine);
-  border-radius:8px;
-  font-size:20px;
-  font-weight:bold;
-  line-height:1;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center
-}
-
-.qtyBtn:hover{
-  background:var(--wine);
-  color:#fff;
-  border-color:var(--wine)
-}
-
-.qtyValue{
-  min-width:28px;
-  text-align:center;
-  font-weight:bold;
-  font-size:15px
+  width:24px;
+  height:24px;
+  border-radius:50%;
 }
 
 .remove{
-  font-size:11px;
+  border:0;
+  background:none;
   color:#a33;
-  cursor:pointer
+  font-size:11px;
 }
 
-.checkout{
+.cartTotal{
+  display:flex;
+  justify-content:space-between;
+  margin:22px 0;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+  font-weight:bold;
+}
+
+.checkoutBtn{
+  width:100%;
+  border:0;
   background:var(--wine);
   color:#fff;
-  border:0;
   padding:14px;
   border-radius:25px;
   font-weight:bold;
-  cursor:pointer;
-  width:100%
 }
 
-.total{
-  padding:15px 0;
-  font-size:18px;
-  font-weight:bold
+.whatsappCheckout{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--wine);
+  padding:13px;
+  border-radius:25px;
+  font-weight:bold;
+  margin-top:9px;
 }
 
-.pay-modal{
-  display:none;
+/* ================= CHECKOUT ================= */
+
+.modal{
   position:fixed;
   inset:0;
-  background:#0008;
-  z-index:100;
+  background:rgba(20,8,13,.62);
+  z-index:120;
+  display:none;
   align-items:center;
   justify-content:center;
-  padding:15px
+  padding:15px;
 }
 
-.pay-modal.open{
-  display:flex
+.modal.show{
+  display:flex;
 }
 
-.pay-box{
-  background:#fff;
-  border-radius:20px;
-  max-width:520px;
-  width:100%;
+.modalBox{
+  width:min(600px,100%);
   max-height:92vh;
   overflow:auto;
-  padding:25px
+  background:#fff;
+  border-radius:22px;
+  padding:25px;
+  position:relative;
 }
 
-.pay-box h2{
+.modalBox h2{
+  color:var(--wine);
   font:30px Georgia,serif;
-  color:#651630;
-  margin-top:0
+  margin-top:0;
 }
 
-.pay-close{
-  float:right;
+.modalClose{
+  position:absolute;
+  top:15px;
+  right:15px;
   border:0;
-  background:none;
-  font-size:25px;
-  cursor:pointer
+  background:#f5eee8;
+  width:36px;
+  height:36px;
+  border-radius:50%;
 }
 
-.pay-box label{
-  font-size:13px;
-  font-weight:bold;
+.formGroup{
+  margin-bottom:13px;
+}
+
+.formGroup label{
   display:block;
-  margin:12px 0 6px
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:5px;
 }
 
-.pay-box input,
-.pay-box select{
+.formGroup input,
+.formGroup textarea{
   width:100%;
   padding:12px;
-  border:1px solid #eadfd4;
-  border-radius:10px
+  border:1px solid var(--line);
+  border-radius:10px;
+  outline:none;
+}
+
+.formGroup textarea{
+  min-height:85px;
+  resize:vertical;
 }
 
 .methods{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
-  margin:15px 0
+  margin:10px 0;
 }
 
 .method{
-  border:1px solid #eadfd4;
-  border-radius:12px;
+  border:1px solid var(--line);
   padding:13px;
-  cursor:pointer
+  border-radius:12px;
+  cursor:pointer;
 }
 
 .method.selected{
-  border:2px solid #651630;
-  background:#fbf3f5
+  border:2px solid var(--wine);
+  background:#fcf6f2;
 }
 
 .method b{
   display:block;
-  color:#651630
+  color:var(--wine);
+  font-size:13px;
 }
 
-.pay-now{
+.method small{
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+  font-size:10px;
+}
+
+.notice{
+  background:#fcf8f1;
+  padding:12px;
+  border-radius:10px;
+  color:#665d60;
+  font-size:12px;
+  line-height:1.6;
+  margin:14px 0;
+}
+
+.payBtn{
   width:100%;
   border:0;
-  background:#651630;
+  background:var(--wine);
   color:#fff;
   padding:14px;
   border-radius:25px;
   font-weight:bold;
-  cursor:pointer;
-  margin-top:12px
 }
 
-.notice{
-  font-size:12px;
-  color:#756a6f;
-  line-height:1.6;
-  background:#fcf8f1;
-  padding:10px;
-  border-radius:10px
-}
+/* ================= LOADING ================= */
 
 .loading{
+  grid-column:1/-1;
   text-align:center;
-  padding:40px 20px;
-  color:#756a6f
+  padding:60px;
+  color:var(--muted);
 }
 
-.loading strong{
-  display:block;
-  color:var(--wine);
-  font-size:18px;
-  margin-bottom:7px
+.spinner{
+  width:30px;
+  height:30px;
+  border:3px solid #eadfe1;
+  border-top-color:var(--wine);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 12px;
 }
 
-.error-box{
-  background:#fff0f0;
-  border:1px solid #f0cccc;
-  color:#9a2222;
-  padding:18px;
-  border-radius:12px;
-  text-align:center;
+@keyframes spin{
+  to{transform:rotate(360deg)}
 }
 
-@media(max-width:900px){
+/* ================= TOAST ================= */
 
-  .grid{
-    grid-template-columns:repeat(2,1fr)
-  }
+.toast{
+  position:fixed;
+  bottom:22px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--wine);
+  color:#fff;
+  padding:12px 18px;
+  border-radius:25px;
+  font-size:12px;
+  z-index:300;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+}
 
-  .features{
-    grid-template-columns:repeat(2,1fr)
-  }
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
 
-  .hero{
-    grid-template-columns:1fr
-  }
+/* ================= RESPONSIVE ================= */
 
-  .heroImg{
-    min-height:380px
-  }
+@media(max-width:950px){
 
   .navlinks{
-    display:none
+    display:none;
+  }
+
+  .menuBtn{
+    display:block;
+  }
+
+  .nav{
+    min-height:68px;
   }
 
   .brand{
-    margin-right:auto
-  }
-
-  .foot{
-    grid-template-columns:1fr 1fr
-  }
-}
-
-@media(max-width:520px){
-
-  .grid{
-    grid-template-columns:1fr 1fr;
-    gap:10px
-  }
-
-  .body h3{
-    font-size:17px
-  }
-
-  .price{
-    font-size:16px
-  }
-
-  .features{
-    grid-template-columns:1fr
+    min-width:auto;
   }
 
   .hero{
-    padding:14px
+    grid-template-columns:1fr;
+    padding-top:45px;
   }
 
-  .wrap{
-    padding:25px 12px
+  .heroVisual{
+    min-height:380px;
   }
 
-  .search{
-    width:100%
+  .heroPlaceholder{
+    min-height:380px;
   }
 
-  .heroImg{
-    min-height:300px
+  .products{
+    grid-template-columns:repeat(3,1fr);
   }
 
-  .foot{
-    grid-template-columns:1fr
+  .featureGrid{
+    grid-template-columns:repeat(2,1fr);
   }
+
+}
+
+@media(max-width:650px){
+
+  .topbar{
+    font-size:10px;
+  }
+
+  .brand-text strong{
+    font-size:16px;
+  }
+
+  .brand-text small{
+    font-size:7px;
+  }
+
+  .logo{
+    width:42px;
+    height:42px;
+    font-size:17px;
+  }
+
+  .hero{
+    padding:40px 15px;
+  }
+
+  .hero h1{
+    font-size:44px;
+  }
+
+  .hero p{
+    font-size:14px;
+  }
+
+  .section{
+    padding:45px 15px;
+  }
+
+  .section h2{
+    font-size:31px;
+  }
+
+  .products{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+
+  .productName{
+    font-size:16px;
+  }
+
+  .productBody{
+    padding:11px;
+  }
+
+  .productBottom{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .addBtn{
+    width:100%;
+  }
+
+  .featureGrid{
+    grid-template-columns:1fr;
+  }
+
+  .aboutGrid{
+    grid-template-columns:1fr;
+  }
+
+  .footerGrid{
+    grid-template-columns:1fr;
+    padding:40px 20px 20px;
+  }
+
+  .methods{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:380px){
+
+  .products{
+    grid-template-columns:1fr;
+  }
+
 }
 </style>
 </head>
 
 <body>
 
-<div class="top">
-✨ QUALITY MODEST FASHION • ORDER DIRECT ON WHATSAPP • 0906 582 8886
+<div class="topbar">
+  ✨ QUALITY MODEST FASHION
+  • ORDER DIRECT ON WHATSAPP
+  • <b>0906 582 8886</b>
 </div>
 
-<header class="nav">
+<header>
 
-  <a href="#home">
-    <img class="logo" src="logo.png" alt="Face of Style Hijab Factory">
-  </a>
+  <div class="nav">
 
-  <div class="brand">
-    FACE OF STYLE
-    <small>HIJAB FACTORY</small>
+    <a href="#" class="brand">
+
+      <div class="logo">
+        FS
+      </div>
+
+      <div class="brand-text">
+
+        <strong>
+          Face of Style
+        </strong>
+
+        <small>
+          HIJAB FACTORY
+        </small>
+
+      </div>
+
+    </a>
+
+    <nav class="navlinks">
+
+      <a href="#shop">
+        Shop
+      </a>
+
+      <a href="#custom">
+        Custom Order
+      </a>
+
+      <a href="#about">
+        About
+      </a>
+
+      <a href="#contact">
+        Contact
+      </a>
+
+    </nav>
+
+    <div style="display:flex;gap:8px;align-items:center">
+
+      <button
+        class="cartBtn"
+        onclick="openCart()"
+        aria-label="Shopping cart"
+      >
+        🛍️
+        <span
+          id="cartCount"
+          class="cartCount"
+        >
+          0
+        </span>
+      </button>
+
+      <button
+        class="menuBtn"
+        onclick="toggleMenu()"
+        aria-label="Menu"
+      >
+        ☰
+      </button>
+
+    </div>
+
   </div>
 
-  <nav class="navlinks">
-    <a href="#shop">Shop</a>
-    <a href="#custom">Custom Order</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
-  </nav>
+  <div
+    id="mobileMenu"
+    style="
+      display:none;
+      background:#fff;
+      border-top:1px solid var(--line);
+      padding:12px 20px 18px;
+    "
+  >
 
-  <div class="icons">
-    <button class="iconbtn" onclick="openCart()">
-      🛍️
-      <span class="count" id="count">0</span>
-    </button>
+    <a
+      href="#shop"
+      onclick="closeMobileMenu()"
+      style="display:block;padding:10px 0;font-weight:bold"
+    >
+      Shop
+    </a>
+
+    <a
+      href="#custom"
+      onclick="closeMobileMenu()"
+      style="display:block;padding:10px 0;font-weight:bold"
+    >
+      Custom Order
+    </a>
+
+    <a
+      href="#about"
+      onclick="closeMobileMenu()"
+      style="display:block;padding:10px 0;font-weight:bold"
+    >
+      About
+    </a>
+
+    <a
+      href="#contact"
+      onclick="closeMobileMenu()"
+      style="display:block;padding:10px 0;font-weight:bold"
+    >
+      Contact
+    </a>
+
   </div>
 
 </header>
 
-<main id="home">
+<!-- ================= HERO ================= -->
 
 <section class="hero">
 
-  <div class="heroText">
+  <div>
 
-    <div class="tag">FACE OF STYLE</div>
+    <div class="tag">
+      FACE OF STYLE
+    </div>
 
     <h1>
       Modesty, Elegance & Style.
     </h1>
 
     <p>
-      Discover carefully crafted hijabs, abayas, gowns and modest outfits.
-      Choose your style and order directly from us.
+      Discover carefully crafted hijabs, abayas,
+      gowns and modest outfits. Choose your style
+      and order directly from Face of Style Hijab Factory.
     </p>
 
-    <a class="heroBtn" href="#shop">
-      SHOP COLLECTION →
-    </a>
+    <div class="heroActions">
+
+      <a
+        class="heroBtn"
+        href="#shop"
+      >
+        SHOP COLLECTION →
+      </a>
+
+      <a
+        class="secondaryBtn"
+        href="https://wa.me/2349065828886?text=Assalamu%20alaikum%2C%20Ina%20son%20yin%20tambaya%20game%20da%20kayayyakin%20Face%20of%20Style."
+        target="_blank"
+        rel="noopener"
+      >
+        💬 WhatsApp Us
+      </a>
+
+    </div>
 
   </div>
 
-  <div class="heroImg">
-    <img src="product-1.jpg" alt="Face of Style collection">
+  <div class="heroVisual">
+
+    <img
+      src="product-1.jpg"
+      alt="Face of Style modest fashion"
+      onerror="this.style.display='none';document.getElementById('heroPlaceholder').style.display='flex';"
+    >
+
+    <div
+      id="heroPlaceholder"
+      class="heroPlaceholder"
+      style="display:none"
+    >
+      Face of Style
+      <br>
+      Hijab Factory
+    </div>
+
   </div>
 
 </section>
 
-<section class="wrap" id="shop">
+<!-- ================= SHOP ================= -->
 
-  <div class="sectionTitle">
+<section
+  class="section"
+  id="shop"
+>
 
-    <div style="color:var(--gold);letter-spacing:4px;font-size:11px;font-weight:bold">
+  <div class="sectionHead">
+
+    <div class="eyebrow">
       SHOP ONLINE
     </div>
 
-    <h2>Our Latest Collection</h2>
+    <h2>
+      Our Latest Collection
+    </h2>
 
     <p>
-      Browse our styles and add your favourites to your cart.
+      Browse our styles and add your favourites
+      to your cart. All products are loaded directly
+      from our store database.
     </p>
 
   </div>
 
-  <div class="toolbar">
+  <div class="cats">
 
-    <div class="cats">
+    <button
+      class="cat active"
+      onclick="filterProducts('All',this)"
+    >
+      All
+    </button>
 
-      <button class="cat active" onclick="filterProducts('All',this)">
-        All
-      </button>
+    <button
+      class="cat"
+      onclick="filterProducts('Abaya',this)"
+    >
+      Abayas
+    </button>
 
-      <button class="cat" onclick="filterProducts('Abaya',this)">
-        Abayas
-      </button>
+    <button
+      class="cat"
+      onclick="filterProducts('Gown',this)"
+    >
+      Gowns
+    </button>
 
-      <button class="cat" onclick="filterProducts('Gown',this)">
-        Gowns
-      </button>
+    <button
+      class="cat"
+      onclick="filterProducts('Hijab',this)"
+    >
+      Hijabs
+    </button>
 
-      <button class="cat" onclick="filterProducts('Hijab',this)">
-        Hijabs
-      </button>
+    <button
+      class="cat"
+      onclick="filterProducts('Custom',this)"
+    >
+      Custom
+    </button>
 
-      <button class="cat" onclick="filterProducts('Custom',this)">
-        Custom
-      </button>
+  </div>
 
-    </div>
+  <div class="searchWrap">
 
     <input
       class="search"
       id="search"
       oninput="renderProducts()"
       placeholder="Search products..."
+      autocomplete="off"
     >
 
   </div>
 
-  <div class="grid" id="products">
+  <div
+    id="products"
+    class="products"
+  >
 
     <div class="loading">
-      <strong>Loading products...</strong>
-      Please wait.
+
+      <div class="spinner"></div>
+
+      Loading collection...
+
     </div>
 
   </div>
 
-  <div class="features">
+</section>
+
+<!-- ================= FEATURES ================= -->
+
+<section class="section">
+
+  <div class="sectionHead">
+
+    <div class="eyebrow">
+      WHY FACE OF STYLE
+    </div>
+
+    <h2>
+      Made With Care
+    </h2>
+
+  </div>
+
+  <div class="featureGrid">
 
     <div class="feature">
-      🧵
-      <b>Quality Sewing</b>
-      <span>Neat finishing and careful craftsmanship.</span>
+
+      <div class="featureIcon">
+        🧵
+      </div>
+
+      <b>
+        Quality Sewing
+      </b>
+
+      <span>
+        Neat finishing and careful craftsmanship.
+      </span>
+
     </div>
 
     <div class="feature">
-      🎨
-      <b>Choose Your Style</b>
-      <span>Colours, fabrics and designs to suit you.</span>
+
+      <div class="featureIcon">
+        🎨
+      </div>
+
+      <b>
+        Choose Your Style
+      </b>
+
+      <span>
+        Colours, fabrics and designs to suit you.
+      </span>
+
     </div>
 
     <div class="feature">
-      📱
-      <b>Easy Ordering</b>
-      <span>Order quickly through WhatsApp.</span>
+
+      <div class="featureIcon">
+        📱
+      </div>
+
+      <b>
+        Easy Ordering
+      </b>
+
+      <span>
+        Order quickly through WhatsApp or our secure checkout.
+      </span>
+
     </div>
 
     <div class="feature">
-      ✨
-      <b>Made With Care</b>
-      <span>Modest fashion with a refined finish.</span>
+
+      <div class="featureIcon">
+        ✨
+      </div>
+
+      <b>
+        Made With Care
+      </b>
+
+      <span>
+        Modest fashion with a refined finish.
+      </span>
+
     </div>
 
   </div>
 
-  <div class="custom" id="custom">
+</section>
+
+<!-- ================= CUSTOM ================= -->
+
+<section
+  class="section"
+  id="custom"
+>
+
+  <div class="custom">
 
     <h2>
       Want Something Made Just For You?
     </h2>
 
     <p>
-      Send us your preferred style, fabric, colour and measurements.
-      We also accept custom sewing requests.
+      Send us your preferred style, fabric, colour
+      and measurements. We also accept custom sewing requests.
     </p>
 
-    <a href="https://wa.me/2349065828886?text=Assalamu%20alaikum%2C%20Ina%20son%20custom%20order.%20Ga%20style%2C%20fabric%2C%20colour%20da%20measurements%20na.">
+    <a
+      class="whatsappBtn"
+      href="https://wa.me/2349065828886?text=Assalamu%20alaikum%2C%20Ina%20son%20custom%20order.%20Ga%20style%2C%20fabric%2C%20colour%20da%20measurements%20na."
+      target="_blank"
+      rel="noopener"
+    >
       START CUSTOM ORDER
     </a>
 
@@ -913,97 +1426,214 @@ footer{
 
 </section>
 
-<section class="wrap" id="about">
+<!-- ================= ABOUT ================= -->
 
-  <div class="sectionTitle">
+<section
+  class="section"
+  id="about"
+>
 
-    <h2>About Face of Style</h2>
+  <div class="aboutGrid">
 
-    <p>
-      We create modest fashion that feels comfortable, elegant and personal.
-    </p>
+    <div class="aboutBox">
+
+      <div class="eyebrow">
+        ABOUT US
+      </div>
+
+      <h3>
+        Face of Style Hijab Factory
+      </h3>
+
+      <p>
+        We create modest fashion that feels comfortable,
+        elegant and personal. From everyday hijabs to
+        abayas, gowns and custom outfits, every piece is
+        prepared with attention to detail.
+      </p>
+
+      <p>
+        Our goal is simple: quality modest fashion,
+        easy ordering and a shopping experience our
+        customers can trust.
+      </p>
+
+    </div>
+
+    <div class="aboutBox">
+
+      <div class="eyebrow">
+        ORDER WITH CONFIDENCE
+      </div>
+
+      <h3>
+        Simple. Secure. Personal.
+      </h3>
+
+      <p>
+        Select your favourite products, add them to your
+        cart and continue to secure checkout. You can also
+        contact us directly through WhatsApp for questions
+        or custom orders.
+      </p>
+
+      <a
+        class="heroBtn"
+        href="https://wa.me/2349065828886"
+        target="_blank"
+        rel="noopener"
+      >
+        CHAT ON WHATSAPP
+      </a>
+
+    </div>
 
   </div>
 
 </section>
 
-</main>
+<!-- ================= FOOTER ================= -->
 
 <footer id="contact">
 
-<div class="foot">
+  <div class="footerGrid">
 
-  <div>
-    <h3>Face of Style Hijab Factory</h3>
-    <p>
-      Elegant hijabs, abayas, gowns and custom modest wear.
-    </p>
+    <div>
+
+      <h3>
+        Face of Style Hijab Factory
+      </h3>
+
+      <p>
+        Elegant hijabs, abayas, gowns and
+        custom modest wear.
+      </p>
+
+    </div>
+
+    <div>
+
+      <h3>
+        Quick Links
+      </h3>
+
+      <p>
+        <a href="#shop">
+          Shop Collection
+        </a>
+        <br>
+
+        <a href="#custom">
+          Custom Order
+        </a>
+        <br>
+
+        <a href="#about">
+          About Us
+        </a>
+      </p>
+
+    </div>
+
+    <div>
+
+      <h3>
+        Contact
+      </h3>
+
+      <p>
+        WhatsApp:
+        <a href="https://wa.me/2349065828886">
+          0906 582 8886
+        </a>
+        <br>
+        Orders & enquiries welcome.
+      </p>
+
+    </div>
+
   </div>
 
-  <div>
-    <h3>Quick Links</h3>
+  <div class="footerBottom">
 
-    <p>
-      <a href="#shop">Shop Collection</a><br>
-      <a href="#custom">Custom Order</a><br>
-      <a href="#about">About Us</a>
-    </p>
+    © 2026 Face of Style Hijab Factory.
+    All rights reserved.
 
   </div>
-
-  <div>
-
-    <h3>Contact</h3>
-
-    <p>
-      WhatsApp: 0906 582 8886<br>
-      Orders & enquiries welcome.
-    </p>
-
-  </div>
-
-</div>
-
-<div class="copy">
-© 2026 Face of Style Hijab Factory. All rights reserved.
-</div>
-
-<p style="text-align:center;margin-top:15px">
-  <a href="/admin.html" style="color:#d8b96b">
-    Admin Dashboard
-  </a>
-</p>
 
 </footer>
 
-<aside class="drawer" id="drawer">
+<!-- ================= CART ================= -->
 
-  <button class="close" onclick="closeCart()">×</button>
+<div
+  id="cartOverlay"
+  class="overlay"
+  onclick="closeCart(event)"
+>
 
-  <h2>Your Cart</h2>
-
-  <div class="cartItems" id="cartItems"></div>
-
-  <div class="total" id="total">
-    Total: ₦0
-  </div>
-
-  <button class="checkout" onclick="openPayment()">
-    CHECKOUT & PAY
-  </button>
-
-</aside>
-
-
-<!-- PAYMENT MODAL -->
-
-<div class="pay-modal" id="payModal">
-
-  <div class="pay-box">
+  <aside
+    class="cartPanel"
+    onclick="event.stopPropagation()"
+  >
 
     <button
-      class="pay-close"
-      onclick="closePayment()"
+      class="closeBtn"
+      onclick="closeCart()"
+    >
+      ×
+    </button>
+
+    <h2>
+      Your Cart
+    </h2>
+
+    <div
+      id="cartItems"
+      class="cartItems"
+    ></div>
+
+    <div class="cartTotal">
+
+      <span>
+        Total
+      </span>
+
+      <span id="cartTotal">
+        ₦0
+      </span>
+
+    </div>
+
+    <button
+      class="checkoutBtn"
+      onclick="openCheckout()"
+    >
+      CHECKOUT & PAY
+    </button>
+
+    <button
+      class="whatsappCheckout"
+      onclick="orderCartWhatsApp()"
+    >
+      ORDER VIA WHATSAPP
+    </button>
+
+  </aside>
+
+</div>
+
+<!-- ================= CHECKOUT MODAL ================= -->
+
+<div
+  id="checkoutModal"
+  class="modal"
+>
+
+  <div class="modalBox">
+
+    <button
+      class="modalClose"
+      onclick="closeCheckout()"
     >
       ×
     </button>
@@ -1012,46 +1642,68 @@ footer{
       Secure Checkout
     </h2>
 
-    <p id="paySummary"></p>
+    <p
+      id="paySummary"
+      style="color:var(--muted);font-size:13px"
+    ></p>
 
-    <label>
-      Full Name
-    </label>
+    <div class="formGroup">
 
-    <input
-      id="customerName"
-      placeholder="Your full name"
-    >
+      <label>
+        Full Name
+      </label>
 
-    <label>
-      Email
-    </label>
+      <input
+        id="customerName"
+        placeholder="Your full name"
+        autocomplete="name"
+      >
 
-    <input
-      id="customerEmail"
-      type="email"
-      placeholder="you@example.com"
-    >
+    </div>
 
-    <label>
-      Phone
-    </label>
+    <div class="formGroup">
 
-    <input
-      id="customerPhone"
-      placeholder="0906..."
-    >
+      <label>
+        Email
+      </label>
 
-    <label>
-      Delivery Address
-    </label>
+      <input
+        id="customerEmail"
+        type="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+      >
 
-    <input
-      id="customerAddress"
-      placeholder="Address / area"
-    >
+    </div>
 
-    <label>
+    <div class="formGroup">
+
+      <label>
+        Phone
+      </label>
+
+      <input
+        id="customerPhone"
+        placeholder="0906..."
+        autocomplete="tel"
+      >
+
+    </div>
+
+    <div class="formGroup">
+
+      <label>
+        Delivery Address
+      </label>
+
+      <textarea
+        id="customerAddress"
+        placeholder="Full delivery address / area"
+      ></textarea>
+
+    </div>
+
+    <label style="font-size:12px;font-weight:bold">
       Choose Payment Method
     </label>
 
@@ -1062,21 +1714,15 @@ footer{
         id="mPaystack"
         onclick="selectMethod('paystack')"
       >
-        <b>Paystack</b>
+
+        <b>
+          Paystack
+        </b>
+
         <small>
           Card, bank & supported channels
         </small>
-      </div>
 
-      <div
-        class="method"
-        id="mFlutterwave"
-        onclick="selectMethod('flutterwave')"
-      >
-        <b>Flutterwave</b>
-        <small>
-          Coming soon
-        </small>
       </div>
 
       <div
@@ -1084,10 +1730,15 @@ footer{
         id="mBank"
         onclick="selectMethod('bank')"
       >
-        <b>Bank Transfer</b>
+
+        <b>
+          Bank Transfer
+        </b>
+
         <small>
-          Pay manually to business account
+          Contact us for transfer details
         </small>
+
       </div>
 
       <div
@@ -1095,10 +1746,15 @@ footer{
         id="mWhatsapp"
         onclick="selectMethod('whatsapp')"
       >
-        <b>WhatsApp Order</b>
+
+        <b>
+          WhatsApp Order
+        </b>
+
         <small>
-          Confirm order with us
+          Confirm your order directly
         </small>
+
       </div>
 
     </div>
@@ -1112,7 +1768,8 @@ footer{
     </div>
 
     <button
-      class="pay-now"
+      id="payNowBtn"
+      class="payBtn"
       onclick="startPayment()"
     >
       CONTINUE PAYMENT
@@ -1122,169 +1779,120 @@ footer{
 
 </div>
 
+<div
+  id="toast"
+  class="toast"
+></div>
 
 <script>
 
-/* =========================================================
-   FACE OF STYLE - CUSTOMER STORE
-   PRODUCTS COME FROM SERVER
-========================================================= */
+let allProducts = [];
 
-let products = [];
-
-let selectedCategory = "All";
+let selectedCategory = 'All';
 
 let cart = [];
 
-let paymentMethod = "paystack";
+let selectedMethod = 'paystack';
 
 
-/* =========================================================
-   MONEY
-========================================================= */
-
-function money(n){
-
-  return "₦" +
-    Number(n || 0).toLocaleString("en-NG");
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
+/* ================= HELPERS ================= */
 
 function escapeHtml(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
 
 }
 
 
-/* =========================================================
-   LOAD PRODUCTS FROM SERVER
-========================================================= */
+function formatNaira(value){
+
+  return '₦' + Number(value || 0)
+    .toLocaleString('en-NG');
+
+}
+
+
+function showToast(message){
+
+  const toast =
+    document.getElementById('toast');
+
+  toast.textContent = message;
+
+  toast.classList.add('show');
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer =
+    setTimeout(
+      () => toast.classList.remove('show'),
+      2500
+    );
+
+}
+
+
+/* ================= PRODUCTS ================= */
 
 async function loadProducts(){
 
   const box =
-    document.getElementById("products");
-
-  box.innerHTML = `
-    <div class="loading">
-      <strong>Loading products...</strong>
-      Please wait.
-    </div>
-  `;
+    document.getElementById('products');
 
   try{
 
     const response =
-      await fetch(
-        "/api/products",
-        {
-          method:"GET",
-          cache:"no-store",
-          headers:{
-            "Accept":"application/json"
-          }
-        }
-      );
-
+      await fetch('/api/products');
 
     if(!response.ok){
 
-      throw new Error(
-        "Products API returned " +
-        response.status
-      );
+      throw new Error('Failed to load products');
 
     }
-
 
     const data =
       await response.json();
 
-
-    if(Array.isArray(data)){
-
-      products = data;
-
-    }else if(
-      data &&
+    allProducts =
       Array.isArray(data.products)
-    ){
-
-      products = data.products;
-
-    }else{
-
-      products = [];
-
-    }
-
-
-    products =
-      products.map((p,index) => ({
-
-        id:
-          p.id ??
-          p._id ??
-          index + 1,
-
-        name:
-          p.name ||
-          "Unnamed Product",
-
-        cat:
-          p.cat ||
-          p.category ||
-          "Custom",
-
-        price:
-          Number(p.price || 0),
-
-        color:
-          p.color ||
-          "",
-
-        img:
-          p.img ||
-          p.image ||
-          p.imageUrl ||
-          "",
-
-        desc:
-          p.desc ||
-          p.description ||
-          ""
-
-      }));
-
+        ? data.products
+        : [];
 
     renderProducts();
 
-
   }catch(error){
 
-    console.error(
-      "Could not load products:",
-      error
-    );
-
+    console.error(error);
 
     box.innerHTML = `
-      <div class="error-box">
-        <strong>Unable to load products.</strong>
-        <br>
-        Please refresh the page or try again later.
+
+      <div class="empty">
+
+        <h3>
+          Unable to load collection
+        </h3>
+
+        <p>
+          Please refresh the page or contact us
+          on WhatsApp.
+        </p>
+
+        <a
+          class="heroBtn"
+          href="https://wa.me/2349065828886"
+          target="_blank"
+          rel="noopener"
+        >
+          CONTACT US
+        </a>
+
       </div>
+
     `;
 
   }
@@ -1292,65 +1900,78 @@ async function loadProducts(){
 }
 
 
-/* =========================================================
-   RENDER PRODUCTS
-========================================================= */
+function filterProducts(category, button){
+
+  selectedCategory =
+    category;
+
+  document
+    .querySelectorAll('.cat')
+    .forEach(
+      x => x.classList.remove('active')
+    );
+
+  button.classList.add('active');
+
+  renderProducts();
+
+}
+
 
 function renderProducts(){
 
   const box =
-    document.getElementById("products");
+    document.getElementById('products');
 
-  const searchInput =
-    document.getElementById("search");
+  const search =
+    document.getElementById('search')
+      .value
+      .trim()
+      .toLowerCase();
 
-  const query =
-    searchInput
-      ? searchInput.value.trim().toLowerCase()
-      : "";
-
-
-  const list =
-    products.filter(p => {
+  let products =
+    allProducts.filter(product => {
 
       const categoryMatch =
-        selectedCategory === "All" ||
-        String(p.cat).toLowerCase() ===
-        selectedCategory.toLowerCase();
+        selectedCategory === 'All' ||
+        String(product.cat || '')
+          .toLowerCase() ===
+          selectedCategory.toLowerCase();
 
+      const text =
+        `${product.name || ''}
+         ${product.cat || ''}
+         ${product.color || ''}
+         ${product.description || ''}
+         ${product.desc || ''}`
+          .toLowerCase();
 
       const searchMatch =
-        !query ||
+        !search ||
+        text.includes(search);
 
-        String(p.name)
-          .toLowerCase()
-          .includes(query)
-
-        ||
-
-        String(p.desc)
-          .toLowerCase()
-          .includes(query)
-
-        ||
-
-        String(p.color)
-          .toLowerCase()
-          .includes(query);
-
-
-      return categoryMatch && searchMatch;
+      return categoryMatch &&
+             searchMatch;
 
     });
 
 
-  if(!list.length){
+  if(!products.length){
 
     box.innerHTML = `
-      <div class="loading">
-        <strong>No products found.</strong>
-        Products added from the Admin Dashboard will appear here.
+
+      <div class="empty">
+
+        <h3>
+          No products found
+        </h3>
+
+        <p>
+          Try another search or category.
+        </p>
+
       </div>
+
     `;
 
     return;
@@ -1359,158 +1980,100 @@ function renderProducts(){
 
 
   box.innerHTML =
-    list.map(p => {
+    products.map(product => `
 
-      const image =
-        p.img ||
-        "product-1.jpg";
+      <article class="product">
 
+        <div class="productImage">
 
-      return `
+          ${
+            product.img
 
-        <article class="card">
+            ? `
 
-          <div class="pic">
+              <img
+                src="${escapeHtml(product.img)}"
+                alt="${escapeHtml(product.name)}"
+                loading="lazy"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+              >
 
-            <img
-              src="${escapeHtml(image)}"
-              alt="${escapeHtml(p.name)}"
-              onerror="this.onerror=null;this.src='product-1.jpg'"
-            >
+              <div
+                class="noImage"
+                style="display:none"
+              >
+                No Photo
+              </div>
 
-            <span class="badge">
-              ${escapeHtml(p.cat)}
-            </span>
+            `
+
+            : `
+
+              <div class="noImage">
+                No Photo
+              </div>
+
+            `
+          }
+
+        </div>
+
+        <div class="productBody">
+
+          <div class="productCat">
+            ${escapeHtml(product.cat || 'Fashion')}
+          </div>
+
+          <div class="productName">
+            ${escapeHtml(product.name || 'Product')}
+          </div>
+
+          <div class="productDesc">
+
+            ${escapeHtml(
+              product.description ||
+              product.desc ||
+              'Beautiful modest fashion design.'
+            )}
+
+          </div>
+
+          <div class="productBottom">
+
+            <div class="price">
+              ${formatNaira(product.price)}
+            </div>
 
             <button
-              class="heart"
-              onclick="addToCart('${String(p.id).replace(/'/g,"\\'")}')"
+              class="addBtn"
+              onclick="addToCart(${Number(product.id)})"
             >
-              ♡
+              ADD TO CART
             </button>
 
           </div>
 
+        </div>
 
-          <div class="body">
+      </article>
 
-            <h3>
-              ${escapeHtml(p.name)}
-            </h3>
-
-
-            <p>
-
-              ${
-                p.desc
-                  ? escapeHtml(p.desc)
-                  : (
-                      p.color
-                        ? "Color: " +
-                          escapeHtml(p.color)
-                        : "Beautiful modest fashion design."
-                    )
-              }
-
-            </p>
-
-
-            <div class="price">
-              ${money(p.price)}
-            </div>
-
-
-            <div class="actions">
-
-              <button
-                class="add"
-                onclick="addToCart('${String(p.id).replace(/'/g,"\\'")}')"
-              >
-                Add to Cart
-              </button>
-
-
-              <button
-                class="view"
-                onclick="orderProduct('${String(p.id).replace(/'/g,"\\'")}')"
-              >
-                Order
-              </button>
-
-            </div>
-
-          </div>
-
-        </article>
-
-      `;
-
-    }).join("");
+    `).join('');
 
 }
 
 
-/* =========================================================
-   CATEGORY FILTER
-========================================================= */
-
-function filterProducts(category,element){
-
-  selectedCategory =
-    category;
-
-
-  document
-    .querySelectorAll(".cat")
-    .forEach(button => {
-
-      button.classList.remove("active");
-
-    });
-
-
-  if(element){
-
-    element.classList.add("active");
-
-  }
-
-
-  renderProducts();
-
-}
-
-
-/* =========================================================
-   FIND PRODUCT
-========================================================= */
-
-function findProduct(id){
-
-  return products.find(
-    p =>
-      String(p.id) ===
-      String(id)
-  );
-
-}
-
-
-/* =========================================================
-   ADD TO CART
-========================================================= */
+/* ================= CART ================= */
 
 function addToCart(id){
 
   const product =
-    findProduct(id);
-
+    allProducts.find(
+      p => Number(p.id) === Number(id)
+    );
 
   if(!product){
 
-    alert(
-      "Product could not be found."
-    );
+    showToast('Product not found.');
 
     return;
 
@@ -1520,21 +2083,30 @@ function addToCart(id){
   const existing =
     cart.find(
       item =>
-        String(item.id) ===
-        String(id)
+        Number(item.id) ===
+        Number(id)
     );
 
 
   if(existing){
 
-    existing.qty =
-      Number(existing.qty || 1) + 1;
+    if(existing.qty < 99){
+
+      existing.qty++;
+
+    }
 
   }else{
 
     cart.push({
 
-      ...product,
+      id:Number(product.id),
+
+      name:product.name,
+
+      price:Number(product.price),
+
+      img:product.img || '',
 
       qty:1
 
@@ -1543,26 +2115,26 @@ function addToCart(id){
   }
 
 
-  updateCart();
+  saveCart();
 
-  openCart();
+  renderCart();
+
+  updateCartCount();
+
+  showToast(
+    product.name + ' added to cart ✓'
+  );
 
 }
 
 
-/* =========================================================
-   CHANGE CART QUANTITY
-========================================================= */
-
-function changeQty(id,delta){
+function changeQty(id, amount){
 
   const item =
     cart.find(
-      item =>
-        String(item.id) ===
-        String(id)
+      x =>
+        Number(x.id) === Number(id)
     );
-
 
   if(!item){
 
@@ -1570,481 +2142,424 @@ function changeQty(id,delta){
 
   }
 
+  item.qty += amount;
 
-  const currentQty =
-    Number(item.qty || 1);
+  if(item.qty < 1){
 
+    cart =
+      cart.filter(
+        x =>
+          Number(x.id) !== Number(id)
+      );
 
-  const newQty =
-    currentQty +
-    Number(delta || 0);
+  }
 
+  if(item.qty > 99){
 
-  /*
-    CUSTOMER CANNOT REDUCE
-    QUANTITY BELOW 1
-  */
+    item.qty = 99;
 
-  item.qty =
-    Math.max(1,newQty);
+  }
 
+  saveCart();
 
-  updateCart();
+  renderCart();
+
+  updateCartCount();
 
 }
 
 
-/* =========================================================
-   REMOVE CART ITEM
-========================================================= */
-
-function removeItem(id){
+function removeFromCart(id){
 
   cart =
     cart.filter(
-      item =>
-        String(item.id) !==
-        String(id)
+      x =>
+        Number(x.id) !== Number(id)
     );
 
+  saveCart();
 
-  updateCart();
+  renderCart();
+
+  updateCartCount();
 
 }
 
 
-/* =========================================================
-   UPDATE CART
-========================================================= */
+function cartTotal(){
 
-function updateCart(){
+  return cart.reduce(
+    (total,item) =>
+      total +
+      Number(item.price) *
+      Number(item.qty),
+    0
+  );
+
+}
+
+
+function updateCartCount(){
 
   const count =
-    document.getElementById("count");
-
-
-  const cartItems =
-    document.getElementById("cartItems");
-
-
-  const totalBox =
-    document.getElementById("total");
-
-
-  const totalQty =
     cart.reduce(
-      (sum,item) =>
-        sum +
-        Number(item.qty || 0),
+      (total,item) =>
+        total + Number(item.qty),
       0
     );
 
+  document.getElementById(
+    'cartCount'
+  ).textContent =
+    count;
 
-  count.textContent =
-    totalQty;
+}
+
+
+function saveCart(){
+
+  try{
+
+    localStorage.setItem(
+      'faceOfStyleCart',
+      JSON.stringify(cart)
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+}
+
+
+function loadCart(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        'faceOfStyleCart'
+      );
+
+    cart =
+      saved
+        ? JSON.parse(saved)
+        : [];
+
+    if(!Array.isArray(cart)){
+
+      cart = [];
+
+    }
+
+  }catch{
+
+    cart = [];
+
+  }
+
+  updateCartCount();
+
+}
+
+
+function renderCart(){
+
+  const box =
+    document.getElementById(
+      'cartItems'
+    );
+
+  const total =
+    document.getElementById(
+      'cartTotal'
+    );
 
 
   if(!cart.length){
 
-    cartItems.innerHTML =
-      "<p>Your cart is empty.</p>";
+    box.innerHTML = `
 
-  }else{
+      <div class="empty">
 
-    cartItems.innerHTML =
+        <div style="font-size:35px">
+          🛍️
+        </div>
 
-      cart.map(item => `
+        <p>
+          Your cart is empty.
+        </p>
 
-        <div class="cartItem">
+        <a
+          href="#shop"
+          class="heroBtn"
+          onclick="closeCart()"
+        >
+          SHOP NOW
+        </a>
 
-          <img
-            src="${escapeHtml(item.img || "product-1.jpg")}"
-            alt="${escapeHtml(item.name)}"
-            onerror="this.onerror=null;this.src='product-1.jpg'"
-          >
+      </div>
 
-          <div style="flex:1">
+    `;
 
-            <b>
-              ${escapeHtml(item.name)}
-            </b>
+    total.textContent =
+      '₦0';
 
-            <br>
+    return;
 
-            <small>
-              ${money(item.price)}
-              ×
-              ${item.qty}
-            </small>
-
-
-            <div class="qtyControl">
-
-              <button
-                class="qtyBtn"
-                onclick="changeQty('${String(item.id).replace(/'/g,"\\'")}',-1)"
-                aria-label="Decrease quantity"
-              >
-                −
-              </button>
+  }
 
 
-              <span class="qtyValue">
-                ${item.qty}
-              </span>
+  box.innerHTML =
+    cart.map(item => `
 
+      <div class="cartItem">
 
-              <button
-                class="qtyBtn"
-                onclick="changeQty('${String(item.id).replace(/'/g,"\\'")}',1)"
-                aria-label="Increase quantity"
-              >
-                +
-              </button>
+        ${
+          item.img
 
+          ? `
+
+            <img
+              src="${escapeHtml(item.img)}"
+              alt="${escapeHtml(item.name)}"
+            >
+
+          `
+
+          : `
+
+            <div
+              style="
+                width:65px;
+                height:78px;
+                border-radius:9px;
+                background:#f4ece5;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:10px;
+                color:#aaa;
+              "
+            >
+              No Photo
             </div>
 
+          `
+        }
 
-            <span
+        <div>
+
+          <div class="cartItemName">
+            ${escapeHtml(item.name)}
+          </div>
+
+          <div class="cartItemPrice">
+            ${formatNaira(item.price)}
+          </div>
+
+          <div class="qty">
+
+            <button
+              onclick="changeQty(${item.id},-1)"
+            >
+              −
+            </button>
+
+            <b style="font-size:12px">
+              ${item.qty}
+            </b>
+
+            <button
+              onclick="changeQty(${item.id},1)"
+            >
+              +
+            </button>
+
+            <button
               class="remove"
-              onclick="removeItem('${String(item.id).replace(/'/g,"\\'")}')"
+              onclick="removeFromCart(${item.id})"
             >
               Remove
-            </span>
+            </button>
 
           </div>
 
         </div>
 
-      `).join("");
+        <b style="font-size:12px;color:var(--wine)">
+          ${formatNaira(item.price * item.qty)}
+        </b>
 
-  }
+      </div>
 
-
-  const total =
-    cart.reduce(
-      (sum,item) =>
-        sum +
-        Number(item.price || 0) *
-        Number(item.qty || 0),
-      0
-    );
+    `).join('');
 
 
-  totalBox.textContent =
-    "Total: " +
-    money(total);
+  total.textContent =
+    formatNaira(cartTotal());
 
 }
 
 
-/* =========================================================
-   OPEN CART
-========================================================= */
+/* ================= CART PANEL ================= */
 
 function openCart(){
 
+  renderCart();
+
   document
-    .getElementById("drawer")
-    .classList.add("open");
-
-
-  updateCart();
+    .getElementById('cartOverlay')
+    .classList.add('show');
 
 }
 
 
-/* =========================================================
-   CLOSE CART
-========================================================= */
+function closeCart(event){
 
-function closeCart(){
-
-  document
-    .getElementById("drawer")
-    .classList.remove("open");
-
-}
-
-
-/* =========================================================
-   DIRECT ORDER
-========================================================= */
-
-function orderProduct(id){
-
-  const p =
-    findProduct(id);
-
-
-  if(!p){
-
-    alert(
-      "Product could not be found."
-    );
+  if(
+    event &&
+    event.target !== event.currentTarget
+  ){
 
     return;
 
   }
 
-
-  const modal =
-    document.createElement("div");
-
-
-  modal.style.cssText =
-    "position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px";
-
-
-  modal.innerHTML = `
-
-    <div
-      style="
-        background:white;
-        border-radius:18px;
-        padding:25px;
-        max-width:360px;
-        width:100%;
-        text-align:center
-      "
-    >
-
-      <h2 style="margin-top:0">
-        How would you like to order?
-      </h2>
-
-      <p style="color:#666">
-        ${escapeHtml(p.name)}
-      </p>
-
-      <button
-        id="cartOrderBtn"
-        style="
-          width:100%;
-          padding:14px;
-          margin:8px 0;
-          border:0;
-          border-radius:10px;
-          background:#222;
-          color:white;
-          font-size:16px
-        "
-      >
-        🛒 Order via Cart
-      </button>
-
-      <button
-        id="whatsappOrderBtn"
-        style="
-          width:100%;
-          padding:14px;
-          margin:8px 0;
-          border:0;
-          border-radius:10px;
-          background:#25D366;
-          color:white;
-          font-size:16px
-        "
-      >
-        💬 Order via WhatsApp
-      </button>
-
-      <button
-        id="closeOrderBtn"
-        style="
-          margin-top:10px;
-          border:0;
-          background:none;
-          color:#777
-        "
-      >
-        Cancel
-      </button>
-
-    </div>
-
-  `;
-
-
-  document.body.appendChild(modal);
-
-
   document
-    .getElementById("cartOrderBtn")
-    .onclick = () => {
-
-      addToCart(id);
-
-      modal.remove();
-
-    };
-
-
-  document
-    .getElementById("whatsappOrderBtn")
-    .onclick = () => {
-
-      const msg =
-        `Hello, I would like to order: ${p.name} — ${money(p.price)}. Please provide information about available colours and sizes.`;
-
-
-      window.open(
-        "https://wa.me/2349065828886?text=" +
-        encodeURIComponent(msg),
-        "_blank"
-      );
-
-
-      modal.remove();
-
-    };
-
-
-  document
-    .getElementById("closeOrderBtn")
-    .onclick = () => {
-
-      modal.remove();
-
-    };
+    .getElementById('cartOverlay')
+    .classList.remove('show');
 
 }
 
 
-/* =========================================================
-   OPEN PAYMENT
-========================================================= */
+/* ================= CHECKOUT ================= */
 
-function openPayment(){
+function openCheckout(){
 
   if(!cart.length){
 
-    alert(
-      "Your cart is empty."
-    );
+    showToast('Your cart is empty.');
 
     return;
 
   }
 
+  closeCart();
 
-  const total =
-    cart.reduce(
-      (sum,item) =>
-        sum +
-        Number(item.price || 0) *
-        Number(item.qty || 0),
-      0
-    );
-
+  document.getElementById(
+    'paySummary'
+  ).textContent =
+    `${cart.length} item(s) • Total ${formatNaira(cartTotal())}`;
 
   document
-    .getElementById("paySummary")
-    .textContent =
-      "Order total: " +
-      money(total);
-
-
-  document
-    .getElementById("payModal")
-    .classList.add("open");
+    .getElementById('checkoutModal')
+    .classList.add('show');
 
 }
 
 
-/* =========================================================
-   CLOSE PAYMENT
-========================================================= */
-
-function closePayment(){
+function closeCheckout(){
 
   document
-    .getElementById("payModal")
-    .classList.remove("open");
+    .getElementById('checkoutModal')
+    .classList.remove('show');
 
 }
 
-
-/* =========================================================
-   PAYMENT METHOD
-========================================================= */
 
 function selectMethod(method){
 
-  paymentMethod =
+  selectedMethod =
     method;
 
-
   document
-    .querySelectorAll(".method")
+    .querySelectorAll('.method')
     .forEach(
-      x =>
-        x.classList.remove("selected")
+      x => x.classList.remove('selected')
     );
 
+  const target =
+    document.getElementById(
+      method === 'paystack'
+        ? 'mPaystack'
+        : method === 'bank'
+          ? 'mBank'
+          : 'mWhatsapp'
+    );
 
-  const id =
-    "m" +
-    method.charAt(0).toUpperCase() +
-    method.slice(1);
+  if(target){
+
+    target.classList.add('selected');
+
+  }
 
 
-  const element =
-    document.getElementById(id);
+  const button =
+    document.getElementById(
+      'payNowBtn'
+    );
 
+  if(method === 'paystack'){
 
-  if(element){
+    button.textContent =
+      'CONTINUE PAYMENT';
 
-    element.classList.add("selected");
+  }else if(method === 'bank'){
+
+    button.textContent =
+      'GET TRANSFER DETAILS';
+
+  }else{
+
+    button.textContent =
+      'ORDER ON WHATSAPP';
 
   }
 
 }
 
 
-/* =========================================================
-   START PAYMENT
-========================================================= */
+/* ================= PAYSTACK ================= */
 
 async function startPayment(){
 
-  const name =
-    document
-      .getElementById("customerName")
-      .value
-      .trim();
+  if(!cart.length){
 
+    showToast('Your cart is empty.');
+
+    return;
+
+  }
+
+
+  const name =
+    document.getElementById(
+      'customerName'
+    ).value.trim();
 
   const email =
-    document
-      .getElementById("customerEmail")
-      .value
-      .trim();
-
+    document.getElementById(
+      'customerEmail'
+    ).value.trim();
 
   const phone =
-    document
-      .getElementById("customerPhone")
-      .value
-      .trim();
-
+    document.getElementById(
+      'customerPhone'
+    ).value.trim();
 
   const address =
-    document
-      .getElementById("customerAddress")
-      .value
-      .trim();
+    document.getElementById(
+      'customerAddress'
+    ).value.trim();
 
 
-  if(
-    !name ||
-    !email ||
-    !phone ||
-    !address
-  ){
+  if(!name || !email || !phone || !address){
 
-    alert(
-      "Please complete your name, email, phone and delivery address."
+    showToast(
+      'Please complete all customer details.'
     );
 
     return;
@@ -2052,103 +2567,41 @@ async function startPayment(){
   }
 
 
-  const order = {
+  if(selectedMethod === 'whatsapp'){
 
-    customer:{
+    orderCartWhatsApp({
 
-      name:name,
-
-      email:email,
-
-      phone:phone,
-
-      address:address
-
-    },
-
-
-    items:
-
-      cart.map(item => ({
-
-        id:item.id,
-
-        name:item.name,
-
-        price:Number(item.price || 0),
-
-        qty:Number(item.qty || 0)
-
-      })),
-
-
-    total:
-
-      cart.reduce(
-        (sum,item) =>
-          sum +
-          Number(item.price || 0) *
-          Number(item.qty || 0),
-        0
-      )
-
-  };
-
-
-  /* WHATSAPP */
-
-  if(paymentMethod === "whatsapp"){
-
-    let message =
-      "Assalamu alaikum, Ina son yin order:\n\n";
-
-
-    order.items.forEach(item => {
-
-      message +=
-        "• " +
-        item.name +
-        " — " +
-        item.qty +
-        " × " +
-        money(item.price) +
-        "\n";
+      name,
+      email,
+      phone,
+      address
 
     });
 
+    return;
 
-    message +=
-      "\nTotal: " +
-      money(order.total) +
+  }
 
-      "\nName: " +
-      name +
 
-      "\nPhone: " +
-      phone +
+  if(selectedMethod === 'bank'){
 
-      "\nAddress: " +
-      address;
-
+    const message =
+      `Assalamu alaikum, Ina son yin order.\n\n` +
+      `Name: ${name}\n` +
+      `Phone: ${phone}\n` +
+      `Email: ${email}\n` +
+      `Address: ${address}\n\n` +
+      cart.map(
+        x =>
+          `${x.name} x${x.qty} = ${formatNaira(x.price * x.qty)}`
+      ).join('\n') +
+      `\n\nTotal: ${formatNaira(cartTotal())}` +
+      `\n\nIna bukatar bayanan bank transfer.`;
 
     window.open(
-      "https://wa.me/2349065828886?text=" +
+      'https://wa.me/2349065828886?text=' +
       encodeURIComponent(message),
-      "_blank"
-    );
-
-
-    return;
-
-  }
-
-
-  /* BANK */
-
-  if(paymentMethod === "bank"){
-
-    alert(
-      "Bank-transfer details can be added in the Admin Settings."
+      '_blank'
     );
 
     return;
@@ -2156,36 +2609,52 @@ async function startPayment(){
   }
 
 
-  /* OTHER */
-
-  if(paymentMethod !== "paystack"){
-
-    alert(
-      "Paystack is the active online payment gateway."
+  const button =
+    document.getElementById(
+      'payNowBtn'
     );
 
-    return;
+  button.disabled = true;
 
-  }
+  button.textContent =
+    'CONNECTING TO PAYMENT...';
 
-
-  /* PAYSTACK */
 
   try{
 
     const response =
       await fetch(
-        "/api/paystack/initialize",
+        '/api/paystack/initialize',
         {
-          method:"POST",
+
+          method:'POST',
 
           headers:{
-            "Content-Type":
-              "application/json"
+            'Content-Type':
+              'application/json'
           },
 
           body:
-            JSON.stringify(order)
+            JSON.stringify({
+
+              customer:{
+
+                name,
+                email,
+                phone,
+                address
+
+              },
+
+              items:
+                cart.map(
+                  x => ({
+                    id:x.id,
+                    qty:x.qty
+                  })
+                )
+
+            })
 
         }
       );
@@ -2196,47 +2665,153 @@ async function startPayment(){
 
 
     if(
-      data &&
+      response.ok &&
       data.authorization_url
     ){
+
+      /*
+        The server calculates the total.
+        The browser never sends a trusted price.
+      */
 
       window.location.href =
         data.authorization_url;
 
-    }else{
-
-      alert(
-        data?.message ||
-        "Payment could not be started."
-      );
+      return;
 
     }
 
 
+    throw new Error(
+      data.message ||
+      'Payment initialization failed.'
+    );
+
+
   }catch(error){
 
-    console.error(
-      "Payment error:",
-      error
+    console.error(error);
+
+    showToast(
+      error.message ||
+      'Payment service error.'
     );
 
+    button.disabled =
+      false;
 
-    alert(
-      "Payment server is not connected yet. Please contact the store."
-    );
+    button.textContent =
+      'CONTINUE PAYMENT';
 
   }
 
 }
 
 
-/* =========================================================
-   START WEBSITE
-========================================================= */
+/* ================= WHATSAPP ================= */
+
+function orderCartWhatsApp(customer = null){
+
+  if(!cart.length){
+
+    showToast('Your cart is empty.');
+
+    return;
+
+  }
+
+
+  let message =
+    'Assalamu alaikum, Face of Style Hijab Factory.%0A%0A' +
+    'Ina son yin order daga website:%0A%0A';
+
+
+  cart.forEach(item => {
+
+    message +=
+      encodeURIComponent(
+        `${item.name} x${item.qty} — ${formatNaira(item.price * item.qty)}`
+      ) +
+      '%0A';
+
+  });
+
+
+  message +=
+    '%0A' +
+    encodeURIComponent(
+      `Total: ${formatNaira(cartTotal())}`
+    );
+
+
+  if(customer){
+
+    message +=
+      '%0A%0A' +
+      encodeURIComponent(
+        `Name: ${customer.name}
+Phone: ${customer.phone}
+Email: ${customer.email}
+Address: ${customer.address}`
+      );
+
+  }
+
+
+  window.open(
+    'https://wa.me/2349065828886?text=' +
+    message,
+    '_blank'
+  );
+
+}
+
+
+/* ================= MOBILE MENU ================= */
+
+function toggleMenu(){
+
+  const menu =
+    document.getElementById(
+      'mobileMenu'
+    );
+
+  menu.style.display =
+    menu.style.display === 'block'
+      ? 'none'
+      : 'block';
+
+}
+
+
+function closeMobileMenu(){
+
+  document.getElementById(
+    'mobileMenu'
+  ).style.display =
+    'none';
+
+}
+
+
+/* ================= PAYMENT SUCCESS ================= */
+
+/*
+  If Paystack redirects to payment-success.html,
+  that page can verify the transaction through the server.
+*/
+
+window.addEventListener(
+  'storage',
+  updateCartCount
+);
+
+
+/* ================= START ================= */
+
+loadCart();
 
 loadProducts();
-
-updateCart();
 
 </script>
 
