@@ -1,499 +1,780 @@
 import 'dotenv/config';
 import express from 'express';
-import path from 'path';
-import crypto from 'crypto';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
 import pg from 'pg';
+import crypto from 'crypto';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const { Pool } = pg;
-
-const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const app = express();
+const PORT = process.env.PORT || 10000;
+
 /* =========================================================
-   BASIC CONFIGURATION
+   CONFIGURATION
 ========================================================= */
 
-const PORT = Number(process.env.PORT || 3000);
+const PAYSTACK_SECRET_KEY =
+  process.env.PAYSTACK_SECRET_KEY || '';
 
-const BASE_URL = (
-  process.env.BASE_URL ||
-  `http://localhost:${PORT}`
-).replace(/\/+$/, '');
+const ADMIN_USERNAME =
+  process.env.ADMIN_USERNAME || '';
 
-const DATA = path.join(__dirname, 'data');
+const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD || '';
 
-const ORDERS_FILE = path.join(DATA, 'orders.json');
-const PRODUCTS_BACKUP_FILE = path.join(DATA, 'products.json');
-const SETTINGS_FILE = path.join(DATA, 'settings.json');
+const DATABASE_URL =
+  process.env.DATABASE_URL || '';
 
-fs.mkdirSync(DATA, { recursive: true });
+const WHATSAPP_NUMBER =
+  process.env.WHATSAPP_NUMBER || '2349065828886';
 
-if (!fs.existsSync(ORDERS_FILE)) {
-  fs.writeFileSync(ORDERS_FILE, '[]');
-}
+const SESSION_SECRET =
+  process.env.SESSION_SECRET || '';
 
-if (!fs.existsSync(PRODUCTS_BACKUP_FILE)) {
-  fs.writeFileSync(
-    PRODUCTS_BACKUP_FILE,
-    JSON.stringify([], null, 2)
-  );
-}
-
-if (!fs.existsSync(SETTINGS_FILE)) {
-  fs.writeFileSync(
-    SETTINGS_FILE,
-    JSON.stringify(
-      {
-        primaryColor: '#651630',
-        accentColor: '#c9a45b',
-        backgroundColor: '#f7f2eb',
-        textColor: '#292025'
-      },
-      null,
-      2
-    )
-  );
-}
+const isProduction =
+  process.env.NODE_ENV === 'production';
 
 /* =========================================================
    DATABASE
 ========================================================= */
 
-if (!process.env.DATABASE_URL) {
-  console.error('DATABASE_URL is not configured.');
-}
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-
-  ssl: process.env.DATABASE_URL
-    ? { rejectUnauthorized: false }
-    : undefined,
-
-  max: 10,
-
-  idleTimeoutMillis: 30000,
-
-  connectionTimeoutMillis: 10000
-});
+const pool = DATABASE_URL
+  ? new Pool({
+      connectionString: DATABASE_URL,
+      ssl: isProduction
+        ? { rejectUnauthorized: false }
+        : false
+    })
+  : null;
 
 /* =========================================================
    EXPRESS
 ========================================================= */
 
-app.disable('x-powered-by');
-
-app.use((req, res, next) => {
-  res.setHeader(
-    'X-Content-Type-Options',
-    'nosniff'
-  );
-
-  res.setHeader(
-    'X-Frame-Options',
-    'SAMEORIGIN'
-  );
-
-  res.setHeader(
-    'Referrer-Policy',
-    'strict-origin-when-cross-origin'
-  );
-
-  res.setHeader(
-    'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=()'
-  );
-
-  next();
-});
-
 app.use(
   express.json({
-    limit: '12mb',
-
-    verify: (req, res, buf) => {
-      req.rawBody = buf;
-    }
+    limit: '1mb'
   })
 );
 
 app.use(
   express.urlencoded({
     extended: true,
-    limit: '12mb'
+    limit: '1mb'
   })
 );
 
-app.use(express.static(__dirname));
+app.use(
+  express.static(
+    path.join(__dirname, 'public')
+  )
+);
 
 /* =========================================================
-   ADMIN SESSION SYSTEM
+   SIMPLE AUTH TOKENS
 ========================================================= */
 
-const adminSessions = new Map();
+const sessions = new Map();
 
-const SESSION_DURATION =
-  Number(process.env.ADMIN_SESSION_MINUTES || 240) *
-  60 *
-  1000;
+function createSession(username) {
+  const token =
+    crypto.randomBytes(32).toString('hex');
 
-function createAdminSession() {
-  const token = crypto
-    .randomBytes(48)
-    .toString('hex');
-
-  adminSessions.set(token, {
-    createdAt: Date.now(),
-    expiresAt:
-      Date.now() + SESSION_DURATION
+  sessions.set(token, {
+    username,
+    createdAt: Date.now()
   });
 
   return token;
 }
 
-function cleanupSessions() {
-  const now = Date.now();
-
-  for (const [token, session] of adminSessions) {
-    if (
-      !session ||
-      session.expiresAt <= now
-    ) {
-      adminSessions.delete(token);
-    }
-  }
-}
-
-setInterval(
-  cleanupSessions,
-  10 * 60 * 1000
-).unref();
-
-function getAdminToken(req) {
-  const header =
+function getSession(req) {
+  const auth =
     req.headers.authorization || '';
 
-  if (!header.startsWith('Bearer ')) {
-    return '';
+  if (!auth.startsWith('Bearer ')) {
+    return null;
   }
 
-  return header.slice(7).trim();
-}
-
-function adminAuth(req, res, next) {
-  cleanupSessions();
-
-  const token = getAdminToken(req);
+  const token =
+    auth.slice(7).trim();
 
   if (!token) {
-    return res.status(401).json({
-      ok: false,
-      message: 'Unauthorized.'
-    });
+    return null;
   }
 
   const session =
-    adminSessions.get(token);
+    sessions.get(token);
+
+  if (!session) {
+    return null;
+  }
+
+  const maxAge =
+    1000 * 60 * 60 * 24;
+
+  if (
+    Date.now() -
+      session.createdAt >
+    maxAge
+  ) {
+    sessions.delete(token);
+    return null;
+  }
+
+  return {
+    token,
+    ...session
+  };
+}
+
+function requireAdmin(req, res, next) {
+  const session =
+    getSession(req);
 
   if (!session) {
     return res.status(401).json({
       ok: false,
-      message: 'Session expired. Please login again.'
+      message: 'Admin authentication required.'
     });
   }
 
-  if (
-    session.expiresAt <= Date.now()
-  ) {
-    adminSessions.delete(token);
-
-    return res.status(401).json({
-      ok: false,
-      message: 'Session expired. Please login again.'
-    });
-  }
-
-  req.adminSession = session;
+  req.admin = session;
 
   next();
 }
 
 /* =========================================================
-   LOGIN RATE LIMIT
+   DATABASE INITIALIZATION
 ========================================================= */
 
-const loginAttempts = new Map();
-
-const LOGIN_WINDOW = 15 * 60 * 1000;
-const MAX_LOGIN_ATTEMPTS = 8;
-
-function getClientKey(req) {
-  return (
-    req.ip ||
-    req.headers['x-forwarded-for'] ||
-    'unknown'
-  );
-}
-
-function loginRateLimited(req) {
-  const key = getClientKey(req);
-
-  const current =
-    loginAttempts.get(key);
-
-  if (!current) {
-    return false;
-  }
-
-  if (
-    Date.now() - current.firstAttempt >
-    LOGIN_WINDOW
-  ) {
-    loginAttempts.delete(key);
-    return false;
-  }
-
-  return (
-    current.count >=
-    MAX_LOGIN_ATTEMPTS
-  );
-}
-
-function recordFailedLogin(req) {
-  const key = getClientKey(req);
-
-  const current =
-    loginAttempts.get(key);
-
-  if (
-    !current ||
-    Date.now() - current.firstAttempt >
-      LOGIN_WINDOW
-  ) {
-    loginAttempts.set(key, {
-      count: 1,
-      firstAttempt: Date.now()
-    });
+async function initDatabase() {
+  if (!pool) {
+    console.warn(
+      'DATABASE_URL is not configured. Database features are disabled.'
+    );
 
     return;
   }
 
-  current.count += 1;
-}
-
-/* =========================================================
-   JSON FILE HELPERS
-========================================================= */
-
-function readOrders() {
-  try {
-    return JSON.parse(
-      fs.readFileSync(
-        ORDERS_FILE,
-        'utf8'
-      ) || '[]'
-    );
-  } catch {
-    return [];
-  }
-}
-
-function writeOrders(orders) {
-  const temp =
-    `${ORDERS_FILE}.tmp`;
-
-  fs.writeFileSync(
-    temp,
-    JSON.stringify(
-      orders,
-      null,
-      2
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS products (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'Fashion',
+      description TEXT DEFAULT '',
+      price NUMERIC(12,2) NOT NULL DEFAULT 0,
+      color TEXT DEFAULT '',
+      image TEXT DEFAULT '',
+      stock INTEGER NOT NULL DEFAULT 0,
+      active BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
-  );
+  `);
 
-  fs.renameSync(
-    temp,
-    ORDERS_FILE
-  );
-}
-
-function readSettings() {
-  try {
-    return JSON.parse(
-      fs.readFileSync(
-        SETTINGS_FILE,
-        'utf8'
-      ) || '{}'
-    );
-  } catch {
-    return {
-      primaryColor: '#651630',
-      accentColor: '#c9a45b',
-      backgroundColor: '#f7f2eb',
-      textColor: '#292025'
-    };
-  }
-}
-
-function writeSettings(settings) {
-  const temp =
-    `${SETTINGS_FILE}.tmp`;
-
-  fs.writeFileSync(
-    temp,
-    JSON.stringify(
-      settings,
-      null,
-      2
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id BIGSERIAL PRIMARY KEY,
+      reference TEXT UNIQUE NOT NULL,
+      customer_name TEXT NOT NULL,
+      customer_email TEXT NOT NULL,
+      customer_phone TEXT NOT NULL,
+      delivery_address TEXT NOT NULL,
+      payment_method TEXT NOT NULL DEFAULT 'paystack',
+      payment_status TEXT NOT NULL DEFAULT 'PENDING',
+      order_status TEXT NOT NULL DEFAULT 'PENDING',
+      total NUMERIC(12,2) NOT NULL DEFAULT 0,
+      currency TEXT NOT NULL DEFAULT 'NGN',
+      paystack_reference TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
-  );
+  `);
 
-  fs.renameSync(
-    temp,
-    SETTINGS_FILE
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS order_items (
+      id BIGSERIAL PRIMARY KEY,
+      order_id BIGINT NOT NULL
+        REFERENCES orders(id)
+        ON DELETE CASCADE,
+      product_id INTEGER NOT NULL,
+      product_name TEXT NOT NULL,
+      price NUMERIC(12,2) NOT NULL,
+      quantity INTEGER NOT NULL,
+      subtotal NUMERIC(12,2) NOT NULL
+    )
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_products_active
+    ON products(active)
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_orders_created
+    ON orders(created_at DESC)
+  `);
+
+  console.log(
+    'Database initialized successfully.'
   );
 }
 
 /* =========================================================
-   SECURITY HELPERS
+   HELPERS
 ========================================================= */
 
-function safeString(
-  value,
-  maxLength = 500
-) {
+function cleanString(value, max = 500) {
   return String(value ?? '')
     .trim()
-    .slice(0, maxLength);
+    .slice(0, max);
 }
 
-function createReference() {
-  return (
-    `FS-${Date.now()}-${crypto
-      .randomBytes(4)
-      .toString('hex')}`
-  ).toUpperCase();
-}
-
-function timingSafeEqualText(a, b) {
-  const aBuffer =
-    Buffer.from(String(a));
-
-  const bBuffer =
-    Buffer.from(String(b));
+function positiveInteger(value) {
+  const number =
+    Number(value);
 
   if (
-    aBuffer.length !==
-    bBuffer.length
+    !Number.isInteger(number) ||
+    number < 1
   ) {
-    return false;
+    return null;
   }
 
-  return crypto.timingSafeEqual(
-    aBuffer,
-    bBuffer
+  return number;
+}
+
+function positivePrice(value) {
+  const number =
+    Number(value);
+
+  if (
+    !Number.isFinite(number) ||
+    number < 0
+  ) {
+    return null;
+  }
+
+  return Math.round(
+    number * 100
+  ) / 100;
+}
+
+function createOrderReference() {
+  return (
+    'FS-' +
+    Date.now().toString(36).toUpperCase() +
+    '-' +
+    crypto
+      .randomBytes(4)
+      .toString('hex')
+      .toUpperCase()
   );
 }
 
-function isValidHexColor(value) {
-  return /^#[0-9A-Fa-f]{6}$/.test(
-    String(value || '')
-  );
+function validEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    .test(email);
+}
+
+function validPhone(phone) {
+  return /^[0-9+\-\s()]{7,25}$/
+    .test(phone);
+}
+
+function normalizeCategory(value) {
+  const category =
+    cleanString(value, 50);
+
+  if (!category) {
+    return 'Fashion';
+  }
+
+  return category;
 }
 
 /* =========================================================
-   PRODUCTS
+   HEALTH CHECK
 ========================================================= */
 
-async function getProducts() {
-  const result =
-    await pool.query(`
-      SELECT
-        id,
-        name,
-        cat,
-        price,
-        color,
-        img,
-        description
-      FROM products
-      ORDER BY id ASC
-    `);
+app.get('/api/health', async (req, res) => {
+  let database = false;
 
-  return result.rows;
-}
+  if (pool) {
+    try {
+      await pool.query(
+        'SELECT 1'
+      );
+
+      database = true;
+    } catch {
+      database = false;
+    }
+  }
+
+  res.json({
+    ok: true,
+    service:
+      'Face of Style Hijab Factory',
+    database,
+    paystackConfigured:
+      Boolean(PAYSTACK_SECRET_KEY),
+    adminConfigured:
+      Boolean(
+        ADMIN_USERNAME &&
+        ADMIN_PASSWORD
+      )
+  });
+});
 
 /* =========================================================
    PUBLIC PRODUCTS
 ========================================================= */
 
+app.get('/api/products', async (req, res) => {
+  if (!pool) {
+    return res.json({
+      products: []
+    });
+  }
+
+  try {
+    const result =
+      await pool.query(`
+        SELECT
+          id,
+          name,
+          category AS cat,
+          description,
+          price,
+          color,
+          image AS img,
+          stock
+        FROM products
+        WHERE active = TRUE
+        ORDER BY created_at DESC
+      `);
+
+    res.json({
+      products:
+        result.rows
+    });
+
+  } catch (error) {
+    console.error(
+      'Products error:',
+      error
+    );
+
+    res.status(500).json({
+      ok: false,
+      message:
+        'Unable to load products.'
+    });
+  }
+});
+
+/* =========================================================
+   ADMIN LOGIN
+========================================================= */
+
+app.post(
+  '/api/admin/login',
+  (req, res) => {
+    const username =
+      cleanString(
+        req.body?.username,
+        100
+      );
+
+    const password =
+      String(
+        req.body?.password || ''
+      );
+
+    if (
+      !ADMIN_USERNAME ||
+      !ADMIN_PASSWORD
+    ) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Admin credentials are not configured on the server.'
+      });
+    }
+
+    if (
+      username !== ADMIN_USERNAME ||
+      password !== ADMIN_PASSWORD
+    ) {
+      return res.status(401).json({
+        ok: false,
+        message:
+          'Invalid admin credentials.'
+      });
+    }
+
+    const token =
+      createSession(username);
+
+    res.json({
+      ok: true,
+      token,
+      username
+    });
+  }
+);
+
+/* =========================================================
+   ADMIN LOGOUT
+========================================================= */
+
+app.post(
+  '/api/admin/logout',
+  requireAdmin,
+  (req, res) => {
+    sessions.delete(
+      req.admin.token
+    );
+
+    res.json({
+      ok: true
+    });
+  }
+);
+
+/* =========================================================
+   ADMIN SESSION
+========================================================= */
+
 app.get(
-  '/api/products',
+  '/api/admin/me',
+  requireAdmin,
+  (req, res) => {
+    res.json({
+      ok: true,
+      username:
+        req.admin.username
+    });
+  }
+);
+
+/* =========================================================
+   ADMIN PRODUCTS
+========================================================= */
+
+app.get(
+  '/api/admin/products',
+  requireAdmin,
   async (req, res) => {
+    if (!pool) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Database is not configured.'
+      });
+    }
+
     try {
-      const products =
-        await getProducts();
+      const result =
+        await pool.query(`
+          SELECT
+            id,
+            name,
+            category AS cat,
+            description,
+            price,
+            color,
+            image AS img,
+            stock,
+            active,
+            created_at,
+            updated_at
+          FROM products
+          ORDER BY created_at DESC
+        `);
 
       res.json({
         ok: true,
-        products
+        products:
+          result.rows
       });
+
     } catch (error) {
-      console.error(
-        'PUBLIC PRODUCTS ERROR:',
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         ok: false,
         message:
-          'Failed to load products.'
+          'Unable to load admin products.'
       });
     }
   }
 );
 
 /* =========================================================
-   SINGLE PUBLIC PRODUCT
+   CREATE PRODUCT
 ========================================================= */
 
-app.get(
-  '/api/products/:id',
+app.post(
+  '/api/admin/products',
+  requireAdmin,
   async (req, res) => {
+    if (!pool) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Database is not configured.'
+      });
+    }
+
+    const name =
+      cleanString(
+        req.body?.name,
+        150
+      );
+
+    const category =
+      normalizeCategory(
+        req.body?.category ||
+        req.body?.cat
+      );
+
+    const description =
+      cleanString(
+        req.body?.description ||
+        req.body?.desc,
+        1000
+      );
+
+    const color =
+      cleanString(
+        req.body?.color,
+        100
+      );
+
+    const image =
+      cleanString(
+        req.body?.image ||
+        req.body?.img,
+        1000
+      );
+
+    const price =
+      positivePrice(
+        req.body?.price
+      );
+
+    const stock =
+      Number.isInteger(
+        Number(req.body?.stock)
+      )
+        ? Number(req.body.stock)
+        : 0;
+
+    if (!name) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Product name is required.'
+      });
+    }
+
+    if (price === null) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'A valid product price is required.'
+      });
+    }
+
+    if (
+      stock < 0 ||
+      stock > 1000000
+    ) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Invalid stock quantity.'
+      });
+    }
+
     try {
-      const id =
-        Number(req.params.id);
-
-      if (!Number.isInteger(id)) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Invalid product ID.'
-        });
-      }
-
       const result =
         await pool.query(
           `
-          SELECT
-            id,
+          INSERT INTO products
+          (
             name,
-            cat,
+            category,
+            description,
             price,
             color,
-            img,
-            description
-          FROM products
-          WHERE id = $1
+            image,
+            stock
+          )
+          VALUES
+          ($1,$2,$3,$4,$5,$6,$7)
+          RETURNING *
           `,
-          [id]
+          [
+            name,
+            category,
+            description,
+            price,
+            color,
+            image,
+            stock
+          ]
         );
 
-      if (!result.rows.length) {
+      res.status(201).json({
+        ok: true,
+        product:
+          result.rows[0]
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      res.status(500).json({
+        ok: false,
+        message:
+          'Unable to create product.'
+      });
+    }
+  }
+);
+
+/* =========================================================
+   UPDATE PRODUCT
+========================================================= */
+
+app.put(
+  '/api/admin/products/:id',
+  requireAdmin,
+  async (req, res) => {
+    if (!pool) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Database is not configured.'
+      });
+    }
+
+    const id =
+      positiveInteger(
+        req.params.id
+      );
+
+    if (!id) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Invalid product ID.'
+      });
+    }
+
+    const name =
+      cleanString(
+        req.body?.name,
+        150
+      );
+
+    const category =
+      normalizeCategory(
+        req.body?.category ||
+        req.body?.cat
+      );
+
+    const description =
+      cleanString(
+        req.body?.description ||
+        req.body?.desc,
+        1000
+      );
+
+    const color =
+      cleanString(
+        req.body?.color,
+        100
+      );
+
+    const image =
+      cleanString(
+        req.body?.image ||
+        req.body?.img,
+        1000
+      );
+
+    const price =
+      positivePrice(
+        req.body?.price
+      );
+
+    const stock =
+      Number(req.body?.stock);
+
+    const active =
+      req.body?.active !== false;
+
+    if (!name || price === null) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Product name and valid price are required.'
+      });
+    }
+
+    if (
+      !Number.isInteger(stock) ||
+      stock < 0 ||
+      stock > 1000000
+    ) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Invalid stock quantity.'
+      });
+    }
+
+    try {
+      const result =
+        await pool.query(
+          `
+          UPDATE products
+          SET
+            name = $1,
+            category = $2,
+            description = $3,
+            price = $4,
+            color = $5,
+            image = $6,
+            stock = $7,
+            active = $8,
+            updated_at = NOW()
+          WHERE id = $9
+          RETURNING *
+          `,
+          [
+            name,
+            category,
+            description,
+            price,
+            color,
+            image,
+            stock,
+            active,
+            id
+          ]
+        );
+
+      if (!result.rowCount) {
         return res.status(404).json({
           ok: false,
           message:
@@ -506,254 +787,83 @@ app.get(
         product:
           result.rows[0]
       });
+
     } catch (error) {
-      console.error(
-        'SINGLE PRODUCT ERROR:',
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         ok: false,
         message:
-          'Failed to load product.'
+          'Unable to update product.'
       });
     }
   }
 );
 
 /* =========================================================
-   CALCULATE ORDER
+   DELETE / DEACTIVATE PRODUCT
 ========================================================= */
 
-async function calculateOrder(items) {
-  if (
-    !Array.isArray(items) ||
-    !items.length
-  ) {
-    return null;
-  }
-
-  const products =
-    await getProducts();
-
-  let total = 0;
-
-  const clean = [];
-
-  for (const item of items) {
-    const product =
-      products.find(
-        p =>
-          Number(p.id) ===
-          Number(item.id)
-      );
-
-    const qty =
-      Math.floor(
-        Number(item.qty)
-      );
-
-    if (
-      !product ||
-      !Number.isInteger(qty) ||
-      qty < 1 ||
-      qty > 99
-    ) {
-      return null;
-    }
-
-    total +=
-      Number(product.price) * qty;
-
-    clean.push({
-      id: product.id,
-      name: product.name,
-      price: Number(product.price),
-      qty
-    });
-  }
-
-  return {
-    items: clean,
-    total
-  };
-}
-
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
-
-app.post(
-  '/api/admin/login',
-  (req, res) => {
-    if (loginRateLimited(req)) {
-      return res.status(429).json({
-        ok: false,
-        message:
-          'Too many login attempts. Please wait and try again.'
-      });
-    }
-
-    const username =
-      safeString(
-        req.body?.username,
-        120
-      );
-
-    const password =
-      String(
-        req.body?.password || ''
-      );
-
-    const expectedUser =
-      process.env.ADMIN_USER;
-
-    const expectedPassword =
-      process.env.ADMIN_PASSWORD;
-
-    if (
-      !expectedUser ||
-      !expectedPassword
-    ) {
+app.delete(
+  '/api/admin/products/:id',
+  requireAdmin,
+  async (req, res) => {
+    if (!pool) {
       return res.status(503).json({
         ok: false,
         message:
-          'Admin credentials are not configured on the server.'
+          'Database is not configured.'
       });
     }
 
-    const validUser =
-      timingSafeEqualText(
-        username,
-        expectedUser
+    const id =
+      positiveInteger(
+        req.params.id
       );
 
-    const validPassword =
-      timingSafeEqualText(
-        password,
-        expectedPassword
-      );
-
-    if (
-      !validUser ||
-      !validPassword
-    ) {
-      recordFailedLogin(req);
-
-      return res.status(401).json({
+    if (!id) {
+      return res.status(400).json({
         ok: false,
         message:
-          'Invalid username or password.'
+          'Invalid product ID.'
       });
     }
 
-    loginAttempts.delete(
-      getClientKey(req)
-    );
-
-    const token =
-      createAdminSession();
-
-    res.json({
-      ok: true,
-      token,
-      expiresAt:
-        Date.now() +
-        SESSION_DURATION
-    });
-  }
-);
-
-/* =========================================================
-   ADMIN LOGOUT
-========================================================= */
-
-app.post(
-  '/api/admin/logout',
-  adminAuth,
-  (req, res) => {
-    const token =
-      getAdminToken(req);
-
-    adminSessions.delete(token);
-
-    res.json({
-      ok: true,
-      message:
-        'Logged out successfully.'
-    });
-  }
-);
-
-/* =========================================================
-   ADMIN DASHBOARD
-========================================================= */
-
-app.get(
-  '/api/admin/dashboard',
-  adminAuth,
-  (req, res) => {
     try {
-      const orders =
-        readOrders();
-
-      const paid =
-        orders.filter(
-          x =>
-            x.status === 'paid'
+      const result =
+        await pool.query(
+          `
+          UPDATE products
+          SET
+            active = FALSE,
+            updated_at = NOW()
+          WHERE id = $1
+          RETURNING id
+          `,
+          [id]
         );
 
-      const pending =
-        orders.filter(
-          x =>
-            x.status === 'pending'
-        );
-
-      const failed =
-        orders.filter(
-          x =>
-            x.status === 'failed'
-        );
-
-      const revenue =
-        paid.reduce(
-          (total, order) =>
-            total +
-            Number(
-              order.total || 0
-            ),
-          0
-        );
+      if (!result.rowCount) {
+        return res.status(404).json({
+          ok: false,
+          message:
+            'Product not found.'
+        });
+      }
 
       res.json({
         ok: true,
-
-        stats: {
-          orders:
-            orders.length,
-
-          paid:
-            paid.length,
-
-          pending:
-            pending.length,
-
-          failed:
-            failed.length,
-
-          revenue
-        }
+        message:
+          'Product removed from the store.'
       });
+
     } catch (error) {
-      console.error(
-        'DASHBOARD ERROR:',
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         ok: false,
         message:
-          'Failed to load dashboard.'
+          'Unable to remove product.'
       });
     }
   }
@@ -765,57 +875,193 @@ app.get(
 
 app.get(
   '/api/admin/orders',
-  adminAuth,
-  (req, res) => {
+  requireAdmin,
+  async (req, res) => {
+    if (!pool) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Database is not configured.'
+      });
+    }
+
     try {
+      const ordersResult =
+        await pool.query(`
+          SELECT
+            id,
+            reference,
+            customer_name,
+            customer_email,
+            customer_phone,
+            delivery_address,
+            payment_method,
+            payment_status,
+            order_status,
+            total,
+            currency,
+            paystack_reference,
+            created_at,
+            updated_at
+          FROM orders
+          ORDER BY created_at DESC
+        `);
+
       const orders =
-        readOrders()
-          .sort(
-            (a, b) =>
-              new Date(
-                b.createdAt
-              ) -
-              new Date(
-                a.createdAt
-              )
+        ordersResult.rows;
+
+      if (!orders.length) {
+        return res.json({
+          ok: true,
+          orders: []
+        });
+      }
+
+      const ids =
+        orders.map(
+          order => order.id
+        );
+
+      const itemsResult =
+        await pool.query(
+          `
+          SELECT
+            id,
+            order_id,
+            product_id,
+            product_name,
+            price,
+            quantity,
+            subtotal
+          FROM order_items
+          WHERE order_id = ANY($1::bigint[])
+          ORDER BY id ASC
+          `,
+          [ids]
+        );
+
+      const itemsByOrder =
+        new Map();
+
+      for (
+        const item
+        of itemsResult.rows
+      ) {
+        if (
+          !itemsByOrder.has(
+            item.order_id
+          )
+        ) {
+          itemsByOrder.set(
+            item.order_id,
+            []
           );
+        }
+
+        itemsByOrder
+          .get(item.order_id)
+          .push(item);
+      }
+
+      const output =
+        orders.map(order => ({
+          ...order,
+          items:
+            itemsByOrder.get(
+              order.id
+            ) || []
+        }));
 
       res.json({
         ok: true,
-        orders
+        orders: output
       });
+
     } catch (error) {
-      console.error(
-        'ADMIN ORDERS ERROR:',
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         ok: false,
         message:
-          'Failed to load orders.'
+          'Unable to load orders.'
       });
     }
   }
 );
 
 /* =========================================================
-   ADMIN SINGLE ORDER
+   UPDATE ORDER STATUS
 ========================================================= */
 
-app.get(
+app.patch(
   '/api/admin/orders/:id',
-  adminAuth,
-  (req, res) => {
+  requireAdmin,
+  async (req, res) => {
+    if (!pool) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Database is not configured.'
+      });
+    }
+
+    const id =
+      positiveInteger(
+        req.params.id
+      );
+
+    const orderStatus =
+      cleanString(
+        req.body?.order_status,
+        30
+      ).toUpperCase();
+
+    const allowed = [
+      'PENDING',
+      'PROCESSING',
+      'SHIPPED',
+      'DELIVERED',
+      'CANCELLED'
+    ];
+
+    if (!id) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Invalid order ID.'
+      });
+    }
+
+    if (
+      !allowed.includes(
+        orderStatus
+      )
+    ) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Invalid order status.'
+      });
+    }
+
     try {
-      const order =
-        readOrders().find(
-          x =>
-            x.id ===
-            req.params.id
+      const result =
+        await pool.query(
+          `
+          UPDATE orders
+          SET
+            order_status = $1,
+            updated_at = NOW()
+          WHERE id = $2
+          RETURNING *
+          `,
+          [
+            orderStatus,
+            id
+          ]
         );
 
-      if (!order) {
+      if (!result.rowCount) {
         return res.status(404).json({
           ok: false,
           message:
@@ -825,837 +1071,19 @@ app.get(
 
       res.json({
         ok: true,
-        order
-      });
-    } catch (error) {
-      console.error(
-        'SINGLE ORDER ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Failed to load order.'
-      });
-    }
-  }
-);
-
-/* =========================================================
-   ADMIN PRODUCTS - GET
-========================================================= */
-
-app.get(
-  '/api/admin/products',
-  adminAuth,
-  async (req, res) => {
-    try {
-      const products =
-        await getProducts();
-
-      res.json({
-        ok: true,
-        products
-      });
-    } catch (error) {
-      console.error(
-        'GET PRODUCTS ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Failed to load products.'
-      });
-    }
-  }
-);
-
-/* =========================================================
-   ADMIN PRODUCTS - ADD
-========================================================= */
-
-app.post(
-  '/api/admin/products',
-  adminAuth,
-  async (req, res) => {
-    try {
-      const {
-        name,
-        cat,
-        price,
-        color,
-        img,
-        description,
-        desc
-      } = req.body || {};
-
-      const cleanName =
-        safeString(name, 150);
-
-      const cleanCat =
-        safeString(cat, 80);
-
-      const cleanColor =
-        safeString(color, 100);
-
-      const cleanImg =
-        safeString(img, 12000000);
-
-      const cleanDescription =
-        safeString(
-          description ??
-          desc ??
-          '',
-          2000
-        );
-
-      const cleanPrice =
-        Number(price);
-
-      if (!cleanName) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Product name is required.'
-        });
-      }
-
-      if (!cleanCat) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Category is required.'
-        });
-      }
-
-      if (
-        !Number.isFinite(
-          cleanPrice
-        ) ||
-        cleanPrice <= 0
-      ) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Enter a valid product price.'
-        });
-      }
-
-      if (!cleanColor) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Product color is required.'
-        });
-      }
-
-      if (!cleanImg) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Product photo is required.'
-        });
-      }
-
-      const result =
-        await pool.query(
-          `
-          INSERT INTO products
-          (
-            name,
-            cat,
-            price,
-            color,
-            img,
-            description
-          )
-          VALUES
-          ($1,$2,$3,$4,$5,$6)
-          RETURNING
-            id,
-            name,
-            cat,
-            price,
-            color,
-            img,
-            description
-          `,
-          [
-            cleanName,
-            cleanCat,
-            cleanPrice,
-            cleanColor,
-            cleanImg,
-            cleanDescription
-          ]
-        );
-
-      res.json({
-        ok: true,
-        product:
+        order:
           result.rows[0]
       });
+
     } catch (error) {
-      console.error(
-        'ADD PRODUCT ERROR:',
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         ok: false,
         message:
-          'Failed to add product. Please try again.'
+          'Unable to update order.'
       });
     }
-  }
-);
-
-/* =========================================================
-   ADMIN PRODUCTS - EDIT
-========================================================= */
-
-app.put(
-  '/api/admin/products/:id',
-  adminAuth,
-  async (req, res) => {
-    try {
-      const id =
-        Number(req.params.id);
-
-      if (!Number.isInteger(id)) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Invalid product ID.'
-        });
-      }
-
-      const {
-        name,
-        cat,
-        price,
-        color,
-        img,
-        description,
-        desc
-      } = req.body || {};
-
-      const cleanName =
-        safeString(name, 150);
-
-      const cleanCat =
-        safeString(cat, 80);
-
-      const cleanColor =
-        safeString(color, 100);
-
-      const cleanImg =
-        safeString(img, 12000000);
-
-      const cleanDescription =
-        safeString(
-          description ??
-          desc ??
-          '',
-          2000
-        );
-
-      const cleanPrice =
-        Number(price);
-
-      if (!cleanName) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Product name is required.'
-        });
-      }
-
-      if (!cleanCat) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Category is required.'
-        });
-      }
-
-      if (
-        !Number.isFinite(
-          cleanPrice
-        ) ||
-        cleanPrice <= 0
-      ) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Enter a valid product price.'
-        });
-      }
-
-      if (!cleanColor) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Product color is required.'
-        });
-      }
-
-      if (!cleanImg) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Product photo is required.'
-        });
-      }
-
-      const result =
-        await pool.query(
-          `
-          UPDATE products
-          SET
-            name = $1,
-            cat = $2,
-            price = $3,
-            color = $4,
-            img = $5,
-            description = $6
-          WHERE id = $7
-          RETURNING
-            id,
-            name,
-            cat,
-            price,
-            color,
-            img,
-            description
-          `,
-          [
-            cleanName,
-            cleanCat,
-            cleanPrice,
-            cleanColor,
-            cleanImg,
-            cleanDescription,
-            id
-          ]
-        );
-
-      if (!result.rows.length) {
-        return res.status(404).json({
-          ok: false,
-          message:
-            'Product not found.'
-        });
-      }
-
-      res.json({
-        ok: true,
-        product:
-          result.rows[0]
-      });
-    } catch (error) {
-      console.error(
-        'EDIT PRODUCT ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Failed to update product.'
-      });
-    }
-  }
-);
-
-/* =========================================================
-   ADMIN PRODUCTS - DELETE
-========================================================= */
-
-app.delete(
-  '/api/admin/products/:id',
-  adminAuth,
-  async (req, res) => {
-    try {
-      const id =
-        Number(req.params.id);
-
-      if (!Number.isInteger(id)) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Invalid product ID.'
-        });
-      }
-
-      const result =
-        await pool.query(
-          `
-          DELETE FROM products
-          WHERE id = $1
-          RETURNING
-            id,
-            name
-          `,
-          [id]
-        );
-
-      if (!result.rows.length) {
-        return res.status(404).json({
-          ok: false,
-          message:
-            'Product not found.'
-        });
-      }
-
-      res.json({
-        ok: true,
-        product:
-          result.rows[0]
-      });
-    } catch (error) {
-      console.error(
-        'DELETE PRODUCT ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Failed to delete product.'
-      });
-    }
-  }
-);
-
-/* =========================================================
-   ADMIN SETTINGS - GET
-========================================================= */
-
-app.get(
-  '/api/admin/settings',
-  adminAuth,
-  (req, res) => {
-    try {
-      const settings =
-        readSettings();
-
-      res.json({
-        ok: true,
-
-        paystackConfigured:
-          Boolean(
-            process.env
-              .PAYSTACK_SECRET_KEY
-          ),
-
-        whatsapp:
-          '09065828886',
-
-        theme: settings,
-
-        biometric:
-          Boolean(
-            process.env
-              .WEBAUTHN_RP_ID
-          )
-      });
-    } catch (error) {
-      console.error(
-        'SETTINGS ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Failed to load settings.'
-      });
-    }
-  }
-);
-
-/* =========================================================
-   ADMIN SETTINGS - SAVE THEME
-========================================================= */
-
-app.put(
-  '/api/admin/settings/theme',
-  adminAuth,
-  (req, res) => {
-    try {
-      const current =
-        readSettings();
-
-      const primaryColor =
-        safeString(
-          req.body?.primaryColor,
-          20
-        );
-
-      const accentColor =
-        safeString(
-          req.body?.accentColor,
-          20
-        );
-
-      const backgroundColor =
-        safeString(
-          req.body?.backgroundColor,
-          20
-        );
-
-      const textColor =
-        safeString(
-          req.body?.textColor,
-          20
-        );
-
-      const values = {
-        primaryColor,
-        accentColor,
-        backgroundColor,
-        textColor
-      };
-
-      for (const [key, value] of Object.entries(values)) {
-        if (
-          value &&
-          !isValidHexColor(value)
-        ) {
-          return res.status(400).json({
-            ok: false,
-            message:
-              `${key} must be a valid HEX colour.`
-          });
-        }
-      }
-
-      const updated = {
-        ...current,
-
-        primaryColor:
-          primaryColor ||
-          current.primaryColor,
-
-        accentColor:
-          accentColor ||
-          current.accentColor,
-
-        backgroundColor:
-          backgroundColor ||
-          current.backgroundColor,
-
-        textColor:
-          textColor ||
-          current.textColor
-      };
-
-      writeSettings(updated);
-
-      res.json({
-        ok: true,
-        theme: updated
-      });
-    } catch (error) {
-      console.error(
-        'SAVE THEME ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Failed to save website colours.'
-      });
-    }
-  }
-);
-
-/* =========================================================
-   PUBLIC THEME
-========================================================= */
-
-app.get(
-  '/api/theme',
-  (req, res) => {
-    try {
-      res.json({
-        ok: true,
-        theme:
-          readSettings()
-      });
-    } catch {
-      res.status(500).json({
-        ok: false,
-        message:
-          'Failed to load website theme.'
-      });
-    }
-  }
-);
-
-/* =========================================================
-   CHANGE ADMIN PASSWORD
-========================================================= */
-
-app.put(
-  '/api/admin/change-password',
-  adminAuth,
-  (req, res) => {
-    try {
-      const currentPassword =
-        String(
-          req.body?.currentPassword ||
-          ''
-        );
-
-      const newPassword =
-        String(
-          req.body?.newPassword ||
-          ''
-        );
-
-      const configuredPassword =
-        process.env.ADMIN_PASSWORD;
-
-      if (!configuredPassword) {
-        return res.status(503).json({
-          ok: false,
-          message:
-            'Admin password is not configured.'
-        });
-      }
-
-      if (
-        !timingSafeEqualText(
-          currentPassword,
-          configuredPassword
-        )
-      ) {
-        return res.status(401).json({
-          ok: false,
-          message:
-            'Current password is incorrect.'
-        });
-      }
-
-      if (
-        newPassword.length < 10
-      ) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'New password must contain at least 10 characters.'
-        });
-      }
-
-      /*
-        IMPORTANT:
-        Render environment variables are normally
-        changed from the Render dashboard.
-
-        Therefore this endpoint does not pretend
-        to permanently change process.env.ADMIN_PASSWORD.
-
-        It invalidates all sessions and tells the
-        admin to update ADMIN_PASSWORD in Render.
-
-        Full database-backed admin credentials can
-        be added in the next security stage.
-      */
-
-      for (const token of adminSessions.keys()) {
-        adminSessions.delete(token);
-      }
-
-      res.json({
-        ok: true,
-
-        requiresEnvironmentUpdate:
-          true,
-
-        message:
-          'Password validation completed. Update ADMIN_PASSWORD in your Render environment variables, then login again.'
-      });
-    } catch (error) {
-      console.error(
-        'CHANGE PASSWORD ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Failed to change password.'
-      });
-    }
-  }
-);
-
-/* =========================================================
-   FORGOT PASSWORD / RECOVERY
-========================================================= */
-
-app.post(
-  '/api/admin/forgot-password',
-  (req, res) => {
-    const recoveryCode =
-      String(
-        req.body?.recoveryCode ||
-        ''
-      );
-
-    const configuredRecoveryCode =
-      process.env
-        .ADMIN_RECOVERY_CODE;
-
-    if (
-      !configuredRecoveryCode
-    ) {
-      return res.status(503).json({
-        ok: false,
-        message:
-          'Admin recovery is not configured. Add ADMIN_RECOVERY_CODE on Render.'
-      });
-    }
-
-    if (
-      !timingSafeEqualText(
-        recoveryCode,
-        configuredRecoveryCode
-      )
-    ) {
-      return res.status(401).json({
-        ok: false,
-        message:
-          'Invalid recovery code.'
-      });
-    }
-
-    const resetToken =
-      crypto
-        .randomBytes(32)
-        .toString('hex');
-
-    const resetHash =
-      crypto
-        .createHash('sha256')
-        .update(resetToken)
-        .digest('hex');
-
-    const resetExpires =
-      Date.now() +
-      10 * 60 * 1000;
-
-    /*
-      Store temporary reset information
-      in memory only.
-    */
-
-    globalThis.__adminReset = {
-      hash: resetHash,
-      expiresAt: resetExpires
-    };
-
-    res.json({
-      ok: true,
-
-      resetToken,
-
-      expiresAt:
-        resetExpires,
-
-      message:
-        'Recovery verified. Use the reset token within 10 minutes.'
-    });
-  }
-);
-
-/* =========================================================
-   RESET PASSWORD
-========================================================= */
-
-app.post(
-  '/api/admin/reset-password',
-  (req, res) => {
-    const resetToken =
-      String(
-        req.body?.resetToken ||
-        ''
-      );
-
-    const newPassword =
-      String(
-        req.body?.newPassword ||
-        ''
-      );
-
-    const reset =
-      globalThis.__adminReset;
-
-    if (
-      !reset ||
-      reset.expiresAt <= Date.now()
-    ) {
-      globalThis.__adminReset =
-        null;
-
-      return res.status(400).json({
-        ok: false,
-        message:
-          'Reset token has expired. Start again.'
-      });
-    }
-
-    const resetHash =
-      crypto
-        .createHash('sha256')
-        .update(resetToken)
-        .digest('hex');
-
-    if (
-      !timingSafeEqualText(
-        resetHash,
-        reset.hash
-      )
-    ) {
-      return res.status(401).json({
-        ok: false,
-        message:
-          'Invalid reset token.'
-      });
-    }
-
-    if (
-      newPassword.length < 10
-    ) {
-      return res.status(400).json({
-        ok: false,
-        message:
-          'New password must contain at least 10 characters.'
-      });
-    }
-
-    globalThis.__adminReset =
-      null;
-
-    for (const token of adminSessions.keys()) {
-      adminSessions.delete(token);
-    }
-
-    res.json({
-      ok: true,
-
-      requiresEnvironmentUpdate:
-        true,
-
-      message:
-        'Reset verified. Now update ADMIN_PASSWORD in Render with the new password, then login again.'
-    });
   }
 );
 
@@ -1666,213 +1094,421 @@ app.post(
 app.post(
   '/api/paystack/initialize',
   async (req, res) => {
+    if (!pool) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Database is not configured.'
+      });
+    }
+
+    if (!PAYSTACK_SECRET_KEY) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Paystack is not configured on the server.'
+      });
+    }
+
+    const customer =
+      req.body?.customer || {};
+
+    const name =
+      cleanString(
+        customer.name,
+        150
+      );
+
+    const email =
+      cleanString(
+        customer.email,
+        200
+      );
+
+    const phone =
+      cleanString(
+        customer.phone,
+        40
+      );
+
+    const address =
+      cleanString(
+        customer.address,
+        1000
+      );
+
+    const rawItems =
+      Array.isArray(
+        req.body?.items
+      )
+        ? req.body.items
+        : [];
+
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !address
+    ) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Complete customer details are required.'
+      });
+    }
+
+    if (!validEmail(email)) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Please provide a valid email address.'
+      });
+    }
+
+    if (!validPhone(phone)) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Please provide a valid phone number.'
+      });
+    }
+
+    if (!rawItems.length) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Your cart is empty.'
+      });
+    }
+
+    /*
+      IMPORTANT:
+      Prices are loaded from PostgreSQL.
+      The browser is NOT trusted to send prices.
+    */
+
+    const client =
+      await pool.connect();
+
     try {
-      if (
-        !process.env
-          .PAYSTACK_SECRET_KEY
-      ) {
-        return res.status(500).json({
-          ok: false,
-          message:
-            'Paystack is not configured. Add PAYSTACK_SECRET_KEY on the server.'
-        });
+      await client.query(
+        'BEGIN'
+      );
+
+      const productIds =
+        rawItems
+          .map(
+            item =>
+              positiveInteger(
+                item.id
+              )
+          )
+          .filter(Boolean);
+
+      if (!productIds.length) {
+        throw new Error(
+          'Invalid cart items.'
+        );
       }
 
-      const customer =
-        req.body?.customer;
-
-      const calculated =
-        await calculateOrder(
-          req.body?.items
+      const productsResult =
+        await client.query(
+          `
+          SELECT
+            id,
+            name,
+            price,
+            stock,
+            active
+          FROM products
+          WHERE id = ANY($1::int[])
+          FOR UPDATE
+          `,
+          [productIds]
         );
 
-      if (
-        !customer?.name ||
-        !customer?.email ||
-        !customer?.phone ||
-        !customer?.address ||
-        !calculated
+      const productMap =
+        new Map(
+          productsResult.rows.map(
+            product => [
+              Number(product.id),
+              product
+            ]
+          )
+        );
+
+      const orderItems = [];
+      let total = 0;
+
+      for (
+        const rawItem
+        of rawItems
       ) {
-        return res.status(400).json({
-          ok: false,
-          message:
-            'Incomplete order details.'
+        const productId =
+          positiveInteger(
+            rawItem.id
+          );
+
+        const quantity =
+          positiveInteger(
+            rawItem.qty
+          );
+
+        if (
+          !productId ||
+          !quantity
+        ) {
+          throw new Error(
+            'Invalid cart quantity.'
+          );
+        }
+
+        if (
+          quantity > 99
+        ) {
+          throw new Error(
+            'Maximum quantity per item is 99.'
+          );
+        }
+
+        const product =
+          productMap.get(
+            productId
+          );
+
+        if (
+          !product ||
+          !product.active
+        ) {
+          throw new Error(
+            'One of the products is no longer available.'
+          );
+        }
+
+        if (
+          Number(product.stock) <
+          quantity
+        ) {
+          throw new Error(
+            `${product.name} does not have enough stock.`
+          );
+        }
+
+        const price =
+          Number(product.price);
+
+        const subtotal =
+          price * quantity;
+
+        total += subtotal;
+
+        orderItems.push({
+          productId,
+          name:
+            product.name,
+          price,
+          quantity,
+          subtotal
         });
       }
 
-      const id =
-        crypto.randomUUID();
+      total =
+        Math.round(
+          total * 100
+        ) / 100;
+
+      if (
+        !Number.isFinite(total) ||
+        total <= 0
+      ) {
+        throw new Error(
+          'Invalid order total.'
+        );
+      }
 
       const reference =
-        createReference();
+        createOrderReference();
 
-      const order = {
-        id,
-
-        reference,
-
-        status:
-          'pending',
-
-        customer: {
-          name:
-            safeString(
-              customer.name,
-              120
-            ),
-
-          email:
-            safeString(
-              customer.email,
-              200
-            ),
-
-          phone:
-            safeString(
-              customer.phone,
-              40
-            ),
-
-          address:
-            safeString(
-              customer.address,
-              500
-            )
-        },
-
-        items:
-          calculated.items,
-
-        total:
-          calculated.total,
-
-        payment: {
-          provider:
+      const orderResult =
+        await client.query(
+          `
+          INSERT INTO orders
+          (
+            reference,
+            customer_name,
+            customer_email,
+            customer_phone,
+            delivery_address,
+            payment_method,
+            payment_status,
+            order_status,
+            total,
+            currency
+          )
+          VALUES
+          (
+            $1,$2,$3,$4,$5,
             'paystack',
+            'PENDING',
+            'PENDING',
+            $6,
+            'NGN'
+          )
+          RETURNING id, reference, total
+          `,
+          [
+            reference,
+            name,
+            email,
+            phone,
+            address,
+            total
+          ]
+        );
 
-          reference
-        },
+      const order =
+        orderResult.rows[0];
 
-        createdAt:
-          new Date().toISOString()
-      };
+      for (
+        const item
+        of orderItems
+      ) {
+        await client.query(
+          `
+          INSERT INTO order_items
+          (
+            order_id,
+            product_id,
+            product_name,
+            price,
+            quantity,
+            subtotal
+          )
+          VALUES
+          ($1,$2,$3,$4,$5,$6)
+          `,
+          [
+            order.id,
+            item.productId,
+            item.name,
+            item.price,
+            item.quantity,
+            item.subtotal
+          ]
+        );
+      }
 
-      const orders =
-        readOrders();
+      await client.query(
+        'COMMIT'
+      );
 
-      orders.push(order);
+      /*
+        Paystack expects amount in kobo.
+      */
 
-      writeOrders(orders);
+      const amountInKobo =
+        Math.round(
+          total * 100
+        );
 
-      const response =
+      const paystackResponse =
         await fetch(
           'https://api.paystack.co/transaction/initialize',
           {
             method: 'POST',
-
             headers: {
               Authorization:
-                `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-
+                `Bearer ${PAYSTACK_SECRET_KEY}`,
               'Content-Type':
                 'application/json'
             },
-
-            body:
-              JSON.stringify({
-                email:
-                  order.customer.email,
-
-                amount:
-                  Math.round(
-                    calculated.total * 100
-                  ),
-
-                currency:
-                  'NGN',
-
-                reference,
-
-                callback_url:
-                  `${BASE_URL}/payment-success.html`,
-
-                metadata: {
-                  order_id:
-                    id,
-
-                  custom_fields: [
-                    {
-                      display_name:
-                        'Customer Name',
-
-                      variable_name:
-                        'customer_name',
-
-                      value:
-                        order.customer.name
-                    },
-
-                    {
-                      display_name:
-                        'Customer Phone',
-
-                      variable_name:
-                        'customer_phone',
-
-                      value:
-                        order.customer.phone
-                    }
-                  ]
-                }
-              })
+            body: JSON.stringify({
+              email,
+              amount:
+                amountInKobo,
+              currency:
+                'NGN',
+              reference,
+              callback_url:
+                process.env.PAYSTACK_CALLBACK_URL ||
+                undefined,
+              metadata: {
+                order_id:
+                  String(order.id),
+                order_reference:
+                  reference,
+                customer_name:
+                  name,
+                customer_phone:
+                  phone
+              }
+            })
           }
         );
 
-      const data =
-        await response.json();
+      const paystackData =
+        await paystackResponse.json();
 
       if (
-        !response.ok ||
-        !data.status ||
-        !data.data?.authorization_url
+        !paystackResponse.ok ||
+        !paystackData.status ||
+        !paystackData.data?.authorization_url
       ) {
-        order.status =
-          'failed';
+        console.error(
+          'Paystack initialize error:',
+          paystackData
+        );
 
-        order.payment.error =
-          data.message ||
-          'Paystack initialization failed';
-
-        writeOrders(orders);
-
-        return res.status(400).json({
+        return res.status(502).json({
           ok: false,
           message:
-            data.message ||
-            'Paystack initialization failed.'
+            paystackData.message ||
+            'Unable to initialize Paystack payment.'
         });
       }
 
+      await pool.query(
+        `
+        UPDATE orders
+        SET
+          paystack_reference = $1,
+          updated_at = NOW()
+        WHERE reference = $2
+        `,
+        [
+          reference,
+          reference
+        ]
+      );
+
       res.json({
         ok: true,
-
+        reference,
         authorization_url:
-          data.data
-            .authorization_url,
-
-        reference
+          paystackData.data.authorization_url
       });
+
     } catch (error) {
+      try {
+        await client.query(
+          'ROLLBACK'
+        );
+      } catch {}
+
       console.error(
-        'PAYSTACK INIT ERROR:',
+        'Payment initialization error:',
         error
       );
 
-      res.status(500).json({
+      res.status(400).json({
         ok: false,
         message:
-          'Payment service error.'
+          error.message ||
+          'Payment initialization failed.'
       });
+
+    } finally {
+      client.release();
     }
   }
 );
@@ -1884,51 +1520,44 @@ app.post(
 app.get(
   '/api/paystack/verify/:reference',
   async (req, res) => {
+    if (!pool) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Database is not configured.'
+      });
+    }
+
+    if (!PAYSTACK_SECRET_KEY) {
+      return res.status(503).json({
+        ok: false,
+        message:
+          'Paystack is not configured on the server.'
+      });
+    }
+
+    const reference =
+      cleanString(
+        req.params.reference,
+        200
+      );
+
+    if (!reference) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Payment reference is required.'
+      });
+    }
+
     try {
-      if (
-        !process.env
-          .PAYSTACK_SECRET_KEY
-      ) {
-        return res.status(500).json({
-          ok: false,
-          message:
-            'Paystack is not configured.'
-        });
-      }
-
-      const reference =
-        safeString(
-          req.params.reference,
-          200
-        );
-
-      const orders =
-        readOrders();
-
-      const order =
-        orders.find(
-          x =>
-            x.reference ===
-            reference
-        );
-
-      if (!order) {
-        return res.status(404).json({
-          ok: false,
-          message:
-            'Order not found.'
-        });
-      }
-
       const response =
         await fetch(
           `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
           {
-            method: 'GET',
-
             headers: {
               Authorization:
-                `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
+                `Bearer ${PAYSTACK_SECRET_KEY}`
             }
           }
         );
@@ -1936,77 +1565,222 @@ app.get(
       const data =
         await response.json();
 
+      if (
+        !response.ok ||
+        !data.status ||
+        !data.data
+      ) {
+        return res.status(502).json({
+          ok: false,
+          message:
+            data.message ||
+            'Unable to verify payment.'
+        });
+      }
+
       const transaction =
         data.data;
+
+      const orderResult =
+        await pool.query(
+          `
+          SELECT *
+          FROM orders
+          WHERE reference = $1
+          LIMIT 1
+          `,
+          [reference]
+        );
+
+      if (!orderResult.rowCount) {
+        return res.status(404).json({
+          ok: false,
+          message:
+            'Order not found.'
+        });
+      }
+
+      const order =
+        orderResult.rows[0];
+
+      /*
+        Verify BOTH:
+        1. Paystack says transaction succeeded.
+        2. Paystack amount matches our server-side order total.
+      */
 
       const expectedAmount =
         Math.round(
           Number(order.total) * 100
         );
 
-      if (
-        data.status === true &&
-        transaction?.status ===
-          'success' &&
+      const paidAmount =
         Number(
           transaction.amount
-        ) === expectedAmount &&
+        );
+
+      const amountMatches =
+        expectedAmount ===
+        paidAmount;
+
+      const success =
+        transaction.status ===
+          'success' &&
         transaction.currency ===
-          'NGN'
-      ) {
-        order.status =
-          'paid';
+          'NGN' &&
+        amountMatches;
 
-        order.payment.verifiedAt =
-          new Date()
-            .toISOString();
+      if (!success) {
+        await pool.query(
+          `
+          UPDATE orders
+          SET
+            payment_status = 'FAILED',
+            updated_at = NOW()
+          WHERE id = $1
+          `,
+          [order.id]
+        );
 
-        order.payment.channel =
-          transaction.channel;
-
-        order.payment.paidAt =
-          transaction.paid_at;
-
-        writeOrders(orders);
-
-        return res.json({
-          ok: true,
-          success: true,
-          reference
+        return res.status(400).json({
+          ok: false,
+          paid: false,
+          message:
+            'Payment verification failed.'
         });
       }
 
-      if (
-        transaction?.status ===
-        'failed'
-      ) {
-        order.status =
-          'failed';
-      } else {
-        order.status =
-          'pending';
-      }
+      const client =
+        await pool.connect();
 
-      writeOrders(orders);
+      try {
+        await client.query(
+          'BEGIN'
+        );
+
+        const lockedOrderResult =
+          await client.query(
+            `
+            SELECT *
+            FROM orders
+            WHERE id = $1
+            FOR UPDATE
+            `,
+            [order.id]
+          );
+
+        const lockedOrder =
+          lockedOrderResult
+            .rows[0];
+
+        /*
+          Do not reduce stock twice if
+          the customer refreshes success page.
+        */
+
+        if (
+          lockedOrder.payment_status !==
+          'PAID'
+        ) {
+          const itemsResult =
+            await client.query(
+              `
+              SELECT *
+              FROM order_items
+              WHERE order_id = $1
+              `,
+              [order.id]
+            );
+
+          for (
+            const item
+            of itemsResult.rows
+          ) {
+            const stockResult =
+              await client.query(
+                `
+                UPDATE products
+                SET
+                  stock =
+                    stock - $1,
+                  updated_at = NOW()
+                WHERE id = $2
+                  AND active = TRUE
+                  AND stock >= $1
+                RETURNING id
+                `,
+                [
+                  item.quantity,
+                  item.product_id
+                ]
+              );
+
+            if (
+              !stockResult.rowCount
+            ) {
+              throw new Error(
+                `Insufficient stock for ${item.product_name}.`
+              );
+            }
+          }
+        }
+
+        await client.query(
+          `
+          UPDATE orders
+          SET
+            payment_status = 'PAID',
+            order_status = 'PROCESSING',
+            paystack_reference = $1,
+            updated_at = NOW()
+          WHERE id = $2
+          `,
+          [
+            transaction.reference,
+            order.id
+          ]
+        );
+
+        await client.query(
+          'COMMIT'
+        );
+
+      } catch (error) {
+        try {
+          await client.query(
+            'ROLLBACK'
+          );
+        } catch {}
+
+        throw error;
+
+      } finally {
+        client.release();
+      }
 
       res.json({
         ok: true,
-
-        success: false,
-
-        message:
-          'Payment has not been verified as successful.'
+        paid: true,
+        reference,
+        order_reference:
+          order.reference,
+        amount:
+          Number(order.total),
+        customer_name:
+          order.customer_name
       });
+
     } catch (error) {
       console.error(
-        'PAYSTACK VERIFY ERROR:',
+        'Verify error:',
         error
       );
 
       res.status(500).json({
         ok: false,
         message:
-          'Verification error.'
+          error.message ||
+          'Payment verification error.'
       });
     }
   }
@@ -2018,332 +1792,300 @@ app.get(
 
 app.post(
   '/api/paystack/webhook',
-  (req, res) => {
-    try {
-      const signature =
-        req.headers[
-          'x-paystack-signature'
-        ];
+  express.raw({
+    type: 'application/json'
+  }),
+  async (req, res) => {
+    if (!PAYSTACK_SECRET_KEY) {
+      return res.sendStatus(200);
+    }
 
-      if (
-        !signature ||
-        !process.env
-          .PAYSTACK_SECRET_KEY ||
-        !req.rawBody
-      ) {
-        return res.sendStatus(401);
-      }
+    const signature =
+      req.headers[
+        'x-paystack-signature'
+      ];
 
-      const expected =
-        crypto
-          .createHmac(
-            'sha512',
-            process.env
-              .PAYSTACK_SECRET_KEY
-          )
-          .update(req.rawBody)
-          .digest('hex');
+    if (!signature) {
+      return res.sendStatus(401);
+    }
 
-      const receivedBuffer =
-        Buffer.from(
-          String(signature),
-          'utf8'
-        );
-
-      const expectedBuffer =
-        Buffer.from(
-          expected,
-          'utf8'
-        );
-
-      if (
-        receivedBuffer.length !==
-          expectedBuffer.length ||
-        !crypto.timingSafeEqual(
-          receivedBuffer,
-          expectedBuffer
+    const hash =
+      crypto
+        .createHmac(
+          'sha512',
+          PAYSTACK_SECRET_KEY
         )
-      ) {
-        return res.sendStatus(401);
-      }
+        .update(req.body)
+        .digest('hex');
 
+    if (
+      hash !== signature
+    ) {
+      return res.sendStatus(401);
+    }
+
+    try {
       const event =
-        req.body;
+        JSON.parse(
+          req.body.toString(
+            'utf8'
+          )
+        );
 
       if (
-        event?.event ===
+        event.event !==
         'charge.success'
       ) {
-        const transaction =
-          event.data;
-
-        const orders =
-          readOrders();
-
-        const order =
-          orders.find(
-            x =>
-              x.reference ===
-              transaction.reference
-          );
-
-        if (
-          order &&
-          Number(
-            transaction.amount
-          ) ===
-            Math.round(
-              Number(order.total) * 100
-            ) &&
-          transaction.currency ===
-            'NGN'
-        ) {
-          order.status =
-            'paid';
-
-          order.payment.verifiedAt =
-            new Date()
-              .toISOString();
-
-          order.payment.channel =
-            transaction.channel;
-
-          order.payment.paidAt =
-            transaction.paid_at;
-
-          writeOrders(orders);
-        }
+        return res.sendStatus(200);
       }
 
-      res.sendStatus(200);
+      const transaction =
+        event.data;
+
+      const reference =
+        cleanString(
+          transaction?.reference,
+          200
+        );
+
+      if (!reference) {
+        return res.sendStatus(200);
+      }
+
+      const orderResult =
+        await pool.query(
+          `
+          SELECT *
+          FROM orders
+          WHERE reference = $1
+          LIMIT 1
+          `,
+          [reference]
+        );
+
+      if (!orderResult.rowCount) {
+        return res.sendStatus(200);
+      }
+
+      const order =
+        orderResult.rows[0];
+
+      const expectedAmount =
+        Math.round(
+          Number(order.total) * 100
+        );
+
+      if (
+        transaction.status !==
+          'success' ||
+        transaction.currency !==
+          'NGN' ||
+        Number(transaction.amount) !==
+          expectedAmount
+      ) {
+        return res.sendStatus(200);
+      }
+
+      const client =
+        await pool.connect();
+
+      try {
+        await client.query(
+          'BEGIN'
+        );
+
+        const locked =
+          await client.query(
+            `
+            SELECT *
+            FROM orders
+            WHERE id = $1
+            FOR UPDATE
+            `,
+            [order.id]
+          );
+
+        const lockedOrder =
+          locked.rows[0];
+
+        if (
+          lockedOrder.payment_status !==
+          'PAID'
+        ) {
+          const items =
+            await client.query(
+              `
+              SELECT *
+              FROM order_items
+              WHERE order_id = $1
+              `,
+              [order.id]
+            );
+
+          for (
+            const item
+            of items.rows
+          ) {
+            const stock =
+              await client.query(
+                `
+                UPDATE products
+                SET
+                  stock =
+                    stock - $1,
+                  updated_at = NOW()
+                WHERE id = $2
+                  AND stock >= $1
+                RETURNING id
+                `,
+                [
+                  item.quantity,
+                  item.product_id
+                ]
+              );
+
+            if (
+              !stock.rowCount
+            ) {
+              throw new Error(
+                'Insufficient stock during webhook processing.'
+              );
+            }
+          }
+        }
+
+        await client.query(
+          `
+          UPDATE orders
+          SET
+            payment_status = 'PAID',
+            order_status = 'PROCESSING',
+            paystack_reference = $1,
+            updated_at = NOW()
+          WHERE id = $2
+          `,
+          [
+            reference,
+            order.id
+          ]
+        );
+
+        await client.query(
+          'COMMIT'
+        );
+
+      } catch (error) {
+        try {
+          await client.query(
+            'ROLLBACK'
+          );
+        } catch {}
+
+        console.error(
+          'Webhook transaction error:',
+          error
+        );
+
+      } finally {
+        client.release();
+      }
+
     } catch (error) {
       console.error(
-        'WEBHOOK ERROR:',
+        'Webhook error:',
         error
       );
-
-      res.sendStatus(500);
     }
+
+    return res.sendStatus(200);
   }
 );
 
 /* =========================================================
-   HEALTH CHECK
+   WHATSAPP ORDER MESSAGE
 ========================================================= */
 
 app.get(
-  '/api/health',
-  async (req, res) => {
-    try {
-      await pool.query(
-        'SELECT 1'
-      );
-
-      res.json({
-        ok: true,
-
-        database:
-          'connected',
-
-        paystackConfigured:
-          Boolean(
-            process.env
-              .PAYSTACK_SECRET_KEY
-          )
-      });
-    } catch (error) {
-      console.error(
-        'HEALTH DATABASE ERROR:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-
-        database:
-          'disconnected',
-
-        paystackConfigured:
-          Boolean(
-            process.env
-              .PAYSTACK_SECRET_KEY
-          )
-      });
-    }
+  '/api/config',
+  (req, res) => {
+    res.json({
+      ok: true,
+      whatsapp:
+        WHATSAPP_NUMBER,
+      paystackConfigured:
+        Boolean(
+          PAYSTACK_SECRET_KEY
+        )
+    });
   }
 );
 
 /* =========================================================
-   DATABASE INITIALIZATION
+   FRONTEND ROUTES
 ========================================================= */
 
-async function initDatabase() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error(
-      'DATABASE_URL is missing.'
+app.get(
+  '/',
+  (req, res) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        'public',
+        'index.html'
+      )
     );
   }
+);
 
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS products (
-      id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL,
-      cat TEXT NOT NULL,
-      price NUMERIC NOT NULL,
-      color TEXT NOT NULL,
-      img TEXT NOT NULL,
-      description TEXT DEFAULT ''
-    )
-  `);
-
-  const oldDesc =
-    await pool.query(`
-      SELECT column_name
-      FROM information_schema.columns
-      WHERE table_schema = 'public'
-      AND table_name = 'products'
-      AND column_name = 'desc'
-    `);
-
-  const newDescription =
-    await pool.query(`
-      SELECT column_name
-      FROM information_schema.columns
-      WHERE table_schema = 'public'
-      AND table_name = 'products'
-      AND column_name = 'description'
-    `);
-
-  if (
-    oldDesc.rows.length &&
-    !newDescription.rows.length
-  ) {
-    await pool.query(`
-      ALTER TABLE products
-      ADD COLUMN description TEXT DEFAULT ''
-    `);
-  }
-
-  if (oldDesc.rows.length) {
-    await pool.query(`
-      UPDATE products
-      SET description =
-        COALESCE("desc", '')
-      WHERE description IS NULL
-      OR description = ''
-    `);
-
-    await pool.query(`
-      ALTER TABLE products
-      DROP COLUMN IF EXISTS "desc"
-    `);
-  }
-
-  const verifyDescription =
-    await pool.query(`
-      SELECT column_name
-      FROM information_schema.columns
-      WHERE table_schema = 'public'
-      AND table_name = 'products'
-      AND column_name = 'description'
-    `);
-
-  if (
-    !verifyDescription.rows.length
-  ) {
-    await pool.query(`
-      ALTER TABLE products
-      ADD COLUMN description TEXT DEFAULT ''
-    `);
-  }
-
-  const countResult =
-    await pool.query(`
-      SELECT COUNT(*)::int AS count
-      FROM products
-    `);
-
-  const count =
-    Number(
-      countResult.rows[0].count
+app.get(
+  '/admin',
+  (req, res) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        'public',
+        'admin.html'
+      )
     );
-
-  if (count === 0) {
-    await pool.query(`
-      INSERT INTO products
-      (
-        name,
-        cat,
-        price,
-        color,
-        img,
-        description
-      )
-      VALUES
-
-      (
-        'Elegant Zip Abaya',
-        'Abaya',
-        25000,
-        'Black',
-        'product-1.jpg',
-        'Flowing full-length abaya with refined finishing.'
-      ),
-
-      (
-        'Two-Tone Signature Gown',
-        'Gown',
-        22000,
-        'Two-Tone',
-        'product-2.jpg',
-        'Elegant two-tone modest gown design.'
-      ),
-
-      (
-        'Teal Classic Hijab Dress',
-        'Gown',
-        20000,
-        'Teal',
-        'product-3.jpg',
-        'Comfortable modest dress with clean detailing.'
-      ),
-
-      (
-        'Premium Black & White',
-        'Abaya',
-        28000,
-        'Black & White',
-        'product-4.jpg',
-        'Statement modest outfit with premium contrast.'
-      ),
-
-      (
-        'Ruffle Hijab Collection',
-        'Hijab',
-        12000,
-        'Multiple Colors',
-        'product-5.jpg',
-        'Soft, colourful hijab styles with beautiful ruffles.'
-      ),
-
-      (
-        'Rose Signature Gown',
-        'Custom',
-        24000,
-        'Rose',
-        'product-6.jpg',
-        'Elegant flowing gown; custom colours available.'
-      )
-    `);
   }
+);
 
-  console.log(
-    `Database ready. Products in database: ${count}`
-  );
-}
+app.get(
+  '/payment-success',
+  (req, res) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        'public',
+        'payment-success.html'
+      )
+    );
+  }
+);
+
+app.get(
+  '/payment-failed',
+  (req, res) => {
+    const file =
+      path.join(
+        __dirname,
+        'public',
+        'payment-failed.html'
+      );
+
+    res.sendFile(
+      file,
+      error => {
+        if (error) {
+          res.redirect('/');
+        }
+      }
+    );
+  }
+);
 
 /* =========================================================
-   404 API HANDLER
+   404 API
 ========================================================= */
 
 app.use(
@@ -2358,17 +2100,19 @@ app.use(
 );
 
 /* =========================================================
-   GLOBAL ERROR HANDLER
+   ERROR HANDLER
 ========================================================= */
 
 app.use(
   (error, req, res, next) => {
     console.error(
-      'GLOBAL SERVER ERROR:',
+      'Server error:',
       error
     );
 
-    if (res.headersSent) {
+    if (
+      res.headersSent
+    ) {
       return next(error);
     }
 
@@ -2384,22 +2128,47 @@ app.use(
    START SERVER
 ========================================================= */
 
-initDatabase()
-  .then(() => {
+async function startServer() {
+  try {
+    await initDatabase();
+
     app.listen(
       PORT,
+      '0.0.0.0',
       () => {
         console.log(
-          `Face of Style Hijab Factory running at ${BASE_URL}`
+          `Face of Style Hijab Factory running on port ${PORT}`
+        );
+
+        console.log(
+          `Paystack configured: ${Boolean(
+            PAYSTACK_SECRET_KEY
+          )}`
+        );
+
+        console.log(
+          `Admin configured: ${Boolean(
+            ADMIN_USERNAME &&
+            ADMIN_PASSWORD
+          )}`
+        );
+
+        console.log(
+          `Database configured: ${Boolean(
+            pool
+          )}`
         );
       }
     );
-  })
-  .catch(error => {
+
+  } catch (error) {
     console.error(
-      'Database initialization failed:',
+      'Failed to start server:',
       error
     );
 
     process.exit(1);
-  });
+  }
+}
+
+startServer();
