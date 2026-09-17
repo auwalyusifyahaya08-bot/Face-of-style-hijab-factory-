@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = Number(process.env.PORT) || 10000;
 
 /* =========================================================
    CONFIGURATION
@@ -50,9 +50,6 @@ const pool = DATABASE_URL
 
 /* =========================================================
    EXPRESS
-   IMPORTANT:
-   Keep original request bytes for Paystack webhook
-   signature verification.
 ========================================================= */
 
 app.use(
@@ -135,11 +132,7 @@ function getSession(req) {
   };
 }
 
-function requireAdmin(
-  req,
-  res,
-  next
-) {
+function requireAdmin(req, res, next) {
   const session =
     getSession(req);
 
@@ -237,13 +230,8 @@ async function initDatabase() {
    HELPERS
 ========================================================= */
 
-function cleanString(
-  value,
-  max = 500
-) {
-  return String(
-    value ?? ''
-  )
+function cleanString(value, max = 500) {
+  return String(value ?? '')
     .trim()
     .slice(0, max);
 }
@@ -303,10 +291,60 @@ function validPhone(phone) {
 }
 
 function normalizeCategory(value) {
-  return (
-    cleanString(value, 50) ||
-    'Fashion'
-  );
+  const category =
+    cleanString(value, 50);
+
+  return category || 'Fashion';
+}
+
+function verifyPaystackSignature(
+  rawBody,
+  signature
+) {
+  if (
+    !rawBody ||
+    !signature ||
+    !PAYSTACK_SECRET_KEY
+  ) {
+    return false;
+  }
+
+  const hash =
+    crypto
+      .createHmac(
+        'sha512',
+        PAYSTACK_SECRET_KEY
+      )
+      .update(rawBody)
+      .digest('hex');
+
+  try {
+    const expected =
+      Buffer.from(
+        hash,
+        'utf8'
+      );
+
+    const received =
+      Buffer.from(
+        String(signature),
+        'utf8'
+      );
+
+    if (
+      expected.length !==
+      received.length
+    ) {
+      return false;
+    }
+
+    return crypto.timingSafeEqual(
+      expected,
+      received
+    );
+  } catch {
+    return false;
+  }
 }
 
 /* =========================================================
@@ -382,7 +420,6 @@ app.get(
         products:
           result.rows
       });
-
     } catch (error) {
       console.error(
         'Products error:',
@@ -525,7 +562,6 @@ app.get(
         products:
           result.rows
       });
-
     } catch (error) {
       console.error(error);
 
@@ -596,6 +632,11 @@ app.post(
         req.body?.stock
       );
 
+    const safeStock =
+      Number.isInteger(stock)
+        ? stock
+        : 0;
+
     if (!name) {
       return res.status(400).json({
         ok: false,
@@ -613,9 +654,8 @@ app.post(
     }
 
     if (
-      !Number.isInteger(stock) ||
-      stock < 0 ||
-      stock > 1000000
+      safeStock < 0 ||
+      safeStock > 1000000
     ) {
       return res.status(400).json({
         ok: false,
@@ -626,7 +666,8 @@ app.post(
 
     try {
       const result =
-        await pool.query(`
+        await pool.query(
+          `
           INSERT INTO products
           (
             name,
@@ -638,26 +679,25 @@ app.post(
             stock
           )
           VALUES
-          (
-            $1,$2,$3,$4,$5,$6,$7
-          )
+          ($1,$2,$3,$4,$5,$6,$7)
           RETURNING *
-        `, [
-          name,
-          category,
-          description,
-          price,
-          color,
-          image,
-          stock
-        ]);
+          `,
+          [
+            name,
+            category,
+            description,
+            price,
+            color,
+            image,
+            safeStock
+          ]
+        );
 
       res.status(201).json({
         ok: true,
         product:
           result.rows[0]
       });
-
     } catch (error) {
       console.error(error);
 
@@ -690,6 +730,14 @@ app.put(
       positiveInteger(
         req.params.id
       );
+
+    if (!id) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Invalid product ID.'
+      });
+    }
 
     const name =
       cleanString(
@@ -736,14 +784,6 @@ app.put(
     const active =
       req.body?.active !== false;
 
-    if (!id) {
-      return res.status(400).json({
-        ok: false,
-        message:
-          'Invalid product ID.'
-      });
-    }
-
     if (
       !name ||
       price === null
@@ -769,7 +809,8 @@ app.put(
 
     try {
       const result =
-        await pool.query(`
+        await pool.query(
+          `
           UPDATE products
           SET
             name = $1,
@@ -783,17 +824,19 @@ app.put(
             updated_at = NOW()
           WHERE id = $9
           RETURNING *
-        `, [
-          name,
-          category,
-          description,
-          price,
-          color,
-          image,
-          stock,
-          active,
-          id
-        ]);
+          `,
+          [
+            name,
+            category,
+            description,
+            price,
+            color,
+            image,
+            stock,
+            active,
+            id
+          ]
+        );
 
       if (!result.rowCount) {
         return res.status(404).json({
@@ -808,7 +851,6 @@ app.put(
         product:
           result.rows[0]
       });
-
     } catch (error) {
       console.error(error);
 
@@ -852,14 +894,17 @@ app.delete(
 
     try {
       const result =
-        await pool.query(`
+        await pool.query(
+          `
           UPDATE products
           SET
             active = FALSE,
             updated_at = NOW()
           WHERE id = $1
           RETURNING id
-        `, [id]);
+          `,
+          [id]
+        );
 
       if (!result.rowCount) {
         return res.status(404).json({
@@ -874,7 +919,6 @@ app.delete(
         message:
           'Product removed from the store.'
       });
-
     } catch (error) {
       console.error(error);
 
@@ -941,7 +985,8 @@ app.get(
         );
 
       const itemsResult =
-        await pool.query(`
+        await pool.query(
+          `
           SELECT
             id,
             order_id,
@@ -954,7 +999,9 @@ app.get(
           WHERE order_id =
             ANY($1::bigint[])
           ORDER BY id ASC
-        `, [ids]);
+          `,
+          [ids]
+        );
 
       const itemsByOrder =
         new Map();
@@ -979,20 +1026,19 @@ app.get(
           .push(item);
       }
 
+      const output =
+        orders.map(order => ({
+          ...order,
+          items:
+            itemsByOrder.get(
+              order.id
+            ) || []
+        }));
+
       res.json({
         ok: true,
-        orders:
-          orders.map(
-            order => ({
-              ...order,
-              items:
-                itemsByOrder.get(
-                  order.id
-                ) || []
-            })
-          )
+        orders: output
       });
-
     } catch (error) {
       console.error(error);
 
@@ -1062,17 +1108,20 @@ app.patch(
 
     try {
       const result =
-        await pool.query(`
+        await pool.query(
+          `
           UPDATE orders
           SET
             order_status = $1,
             updated_at = NOW()
           WHERE id = $2
           RETURNING *
-        `, [
-          orderStatus,
-          id
-        ]);
+          `,
+          [
+            orderStatus,
+            id
+          ]
+        );
 
       if (!result.rowCount) {
         return res.status(404).json({
@@ -1087,7 +1136,6 @@ app.patch(
         order:
           result.rows[0]
       });
-
     } catch (error) {
       console.error(error);
 
@@ -1212,14 +1260,17 @@ app.post(
           )
           .filter(Boolean);
 
-      if (!productIds.length) {
+      if (
+        !productIds.length
+      ) {
         throw new Error(
           'Invalid cart items.'
         );
       }
 
       const productsResult =
-        await client.query(`
+        await client.query(
+          `
           SELECT
             id,
             name,
@@ -1230,7 +1281,9 @@ app.post(
           WHERE id =
             ANY($1::int[])
           FOR UPDATE
-        `, [productIds]);
+          `,
+          [productIds]
+        );
 
       const productMap =
         new Map(
@@ -1268,7 +1321,9 @@ app.post(
           );
         }
 
-        if (quantity > 99) {
+        if (
+          quantity > 99
+        ) {
           throw new Error(
             'Maximum quantity per item is 99.'
           );
@@ -1289,9 +1344,8 @@ app.post(
         }
 
         if (
-          Number(
-            product.stock
-          ) < quantity
+          Number(product.stock) <
+          quantity
         ) {
           throw new Error(
             `${product.name} does not have enough stock.`
@@ -1299,9 +1353,7 @@ app.post(
         }
 
         const price =
-          Number(
-            product.price
-          );
+          Number(product.price);
 
         const subtotal =
           price * quantity;
@@ -1336,7 +1388,8 @@ app.post(
         createOrderReference();
 
       const orderResult =
-        await client.query(`
+        await client.query(
+          `
           INSERT INTO orders
           (
             reference,
@@ -1359,18 +1412,19 @@ app.post(
             $6,
             'NGN'
           )
-          RETURNING
-            id,
+          RETURNING id,
+                    reference,
+                    total
+          `,
+          [
             reference,
+            name,
+            email,
+            phone,
+            address,
             total
-        `, [
-          reference,
-          name,
-          email,
-          phone,
-          address,
-          total
-        ]);
+          ]
+        );
 
       const order =
         orderResult.rows[0];
@@ -1379,7 +1433,8 @@ app.post(
         const item
         of orderItems
       ) {
-        await client.query(`
+        await client.query(
+          `
           INSERT INTO order_items
           (
             order_id,
@@ -1390,22 +1445,54 @@ app.post(
             subtotal
           )
           VALUES
-          (
-            $1,$2,$3,$4,$5,$6
-          )
-        `, [
-          order.id,
-          item.productId,
-          item.name,
-          item.price,
-          item.quantity,
-          item.subtotal
-        ]);
+          ($1,$2,$3,$4,$5,$6)
+          `,
+          [
+            order.id,
+            item.productId,
+            item.name,
+            item.price,
+            item.quantity,
+            item.subtotal
+          ]
+        );
       }
 
       await client.query(
         'COMMIT'
       );
+
+      const amountInKobo =
+        Math.round(
+          total * 100
+        );
+
+      const paystackPayload = {
+        email,
+        amount:
+          amountInKobo,
+        currency: 'NGN',
+        reference,
+        metadata: {
+          order_id:
+            String(order.id),
+          order_reference:
+            reference,
+          customer_name:
+            name,
+          customer_phone:
+            phone
+        }
+      };
+
+      if (
+        process.env
+          .PAYSTACK_CALLBACK_URL
+      ) {
+        paystackPayload.callback_url =
+          process.env
+            .PAYSTACK_CALLBACK_URL;
+      }
 
       const paystackResponse =
         await fetch(
@@ -1419,32 +1506,9 @@ app.post(
                 'application/json'
             },
             body:
-              JSON.stringify({
-                email,
-                amount:
-                  Math.round(
-                    total * 100
-                  ),
-                currency:
-                  'NGN',
-                reference,
-                callback_url:
-                  process.env
-                    .PAYSTACK_CALLBACK_URL ||
-                  undefined,
-                metadata: {
-                  order_id:
-                    String(
-                      order.id
-                    ),
-                  order_reference:
-                    reference,
-                  customer_name:
-                    name,
-                  customer_phone:
-                    phone
-                }
-              })
+              JSON.stringify(
+                paystackPayload
+              )
           }
         );
 
@@ -1470,26 +1534,27 @@ app.post(
         });
       }
 
-      await pool.query(`
+      await pool.query(
+        `
         UPDATE orders
         SET
           paystack_reference = $1,
           updated_at = NOW()
         WHERE reference = $2
-      `, [
-        reference,
-        reference
-      ]);
+        `,
+        [
+          reference,
+          reference
+        ]
+      );
 
       res.json({
         ok: true,
         reference,
         authorization_url:
-          paystackData
-            .data
+          paystackData.data
             .authorization_url
       });
-
     } catch (error) {
       try {
         await client.query(
@@ -1508,163 +1573,11 @@ app.post(
           error.message ||
           'Payment initialization failed.'
       });
-
     } finally {
       client.release();
     }
   }
 );
-
-/* =========================================================
-   MARK ORDER AS PAID
-   Used by both verification and webhook.
-========================================================= */
-
-async function markOrderPaid(
-  reference,
-  transaction
-) {
-  const orderResult =
-    await pool.query(`
-      SELECT *
-      FROM orders
-      WHERE reference = $1
-      LIMIT 1
-    `, [reference]);
-
-  if (!orderResult.rowCount) {
-    return {
-      ok: false,
-      notFound: true
-    };
-  }
-
-  const order =
-    orderResult.rows[0];
-
-  const expectedAmount =
-    Math.round(
-      Number(order.total) * 100
-    );
-
-  if (
-    transaction.status !==
-      'success' ||
-    transaction.currency !==
-      'NGN' ||
-    Number(
-      transaction.amount
-    ) !== expectedAmount
-  ) {
-    return {
-      ok: false,
-      invalidPayment: true
-    };
-  }
-
-  const client =
-    await pool.connect();
-
-  try {
-    await client.query(
-      'BEGIN'
-    );
-
-    const locked =
-      await client.query(`
-        SELECT *
-        FROM orders
-        WHERE id = $1
-        FOR UPDATE
-      `, [order.id]);
-
-    const lockedOrder =
-      locked.rows[0];
-
-    if (!lockedOrder) {
-      throw new Error(
-        'Order not found.'
-      );
-    }
-
-    /* Prevent double stock deduction. */
-    if (
-      lockedOrder.payment_status !==
-      'PAID'
-    ) {
-      const items =
-        await client.query(`
-          SELECT *
-          FROM order_items
-          WHERE order_id = $1
-          ORDER BY id ASC
-        `, [order.id]);
-
-      for (
-        const item
-        of items.rows
-      ) {
-        const stock =
-          await client.query(`
-            UPDATE products
-            SET
-              stock =
-                stock - $1,
-              updated_at =
-                NOW()
-            WHERE id = $2
-              AND active = TRUE
-              AND stock >= $1
-            RETURNING id
-          `, [
-            item.quantity,
-            item.product_id
-          ]);
-
-        if (!stock.rowCount) {
-          throw new Error(
-            `Insufficient stock for ${item.product_name}.`
-          );
-        }
-      }
-    }
-
-    await client.query(`
-      UPDATE orders
-      SET
-        payment_status = 'PAID',
-        order_status = 'PROCESSING',
-        paystack_reference = $1,
-        updated_at = NOW()
-      WHERE id = $2
-    `, [
-      transaction.reference ||
-        reference,
-      order.id
-    ]);
-
-    await client.query(
-      'COMMIT'
-    );
-
-    return {
-      ok: true,
-      order
-    };
-
-  } catch (error) {
-    try {
-      await client.query(
-        'ROLLBACK'
-      );
-    } catch {}
-
-    throw error;
-
-  } finally {
-    client.release();
-  }
-}
 
 /* =========================================================
    PAYSTACK VERIFY
@@ -1731,13 +1644,23 @@ app.get(
         });
       }
 
-      const result =
-        await markOrderPaid(
-          reference,
-          data.data
+      const transaction =
+        data.data;
+
+      const orderResult =
+        await pool.query(
+          `
+          SELECT *
+          FROM orders
+          WHERE reference = $1
+          LIMIT 1
+          `,
+          [reference]
         );
 
-      if (result.notFound) {
+      if (
+        !orderResult.rowCount
+      ) {
         return res.status(404).json({
           ok: false,
           message:
@@ -1745,18 +1668,44 @@ app.get(
         });
       }
 
-      if (
-        result.invalidPayment
-      ) {
-        await pool.query(`
+      const order =
+        orderResult.rows[0];
+
+      const expectedAmount =
+        Math.round(
+          Number(order.total) *
+          100
+        );
+
+      const paidAmount =
+        Number(
+          transaction.amount
+        );
+
+      const amountMatches =
+        expectedAmount ===
+        paidAmount;
+
+      const success =
+        transaction.status ===
+          'success' &&
+        transaction.currency ===
+          'NGN' &&
+        amountMatches;
+
+      if (!success) {
+        await pool.query(
+          `
           UPDATE orders
           SET
             payment_status =
               'FAILED',
             updated_at =
               NOW()
-          WHERE reference = $1
-        `, [reference]);
+          WHERE id = $1
+          `,
+          [order.id]
+        );
 
         return res.status(400).json({
           ok: false,
@@ -1766,8 +1715,118 @@ app.get(
         });
       }
 
-      const order =
-        result.order;
+      const client =
+        await pool.connect();
+
+      try {
+        await client.query(
+          'BEGIN'
+        );
+
+        const lockedOrderResult =
+          await client.query(
+            `
+            SELECT *
+            FROM orders
+            WHERE id = $1
+            FOR UPDATE
+            `,
+            [order.id]
+          );
+
+        const lockedOrder =
+          lockedOrderResult
+            .rows[0];
+
+        if (!lockedOrder) {
+          throw new Error(
+            'Order not found.'
+          );
+        }
+
+        if (
+          lockedOrder.payment_status !==
+          'PAID'
+        ) {
+          const itemsResult =
+            await client.query(
+              `
+              SELECT *
+              FROM order_items
+              WHERE order_id = $1
+              ORDER BY id ASC
+              `,
+              [order.id]
+            );
+
+          for (
+            const item
+            of itemsResult.rows
+          ) {
+            const stockResult =
+              await client.query(
+                `
+                UPDATE products
+                SET
+                  stock =
+                    stock - $1,
+                  updated_at =
+                    NOW()
+                WHERE id = $2
+                  AND active = TRUE
+                  AND stock >= $1
+                RETURNING id
+                `,
+                [
+                  item.quantity,
+                  item.product_id
+                ]
+              );
+
+            if (
+              !stockResult.rowCount
+            ) {
+              throw new Error(
+                `Insufficient stock for ${item.product_name}.`
+              );
+            }
+          }
+        }
+
+        await client.query(
+          `
+          UPDATE orders
+          SET
+            payment_status =
+              'PAID',
+            order_status =
+              'PROCESSING',
+            paystack_reference =
+              $1,
+            updated_at =
+              NOW()
+          WHERE id = $2
+          `,
+          [
+            transaction.reference,
+            order.id
+          ]
+        );
+
+        await client.query(
+          'COMMIT'
+        );
+      } catch (error) {
+        try {
+          await client.query(
+            'ROLLBACK'
+          );
+        } catch {}
+
+        throw error;
+      } finally {
+        client.release();
+      }
 
       res.json({
         ok: true,
@@ -1780,7 +1839,6 @@ app.get(
         customer_name:
           order.customer_name
       });
-
     } catch (error) {
       console.error(
         'Verify error:',
@@ -1799,8 +1857,6 @@ app.get(
 
 /* =========================================================
    PAYSTACK WEBHOOK
-   IMPORTANT:
-   express.json() above stores req.rawBody.
 ========================================================= */
 
 app.post(
@@ -1821,58 +1877,17 @@ app.post(
       );
 
     if (
-      !signature ||
-      !req.rawBody
+      !verifyPaystackSignature(
+        req.rawBody,
+        signature
+      )
     ) {
-      return res.sendStatus(401);
-    }
-
-    const hash =
-      crypto
-        .createHmac(
-          'sha512',
-          PAYSTACK_SECRET_KEY
-        )
-        .update(
-          req.rawBody
-        )
-        .digest('hex');
-
-    try {
-      const expected =
-        Buffer.from(
-          hash,
-          'utf8'
-        );
-
-      const received =
-        Buffer.from(
-          signature,
-          'utf8'
-        );
-
-      if (
-        expected.length !==
-          received.length ||
-        !crypto.timingSafeEqual(
-          expected,
-          received
-        )
-      ) {
-        return res.sendStatus(
-          401
-        );
-      }
-
-    } catch {
       return res.sendStatus(401);
     }
 
     try {
       const event =
-        req.body &&
-        typeof req.body ===
-          'object'
+        typeof req.body === 'object'
           ? req.body
           : JSON.parse(
               req.rawBody.toString(
@@ -1884,9 +1899,7 @@ app.post(
         event.event !==
         'charge.success'
       ) {
-        return res.sendStatus(
-          200
-        );
+        return res.sendStatus(200);
       }
 
       const transaction =
@@ -1899,41 +1912,174 @@ app.post(
         );
 
       if (!reference) {
-        return res.sendStatus(
-          200
-        );
+        return res.sendStatus(200);
       }
 
-      const result =
-        await markOrderPaid(
-          reference,
-          transaction
+      const orderResult =
+        await pool.query(
+          `
+          SELECT *
+          FROM orders
+          WHERE reference = $1
+          LIMIT 1
+          `,
+          [reference]
         );
 
       if (
-        result.notFound ||
-        result.invalidPayment
+        !orderResult.rowCount
       ) {
-        return res.sendStatus(
-          200
-        );
+        return res.sendStatus(200);
       }
 
-      return res.sendStatus(200);
+      const order =
+        orderResult.rows[0];
 
+      const expectedAmount =
+        Math.round(
+          Number(order.total) *
+          100
+        );
+
+      if (
+        transaction.status !==
+          'success' ||
+        transaction.currency !==
+          'NGN' ||
+        Number(
+          transaction.amount
+        ) !== expectedAmount
+      ) {
+        return res.sendStatus(200);
+      }
+
+      const client =
+        await pool.connect();
+
+      try {
+        await client.query(
+          'BEGIN'
+        );
+
+        const locked =
+          await client.query(
+            `
+            SELECT *
+            FROM orders
+            WHERE id = $1
+            FOR UPDATE
+            `,
+            [order.id]
+          );
+
+        const lockedOrder =
+          locked.rows[0];
+
+        if (!lockedOrder) {
+          throw new Error(
+            'Order not found.'
+          );
+        }
+
+        if (
+          lockedOrder.payment_status !==
+          'PAID'
+        ) {
+          const items =
+            await client.query(
+              `
+              SELECT *
+              FROM order_items
+              WHERE order_id = $1
+              ORDER BY id ASC
+              `,
+              [order.id]
+            );
+
+          for (
+            const item
+            of items.rows
+          ) {
+            const stock =
+              await client.query(
+                `
+                UPDATE products
+                SET
+                  stock =
+                    stock - $1,
+                  updated_at =
+                    NOW()
+                WHERE id = $2
+                  AND active = TRUE
+                  AND stock >= $1
+                RETURNING id
+                `,
+                [
+                  item.quantity,
+                  item.product_id
+                ]
+              );
+
+            if (
+              !stock.rowCount
+            ) {
+              throw new Error(
+                `Insufficient stock for ${item.product_name}.`
+              );
+            }
+          }
+        }
+
+        await client.query(
+          `
+          UPDATE orders
+          SET
+            payment_status =
+              'PAID',
+            order_status =
+              'PROCESSING',
+            paystack_reference =
+              $1,
+            updated_at =
+              NOW()
+          WHERE id = $2
+          `,
+          [
+            transaction.reference,
+            order.id
+          ]
+        );
+
+        await client.query(
+          'COMMIT'
+        );
+      } catch (error) {
+        try {
+          await client.query(
+            'ROLLBACK'
+          );
+        } catch {}
+
+        console.error(
+          'Webhook transaction error:',
+          error
+        );
+      } finally {
+        client.release();
+      }
     } catch (error) {
       console.error(
         'Webhook error:',
         error
       );
-
-      return res.sendStatus(200);
     }
+
+    return res.sendStatus(200);
   }
 );
 
 /* =========================================================
-   APP CONFIG
+   PUBLIC CONFIG
 ========================================================= */
 
 app.get(
@@ -2035,12 +2181,7 @@ app.use(
 ========================================================= */
 
 app.use(
-  (
-    error,
-    req,
-    res,
-    next
-  ) => {
+  (error, req, res, next) => {
     console.error(
       'Server error:',
       error
@@ -2096,7 +2237,6 @@ async function startServer() {
         );
       }
     );
-
   } catch (error) {
     console.error(
       'Failed to start server:',
