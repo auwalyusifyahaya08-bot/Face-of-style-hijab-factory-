@@ -210,7 +210,15 @@ async function initDatabase() {
       subtotal NUMERIC(12,2) NOT NULL
     )
   `);
+await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS stock INTEGER NOT NULL DEFAULT 0
+  `);
 
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  `);
   await pool.query(`
     CREATE INDEX IF NOT EXISTS idx_products_active
     ON products(active)
