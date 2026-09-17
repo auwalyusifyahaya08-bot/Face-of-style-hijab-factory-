@@ -210,6 +210,10 @@ async function initDatabase() {
       subtotal NUMERIC(12,2) NOT NULL
     )
   `);
+   await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE
+  `);
 await pool.query(`
     ALTER TABLE products
     ADD COLUMN IF NOT EXISTS stock INTEGER NOT NULL DEFAULT 0
