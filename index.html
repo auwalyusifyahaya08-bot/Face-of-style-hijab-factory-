@@ -687,9 +687,9 @@
 
     <div class="hero-card">
       <img
-        src="assets/Product-1.jpg"
+        src="Product-1.jpg"
         alt="Face of Style Hijab Factory"
-        onerror="this.src='assets/product-1.jpg'"
+        onerror="this.src='product-1.jpg'"
       >
     </div>
 
@@ -940,7 +940,7 @@ const fallbackProducts = [
     name:"Elegant Zip Abaya",
     cat:"Abaya",
     price:25000,
-    img:"assets/product-1.jpg",
+    img:"product-1.jpg",
     desc:"Flowing full-length abaya with refined finishing.",
     stock:99
   },
@@ -949,7 +949,7 @@ const fallbackProducts = [
     name:"Two-Tone Signature Gown",
     cat:"Gown",
     price:22000,
-    img:"assets/product-2.jpg",
+    img:"product-2.jpg",
     desc:"Elegant two-tone modest gown design.",
     stock:99
   },
@@ -958,7 +958,7 @@ const fallbackProducts = [
     name:"Teal Classic Hijab Dress",
     cat:"Gown",
     price:20000,
-    img:"assets/product-3.jpg",
+    img:"product-3.jpg",
     desc:"Comfortable modest dress with clean detailing.",
     stock:99
   },
@@ -967,7 +967,7 @@ const fallbackProducts = [
     name:"Premium Black & White",
     cat:"Abaya",
     price:28000,
-    img:"assets/product-4.jpg",
+    img:"product-4.jpg",
     desc:"Statement modest outfit with premium contrast.",
     stock:99
   },
@@ -976,7 +976,7 @@ const fallbackProducts = [
     name:"Ruffle Hijab Collection",
     cat:"Hijab",
     price:12000,
-    img:"assets/product-5.jpg",
+    img:"product-5.jpg",
     desc:"Soft, colourful hijab styles with beautiful ruffles.",
     stock:99
   },
@@ -985,7 +985,7 @@ const fallbackProducts = [
     name:"Rose Signature Gown",
     cat:"Custom",
     price:24000,
-    img:"assets/product-6.jpg",
+    img:"product-6.jpg",
     desc:"Elegant flowing gown; custom colours available.",
     stock:99
   }
@@ -1178,7 +1178,7 @@ async function loadProducts(){
           String(
             p.img ||
             p.image ||
-            "assets/product-1.jpg"
+            "product-1.jpg"
           ),
 
         desc:
@@ -1421,7 +1421,7 @@ function updateCart(){
           <img
             src="${item.img}"
             alt="${item.name}"
-            onerror="this.src='assets/product-1.jpg'"
+            onerror="this.src='product-1.jpg'"
           >
 
           <div class="cart-info">
