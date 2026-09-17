@@ -1,182 +1,1078 @@
-<h2>Orders</h2>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard | Face of Style</title>
 
-<div id="ordersList">
-Loading orders...
-</div>
-
-</div>
-`;
+<style>
+:root{
+  --wine:#651630;
+  --gold:#c9a45b;
+  --bg:#f7f2eb;
+  --line:#e6dacf;
 }
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:Arial,sans-serif;
+  color:#292025;
+}
+
+.top{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.top b{
+  font:22px Georgia;
+  color:var(--wine);
+}
+
+button{cursor:pointer}
+
+.logout{
+  background:transparent;
+  border:1px solid var(--line);
+  padding:9px 14px;
+  border-radius:20px;
+}
+
+.layout{
+  max-width:1440px;
+  margin:auto;
+  padding:25px 18px;
+}
+
+.login{
+  max-width:390px;
+  margin:12vh auto;
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 10px 30px #32121b14;
+}
+
+.login h1{
+  font:32px Georgia;
+  color:var(--wine);
+}
+
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:7px 0 14px;
+  font:inherit;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.primary{
+  background:var(--wine);
+  color:#fff;
+  border:0;
+  padding:13px 18px;
+  border-radius:22px;
+  font-weight:bold;
+}
+
+.error{
+  color:#a33;
+  font-size:13px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.stat{
+  background:#fff;
+  border:1px solid var(--line);
+  padding:18px;
+  border-radius:16px;
+}
+
+.stat small{color:#756a6f}
+
+.stat b{
+  display:block;
+  color:var(--wine);
+  font-size:25px;
+  margin-top:5px;
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin:25px 0;
+  flex-wrap:wrap;
+}
+
+.tab{
+  padding:10px 16px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+}
+
+.tab.active{
+  background:var(--wine);
+  color:#fff;
+}
+
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:20px;
+  overflow:auto;
+}
+
+.panel h2{
+  font:25px Georgia;
+  color:var(--wine);
+}
+
+.panelHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.addBtn{
+  background:var(--wine);
+  color:#fff;
+  border:0;
+  border-radius:22px;
+  padding:11px 17px;
+  font-weight:bold;
+}
+
+.productGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.productCard{
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.productCard img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  background:#f4eee7;
+}
+
+.productInfo{
+  padding:15px;
+}
+
+.productInfo h3{
+  margin:0 0 7px;
+  color:var(--wine);
+  font-family:Georgia;
+}
+
+.productMeta{
+  font-size:13px;
+  color:#6d6367;
+  line-height:1.6;
+}
+
+.productPrice{
+  font-weight:bold;
+  font-size:18px;
+  margin:10px 0;
+  color:var(--wine);
+}
+
+.productActions{
+  display:flex;
+  gap:8px;
+}
+
+.productActions button{
+  flex:1;
+  padding:9px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:#fff;
+}
+
+.formGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0 16px;
+}
+
+.formGrid .full{
+  grid-column:1/-1;
+}
+
+.notice{
+  background:#fcf8f1;
+  padding:12px;
+  border-radius:10px;
+  color:#665d60;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.tableWrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:750px;
+}
+
+th,td{
+  text-align:left;
+  padding:12px 10px;
+  border-bottom:1px solid var(--line);
+}
+
+th{
+  color:var(--wine);
+  font-family:Georgia;
+}
+
+.pill{
+  padding:5px 8px;
+  border-radius:14px;
+  font-size:11px;
+}
+
+.paid{
+  background:#e5f5ea;
+  color:#176a35;
+}
+
+.pending{
+  background:#fff1cf;
+  color:#8a5a00;
+}
+
+.failed{
+  background:#fde7e7;
+  color:#9a2222;
+}
+
+@media(max-width:1000px){
+  .cards{grid-template-columns:1fr 1fr}
+  .productGrid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:650px){
+  .cards,
+  .productGrid,
+  .formGrid{
+    grid-template-columns:1fr;
+  }
+
+  .formGrid .full{
+    grid-column:auto;
+  }
+
+  .top{
+    padding:12px 16px;
+  }
+
+  .top b{
+    font-size:18px;
+  }
+
+  .layout{
+    padding:18px 12px;
+  }
+
+  .panelHead{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .addBtn{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <b>FACE OF STYLE — ADMIN</b>
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div id="app"></div>
+
+<script>
+const app = document.getElementById("app");
+
+let token = sessionStorage.getItem("adminToken") || "";
+
+
+/* =========================
+   LOGIN
+========================= */
+
+function login(){
+
+  app.innerHTML = `
+    <div class="login">
+
+      <h1>Admin Login</h1>
+
+      <p>Face of Style Hijab Factory</p>
+
+      <label>Username</label>
+      <input id="username" value="admin">
+
+      <label>Password</label>
+      <input id="password" type="password">
+
+      <button class="primary" onclick="doLogin()">
+        LOGIN
+      </button>
+
+      <p id="loginError" class="error"></p>
+
+    </div>
+  `;
+}
+
+
+async function doLogin(){
+
+  const username =
+    document.getElementById("username").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const error =
+    document.getElementById("loginError");
+
+  error.textContent = "";
+
+  try{
+
+    const r = await fetch("/api/admin/login",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        username,
+        password
+      })
+    });
+
+    const d = await r.json();
+
+    if(d.token){
+
+      token = d.token;
+
+      sessionStorage.setItem(
+        "adminToken",
+        token
+      );
+
+      dashboard();
+
+    }else{
+
+      error.textContent =
+        d.message || "Login failed";
+
+    }
+
+  }catch(e){
+
+    error.textContent =
+      "Unable to connect to server.";
+
+  }
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout(){
+
+  sessionStorage.removeItem("adminToken");
+
+  token = "";
+
+  login();
+}
+
+
+/* =========================
+   API HELPER
+========================= */
+
+async function api(url,opts={}){
+
+  opts.headers = {
+    ...(opts.headers || {}),
+    Authorization:"Bearer " + token
+  };
+
+  try{
+
+    const r = await fetch(url,opts);
+
+    if(r.status === 401){
+
+      logout();
+      return null;
+    }
+
+    return await r.json();
+
+  }catch(e){
+
+    console.error(e);
+
+    return null;
+  }
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+async function dashboard(){
+
+  const d =
+    await api("/api/admin/dashboard");
+
+  if(!d)return;
+
+  const stats = d.stats || {};
+
+  app.innerHTML = `
+
+    <div class="layout">
+
+      <div class="cards">
+
+        <div class="stat">
+          <small>Total Orders</small>
+          <b>${stats.orders || 0}</b>
+        </div>
+
+        <div class="stat">
+          <small>Paid Orders</small>
+          <b>${stats.paid || 0}</b>
+        </div>
+
+        <div class="stat">
+          <small>Pending</small>
+          <b>${stats.pending || 0}</b>
+        </div>
+
+        <div class="stat">
+          <small>Revenue</small>
+          <b>
+            ₦${Number(stats.revenue || 0)
+              .toLocaleString("en-NG")}
+          </b>
+        </div>
+
+      </div>
+
+      <div class="tabs">
+
+        <button
+          class="tab active"
+          onclick="showOrders()">
+          Orders
+        </button>
+
+        <button
+          class="tab"
+          onclick="showProducts()">
+          Products
+        </button>
+
+        <button
+          class="tab"
+          onclick="showSettings()">
+          Settings
+        </button>
+
+      </div>
+
+      <div id="content"></div>
+
+    </div>
+  `;
+
+  showOrders();
+}
+
+
+/* =========================
+   ORDERS
+========================= */
+
+async function showOrders(){
+
+  const content =
+    document.getElementById("content");
+
+  content.innerHTML = `
+    <div class="panel">
+      <h2>Orders</h2>
+      <p>Loading orders...</p>
+    </div>
+  `;
+
+  const d =
+    await api("/api/admin/orders");
+
+  if(!d)return;
+
+  const orders = Array.isArray(d)
+    ? d
+    : (d.orders || []);
+
+  if(!orders.length){
+
+    content.innerHTML = `
+      <div class="panel">
+        <h2>Orders</h2>
+        <p>No orders found.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  content.innerHTML = `
+    <div class="panel">
+
+      <div class="panelHead">
+        <h2>Orders</h2>
+
+        <button
+          class="addBtn"
+          onclick="showOrders()">
+          Refresh
+        </button>
+      </div>
+
+      <div class="tableWrap">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            ${orders.map(order => `
+
+              <tr>
+
+                <td>
+                  ${escapeHtml(
+                    order.reference || "-"
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    order.customer_name || "-"
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    order.customer_phone || "-"
+                  )}
+                </td>
+
+                <td>
+                  ₦${Number(
+                    order.total || 0
+                  ).toLocaleString("en-NG")}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    order.payment_method || "-"
+                  )}
+                </td>
+
+                <td>
+                  <span class="pill ${
+                    String(order.payment_status || "")
+                      .toLowerCase()
+                  }">
+                    ${escapeHtml(
+                      order.payment_status || "PENDING"
+                    )}
+                  </span>
+                </td>
+
+                <td>
+                  ${order.created_at
+                    ? new Date(order.created_at)
+                        .toLocaleString("en-NG")
+                    : "-"}
+                </td>
+
+              </tr>
+
+            `).join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =========================
+   PRODUCTS
+========================= */
 
 async function showProducts(){
 
-const d=await api('/api/admin/products');
+  const content =
+    document.getElementById("content");
 
-if(!d)return;
-
-content.innerHTML=`
-<div class="panel">
-  <div class="panelHead">
-    <h2>Products</h2>
-    <button class="addBtn" onclick="showAddProduct()">+ Add Product</button>
-  </div>
-
-  <div class="productGrid" id="productsList">
-    Loading products...
-  </div>
-</div>
-`;
-
-const list=document.getElementById('productsList');
-
-const products=d.products||d||[];
-
-if(!Array.isArray(products)||!products.length){
-  list.innerHTML='<p>No products found.</p>';
-  return;
-}
-
-list.innerHTML=products.map(p=>`
-  <div class="productCard">
-    <img src="${p.image||''}" onerror="this.style.display='none'">
-    <div class="productInfo">
-      <h3>${escapeHtml(p.name||'Unnamed Product')}</h3>
-      <div class="productMeta">
-        Category: ${escapeHtml(p.category||'Fashion')}<br>
-        Color: ${escapeHtml(p.color||'')}
-        <br>
-        Stock: ${p.stock??0}
-      </div>
-      <div class="productPrice">
-        ₦${Number(p.price||0).toLocaleString('en-NG')}
-      </div>
+  content.innerHTML = `
+    <div class="panel">
+      <h2>Products</h2>
+      <p>Loading products...</p>
     </div>
-  </div>
-`).join('');
+  `;
+
+  const d =
+    await api("/api/admin/products");
+
+  if(!d)return;
+
+  const products =
+    Array.isArray(d)
+      ? d
+      : (d.products || []);
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <div class="panelHead">
+
+        <h2>Products</h2>
+
+        <button
+          class="addBtn"
+          onclick="showAddProduct()">
+          + Add Product
+        </button>
+
+      </div>
+
+      <div class="productGrid"
+           id="productsList">
+
+        ${
+          products.length
+          ? products.map(p => `
+
+            <div class="productCard">
+
+              <img
+                src="${escapeHtml(
+                  p.image || ""
+                )}"
+                onerror="this.style.display='none'"
+                alt="Product">
+
+              <div class="productInfo">
+
+                <h3>
+                  ${escapeHtml(
+                    p.name || "Unnamed Product"
+                  )}
+                </h3>
+
+                <div class="productMeta">
+
+                  Category:
+                  ${escapeHtml(
+                    p.category || "Fashion"
+                  )}
+
+                  <br>
+
+                  Color:
+                  ${escapeHtml(
+                    p.color || "-"
+                  )}
+
+                  <br>
+
+                  Stock:
+                  ${Number(p.stock || 0)}
+
+                </div>
+
+                <div class="productPrice">
+
+                  ₦${Number(
+                    p.price || 0
+                  ).toLocaleString("en-NG")}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          `).join("")
+          : `
+            <p>No products found.</p>
+          `
+        }
+
+      </div>
+
+    </div>
+  `;
 }
 
-function showSettings(){
 
-content.innerHTML=`
-<div class="panel">
-  <h2>Settings</h2>
-  <div class="notice">
-    Admin settings are managed securely through the Render environment.
-  </div>
-</div>
-`;
-}
+/* =========================
+   ADD PRODUCT
+========================= */
 
 function showAddProduct(){
 
-content.innerHTML=`
-<div class="panel">
-  <h2>Add Product</h2>
+  const content =
+    document.getElementById("content");
 
-  <div class="formGrid">
+  content.innerHTML = `
 
-    <div>
-      <label>Product Name</label>
-      <input id="productName" placeholder="Product name">
+    <div class="panel">
+
+      <div class="panelHead">
+
+        <h2>Add Product</h2>
+
+        <button
+          class="logout"
+          onclick="showProducts()">
+          Back
+        </button>
+
+      </div>
+
+      <div class="formGrid">
+
+        <div>
+          <label>Product Name</label>
+          <input
+            id="productName"
+            placeholder="Product name">
+        </div>
+
+        <div>
+          <label>Category</label>
+
+          <select id="productCategory">
+
+            <option value="Hijab">
+              Hijab
+            </option>
+
+            <option value="Abaya">
+              Abaya
+            </option>
+
+            <option value="Gown">
+              Gown
+            </option>
+
+            <option value="Custom">
+              Custom
+            </option>
+
+          </select>
+        </div>
+
+        <div>
+          <label>Price</label>
+
+          <input
+            id="productPrice"
+            type="number"
+            placeholder="25000">
+        </div>
+
+        <div>
+          <label>Color</label>
+
+          <input
+            id="productColor"
+            placeholder="Wine">
+        </div>
+
+        <div>
+          <label>Stock</label>
+
+          <input
+            id="productStock"
+            type="number"
+            value="1">
+        </div>
+
+        <div>
+          <label>Image URL</label>
+
+          <input
+            id="productImage"
+            placeholder="/assets/product-1.jpg">
+        </div>
+
+        <div class="full">
+
+          <label>Description</label>
+
+          <textarea
+            id="productDescription"
+            placeholder="Product description">
+          </textarea>
+
+        </div>
+
+      </div>
+
+      <button
+        class="primary"
+        onclick="createProduct()">
+        SAVE PRODUCT
+      </button>
+
+      <p id="productMessage"></p>
+
     </div>
-
-    <div>
-      <label>Category</label>
-      <select id="productCategory">
-        <option>Hijab</option>
-        <option>Abaya</option>
-        <option>Gown</option>
-        <option>Custom</option>
-      </select>
-    </div>
-
-    <div>
-      <label>Price</label>
-      <input id="productPrice" type="number" placeholder="25000">
-    </div>
-
-    <div>
-      <label>Color</label>
-      <input id="productColor" placeholder="Wine">
-    </div>
-
-    <div>
-      <label>Stock</label>
-      <input id="productStock" type="number" value="1">
-    </div>
-
-    <div class="full">
-      <label>Image URL</label>
-      <input id="productImage" placeholder="/assets/product-1.jpg">
-    </div>
-
-    <div class="full">
-      <label>Description</label>
-      <textarea id="productDescription"
-        placeholder="Product description"></textarea>
-    </div>
-
-  </div>
-
-  <button class="primary" onclick="createProduct()">
-    SAVE PRODUCT
-  </button>
-
-  <p id="productMessage" class="error"></p>
-</div>
-`;
+  `;
 }
+
+
+/* =========================
+   CREATE PRODUCT
+========================= */
 
 async function createProduct(){
 
-const data={
-  name:document.getElementById('productName').value.trim(),
-  category:document.getElementById('productCategory').value,
-  price:Number(document.getElementById('productPrice').value),
-  color:document.getElementById('productColor').value.trim(),
-  stock:Number(document.getElementById('productStock').value),
-  image:document.getElementById('productImage').value.trim(),
-  description:document.getElementById('productDescription').value.trim()
-};
+  const message =
+    document.getElementById("productMessage");
 
-const r=await api('/api/admin/products',{
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify(data)
-});
+  const data = {
 
-if(r&&r.success!==false){
+    name:
+      document.getElementById(
+        "productName"
+      ).value.trim(),
 
-productMessage.style.color='green';
-productMessage.textContent='Product saved successfully.';
+    category:
+      document.getElementById(
+        "productCategory"
+      ).value,
 
-setTimeout(showProducts,700);
+    price:
+      Number(
+        document.getElementById(
+          "productPrice"
+        ).value
+      ),
 
-}else{
+    color:
+      document.getElementById(
+        "productColor"
+      ).value.trim(),
 
-productMessage.textContent=r?.message||'Unable to save product.';
+    stock:
+      Number(
+        document.getElementById(
+          "productStock"
+        ).value
+      ),
 
+    image:
+      document.getElementById(
+        "productImage"
+      ).value.trim(),
+
+    description:
+      document.getElementById(
+        "productDescription"
+      ).value.trim()
+  };
+
+  if(!data.name){
+
+    message.textContent =
+      "Please enter product name.";
+
+    return;
+  }
+
+  if(!data.price){
+
+    message.textContent =
+      "Please enter product price.";
+
+    return;
+  }
+
+  message.textContent =
+    "Saving product...";
+
+  const d =
+    await api("/api/admin/products",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(data)
+    });
+
+  if(d && !d.error){
+
+    message.textContent =
+      "Product saved successfully.";
+
+    setTimeout(
+      showProducts,
+      700
+    );
+
+  }else{
+
+    message.textContent =
+      (d && (d.message || d.error))
+      || "Unable to save product.";
+  }
 }
+
+
+/* =========================
+   SETTINGS
+========================= */
+
+function showSettings(){
+
+  const content =
+    document.getElementById("content");
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <h2>Settings</h2>
+
+      <div class="notice">
+
+        Admin settings are managed securely
+        through the Render Environment.
+
+        <br><br>
+
+        Paystack configuration:
+        Managed from server environment.
+
+        <br><br>
+
+        Database configuration:
+        Managed from server environment.
+
+      </div>
+
+    </div>
+
+  `;
 }
+
+
+/* =========================
+   SECURITY HELPER
+========================= */
 
 function escapeHtml(value){
 
-return String(value)
-.replace(/&/g,'&amp;')
-.replace(/</g,'&lt;')
-.replace(/>/g,'&gt;')
-.replace(/"/g,'&quot;')
-.replace(/'/g,'&#039;');
-
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
+
+
+/* =========================
+   START
+========================= */
 
 if(token){
 
-dashboard();
+  dashboard();
 
 }else{
 
-login();
+  login();
 
 }
 
