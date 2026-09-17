@@ -1,243 +1,186 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Dashboard | Face of Style</title>
+<h2>Orders</h2>
 
-<style>
-:root{--wine:#651630;--gold:#c9a45b;--bg:#f7f2eb;--line:#e6dacf}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:Arial;color:#292025}
-.top{background:#fff;border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
-.top b{font:22px Georgia;color:var(--wine)}
-button{cursor:pointer}
-.logout{background:transparent;border:1px solid var(--line);padding:9px 14px;border-radius:20px}
-.layout{max-width:1440px;margin:auto;padding:25px 18px}
-.login{max-width:390px;margin:12vh auto;background:#fff;padding:30px;border-radius:20px;box-shadow:0 10px 30px #32121b14}
-.login h1{font:32px Georgia;color:var(--wine)}
-input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:7px 0 14px;font:inherit}
-textarea{min-height:90px;resize:vertical}
-.primary{background:var(--wine);color:#fff;border:0;padding:13px 18px;border-radius:22px;font-weight:bold}
-.error{color:#a33;font-size:13px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.stat{background:#fff;border:1px solid var(--line);padding:18px;border-radius:16px}
-.stat small{color:#756a6f}
-.stat b{display:block;color:var(--wine);font-size:25px;margin-top:5px}
-.tabs{display:flex;gap:8px;margin:25px 0;flex-wrap:wrap}
-.tab{padding:10px 16px;border:1px solid var(--line);background:#fff;border-radius:22px}
-.tab.active{background:var(--wine);color:#fff}
-.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:20px;overflow:auto}
-.panel h2{font:25px Georgia;color:var(--wine)}
-.panelHead{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}
-.addBtn{background:var(--wine);color:#fff;border:0;border-radius:22px;padding:11px 17px;font-weight:bold}
-.productGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.productCard{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
-.productCard img{width:100%;height:220px;object-fit:cover;background:#f4eee7}
-.productInfo{padding:15px}
-.productInfo h3{margin:0 0 7px;color:var(--wine);font-family:Georgia}
-.productMeta{font-size:13px;color:#6d6367;line-height:1.6}
-.productPrice{font-weight:bold;font-size:18px;margin:10px 0;color:var(--wine)}
-.productActions{display:flex;gap:8px}
-.productActions button{flex:1;padding:9px;border-radius:18px;border:1px solid var(--line);background:#fff}
-.productActions .edit{background:#fff8e8}
-.productActions .delete{color:#9a2222}
-.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
-.formGrid .full{grid-column:1/-1}
-.preview{width:100%;height:180px;object-fit:cover;border-radius:12px;background:#f4eee7;margin-bottom:10px}
-.pill{padding:5px 8px;border-radius:14px;font-size:11px}
-.paid{background:#e5f5ea;color:#176a35}
-.pending{background:#fff1cf;color:#8a5a00}
-.failed{background:#fde7e7;color:#9a2222}
-.actions button{padding:7px 10px;border-radius:15px;border:1px solid var(--line);background:#fff}
-.notice{background:#fcf8f1;padding:12px;border-radius:10px;color:#665d60;font-size:13px;line-height:1.6}
-
-@media(max-width:1000px){
-.cards{grid-template-columns:1fr 1fr}
-.productGrid{grid-template-columns:1fr 1fr}
-}
-
-@media(max-width:650px){
-.cards,.productGrid,.formGrid{grid-template-columns:1fr}
-.formGrid .full{grid-column:auto}
-.top{padding:12px 16px}
-.top b{font-size:18px}
-.layout{padding:18px 12px}
-.panelHead{align-items:flex-start;flex-direction:column}
-.addBtn{width:100%}
-}
-</style>
-</head>
-
-<body>
-
-<div class="top">
-<b>FACE OF STYLE — ADMIN</b>
-<button class="logout" onclick="logout()">Logout</button>
+<div id="ordersList">
+Loading orders...
 </div>
 
-<div id="app"></div>
-
-<script>
-
-const app=document.getElementById('app');
-
-let token=sessionStorage.getItem('adminToken')||'';
-
-function login(){
-
-app.innerHTML=`
-<div class="login">
-
-<h1>Admin Login</h1>
-
-<p>Face of Style Hijab Factory</p>
-
-<label>Username</label>
-
-<input id="u" value="admin">
-
-<label>Password</label>
-
-<input id="p" type="password">
-
-<button class="primary" onclick="doLogin()">LOGIN</button>
-
-<p id="err" class="error"></p>
-
-<div class="notice">
-For the live store, change the default admin credentials in the server environment before publishing.
 </div>
-
-</div>`;
+`;
 }
 
-async function doLogin(){
+async function showProducts(){
 
-const r=await fetch('/api/admin/login',{
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify({
-username:u.value,
-password:p.value
-})
+const d=await api('/api/admin/products');
+
+if(!d)return;
+
+content.innerHTML=`
+<div class="panel">
+  <div class="panelHead">
+    <h2>Products</h2>
+    <button class="addBtn" onclick="showAddProduct()">+ Add Product</button>
+  </div>
+
+  <div class="productGrid" id="productsList">
+    Loading products...
+  </div>
+</div>
+`;
+
+const list=document.getElementById('productsList');
+
+const products=d.products||d||[];
+
+if(!Array.isArray(products)||!products.length){
+  list.innerHTML='<p>No products found.</p>';
+  return;
+}
+
+list.innerHTML=products.map(p=>`
+  <div class="productCard">
+    <img src="${p.image||''}" onerror="this.style.display='none'">
+    <div class="productInfo">
+      <h3>${escapeHtml(p.name||'Unnamed Product')}</h3>
+      <div class="productMeta">
+        Category: ${escapeHtml(p.category||'Fashion')}<br>
+        Color: ${escapeHtml(p.color||'')}
+        <br>
+        Stock: ${p.stock??0}
+      </div>
+      <div class="productPrice">
+        ₦${Number(p.price||0).toLocaleString('en-NG')}
+      </div>
+    </div>
+  </div>
+`).join('');
+}
+
+function showSettings(){
+
+content.innerHTML=`
+<div class="panel">
+  <h2>Settings</h2>
+  <div class="notice">
+    Admin settings are managed securely through the Render environment.
+  </div>
+</div>
+`;
+}
+
+function showAddProduct(){
+
+content.innerHTML=`
+<div class="panel">
+  <h2>Add Product</h2>
+
+  <div class="formGrid">
+
+    <div>
+      <label>Product Name</label>
+      <input id="productName" placeholder="Product name">
+    </div>
+
+    <div>
+      <label>Category</label>
+      <select id="productCategory">
+        <option>Hijab</option>
+        <option>Abaya</option>
+        <option>Gown</option>
+        <option>Custom</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Price</label>
+      <input id="productPrice" type="number" placeholder="25000">
+    </div>
+
+    <div>
+      <label>Color</label>
+      <input id="productColor" placeholder="Wine">
+    </div>
+
+    <div>
+      <label>Stock</label>
+      <input id="productStock" type="number" value="1">
+    </div>
+
+    <div class="full">
+      <label>Image URL</label>
+      <input id="productImage" placeholder="/assets/product-1.jpg">
+    </div>
+
+    <div class="full">
+      <label>Description</label>
+      <textarea id="productDescription"
+        placeholder="Product description"></textarea>
+    </div>
+
+  </div>
+
+  <button class="primary" onclick="createProduct()">
+    SAVE PRODUCT
+  </button>
+
+  <p id="productMessage" class="error"></p>
+</div>
+`;
+}
+
+async function createProduct(){
+
+const data={
+  name:document.getElementById('productName').value.trim(),
+  category:document.getElementById('productCategory').value,
+  price:Number(document.getElementById('productPrice').value),
+  color:document.getElementById('productColor').value.trim(),
+  stock:Number(document.getElementById('productStock').value),
+  image:document.getElementById('productImage').value.trim(),
+  description:document.getElementById('productDescription').value.trim()
+};
+
+const r=await api('/api/admin/products',{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify(data)
 });
 
-const d=await r.json();
+if(r&&r.success!==false){
 
-if(d.token){
+productMessage.style.color='green';
+productMessage.textContent='Product saved successfully.';
 
-token=d.token;
+setTimeout(showProducts,700);
 
-sessionStorage.setItem('adminToken',token);
+}else{
+
+productMessage.textContent=r?.message||'Unable to save product.';
+
+}
+}
+
+function escapeHtml(value){
+
+return String(value)
+.replace(/&/g,'&amp;')
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;')
+.replace(/"/g,'&quot;')
+.replace(/'/g,'&#039;');
+
+}
+
+if(token){
 
 dashboard();
 
 }else{
 
-err.textContent=d.message||'Login failed';
-
-}
-
-}
-
-function logout(){
-
-sessionStorage.removeItem('adminToken');
-
-token='';
-
 login();
 
 }
 
-async function api(url,opts={}){
+</script>
 
-opts.headers={
-...(opts.headers||{}),
-Authorization:'Bearer '+token
-};
-
-const r=await fetch(url,opts);
-
-if(r.status===401){
-
-logout();
-
-return null;
-
-}
-
-return r.json();
-
-}
-
-async function dashboard(){
-
-const d=await api('/api/admin/dashboard');
-
-if(!d)return;
-
-app.innerHTML=`
-
-<div class="layout">
-
-<div class="cards">
-
-<div class="stat">
-<small>Total Orders</small>
-<b>${d.stats.orders}</b>
-</div>
-
-<div class="stat">
-<small>Paid Orders</small>
-<b>${d.stats.paid}</b>
-</div>
-
-<div class="stat">
-<small>Pending</small>
-<b>${d.stats.pending}</b>
-</div>
-
-<div class="stat">
-<small>Revenue</small>
-<b>₦${d.stats.revenue.toLocaleString('en-NG')}</b>
-</div>
-
-</div>
-
-<div class="tabs">
-
-<button class="tab active" onclick="showOrders()">
-Orders
-</button>
-
-<button class="tab" onclick="showProducts()">
-Products
-</button>
-
-<button class="tab" onclick="showSettings()">
-Settings
-</button>
-
-</div>
-
-<div id="content"></div>
-
-</div>`;
-
-showOrders();
-
-}
-
-async function showOrders(){
-
-const d=await api('/api/admin/orders');
-
-if(!d)return;
-
-content.innerHTML=`
-
-<div class="panel">
-
-<h2>
+</body>
+</html>
