@@ -32,9 +32,6 @@ const DATABASE_URL =
 const WHATSAPP_NUMBER =
   process.env.WHATSAPP_NUMBER || '2349065828886';
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET || '';
-
 const isProduction =
   process.env.NODE_ENV === 'production';
 
@@ -53,11 +50,17 @@ const pool = DATABASE_URL
 
 /* =========================================================
    EXPRESS
+   IMPORTANT:
+   Keep original request bytes for Paystack webhook
+   signature verification.
 ========================================================= */
 
 app.use(
   express.json({
-    limit: '1mb'
+    limit: '1mb',
+    verify: (req, res, buf) => {
+      req.rawBody = Buffer.from(buf);
+    }
   })
 );
 
@@ -132,14 +135,19 @@ function getSession(req) {
   };
 }
 
-function requireAdmin(req, res, next) {
+function requireAdmin(
+  req,
+  res,
+  next
+) {
   const session =
     getSession(req);
 
   if (!session) {
     return res.status(401).json({
       ok: false,
-      message: 'Admin authentication required.'
+      message:
+        'Admin authentication required.'
     });
   }
 
@@ -153,18 +161,13 @@ function requireAdmin(req, res, next) {
 ========================================================= */
 
 async function initDatabase() {
-
-async function initDatabase() {
   if (!pool) {
     console.warn(
       'DATABASE_URL is not configured. Database features are disabled.'
     );
+
     return;
   }
-
-  /*
-    Create the tables if they do not exist.
-  */
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS products (
@@ -181,98 +184,6 @@ async function initDatabase() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
-
-  /*
-    IMPORTANT:
-    The database may already contain an older products table.
-    CREATE TABLE IF NOT EXISTS does NOT add new columns.
-    These migrations safely add missing columns.
-  */
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Fashion'
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS description TEXT DEFAULT ''
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS price NUMERIC(12,2) DEFAULT 0
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS color TEXT DEFAULT ''
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS image TEXT DEFAULT ''
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS stock INTEGER DEFAULT 0
-  `);
-
-  /*
-    THIS FIXES THE CURRENT RENDER ERROR:
-    column "active" does not exist
-  */
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT TRUE
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS created_at
-    TIMESTAMPTZ DEFAULT NOW()
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS updated_at
-    TIMESTAMPTZ DEFAULT NOW()
-  `);
-
-  /*
-    Make sure old rows have valid values.
-  */
-
-  await pool.query(`
-    UPDATE products
-    SET active = TRUE
-    WHERE active IS NULL
-  `);
-
-  await pool.query(`
-    UPDATE products
-    SET stock = 0
-    WHERE stock IS NULL
-  `);
-
-  await pool.query(`
-    UPDATE products
-    SET category = 'Fashion'
-    WHERE category IS NULL
-       OR TRIM(category) = ''
-  `);
-
-  await pool.query(`
-    UPDATE products
-    SET updated_at = NOW()
-    WHERE updated_at IS NULL
-  `);
-
-  /*
-    Orders table
-  */
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS orders (
@@ -293,10 +204,6 @@ async function initDatabase() {
     )
   `);
 
-  /*
-    Order items table
-  */
-
   await pool.query(`
     CREATE TABLE IF NOT EXISTS order_items (
       id BIGSERIAL PRIMARY KEY,
@@ -310,10 +217,6 @@ async function initDatabase() {
       subtotal NUMERIC(12,2) NOT NULL
     )
   `);
-
-  /*
-    Indexes
-  */
 
   await pool.query(`
     CREATE INDEX IF NOT EXISTS idx_products_active
@@ -334,8 +237,13 @@ async function initDatabase() {
    HELPERS
 ========================================================= */
 
-function cleanString(value, max = 500) {
-  return String(value ?? '')
+function cleanString(
+  value,
+  max = 500
+) {
+  return String(
+    value ?? ''
+  )
     .trim()
     .slice(0, max);
 }
@@ -373,7 +281,9 @@ function positivePrice(value) {
 function createOrderReference() {
   return (
     'FS-' +
-    Date.now().toString(36).toUpperCase() +
+    Date.now()
+      .toString(36)
+      .toUpperCase() +
     '-' +
     crypto
       .randomBytes(4)
@@ -393,96 +303,100 @@ function validPhone(phone) {
 }
 
 function normalizeCategory(value) {
-  const category =
-    cleanString(value, 50);
-
-  if (!category) {
-    return 'Fashion';
-  }
-
-  return category;
+  return (
+    cleanString(value, 50) ||
+    'Fashion'
+  );
 }
 
 /* =========================================================
    HEALTH CHECK
 ========================================================= */
 
-app.get('/api/health', async (req, res) => {
-  let database = false;
+app.get(
+  '/api/health',
+  async (req, res) => {
+    let database = false;
 
-  if (pool) {
-    try {
-      await pool.query(
-        'SELECT 1'
-      );
+    if (pool) {
+      try {
+        await pool.query(
+          'SELECT 1'
+        );
 
-      database = true;
-    } catch {
-      database = false;
+        database = true;
+      } catch {
+        database = false;
+      }
     }
-  }
 
-  res.json({
-    ok: true,
-    service:
-      'Face of Style Hijab Factory',
-    database,
-    paystackConfigured:
-      Boolean(PAYSTACK_SECRET_KEY),
-    adminConfigured:
-      Boolean(
-        ADMIN_USERNAME &&
-        ADMIN_PASSWORD
-      )
-  });
-});
+    res.json({
+      ok: true,
+      service:
+        'Face of Style Hijab Factory',
+      database,
+      paystackConfigured:
+        Boolean(
+          PAYSTACK_SECRET_KEY
+        ),
+      adminConfigured:
+        Boolean(
+          ADMIN_USERNAME &&
+          ADMIN_PASSWORD
+        )
+    });
+  }
+);
 
 /* =========================================================
    PUBLIC PRODUCTS
 ========================================================= */
 
-app.get('/api/products', async (req, res) => {
-  if (!pool) {
-    return res.json({
-      products: []
-    });
+app.get(
+  '/api/products',
+  async (req, res) => {
+    if (!pool) {
+      return res.json({
+        products: []
+      });
+    }
+
+    try {
+      const result =
+        await pool.query(`
+          SELECT
+            id,
+            name,
+            category AS cat,
+            description,
+            price,
+            color,
+            image AS img,
+            stock
+          FROM products
+          WHERE active = TRUE
+          ORDER BY created_at DESC
+        `);
+
+      res.json({
+        products:
+          result.rows
+      });
+
+    } catch (error) {
+      console.error(
+        'Products error:',
+        error
+      );
+
+      res.status(500).json({
+        ok: false,
+        message:
+          'Unable to load products.'
+      });
+    }
   }
-
-  try {
-    const result =
-      await pool.query(`
-        SELECT
-          id,
-          name,
-          category AS cat,
-          description,
-          price,
-          color,
-          image AS img,
-          stock
-        FROM products
-        WHERE active = TRUE
-        ORDER BY created_at DESC
-      `);
-
-    res.json({
-      products:
-        result.rows
-    });
-
-  } catch (error) {
-    console.error(
-      'Products error:',
-      error
-    );
-
-    res.status(500).json({
-      ok: false,
-      message:
-        'Unable to load products.'
-    });
-  }
-});
+);
 
 /* =========================================================
    ADMIN LOGIN
@@ -514,8 +428,10 @@ app.post(
     }
 
     if (
-      username !== ADMIN_USERNAME ||
-      password !== ADMIN_PASSWORD
+      username !==
+        ADMIN_USERNAME ||
+      password !==
+        ADMIN_PASSWORD
     ) {
       return res.status(401).json({
         ok: false,
@@ -676,11 +592,9 @@ app.post(
       );
 
     const stock =
-      Number.isInteger(
-        Number(req.body?.stock)
-      )
-        ? Number(req.body.stock)
-        : 0;
+      Number(
+        req.body?.stock
+      );
 
     if (!name) {
       return res.status(400).json({
@@ -699,6 +613,7 @@ app.post(
     }
 
     if (
+      !Number.isInteger(stock) ||
       stock < 0 ||
       stock > 1000000
     ) {
@@ -711,8 +626,7 @@ app.post(
 
     try {
       const result =
-        await pool.query(
-          `
+        await pool.query(`
           INSERT INTO products
           (
             name,
@@ -724,19 +638,19 @@ app.post(
             stock
           )
           VALUES
-          ($1,$2,$3,$4,$5,$6,$7)
+          (
+            $1,$2,$3,$4,$5,$6,$7
+          )
           RETURNING *
-          `,
-          [
-            name,
-            category,
-            description,
-            price,
-            color,
-            image,
-            stock
-          ]
-        );
+        `, [
+          name,
+          category,
+          description,
+          price,
+          color,
+          image,
+          stock
+        ]);
 
       res.status(201).json({
         ok: true,
@@ -777,14 +691,6 @@ app.put(
         req.params.id
       );
 
-    if (!id) {
-      return res.status(400).json({
-        ok: false,
-        message:
-          'Invalid product ID.'
-      });
-    }
-
     const name =
       cleanString(
         req.body?.name,
@@ -823,12 +729,25 @@ app.put(
       );
 
     const stock =
-      Number(req.body?.stock);
+      Number(
+        req.body?.stock
+      );
 
     const active =
       req.body?.active !== false;
 
-    if (!name || price === null) {
+    if (!id) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'Invalid product ID.'
+      });
+    }
+
+    if (
+      !name ||
+      price === null
+    ) {
       return res.status(400).json({
         ok: false,
         message:
@@ -850,8 +769,7 @@ app.put(
 
     try {
       const result =
-        await pool.query(
-          `
+        await pool.query(`
           UPDATE products
           SET
             name = $1,
@@ -865,19 +783,17 @@ app.put(
             updated_at = NOW()
           WHERE id = $9
           RETURNING *
-          `,
-          [
-            name,
-            category,
-            description,
-            price,
-            color,
-            image,
-            stock,
-            active,
-            id
-          ]
-        );
+        `, [
+          name,
+          category,
+          description,
+          price,
+          color,
+          image,
+          stock,
+          active,
+          id
+        ]);
 
       if (!result.rowCount) {
         return res.status(404).json({
@@ -936,17 +852,14 @@ app.delete(
 
     try {
       const result =
-        await pool.query(
-          `
+        await pool.query(`
           UPDATE products
           SET
             active = FALSE,
             updated_at = NOW()
           WHERE id = $1
           RETURNING id
-          `,
-          [id]
-        );
+        `, [id]);
 
       if (!result.rowCount) {
         return res.status(404).json({
@@ -1028,8 +941,7 @@ app.get(
         );
 
       const itemsResult =
-        await pool.query(
-          `
+        await pool.query(`
           SELECT
             id,
             order_id,
@@ -1039,11 +951,10 @@ app.get(
             quantity,
             subtotal
           FROM order_items
-          WHERE order_id = ANY($1::bigint[])
+          WHERE order_id =
+            ANY($1::bigint[])
           ORDER BY id ASC
-          `,
-          [ids]
-        );
+        `, [ids]);
 
       const itemsByOrder =
         new Map();
@@ -1068,18 +979,18 @@ app.get(
           .push(item);
       }
 
-      const output =
-        orders.map(order => ({
-          ...order,
-          items:
-            itemsByOrder.get(
-              order.id
-            ) || []
-        }));
-
       res.json({
         ok: true,
-        orders: output
+        orders:
+          orders.map(
+            order => ({
+              ...order,
+              items:
+                itemsByOrder.get(
+                  order.id
+                ) || []
+            })
+          )
       });
 
     } catch (error) {
@@ -1151,20 +1062,17 @@ app.patch(
 
     try {
       const result =
-        await pool.query(
-          `
+        await pool.query(`
           UPDATE orders
           SET
             order_status = $1,
             updated_at = NOW()
           WHERE id = $2
           RETURNING *
-          `,
-          [
-            orderStatus,
-            id
-          ]
-        );
+        `, [
+          orderStatus,
+          id
+        ]);
 
       if (!result.rowCount) {
         return res.status(404).json({
@@ -1286,12 +1194,6 @@ app.post(
       });
     }
 
-    /*
-      IMPORTANT:
-      Prices are loaded from PostgreSQL.
-      The browser is NOT trusted to send prices.
-    */
-
     const client =
       await pool.connect();
 
@@ -1317,8 +1219,7 @@ app.post(
       }
 
       const productsResult =
-        await client.query(
-          `
+        await client.query(`
           SELECT
             id,
             name,
@@ -1326,11 +1227,10 @@ app.post(
             stock,
             active
           FROM products
-          WHERE id = ANY($1::int[])
+          WHERE id =
+            ANY($1::int[])
           FOR UPDATE
-          `,
-          [productIds]
-        );
+        `, [productIds]);
 
       const productMap =
         new Map(
@@ -1368,9 +1268,7 @@ app.post(
           );
         }
 
-        if (
-          quantity > 99
-        ) {
+        if (quantity > 99) {
           throw new Error(
             'Maximum quantity per item is 99.'
           );
@@ -1391,8 +1289,9 @@ app.post(
         }
 
         if (
-          Number(product.stock) <
-          quantity
+          Number(
+            product.stock
+          ) < quantity
         ) {
           throw new Error(
             `${product.name} does not have enough stock.`
@@ -1400,7 +1299,9 @@ app.post(
         }
 
         const price =
-          Number(product.price);
+          Number(
+            product.price
+          );
 
         const subtotal =
           price * quantity;
@@ -1435,8 +1336,7 @@ app.post(
         createOrderReference();
 
       const orderResult =
-        await client.query(
-          `
+        await client.query(`
           INSERT INTO orders
           (
             reference,
@@ -1459,17 +1359,18 @@ app.post(
             $6,
             'NGN'
           )
-          RETURNING id, reference, total
-          `,
-          [
+          RETURNING
+            id,
             reference,
-            name,
-            email,
-            phone,
-            address,
             total
-          ]
-        );
+        `, [
+          reference,
+          name,
+          email,
+          phone,
+          address,
+          total
+        ]);
 
       const order =
         orderResult.rows[0];
@@ -1478,8 +1379,7 @@ app.post(
         const item
         of orderItems
       ) {
-        await client.query(
-          `
+        await client.query(`
           INSERT INTO order_items
           (
             order_id,
@@ -1490,31 +1390,22 @@ app.post(
             subtotal
           )
           VALUES
-          ($1,$2,$3,$4,$5,$6)
-          `,
-          [
-            order.id,
-            item.productId,
-            item.name,
-            item.price,
-            item.quantity,
-            item.subtotal
-          ]
-        );
+          (
+            $1,$2,$3,$4,$5,$6
+          )
+        `, [
+          order.id,
+          item.productId,
+          item.name,
+          item.price,
+          item.quantity,
+          item.subtotal
+        ]);
       }
 
       await client.query(
         'COMMIT'
       );
-
-      /*
-        Paystack expects amount in kobo.
-      */
-
-      const amountInKobo =
-        Math.round(
-          total * 100
-        );
 
       const paystackResponse =
         await fetch(
@@ -1527,27 +1418,33 @@ app.post(
               'Content-Type':
                 'application/json'
             },
-            body: JSON.stringify({
-              email,
-              amount:
-                amountInKobo,
-              currency:
-                'NGN',
-              reference,
-              callback_url:
-                process.env.PAYSTACK_CALLBACK_URL ||
-                undefined,
-              metadata: {
-                order_id:
-                  String(order.id),
-                order_reference:
-                  reference,
-                customer_name:
-                  name,
-                customer_phone:
-                  phone
-              }
-            })
+            body:
+              JSON.stringify({
+                email,
+                amount:
+                  Math.round(
+                    total * 100
+                  ),
+                currency:
+                  'NGN',
+                reference,
+                callback_url:
+                  process.env
+                    .PAYSTACK_CALLBACK_URL ||
+                  undefined,
+                metadata: {
+                  order_id:
+                    String(
+                      order.id
+                    ),
+                  order_reference:
+                    reference,
+                  customer_name:
+                    name,
+                  customer_phone:
+                    phone
+                }
+              })
           }
         );
 
@@ -1557,7 +1454,8 @@ app.post(
       if (
         !paystackResponse.ok ||
         !paystackData.status ||
-        !paystackData.data?.authorization_url
+        !paystackData.data
+          ?.authorization_url
       ) {
         console.error(
           'Paystack initialize error:',
@@ -1572,25 +1470,24 @@ app.post(
         });
       }
 
-      await pool.query(
-        `
+      await pool.query(`
         UPDATE orders
         SET
           paystack_reference = $1,
           updated_at = NOW()
         WHERE reference = $2
-        `,
-        [
-          reference,
-          reference
-        ]
-      );
+      `, [
+        reference,
+        reference
+      ]);
 
       res.json({
         ok: true,
         reference,
         authorization_url:
-          paystackData.data.authorization_url
+          paystackData
+            .data
+            .authorization_url
       });
 
     } catch (error) {
@@ -1617,6 +1514,157 @@ app.post(
     }
   }
 );
+
+/* =========================================================
+   MARK ORDER AS PAID
+   Used by both verification and webhook.
+========================================================= */
+
+async function markOrderPaid(
+  reference,
+  transaction
+) {
+  const orderResult =
+    await pool.query(`
+      SELECT *
+      FROM orders
+      WHERE reference = $1
+      LIMIT 1
+    `, [reference]);
+
+  if (!orderResult.rowCount) {
+    return {
+      ok: false,
+      notFound: true
+    };
+  }
+
+  const order =
+    orderResult.rows[0];
+
+  const expectedAmount =
+    Math.round(
+      Number(order.total) * 100
+    );
+
+  if (
+    transaction.status !==
+      'success' ||
+    transaction.currency !==
+      'NGN' ||
+    Number(
+      transaction.amount
+    ) !== expectedAmount
+  ) {
+    return {
+      ok: false,
+      invalidPayment: true
+    };
+  }
+
+  const client =
+    await pool.connect();
+
+  try {
+    await client.query(
+      'BEGIN'
+    );
+
+    const locked =
+      await client.query(`
+        SELECT *
+        FROM orders
+        WHERE id = $1
+        FOR UPDATE
+      `, [order.id]);
+
+    const lockedOrder =
+      locked.rows[0];
+
+    if (!lockedOrder) {
+      throw new Error(
+        'Order not found.'
+      );
+    }
+
+    /* Prevent double stock deduction. */
+    if (
+      lockedOrder.payment_status !==
+      'PAID'
+    ) {
+      const items =
+        await client.query(`
+          SELECT *
+          FROM order_items
+          WHERE order_id = $1
+          ORDER BY id ASC
+        `, [order.id]);
+
+      for (
+        const item
+        of items.rows
+      ) {
+        const stock =
+          await client.query(`
+            UPDATE products
+            SET
+              stock =
+                stock - $1,
+              updated_at =
+                NOW()
+            WHERE id = $2
+              AND active = TRUE
+              AND stock >= $1
+            RETURNING id
+          `, [
+            item.quantity,
+            item.product_id
+          ]);
+
+        if (!stock.rowCount) {
+          throw new Error(
+            `Insufficient stock for ${item.product_name}.`
+          );
+        }
+      }
+    }
+
+    await client.query(`
+      UPDATE orders
+      SET
+        payment_status = 'PAID',
+        order_status = 'PROCESSING',
+        paystack_reference = $1,
+        updated_at = NOW()
+      WHERE id = $2
+    `, [
+      transaction.reference ||
+        reference,
+      order.id
+    ]);
+
+    await client.query(
+      'COMMIT'
+    );
+
+    return {
+      ok: true,
+      order
+    };
+
+  } catch (error) {
+    try {
+      await client.query(
+        'ROLLBACK'
+      );
+    } catch {}
+
+    throw error;
+
+  } finally {
+    client.release();
+  }
+}
 
 /* =========================================================
    PAYSTACK VERIFY
@@ -1683,21 +1731,13 @@ app.get(
         });
       }
 
-      const transaction =
-        data.data;
-
-      const orderResult =
-        await pool.query(
-          `
-          SELECT *
-          FROM orders
-          WHERE reference = $1
-          LIMIT 1
-          `,
-          [reference]
+      const result =
+        await markOrderPaid(
+          reference,
+          data.data
         );
 
-      if (!orderResult.rowCount) {
+      if (result.notFound) {
         return res.status(404).json({
           ok: false,
           message:
@@ -1705,47 +1745,18 @@ app.get(
         });
       }
 
-      const order =
-        orderResult.rows[0];
-
-      /*
-        Verify BOTH:
-        1. Paystack says transaction succeeded.
-        2. Paystack amount matches our server-side order total.
-      */
-
-      const expectedAmount =
-        Math.round(
-          Number(order.total) * 100
-        );
-
-      const paidAmount =
-        Number(
-          transaction.amount
-        );
-
-      const amountMatches =
-        expectedAmount ===
-        paidAmount;
-
-      const success =
-        transaction.status ===
-          'success' &&
-        transaction.currency ===
-          'NGN' &&
-        amountMatches;
-
-      if (!success) {
-        await pool.query(
-          `
+      if (
+        result.invalidPayment
+      ) {
+        await pool.query(`
           UPDATE orders
           SET
-            payment_status = 'FAILED',
-            updated_at = NOW()
-          WHERE id = $1
-          `,
-          [order.id]
-        );
+            payment_status =
+              'FAILED',
+            updated_at =
+              NOW()
+          WHERE reference = $1
+        `, [reference]);
 
         return res.status(400).json({
           ok: false,
@@ -1755,113 +1766,8 @@ app.get(
         });
       }
 
-      const client =
-        await pool.connect();
-
-      try {
-        await client.query(
-          'BEGIN'
-        );
-
-        const lockedOrderResult =
-          await client.query(
-            `
-            SELECT *
-            FROM orders
-            WHERE id = $1
-            FOR UPDATE
-            `,
-            [order.id]
-          );
-
-        const lockedOrder =
-          lockedOrderResult
-            .rows[0];
-
-        /*
-          Do not reduce stock twice if
-          the customer refreshes success page.
-        */
-
-        if (
-          lockedOrder.payment_status !==
-          'PAID'
-        ) {
-          const itemsResult =
-            await client.query(
-              `
-              SELECT *
-              FROM order_items
-              WHERE order_id = $1
-              `,
-              [order.id]
-            );
-
-          for (
-            const item
-            of itemsResult.rows
-          ) {
-            const stockResult =
-              await client.query(
-                `
-                UPDATE products
-                SET
-                  stock =
-                    stock - $1,
-                  updated_at = NOW()
-                WHERE id = $2
-                  AND active = TRUE
-                  AND stock >= $1
-                RETURNING id
-                `,
-                [
-                  item.quantity,
-                  item.product_id
-                ]
-              );
-
-            if (
-              !stockResult.rowCount
-            ) {
-              throw new Error(
-                `Insufficient stock for ${item.product_name}.`
-              );
-            }
-          }
-        }
-
-        await client.query(
-          `
-          UPDATE orders
-          SET
-            payment_status = 'PAID',
-            order_status = 'PROCESSING',
-            paystack_reference = $1,
-            updated_at = NOW()
-          WHERE id = $2
-          `,
-          [
-            transaction.reference,
-            order.id
-          ]
-        );
-
-        await client.query(
-          'COMMIT'
-        );
-
-      } catch (error) {
-        try {
-          await client.query(
-            'ROLLBACK'
-          );
-        } catch {}
-
-        throw error;
-
-      } finally {
-        client.release();
-      }
+      const order =
+        result.order;
 
       res.json({
         ok: true,
@@ -1893,24 +1799,31 @@ app.get(
 
 /* =========================================================
    PAYSTACK WEBHOOK
+   IMPORTANT:
+   express.json() above stores req.rawBody.
 ========================================================= */
 
 app.post(
   '/api/paystack/webhook',
-  express.raw({
-    type: 'application/json'
-  }),
   async (req, res) => {
-    if (!PAYSTACK_SECRET_KEY) {
+    if (
+      !PAYSTACK_SECRET_KEY ||
+      !pool
+    ) {
       return res.sendStatus(200);
     }
 
     const signature =
-      req.headers[
-        'x-paystack-signature'
-      ];
+      String(
+        req.headers[
+          'x-paystack-signature'
+        ] || ''
+      );
 
-    if (!signature) {
+    if (
+      !signature ||
+      !req.rawBody
+    ) {
       return res.sendStatus(401);
     }
 
@@ -1920,194 +1833,107 @@ app.post(
           'sha512',
           PAYSTACK_SECRET_KEY
         )
-        .update(req.body)
+        .update(
+          req.rawBody
+        )
         .digest('hex');
 
-    if (
-      hash !== signature
-    ) {
+    try {
+      const expected =
+        Buffer.from(
+          hash,
+          'utf8'
+        );
+
+      const received =
+        Buffer.from(
+          signature,
+          'utf8'
+        );
+
+      if (
+        expected.length !==
+          received.length ||
+        !crypto.timingSafeEqual(
+          expected,
+          received
+        )
+      ) {
+        return res.sendStatus(
+          401
+        );
+      }
+
+    } catch {
       return res.sendStatus(401);
     }
 
     try {
       const event =
-        JSON.parse(
-          req.body.toString(
-            'utf8'
-          )
-        );
+        req.body &&
+        typeof req.body ===
+          'object'
+          ? req.body
+          : JSON.parse(
+              req.rawBody.toString(
+                'utf8'
+              )
+            );
 
       if (
         event.event !==
         'charge.success'
       ) {
-        return res.sendStatus(200);
+        return res.sendStatus(
+          200
+        );
       }
 
       const transaction =
-        event.data;
+        event.data || {};
 
       const reference =
         cleanString(
-          transaction?.reference,
+          transaction.reference,
           200
         );
 
       if (!reference) {
-        return res.sendStatus(200);
-      }
-
-      const orderResult =
-        await pool.query(
-          `
-          SELECT *
-          FROM orders
-          WHERE reference = $1
-          LIMIT 1
-          `,
-          [reference]
+        return res.sendStatus(
+          200
         );
-
-      if (!orderResult.rowCount) {
-        return res.sendStatus(200);
       }
 
-      const order =
-        orderResult.rows[0];
-
-      const expectedAmount =
-        Math.round(
-          Number(order.total) * 100
+      const result =
+        await markOrderPaid(
+          reference,
+          transaction
         );
 
       if (
-        transaction.status !==
-          'success' ||
-        transaction.currency !==
-          'NGN' ||
-        Number(transaction.amount) !==
-          expectedAmount
+        result.notFound ||
+        result.invalidPayment
       ) {
-        return res.sendStatus(200);
+        return res.sendStatus(
+          200
+        );
       }
 
-      const client =
-        await pool.connect();
-
-      try {
-        await client.query(
-          'BEGIN'
-        );
-
-        const locked =
-          await client.query(
-            `
-            SELECT *
-            FROM orders
-            WHERE id = $1
-            FOR UPDATE
-            `,
-            [order.id]
-          );
-
-        const lockedOrder =
-          locked.rows[0];
-
-        if (
-          lockedOrder.payment_status !==
-          'PAID'
-        ) {
-          const items =
-            await client.query(
-              `
-              SELECT *
-              FROM order_items
-              WHERE order_id = $1
-              `,
-              [order.id]
-            );
-
-          for (
-            const item
-            of items.rows
-          ) {
-            const stock =
-              await client.query(
-                `
-                UPDATE products
-                SET
-                  stock =
-                    stock - $1,
-                  updated_at = NOW()
-                WHERE id = $2
-                  AND stock >= $1
-                RETURNING id
-                `,
-                [
-                  item.quantity,
-                  item.product_id
-                ]
-              );
-
-            if (
-              !stock.rowCount
-            ) {
-              throw new Error(
-                'Insufficient stock during webhook processing.'
-              );
-            }
-          }
-        }
-
-        await client.query(
-          `
-          UPDATE orders
-          SET
-            payment_status = 'PAID',
-            order_status = 'PROCESSING',
-            paystack_reference = $1,
-            updated_at = NOW()
-          WHERE id = $2
-          `,
-          [
-            reference,
-            order.id
-          ]
-        );
-
-        await client.query(
-          'COMMIT'
-        );
-
-      } catch (error) {
-        try {
-          await client.query(
-            'ROLLBACK'
-          );
-        } catch {}
-
-        console.error(
-          'Webhook transaction error:',
-          error
-        );
-
-      } finally {
-        client.release();
-      }
+      return res.sendStatus(200);
 
     } catch (error) {
       console.error(
         'Webhook error:',
         error
       );
-    }
 
-    return res.sendStatus(200);
+      return res.sendStatus(200);
+    }
   }
 );
 
 /* =========================================================
-   WHATSAPP ORDER MESSAGE
+   APP CONFIG
 ========================================================= */
 
 app.get(
@@ -2209,7 +2035,12 @@ app.use(
 ========================================================= */
 
 app.use(
-  (error, req, res, next) => {
+  (
+    error,
+    req,
+    res,
+    next
+  ) => {
     console.error(
       'Server error:',
       error
