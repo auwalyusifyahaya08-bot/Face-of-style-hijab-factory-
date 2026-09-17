@@ -215,6 +215,10 @@ async function initDatabase() {
     )
   `);
    await pool.query(`
+  ALTER TABLE products
+  ADD COLUMN IF NOT EXISTS category TEXT NOT NULL DEFAULT 'Fashion'
+`);
+   await pool.query(`
     ALTER TABLE products
     ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE
   `);
