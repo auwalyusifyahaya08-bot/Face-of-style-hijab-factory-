@@ -1,18 +1,14 @@
 {
-  "name": "face-of-style-hijab-factory",
+  "name": "face-of-style-hijab-factory-store",
   "version": "2.0.0",
-  "description": "Professional online store for Face of Style Hijab Factory",
+  "private": true,
   "type": "module",
-  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "express": "^4.21.2",
-    "pg": "^8.13.1"
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
   }
 }
