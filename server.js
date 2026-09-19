@@ -11,11 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = Number(process.env.PORT) || 10000;
-
-/* =========================================================
-   CONFIGURATION
-========================================================= */
+const PORT = Number(process.env.PORT || 10000);
 
 const PAYSTACK_SECRET_KEY =
   process.env.PAYSTACK_SECRET_KEY || '';
@@ -32,28 +28,8 @@ const DATABASE_URL =
 const WHATSAPP_NUMBER =
   process.env.WHATSAPP_NUMBER || '2349065828886';
 
-const PAYSTACK_CALLBACK_URL =
-  process.env.PAYSTACK_CALLBACK_URL || '';
-
 const isProduction =
   process.env.NODE_ENV === 'production';
-
-/* =========================================================
-   DIRECTORIES
-========================================================= */
-
-const PUBLIC_DIR =
-  path.join(__dirname, 'public');
-
-const ROOT_ASSETS_DIR =
-  path.join(__dirname, 'assets');
-
-const PUBLIC_ASSETS_DIR =
-  path.join(PUBLIC_DIR, 'assets');
-
-/* =========================================================
-   DATABASE
-========================================================= */
 
 const pool = DATABASE_URL
   ? new Pool({
@@ -70,7 +46,7 @@ const pool = DATABASE_URL
 
 app.use(
   express.json({
-    limit: '1mb',
+    limit: '5mb',
     verify: (req, res, buf) => {
       req.rawBody = Buffer.from(buf);
     }
@@ -80,51 +56,18 @@ app.use(
 app.use(
   express.urlencoded({
     extended: true,
-    limit: '1mb'
-  })
-);
-
-/*
-  PUBLIC FRONTEND
-  ----------------
-  Main frontend files are served from /public.
-*/
-app.use(
-  express.static(PUBLIC_DIR, {
-    index: false,
-    extensions: ['html']
-  })
-);
-
-/*
-  ASSETS SUPPORT
-  ----------------
-  Supports both:
-    /public/assets/...
-  and:
-    /assets/...
-  at project root.
-
-  This is specifically added to fix image path problems
-  such as:
-    Cannot GET /assets/product-1.jpg
-*/
-app.use(
-  '/assets',
-  express.static(PUBLIC_ASSETS_DIR, {
-    fallthrough: true
+    limit: '5mb'
   })
 );
 
 app.use(
-  '/assets',
-  express.static(ROOT_ASSETS_DIR, {
-    fallthrough: true
-  })
+  express.static(
+    path.join(__dirname, 'public')
+  )
 );
 
 /* =========================================================
-   SIMPLE AUTH TOKENS
+   ADMIN SESSIONS
 ========================================================= */
 
 const sessions = new Map();
@@ -142,15 +85,15 @@ function createSession(username) {
 }
 
 function getSession(req) {
-  const auth =
+  const authorization =
     req.headers.authorization || '';
 
-  if (!auth.startsWith('Bearer ')) {
+  if (!authorization.startsWith('Bearer ')) {
     return null;
   }
 
   const token =
-    auth.slice(7).trim();
+    authorization.slice(7).trim();
 
   if (!token) {
     return null;
@@ -194,20 +137,21 @@ function requireAdmin(req, res, next) {
   }
 
   req.admin = session;
-
   next();
 }
 
 /* =========================================================
    DATABASE INITIALIZATION
+   IMPORTANT:
+   The existing database uses products.img.
+   DO NOT use products.image in SQL queries.
 ========================================================= */
 
 async function initDatabase() {
   if (!pool) {
     console.warn(
-      'DATABASE_URL is not configured. Database features are disabled.'
+      'DATABASE_URL is not configured.'
     );
-
     return;
   }
 
@@ -219,12 +163,31 @@ async function initDatabase() {
       description TEXT DEFAULT '',
       price NUMERIC(12,2) NOT NULL DEFAULT 0,
       color TEXT DEFAULT '',
-      image TEXT DEFAULT '',
+      img TEXT DEFAULT '',
       stock INTEGER NOT NULL DEFAULT 0,
       active BOOLEAN NOT NULL DEFAULT TRUE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
+  `);
+
+  /*
+    Existing database already has "img".
+    This makes sure a fresh database also gets "img".
+  */
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS img TEXT DEFAULT ''
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE
+  `);
+
+  await pool.query(`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS stock INTEGER NOT NULL DEFAULT 0
   `);
 
   await pool.query(`
@@ -261,30 +224,6 @@ async function initDatabase() {
   `);
 
   await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS category
-    TEXT NOT NULL DEFAULT 'Fashion'
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS active
-    BOOLEAN NOT NULL DEFAULT TRUE
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS stock
-    INTEGER NOT NULL DEFAULT 0
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS updated_at
-    TIMESTAMPTZ NOT NULL DEFAULT NOW()
-  `);
-
-  await pool.query(`
     CREATE INDEX IF NOT EXISTS idx_products_active
     ON products(active)
   `);
@@ -292,11 +231,6 @@ async function initDatabase() {
   await pool.query(`
     CREATE INDEX IF NOT EXISTS idx_orders_created
     ON orders(created_at DESC)
-  `);
-
-  await pool.query(`
-    CREATE INDEX IF NOT EXISTS idx_order_items_order
-    ON order_items(order_id)
   `);
 
   console.log(
@@ -315,8 +249,7 @@ function cleanString(value, max = 500) {
 }
 
 function positiveInteger(value) {
-  const number =
-    Number(value);
+  const number = Number(value);
 
   if (
     !Number.isInteger(number) ||
@@ -329,8 +262,7 @@ function positiveInteger(value) {
 }
 
 function positivePrice(value) {
-  const number =
-    Number(value);
+  const number = Number(value);
 
   if (
     !Number.isFinite(number) ||
@@ -339,9 +271,26 @@ function positivePrice(value) {
     return null;
   }
 
-  return Math.round(
-    number * 100
-  ) / 100;
+  return Math.round(number * 100) / 100;
+}
+
+function normalizeCategory(value) {
+  return (
+    cleanString(value, 50) ||
+    'Fashion'
+  );
+}
+
+function validEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    email
+  );
+}
+
+function validPhone(phone) {
+  return /^[0-9+\-\s()]{7,25}$/.test(
+    phone
+  );
 }
 
 function createOrderReference() {
@@ -358,90 +307,8 @@ function createOrderReference() {
   );
 }
 
-function validEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-    email
-  );
-}
-
-function validPhone(phone) {
-  return /^[0-9+\-\s()]{7,25}$/.test(
-    phone
-  );
-}
-
-function normalizeCategory(value) {
-  const category =
-    cleanString(value, 50);
-
-  return category || 'Fashion';
-}
-
-function verifyPaystackSignature(
-  rawBody,
-  signature
-) {
-  if (
-    !rawBody ||
-    !signature ||
-    !PAYSTACK_SECRET_KEY
-  ) {
-    return false;
-  }
-
-  const hash =
-    crypto
-      .createHmac(
-        'sha512',
-        PAYSTACK_SECRET_KEY
-      )
-      .update(rawBody)
-      .digest('hex');
-
-  try {
-    const expected =
-      Buffer.from(
-        hash,
-        'utf8'
-      );
-
-    const received =
-      Buffer.from(
-        String(signature),
-        'utf8'
-      );
-
-    if (
-      expected.length !==
-      received.length
-    ) {
-      return false;
-    }
-
-    return crypto.timingSafeEqual(
-      expected,
-      received
-    );
-  } catch {
-    return false;
-  }
-}
-
-/*
-  Convert database numeric values into normal JSON numbers
-  where appropriate.
-*/
-function serializeProduct(product) {
-  return {
-    ...product,
-    id: Number(product.id),
-    price: Number(product.price),
-    stock: Number(product.stock)
-  };
-}
-
 /* =========================================================
-   HEALTH CHECK
+   HEALTH
 ========================================================= */
 
 app.get(
@@ -453,8 +320,11 @@ app.get(
       try {
         await pool.query('SELECT 1');
         database = true;
-      } catch {
-        database = false;
+      } catch (error) {
+        console.error(
+          'Database health check error:',
+          error
+        );
       }
     }
 
@@ -464,9 +334,7 @@ app.get(
         'Face of Style Hijab Factory',
       database,
       paystackConfigured:
-        Boolean(
-          PAYSTACK_SECRET_KEY
-        ),
+        Boolean(PAYSTACK_SECRET_KEY),
       adminConfigured:
         Boolean(
           ADMIN_USERNAME &&
@@ -499,7 +367,7 @@ app.get(
             description,
             price,
             color,
-            image AS img,
+            img AS image,
             stock
           FROM products
           WHERE active = TRUE
@@ -507,11 +375,8 @@ app.get(
         `);
 
       res.json({
-        ok: true,
         products:
-          result.rows.map(
-            serializeProduct
-          )
+          result.rows
       });
     } catch (error) {
       console.error(
@@ -558,10 +423,8 @@ app.post(
     }
 
     if (
-      username !==
-        ADMIN_USERNAME ||
-      password !==
-        ADMIN_PASSWORD
+      username !== ADMIN_USERNAME ||
+      password !== ADMIN_PASSWORD
     ) {
       return res.status(401).json({
         ok: false,
@@ -600,7 +463,7 @@ app.post(
 );
 
 /* =========================================================
-   ADMIN SESSION
+   ADMIN ME
 ========================================================= */
 
 app.get(
@@ -616,7 +479,7 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN PRODUCTS
+   ADMIN PRODUCTS - LOAD
 ========================================================= */
 
 app.get(
@@ -641,7 +504,7 @@ app.get(
             description,
             price,
             color,
-            image AS img,
+            img AS image,
             stock,
             active,
             created_at,
@@ -653,9 +516,7 @@ app.get(
       res.json({
         ok: true,
         products:
-          result.rows.map(
-            serializeProduct
-          )
+          result.rows
       });
     } catch (error) {
       console.error(
@@ -710,14 +571,14 @@ app.post(
     const color =
       cleanString(
         req.body?.color,
-        100
+        200
       );
 
     const image =
       cleanString(
         req.body?.image ||
         req.body?.img,
-        1000
+        3000000
       );
 
     const price =
@@ -725,14 +586,14 @@ app.post(
         req.body?.price
       );
 
-    const stock =
+    const stockNumber =
       Number(
         req.body?.stock
       );
 
-    const safeStock =
-      Number.isInteger(stock)
-        ? stock
+    const stock =
+      Number.isInteger(stockNumber)
+        ? stockNumber
         : 0;
 
     if (!name) {
@@ -752,8 +613,8 @@ app.post(
     }
 
     if (
-      safeStock < 0 ||
-      safeStock > 1000000
+      stock < 0 ||
+      stock > 1000000
     ) {
       return res.status(400).json({
         ok: false,
@@ -773,12 +634,24 @@ app.post(
             description,
             price,
             color,
-            image,
-            stock
+            img,
+            stock,
+            active
           )
           VALUES
-          ($1,$2,$3,$4,$5,$6,$7)
-          RETURNING *
+          ($1,$2,$3,$4,$5,$6,$7,TRUE)
+          RETURNING
+            id,
+            name,
+            category AS cat,
+            description,
+            price,
+            color,
+            img AS image,
+            stock,
+            active,
+            created_at,
+            updated_at
           `,
           [
             name,
@@ -787,16 +660,14 @@ app.post(
             price,
             color,
             image,
-            safeStock
+            stock
           ]
         );
 
       res.status(201).json({
         ok: true,
         product:
-          serializeProduct(
-            result.rows[0]
-          )
+          result.rows[0]
       });
     } catch (error) {
       console.error(
@@ -864,14 +735,14 @@ app.put(
     const color =
       cleanString(
         req.body?.color,
-        100
+        200
       );
 
     const image =
       cleanString(
         req.body?.image ||
         req.body?.img,
-        1000
+        3000000
       );
 
     const price =
@@ -887,14 +758,19 @@ app.put(
     const active =
       req.body?.active !== false;
 
-    if (
-      !name ||
-      price === null
-    ) {
+    if (!name) {
       return res.status(400).json({
         ok: false,
         message:
-          'Product name and valid price are required.'
+          'Product name is required.'
+      });
+    }
+
+    if (price === null) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          'A valid product price is required.'
       });
     }
 
@@ -921,12 +797,23 @@ app.put(
             description = $3,
             price = $4,
             color = $5,
-            image = $6,
+            img = $6,
             stock = $7,
             active = $8,
             updated_at = NOW()
           WHERE id = $9
-          RETURNING *
+          RETURNING
+            id,
+            name,
+            category AS cat,
+            description,
+            price,
+            color,
+            img AS image,
+            stock,
+            active,
+            created_at,
+            updated_at
           `,
           [
             name,
@@ -952,9 +839,7 @@ app.put(
       res.json({
         ok: true,
         product:
-          serializeProduct(
-            result.rows[0]
-          )
+          result.rows[0]
       });
     } catch (error) {
       console.error(
@@ -972,7 +857,7 @@ app.put(
 );
 
 /* =========================================================
-   DELETE / DEACTIVATE PRODUCT
+   DELETE PRODUCT
 ========================================================= */
 
 app.delete(
@@ -1081,13 +966,7 @@ app.get(
         `);
 
       const orders =
-        ordersResult.rows.map(
-          order => ({
-            ...order,
-            id: Number(order.id),
-            total: Number(order.total)
-          })
-        );
+        ordersResult.rows;
 
       if (!orders.length) {
         return res.json({
@@ -1113,8 +992,7 @@ app.get(
             quantity,
             subtotal
           FROM order_items
-          WHERE order_id =
-            ANY($1::bigint[])
+          WHERE order_id = ANY($1::bigint[])
           ORDER BY id ASC
           `,
           [ids]
@@ -1127,35 +1005,20 @@ app.get(
         const item
         of itemsResult.rows
       ) {
-        const orderId =
-          Number(item.order_id);
-
         if (
           !itemsByOrder.has(
-            orderId
+            item.order_id
           )
         ) {
           itemsByOrder.set(
-            orderId,
+            item.order_id,
             []
           );
         }
 
         itemsByOrder
-          .get(orderId)
-          .push({
-            ...item,
-            id: Number(item.id),
-            order_id: orderId,
-            product_id:
-              Number(item.product_id),
-            price:
-              Number(item.price),
-            quantity:
-              Number(item.quantity),
-            subtotal:
-              Number(item.subtotal)
-          });
+          .get(item.order_id)
+          .push(item);
       }
 
       const output =
@@ -1173,7 +1036,7 @@ app.get(
       });
     } catch (error) {
       console.error(
-        'Admin orders error:',
+        'Orders error:',
         error
       );
 
@@ -1266,16 +1129,10 @@ app.patch(
         });
       }
 
-      const order =
-        result.rows[0];
-
       res.json({
         ok: true,
-        order: {
-          ...order,
-          id: Number(order.id),
-          total: Number(order.total)
-        }
+        order:
+          result.rows[0]
       });
     } catch (error) {
       console.error(
@@ -1289,6 +1146,26 @@ app.patch(
           'Unable to update order.'
       });
     }
+  }
+);
+
+/* =========================================================
+   ADMIN SETTINGS
+========================================================= */
+
+app.get(
+  '/api/admin/settings',
+  requireAdmin,
+  (req, res) => {
+    res.json({
+      ok: true,
+      paystackConfigured:
+        Boolean(
+          PAYSTACK_SECRET_KEY
+        ),
+      whatsapp:
+        WHATSAPP_NUMBER
+    });
   }
 );
 
@@ -1390,72 +1267,18 @@ app.post(
       await pool.connect();
 
     try {
-      await client.query('BEGIN');
-
-      /*
-        Aggregate duplicate product IDs.
-
-        Example:
-        product 5 qty 2
-        product 5 qty 3
-
-        becomes:
-        product 5 qty 5
-
-        This prevents stock from being checked incorrectly.
-      */
-      const requestedItems =
-        new Map();
-
-      for (
-        const rawItem
-        of rawItems
-      ) {
-        const productId =
-          positiveInteger(
-            rawItem?.id
-          );
-
-        const quantity =
-          positiveInteger(
-            rawItem?.qty
-          );
-
-        if (
-          !productId ||
-          !quantity
-        ) {
-          throw new Error(
-            'Invalid cart item.'
-          );
-        }
-
-        const current =
-          requestedItems.get(
-            productId
-          ) || 0;
-
-        const newQuantity =
-          current + quantity;
-
-        if (
-          newQuantity > 99
-        ) {
-          throw new Error(
-            'Maximum quantity per item is 99.'
-          );
-        }
-
-        requestedItems.set(
-          productId,
-          newQuantity
-        );
-      }
+      await client.query(
+        'BEGIN'
+      );
 
       const productIds =
-        Array.from(
-          requestedItems.keys()
-        );
+        rawItems
+          .map(item =>
+            positiveInteger(
+              item.id
+            )
+          )
+          .filter(Boolean);
 
       if (!productIds.length) {
         throw new Error(
@@ -1473,8 +1296,7 @@ app.post(
             stock,
             active
           FROM products
-          WHERE id =
-            ANY($1::int[])
+          WHERE id = ANY($1::int[])
           FOR UPDATE
           `,
           [productIds]
@@ -1494,12 +1316,34 @@ app.post(
       let total = 0;
 
       for (
-        const [
-          productId,
-          quantity
-        ]
-        of requestedItems
+        const rawItem
+        of rawItems
       ) {
+        const productId =
+          positiveInteger(
+            rawItem.id
+          );
+
+        const quantity =
+          positiveInteger(
+            rawItem.qty
+          );
+
+        if (
+          !productId ||
+          !quantity
+        ) {
+          throw new Error(
+            'Invalid cart quantity.'
+          );
+        }
+
+        if (quantity > 99) {
+          throw new Error(
+            'Maximum quantity per item is 99.'
+          );
+        }
+
         const product =
           productMap.get(
             productId
@@ -1514,11 +1358,9 @@ app.post(
           );
         }
 
-        const stock =
-          Number(product.stock);
-
         if (
-          stock < quantity
+          Number(product.stock) <
+          quantity
         ) {
           throw new Error(
             `${product.name} does not have enough stock.`
@@ -1527,15 +1369,6 @@ app.post(
 
         const price =
           Number(product.price);
-
-        if (
-          !Number.isFinite(price) ||
-          price < 0
-        ) {
-          throw new Error(
-            `Invalid price for ${product.name}.`
-          );
-        }
 
         const subtotal =
           price * quantity;
@@ -1594,9 +1427,10 @@ app.post(
             $6,
             'NGN'
           )
-          RETURNING id,
-                    reference,
-                    total
+          RETURNING
+            id,
+            reference,
+            total
           `,
           [
             reference,
@@ -1640,18 +1474,18 @@ app.post(
         );
       }
 
-      await client.query('COMMIT');
-
-      const amountInKobo =
-        Math.round(
-          total * 100
-        );
+      await client.query(
+        'COMMIT'
+      );
 
       const paystackPayload = {
         email,
         amount:
-          amountInKobo,
-        currency: 'NGN',
+          Math.round(
+            total * 100
+          ),
+        currency:
+          'NGN',
         reference,
         metadata: {
           order_id:
@@ -1665,11 +1499,14 @@ app.post(
         }
       };
 
-      if (
-        PAYSTACK_CALLBACK_URL
-      ) {
+      const callbackUrl =
+        process.env
+          .PAYSTACK_CALLBACK_URL ||
+        '';
+
+      if (callbackUrl) {
         paystackPayload.callback_url =
-          PAYSTACK_CALLBACK_URL;
+          callbackUrl;
       }
 
       const paystackResponse =
@@ -1696,8 +1533,7 @@ app.post(
       if (
         !paystackResponse.ok ||
         !paystackData.status ||
-        !paystackData.data
-          ?.authorization_url
+        !paystackData.data?.authorization_url
       ) {
         console.error(
           'Paystack initialize error:',
@@ -1706,7 +1542,6 @@ app.post(
 
         return res.status(502).json({
           ok: false,
-          reference,
           message:
             paystackData.message ||
             'Unable to initialize Paystack payment.'
@@ -1722,7 +1557,8 @@ app.post(
         WHERE reference = $2
         `,
         [
-          reference,
+          paystackData.data.reference ||
+            reference,
           reference
         ]
       );
@@ -1837,9 +1673,7 @@ app.get(
           [reference]
         );
 
-      if (
-        !orderResult.rowCount
-      ) {
+      if (!orderResult.rowCount) {
         return res.status(404).json({
           ok: false,
           message:
@@ -1850,62 +1684,29 @@ app.get(
       const order =
         orderResult.rows[0];
 
-      /*
-        If already paid, do not run stock deduction again.
-      */
-      if (
-        order.payment_status ===
-        'PAID'
-      ) {
-        return res.json({
-          ok: true,
-          paid: true,
-          reference,
-          order_reference:
-            order.reference,
-          amount:
-            Number(order.total),
-          customer_name:
-            order.customer_name
-        });
-      }
-
       const expectedAmount =
         Math.round(
-          Number(order.total) *
-          100
+          Number(order.total) * 100
         );
-
-      const paidAmount =
-        Number(
-          transaction.amount
-        );
-
-      const amountMatches =
-        expectedAmount ===
-        paidAmount;
 
       const success =
         transaction.status ===
           'success' &&
         transaction.currency ===
           'NGN' &&
-        amountMatches;
+        Number(
+          transaction.amount
+        ) === expectedAmount;
 
       if (!success) {
-        /*
-          Do not change a previously paid order to FAILED.
-        */
         await pool.query(
           `
           UPDATE orders
           SET
-            payment_status =
-              'FAILED',
-            updated_at =
-              NOW()
+            payment_status = 'FAILED',
+            updated_at = NOW()
           WHERE id = $1
-            AND payment_status != 'PAID'
+            AND payment_status <> 'PAID'
           `,
           [order.id]
         );
@@ -1926,7 +1727,7 @@ app.get(
           'BEGIN'
         );
 
-        const lockedOrderResult =
+        const lockedResult =
           await client.query(
             `
             SELECT *
@@ -1938,8 +1739,7 @@ app.get(
           );
 
         const lockedOrder =
-          lockedOrderResult
-            .rows[0];
+          lockedResult.rows[0];
 
         if (!lockedOrder) {
           throw new Error(
@@ -1994,27 +1794,24 @@ app.get(
               );
             }
           }
-
-          await client.query(
-            `
-            UPDATE orders
-            SET
-              payment_status =
-                'PAID',
-              order_status =
-                'PROCESSING',
-              paystack_reference =
-                $1,
-              updated_at =
-                NOW()
-            WHERE id = $2
-            `,
-            [
-              transaction.reference,
-              order.id
-            ]
-          );
         }
+
+        await client.query(
+          `
+          UPDATE orders
+          SET
+            payment_status = 'PAID',
+            order_status = 'PROCESSING',
+            paystack_reference = $1,
+            updated_at = NOW()
+          WHERE id = $2
+          `,
+          [
+            transaction.reference ||
+              reference,
+            order.id
+          ]
+        );
 
         await client.query(
           'COMMIT'
@@ -2080,17 +1877,53 @@ app.post(
       );
 
     if (
-      !verifyPaystackSignature(
-        req.rawBody,
-        signature
-      )
+      !signature ||
+      !req.rawBody
     ) {
+      return res.sendStatus(401);
+    }
+
+    const hash =
+      crypto
+        .createHmac(
+          'sha512',
+          PAYSTACK_SECRET_KEY
+        )
+        .update(req.rawBody)
+        .digest('hex');
+
+    try {
+      const expected =
+        Buffer.from(
+          hash,
+          'utf8'
+        );
+
+      const received =
+        Buffer.from(
+          signature,
+          'utf8'
+        );
+
+      if (
+        expected.length !==
+          received.length ||
+        !crypto.timingSafeEqual(
+          expected,
+          received
+        )
+      ) {
+        return res.sendStatus(401);
+      }
+    } catch {
       return res.sendStatus(401);
     }
 
     try {
       const event =
-        typeof req.body === 'object'
+        req.body &&
+        typeof req.body ===
+          'object'
           ? req.body
           : JSON.parse(
               req.rawBody.toString(
@@ -2129,30 +1962,16 @@ app.post(
           [reference]
         );
 
-      if (
-        !orderResult.rowCount
-      ) {
+      if (!orderResult.rowCount) {
         return res.sendStatus(200);
       }
 
       const order =
         orderResult.rows[0];
 
-      /*
-        Already paid:
-        nothing else to do.
-      */
-      if (
-        order.payment_status ===
-        'PAID'
-      ) {
-        return res.sendStatus(200);
-      }
-
       const expectedAmount =
         Math.round(
-          Number(order.total) *
-          100
+          Number(order.total) * 100
         );
 
       if (
@@ -2175,7 +1994,7 @@ app.post(
           'BEGIN'
         );
 
-        const locked =
+        const lockedResult =
           await client.query(
             `
             SELECT *
@@ -2187,7 +2006,7 @@ app.post(
           );
 
         const lockedOrder =
-          locked.rows[0];
+          lockedResult.rows[0];
 
         if (!lockedOrder) {
           throw new Error(
@@ -2199,7 +2018,7 @@ app.post(
           lockedOrder.payment_status !==
           'PAID'
         ) {
-          const items =
+          const itemsResult =
             await client.query(
               `
               SELECT *
@@ -2212,9 +2031,9 @@ app.post(
 
           for (
             const item
-            of items.rows
+            of itemsResult.rows
           ) {
-            const stock =
+            const stockResult =
               await client.query(
                 `
                 UPDATE products
@@ -2235,34 +2054,31 @@ app.post(
               );
 
             if (
-              !stock.rowCount
+              !stockResult.rowCount
             ) {
               throw new Error(
                 `Insufficient stock for ${item.product_name}.`
               );
             }
           }
-
-          await client.query(
-            `
-            UPDATE orders
-            SET
-              payment_status =
-                'PAID',
-              order_status =
-                'PROCESSING',
-              paystack_reference =
-                $1,
-              updated_at =
-                NOW()
-            WHERE id = $2
-            `,
-            [
-              transaction.reference,
-              order.id
-            ]
-          );
         }
+
+        await client.query(
+          `
+          UPDATE orders
+          SET
+            payment_status = 'PAID',
+            order_status = 'PROCESSING',
+            paystack_reference = $1,
+            updated_at = NOW()
+          WHERE id = $2
+          `,
+          [
+            transaction.reference ||
+              reference,
+            order.id
+          ]
+        );
 
         await client.query(
           'COMMIT'
@@ -2281,19 +2097,21 @@ app.post(
       } finally {
         client.release();
       }
+
+      return res.sendStatus(200);
     } catch (error) {
       console.error(
         'Webhook error:',
         error
       );
-    }
 
-    return res.sendStatus(200);
+      return res.sendStatus(200);
+    }
   }
 );
 
 /* =========================================================
-   PUBLIC CONFIG
+   APP CONFIG
 ========================================================= */
 
 app.get(
@@ -2315,107 +2133,67 @@ app.get(
    FRONTEND ROUTES
 ========================================================= */
 
-/*
-  Main website
-*/
 app.get(
   '/',
   (req, res) => {
     res.sendFile(
       path.join(
-        PUBLIC_DIR,
+        __dirname,
+        'public',
         'index.html'
-      ),
-      error => {
-        if (error) {
-          console.error(
-            'Homepage error:',
-            error
-          );
-
-          if (!res.headersSent) {
-            res.status(404).send(
-              'Face of Style Hijab Factory homepage not found.'
-            );
-          }
-        }
-      }
+      )
     );
   }
 );
 
-/*
-  Admin dashboard
-*/
 app.get(
   '/admin',
   (req, res) => {
     res.sendFile(
       path.join(
-        PUBLIC_DIR,
+        __dirname,
+        'public',
         'admin.html'
-      ),
-      error => {
-        if (error) {
-          console.error(
-            'Admin page error:',
-            error
-          );
-
-          if (!res.headersSent) {
-            res.status(404).send(
-              'Admin page not found.'
-            );
-          }
-        }
-      }
+      )
     );
   }
 );
 
-/*
-  Payment success
-*/
+app.get(
+  '/admin.html',
+  (req, res) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        'public',
+        'admin.html'
+      )
+    );
+  }
+);
+
 app.get(
   '/payment-success',
   (req, res) => {
     res.sendFile(
       path.join(
-        PUBLIC_DIR,
+        __dirname,
+        'public',
         'payment-success.html'
-      ),
-      error => {
-        if (error) {
-          console.error(
-            'Payment success page error:',
-            error
-          );
-
-          if (!res.headersSent) {
-            res.redirect('/');
-          }
-        }
-      }
+      )
     );
   }
 );
 
-/*
-  Payment failed
-*/
 app.get(
-  '/payment-failed',
+  '/payment-success.html',
   (req, res) => {
     res.sendFile(
       path.join(
-        PUBLIC_DIR,
-        'payment-failed.html'
-      ),
-      error => {
-        if (error) {
-          res.redirect('/');
-        }
-      }
+        __dirname,
+        'public',
+        'payment-success.html'
+      )
     );
   }
 );
@@ -2436,26 +2214,6 @@ app.use(
 );
 
 /* =========================================================
-   GENERAL 404
-========================================================= */
-
-app.use(
-  (req, res) => {
-    if (req.method === 'GET') {
-      return res.status(404).send(
-        'Page not found.'
-      );
-    }
-
-    return res.status(404).json({
-      ok: false,
-      message:
-        'Route not found.'
-    });
-  }
-);
-
-/* =========================================================
    ERROR HANDLER
 ========================================================= */
 
@@ -2466,9 +2224,7 @@ app.use(
       error
     );
 
-    if (
-      res.headersSent
-    ) {
+    if (res.headersSent) {
       return next(error);
     }
 
@@ -2494,10 +2250,6 @@ async function startServer() {
       () => {
         console.log(
           `Face of Style Hijab Factory running on port ${PORT}`
-        );
-
-        console.log(
-          `Public directory: ${PUBLIC_DIR}`
         );
 
         console.log(
