@@ -489,35 +489,33 @@ app.get(
     if (!pool) {
       return res.status(503).json({
         ok: false,
-        message:
-          'Database is not configured.'
+        message: 'Database is not configured.'
       });
     }
 
     try {
-      const result =
-        await pool.query(`
-          SELECT
-            id,
-            name,
-            category AS cat,
-            description,
-            price,
-            color,
-            img AS image,
-            stock,
-            active,
-            created_at,
-            updated_at
-          FROM products
-          ORDER BY created_at DESC
-        `);
+      const result = await pool.query(`
+        SELECT
+          p.id,
+          p.name,
+          p.category AS cat,
+          p.description,
+          p.price,
+          p.color,
+          p.img AS image,
+          p.stock,
+          p.active,
+          p.created_at,
+          p.updated_at
+        FROM products AS p
+        ORDER BY p.created_at DESC
+      `);
 
       res.json({
         ok: true,
-        products:
-          result.rows
+        products: result.rows
       });
+
     } catch (error) {
       console.error(
         'Admin products error:',
@@ -526,8 +524,7 @@ app.get(
 
       res.status(500).json({
         ok: false,
-        message:
-          'Unable to load admin products.'
+        message: 'Unable to load admin products.'
       });
     }
   }
