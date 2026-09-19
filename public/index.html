@@ -1,0 +1,2318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Face of Style Hijab Factory</title>
+
+  <meta
+    name="description"
+    content="Face of Style Hijab Factory - Elegant hijabs, abayas, gowns and modest outfits."
+  >
+
+  <style>
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:Arial,Helvetica,sans-serif;
+      background:#faf7f8;
+      color:#2d2528;
+      line-height:1.6;
+    }
+
+    body.no-scroll{
+      overflow:hidden;
+    }
+
+    a{
+      text-decoration:none;
+      color:inherit;
+    }
+
+    button,
+    input,
+    textarea{
+      font-family:inherit;
+    }
+
+    button{
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    .container{
+      width:min(1180px,92%);
+      margin:auto;
+    }
+
+    header{
+      background:#651630;
+      color:#fff;
+      position:sticky;
+      top:0;
+      z-index:1000;
+      box-shadow:0 2px 12px rgba(0,0,0,.12);
+    }
+
+    .nav{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand{
+      font-size:21px;
+      font-weight:800;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:22px;
+    }
+
+    .nav-links a{
+      font-size:14px;
+      font-weight:600;
+    }
+
+    .nav-links a:hover{
+      opacity:.8;
+    }
+
+    .cart-button{
+      border:0;
+      background:#fff;
+      color:#651630;
+      padding:10px 16px;
+      border-radius:22px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .cart-button:hover{
+      transform:translateY(-1px);
+    }
+
+    .hero{
+      background:linear-gradient(
+        135deg,
+        #f5e8ed,
+        #fff
+      );
+      padding:70px 0;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:40px;
+      align-items:center;
+    }
+
+    .hero h1{
+      font-size:clamp(38px,6vw,68px);
+      line-height:1.05;
+      margin-bottom:20px;
+      color:#651630;
+    }
+
+    .hero p{
+      font-size:18px;
+      max-width:620px;
+      margin-bottom:28px;
+      color:#665b60;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+
+    .primary-btn,
+    .secondary-btn{
+      display:inline-block;
+      padding:13px 22px;
+      border-radius:28px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .primary-btn{
+      background:#651630;
+      color:#fff;
+      border:1px solid #651630;
+    }
+
+    .secondary-btn{
+      background:#fff;
+      color:#651630;
+      border:1px solid #651630;
+    }
+
+    .hero-card{
+      min-height:330px;
+      border-radius:24px;
+      overflow:hidden;
+      background:#ead9df;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .hero-card img{
+      width:100%;
+      height:100%;
+      min-height:330px;
+      object-fit:cover;
+      display:block;
+    }
+
+    section{
+      padding:60px 0;
+    }
+
+    .section-head{
+      text-align:center;
+      margin-bottom:30px;
+    }
+
+    .section-head h2{
+      color:#651630;
+      font-size:34px;
+      margin-bottom:8px;
+    }
+
+    .section-head p{
+      color:#756a6f;
+    }
+
+    .filters{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:30px;
+    }
+
+    .filter{
+      border:1px solid #d8c8ce;
+      background:#fff;
+      color:#651630;
+      padding:9px 17px;
+      border-radius:22px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.2s ease;
+    }
+
+    .filter:hover{
+      transform:translateY(-1px);
+    }
+
+    .filter.active{
+      background:#651630;
+      color:#fff;
+      border-color:#651630;
+    }
+
+    .products{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:24px;
+    }
+
+    .card{
+      background:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 5px 20px rgba(61,32,43,.08);
+      border:1px solid #eee4e8;
+      transition:.2s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-3px);
+      box-shadow:0 8px 24px rgba(61,32,43,.12);
+    }
+
+    .pic{
+      position:relative;
+      height:300px;
+      background:#eee;
+      overflow:hidden;
+    }
+
+    .pic img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .badge{
+      position:absolute;
+      left:12px;
+      top:12px;
+      background:#651630;
+      color:#fff;
+      padding:5px 10px;
+      border-radius:15px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .heart{
+      position:absolute;
+      right:12px;
+      top:12px;
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:50%;
+      background:#fff;
+      color:#651630;
+      font-size:20px;
+      cursor:pointer;
+      box-shadow:0 2px 8px rgba(0,0,0,.12);
+    }
+
+    .body{
+      padding:18px;
+    }
+
+    .body h3{
+      color:#3c3035;
+      margin-bottom:7px;
+      font-size:19px;
+    }
+
+    .body p{
+      color:#756a6f;
+      font-size:14px;
+      min-height:44px;
+    }
+
+    .price{
+      color:#651630;
+      font-size:21px;
+      font-weight:800;
+      margin:12px 0 5px;
+    }
+
+    .actions{
+      display:flex;
+      gap:9px;
+      margin-top:13px;
+    }
+
+    .add,
+    .view{
+      flex:1;
+      padding:10px 12px;
+      border-radius:20px;
+      cursor:pointer;
+      font-weight:700;
+      transition:.2s ease;
+    }
+
+    .add:hover,
+    .view:hover{
+      transform:translateY(-1px);
+    }
+
+    .add{
+      border:1px solid #651630;
+      background:#651630;
+      color:#fff;
+    }
+
+    .view{
+      border:1px solid #651630;
+      background:#fff;
+      color:#651630;
+    }
+
+    .about{
+      background:#fff;
+    }
+
+    .about-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:35px;
+      align-items:center;
+    }
+
+    .about h2{
+      color:#651630;
+      font-size:34px;
+      margin-bottom:15px;
+    }
+
+    .about p{
+      color:#665b60;
+      margin-bottom:12px;
+    }
+
+    .about-box{
+      background:#f5e8ed;
+      padding:30px;
+      border-radius:22px;
+    }
+
+    .about-box h3{
+      color:#651630;
+      margin-bottom:10px;
+    }
+
+    .contact{
+      text-align:center;
+    }
+
+    .contact h2{
+      color:#651630;
+      margin-bottom:10px;
+    }
+
+    .contact p{
+      color:#756a6f;
+      margin-bottom:20px;
+    }
+
+    footer{
+      background:#2e2025;
+      color:#fff;
+      padding:30px 0;
+      text-align:center;
+    }
+
+    footer p{
+      opacity:.8;
+      font-size:14px;
+    }
+
+    .cart-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      display:none;
+      z-index:2000;
+    }
+
+    .cart-overlay.show{
+      display:block;
+    }
+
+    .cart-panel{
+      position:absolute;
+      right:0;
+      top:0;
+      height:100%;
+      width:min(430px,100%);
+      background:#fff;
+      padding:22px;
+      overflow-y:auto;
+    }
+
+    .cart-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    }
+
+    .cart-head h2{
+      color:#651630;
+    }
+
+    .close-cart{
+      border:0;
+      background:#eee;
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      cursor:pointer;
+      font-size:18px;
+    }
+
+    .cart-item{
+      display:flex;
+      gap:12px;
+      padding:12px 0;
+      border-bottom:1px solid #eee;
+    }
+
+    .cart-item img{
+      width:65px;
+      height:75px;
+      object-fit:cover;
+      border-radius:9px;
+      background:#eee;
+    }
+
+    .cart-info{
+      flex:1;
+    }
+
+    .cart-info h4{
+      font-size:15px;
+      margin-bottom:4px;
+    }
+
+    .cart-info p{
+      color:#651630;
+      font-weight:700;
+    }
+
+    .qty{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top:7px;
+      flex-wrap:wrap;
+    }
+
+    .qty button{
+      width:27px;
+      height:27px;
+      border:1px solid #ddd;
+      background:#fff;
+      border-radius:50%;
+      cursor:pointer;
+    }
+
+    .remove-item{
+      border:0 !important;
+      background:transparent !important;
+      color:#a33;
+      cursor:pointer;
+      font-size:12px;
+      width:auto !important;
+      height:auto !important;
+      border-radius:0 !important;
+    }
+
+    .cart-total{
+      display:flex;
+      justify-content:space-between;
+      margin-top:22px;
+      padding-top:15px;
+      border-top:2px solid #eee;
+      font-size:20px;
+      font-weight:800;
+      color:#651630;
+    }
+
+    .checkout-btn{
+      width:100%;
+      border:0;
+      background:#651630;
+      color:#fff;
+      padding:14px;
+      border-radius:25px;
+      font-weight:bold;
+      cursor:pointer;
+      margin-top:14px;
+    }
+
+    .empty-cart{
+      text-align:center;
+      color:#756a6f;
+      padding:40px 10px;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.5);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:3000;
+      padding:20px;
+    }
+
+    .modal.show{
+      display:flex;
+    }
+
+    .modal-box{
+      background:#fff;
+      width:min(520px,100%);
+      max-height:90vh;
+      overflow-y:auto;
+      border-radius:20px;
+      padding:25px;
+    }
+
+    .modal-box h2{
+      color:#651630;
+      margin-bottom:15px;
+    }
+
+    .field{
+      margin-bottom:13px;
+    }
+
+    .field label{
+      display:block;
+      margin-bottom:5px;
+      font-size:14px;
+      font-weight:600;
+    }
+
+    .field input,
+    .field textarea{
+      width:100%;
+      border:1px solid #ddd;
+      border-radius:10px;
+      padding:11px;
+      outline:none;
+      font-size:15px;
+    }
+
+    .field input:focus,
+    .field textarea:focus{
+      border-color:#651630;
+    }
+
+    .field textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+
+    .modal-actions{
+      display:flex;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .modal-actions button{
+      flex:1;
+      padding:12px;
+      border-radius:22px;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .cancel{
+      background:#eee;
+      border:0;
+    }
+
+    .pay{
+      background:#651630;
+      color:#fff;
+      border:0;
+    }
+
+    .add:disabled,
+    .view:disabled,
+    .heart:disabled,
+    .pay:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .loading{
+      grid-column:1/-1;
+      text-align:center;
+      padding:50px 10px;
+      color:#756a6f;
+    }
+
+    .error-message{
+      grid-column:1/-1;
+      text-align:center;
+      padding:50px 10px;
+      color:#a33;
+    }
+
+    @media(max-width:900px){
+      .products{
+        grid-template-columns:repeat(2,1fr);
+      }
+
+      .hero-grid,
+      .about-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media(max-width:600px){
+      .nav{
+        min-height:65px;
+      }
+
+      .brand{
+        font-size:16px;
+      }
+
+      .nav-links{
+        gap:8px;
+      }
+
+      .nav-links a{
+        display:none;
+      }
+
+      .products{
+        grid-template-columns:1fr;
+      }
+
+      .hero{
+        padding:45px 0;
+      }
+
+      section{
+        padding:45px 0;
+      }
+
+      .hero h1{
+        font-size:42px;
+      }
+
+      .hero-card{
+        min-height:260px;
+      }
+
+      .hero-card img{
+        min-height:260px;
+      }
+
+      .actions{
+        flex-direction:column;
+      }
+
+      .modal-actions{
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+
+    <a href="/" class="brand">
+      Face of Style Hijab Factory
+    </a>
+
+    <div class="nav-links">
+
+      <a href="#home">Home</a>
+      <a href="#products-section">Products</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+
+      <button
+        type="button"
+        class="cart-button"
+        onclick="openCart()"
+      >
+        Cart (<span id="cartCount">0</span>)
+      </button>
+
+    </div>
+
+  </div>
+</header>
+
+<main>
+
+<section class="hero" id="home">
+
+  <div class="container hero-grid">
+
+    <div>
+
+      <h1>
+        Elegant Modest Fashion
+      </h1>
+
+      <p>
+        Discover beautiful hijabs, abayas, gowns and
+        modest outfits made with care by Face of Style
+        Hijab Factory.
+      </p>
+
+      <div class="hero-actions">
+
+        <a
+          href="#products-section"
+          class="primary-btn"
+        >
+          Shop Now
+        </a>
+
+        <a
+          id="heroWhatsApp"
+          href="https://wa.me/2349065828886"
+          class="secondary-btn"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp Us
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="hero-card">
+
+      <img
+        src="/logo.png"
+        alt="Face of Style Hijab Factory logo"
+        onerror="this.style.display='none'"
+      >
+
+    </div>
+
+  </div>
+
+</section>
+
+<section id="products-section">
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <h2>Our Products</h2>
+
+      <p>
+        Choose from our latest modest fashion collection.
+      </p>
+
+    </div>
+
+    <div class="filters">
+
+      <button
+        type="button"
+        class="filter active"
+        onclick="filterProducts('All',this)"
+      >
+        All
+      </button>
+
+      <button
+        type="button"
+        class="filter"
+        onclick="filterProducts('Hijab',this)"
+      >
+        Hijab
+      </button>
+
+      <button
+        type="button"
+        class="filter"
+        onclick="filterProducts('Abaya',this)"
+      >
+        Abaya
+      </button>
+
+      <button
+        type="button"
+        class="filter"
+        onclick="filterProducts('Gown',this)"
+      >
+        Gown
+      </button>
+
+      <button
+        type="button"
+        class="filter"
+        onclick="filterProducts('Custom',this)"
+      >
+        Custom
+      </button>
+
+    </div>
+
+    <div
+      id="products"
+      class="products"
+    >
+      <div class="loading">
+        Loading products...
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="about" id="about">
+
+  <div class="container about-grid">
+
+    <div>
+
+      <h2>About Face of Style</h2>
+
+      <p>
+        Face of Style Hijab Factory is dedicated to
+        creating elegant and modest fashion for women
+        and girls.
+      </p>
+
+      <p>
+        We focus on beautiful designs, quality finishing
+        and comfortable outfits suitable for different
+        occasions.
+      </p>
+
+    </div>
+
+    <div class="about-box">
+
+      <h3>Our Collection</h3>
+
+      <p>
+        Hijabs • Abayas • Gowns • Modest Outfits
+      </p>
+
+      <p>
+        Custom designs are also available.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="contact" id="contact">
+
+  <div class="container">
+
+    <h2>Contact Us</h2>
+
+    <p>
+      For orders and enquiries, contact us directly
+      on WhatsApp.
+    </p>
+
+    <a
+      id="contactWhatsApp"
+      href="https://wa.me/2349065828886"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="primary-btn"
+    >
+      Chat on WhatsApp
+    </a>
+
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+
+  <div class="container">
+
+    <p>
+      © 2026 Face of Style Hijab Factory.
+      All rights reserved.
+    </p>
+
+  </div>
+
+</footer>
+
+<!-- CART -->
+
+<div
+  class="cart-overlay"
+  id="cartOverlay"
+  onclick="closeCart(event)"
+>
+
+  <div
+    class="cart-panel"
+    onclick="event.stopPropagation()"
+  >
+
+    <div class="cart-head">
+
+      <h2>Your Cart</h2>
+
+      <button
+        type="button"
+        class="close-cart"
+        onclick="closeCart()"
+        aria-label="Close cart"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div id="cartItems"></div>
+
+    <div class="cart-total">
+
+      <span>Total</span>
+
+      <span id="cartTotal">
+        ₦0
+      </span>
+
+    </div>
+
+    <button
+      type="button"
+      class="checkout-btn"
+      onclick="openCheckout()"
+    >
+      Checkout & Pay
+    </button>
+
+  </div>
+
+</div>
+
+<!-- CHECKOUT -->
+
+<div
+  class="modal"
+  id="checkoutModal"
+>
+
+  <div class="modal-box">
+
+    <h2>Checkout</h2>
+
+    <div class="field">
+
+      <label for="customerName">
+        Full Name
+      </label>
+
+      <input
+        id="customerName"
+        type="text"
+        placeholder="Your full name"
+        autocomplete="name"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label for="customerEmail">
+        Email Address
+      </label>
+
+      <input
+        id="customerEmail"
+        type="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label for="customerPhone">
+        Phone Number
+      </label>
+
+      <input
+        id="customerPhone"
+        type="tel"
+        placeholder="08012345678"
+        autocomplete="tel"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label for="deliveryAddress">
+        Delivery Address
+      </label>
+
+      <textarea
+        id="deliveryAddress"
+        placeholder="Enter your delivery address"
+        autocomplete="street-address"
+      ></textarea>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        type="button"
+        class="cancel"
+        onclick="closeCheckout()"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="pay"
+        onclick="startPayment()"
+      >
+        Pay with Paystack
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+"use strict";
+
+/* =========================================================
+   FALLBACK PRODUCTS
+========================================================= */
+
+const fallbackProducts = [
+
+  {
+    id:1,
+    name:"Elegant Zip Abaya",
+    cat:"Abaya",
+    price:25000,
+    img:"product-1.jpg",
+    desc:"Flowing full-length abaya with refined finishing.",
+    stock:99
+  },
+
+  {
+    id:2,
+    name:"Two-Tone Signature Gown",
+    cat:"Gown",
+    price:22000,
+    img:"product-2.jpg",
+    desc:"Elegant two-tone modest gown design.",
+    stock:99
+  },
+
+  {
+    id:3,
+    name:"Teal Classic Hijab Dress",
+    cat:"Gown",
+    price:20000,
+    img:"product-3.jpg",
+    desc:"Comfortable modest dress with clean detailing.",
+    stock:99
+  },
+
+  {
+    id:4,
+    name:"Premium Black & White",
+    cat:"Abaya",
+    price:28000,
+    img:"product-4.jpg",
+    desc:"Statement modest outfit with premium contrast.",
+    stock:99
+  },
+
+  {
+    id:5,
+    name:"Ruffle Hijab Collection",
+    cat:"Hijab",
+    price:12000,
+    img:"product-5.jpg",
+    desc:"Soft, colourful hijab styles with beautiful ruffles.",
+    stock:99
+  },
+
+  {
+    id:6,
+    name:"Rose Signature Gown",
+    cat:"Custom",
+    price:24000,
+    img:"product-6.jpg",
+    desc:"Elegant flowing gown; custom colours available.",
+    stock:99
+  }
+
+];
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let products = [];
+
+let selected = "All";
+
+let cart = [];
+
+let whatsappNumber =
+  "2349065828886";
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function money(n){
+
+  return new Intl.NumberFormat(
+    "en-NG",
+    {
+      style:"currency",
+      currency:"NGN",
+      maximumFractionDigits:0
+    }
+  ).format(
+    Number(n) || 0
+  );
+
+}
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+function productImage(src){
+
+  const image =
+    String(src || "").trim();
+
+  if(!image){
+    return "product-1.jpg";
+  }
+
+  if(
+    image.startsWith("http://") ||
+    image.startsWith("https://") ||
+    image.startsWith("/")
+  ){
+    return image;
+  }
+
+  return image.replace(/^\.?\//,"");
+
+}
+
+function setBodyLock(){
+
+  const cartOpen =
+    document
+      .getElementById("cartOverlay")
+      .classList
+      .contains("show");
+
+  const checkoutOpen =
+    document
+      .getElementById("checkoutModal")
+      .classList
+      .contains("show");
+
+  document.body.classList.toggle(
+    "no-scroll",
+    cartOpen || checkoutOpen
+  );
+
+}
+
+/* =========================================================
+   RENDER PRODUCTS
+========================================================= */
+
+function render(){
+
+  const container =
+    document.getElementById("products");
+
+  if(!container){
+    return;
+  }
+
+  const list =
+    selected === "All"
+      ? products
+      : products.filter(
+          p =>
+            String(p.cat).toLowerCase() ===
+            selected.toLowerCase()
+        );
+
+  if(!list.length){
+
+    container.innerHTML = `
+      <div class="loading">
+        No products available in this category.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    list.map(p => {
+
+      const stock =
+        Number(p.stock ?? 0);
+
+      const disabled =
+        stock < 1;
+
+      const image =
+        escapeHTML(
+          productImage(p.img)
+        );
+
+      const name =
+        escapeHTML(p.name);
+
+      const category =
+        escapeHTML(p.cat);
+
+      const description =
+        escapeHTML(
+          p.desc || ""
+        );
+
+      return `
+        <article class="card">
+
+          <div class="pic">
+
+            <img
+              src="${image}"
+              alt="${name}"
+              onerror="this.onerror=null;this.src='product-1.jpg'"
+            >
+
+            <span class="badge">
+              ${category}
+            </span>
+
+            <button
+              type="button"
+              class="heart"
+              onclick="add(${Number(p.id)})"
+              ${disabled ? "disabled" : ""}
+              aria-label="Add ${name} to cart"
+            >
+              ♡
+            </button>
+
+          </div>
+
+          <div class="body">
+
+            <h3>
+              ${name}
+            </h3>
+
+            <p>
+              ${description}
+            </p>
+
+            <div class="price">
+              ${money(Number(p.price))}
+            </div>
+
+            <small style="
+              color:${disabled ? "#a33" : "#756a6f"};
+            ">
+              ${
+                disabled
+                  ? "Out of stock"
+                  : stock + " in stock"
+              }
+            </small>
+
+            <div class="actions">
+
+              <button
+                type="button"
+                class="add"
+                onclick="add(${Number(p.id)})"
+                ${disabled ? "disabled" : ""}
+              >
+                ${
+                  disabled
+                    ? "Out of Stock"
+                    : "Add to Cart"
+                }
+              </button>
+
+              <button
+                type="button"
+                class="view"
+                onclick="order(${Number(p.id)})"
+                ${disabled ? "disabled" : ""}
+              >
+                Order
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+      `;
+
+    }).join("");
+
+}
+
+/* =========================================================
+   LOAD PRODUCTS
+========================================================= */
+
+async function loadProducts(){
+
+  const container =
+    document.getElementById("products");
+
+  try{
+
+    if(container){
+
+      container.innerHTML = `
+        <div class="loading">
+          Loading products...
+        </div>
+      `;
+
+    }
+
+    const res =
+      await fetch(
+        "/api/products",
+        {
+          method:"GET",
+          headers:{
+            "Accept":"application/json"
+          },
+          cache:"no-store"
+        }
+      );
+
+    const data =
+      await res.json();
+
+    if(
+      !res.ok ||
+      !Array.isArray(data.products)
+    ){
+      throw new Error(
+        "Products API error"
+      );
+    }
+
+    products =
+      data.products.map(p => ({
+
+        id:
+          Number(p.id),
+
+        name:
+          String(
+            p.name ||
+            "Product"
+          ),
+
+        cat:
+          String(
+            p.cat ||
+            p.category ||
+            "Fashion"
+          ),
+
+        price:
+          Number(p.price) || 0,
+
+        img:
+          productImage(
+            p.img ||
+            p.image ||
+            "product-1.jpg"
+          ),
+
+        desc:
+          String(
+            p.description ||
+            p.desc ||
+            ""
+          ),
+
+        stock:
+          Number(p.stock) || 0
+
+      }));
+
+  }catch(error){
+
+    console.error(
+      "Unable to load products:",
+      error
+    );
+
+    /*
+      If the database/API is temporarily unavailable,
+      use the built-in products so the storefront
+      does not become completely blank.
+    */
+
+    products =
+      fallbackProducts.map(
+        p => ({
+          ...p
+        })
+      );
+
+  }
+
+  render();
+
+  updateCart();
+
+}
+
+/* =========================================================
+   FILTER PRODUCTS
+========================================================= */
+
+function filterProducts(
+  category,
+  button
+){
+
+  selected =
+    category;
+
+  document
+    .querySelectorAll(".filter")
+    .forEach(
+      btn =>
+        btn.classList.remove(
+          "active"
+        )
+    );
+
+  if(button){
+
+    button.classList.add(
+      "active"
+    );
+
+  }
+
+  render();
+
+}
+
+/* =========================================================
+   CART
+========================================================= */
+
+function add(id){
+
+  const p =
+    products.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
+
+  if(!p){
+    return;
+  }
+
+  const stock =
+    Number(p.stock ?? 0);
+
+  if(stock < 1){
+
+    alert(
+      "This product is currently out of stock."
+    );
+
+    return;
+  }
+
+  const item =
+    cart.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
+
+  if(item){
+
+    if(
+      Number(item.qty) >=
+      Math.min(99,stock)
+    ){
+
+      alert(
+        "You cannot add more than the available stock."
+      );
+
+      return;
+    }
+
+    item.qty =
+      Math.min(
+        99,
+        Number(item.qty) + 1
+      );
+
+  }else{
+
+    cart.push({
+      ...p,
+      qty:1
+    });
+
+  }
+
+  saveCart();
+
+  updateCart();
+
+  openCart();
+
+}
+
+function removeItem(id){
+
+  cart =
+    cart.filter(
+      x =>
+        Number(x.id) !==
+        Number(id)
+    );
+
+  saveCart();
+
+  updateCart();
+
+}
+
+function changeQty(
+  id,
+  amount
+){
+
+  const item =
+    cart.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
+
+  if(!item){
+    return;
+  }
+
+  const product =
+    products.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
+
+  const stock =
+    Number(
+      product?.stock ??
+      item.stock ??
+      0
+    );
+
+  const next =
+    Number(item.qty) +
+    Number(amount);
+
+  if(next < 1){
+
+    removeItem(id);
+
+    return;
+  }
+
+  if(
+    next >
+    Math.min(99,stock)
+  ){
+
+    alert(
+      "You cannot add more than the available stock."
+    );
+
+    return;
+  }
+
+  item.qty =
+    next;
+
+  saveCart();
+
+  updateCart();
+
+}
+
+function updateCart(){
+
+  const count =
+    cart.reduce(
+      (sum,item) =>
+        sum +
+        Number(item.qty),
+      0
+    );
+
+  const countElement =
+    document.getElementById(
+      "cartCount"
+    );
+
+  if(countElement){
+
+    countElement.textContent =
+      count;
+
+  }
+
+  const box =
+    document.getElementById(
+      "cartItems"
+    );
+
+  if(!box){
+    return;
+  }
+
+  if(!cart.length){
+
+    box.innerHTML = `
+      <div class="empty-cart">
+        Your cart is empty.
+      </div>
+    `;
+
+    document
+      .getElementById("cartTotal")
+      .textContent =
+      money(0);
+
+    return;
+  }
+
+  let total = 0;
+
+  box.innerHTML =
+    cart.map(item => {
+
+      const subtotal =
+        Number(item.price) *
+        Number(item.qty);
+
+      total +=
+        subtotal;
+
+      const image =
+        escapeHTML(
+          productImage(item.img)
+        );
+
+      const name =
+        escapeHTML(item.name);
+
+      return `
+        <div class="cart-item">
+
+          <img
+            src="${image}"
+            alt="${name}"
+            onerror="this.onerror=null;this.src='product-1.jpg'"
+          >
+
+          <div class="cart-info">
+
+            <h4>
+              ${name}
+            </h4>
+
+            <p>
+              ${money(item.price)}
+            </p>
+
+            <div class="qty">
+
+              <button
+                type="button"
+                onclick="changeQty(${Number(item.id)},-1)"
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+
+              <span>
+                ${Number(item.qty)}
+              </span>
+
+              <button
+                type="button"
+                onclick="changeQty(${Number(item.id)},1)"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+
+              <button
+                type="button"
+                class="remove-item"
+                onclick="removeItem(${Number(item.id)})"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  document
+    .getElementById("cartTotal")
+    .textContent =
+    money(total);
+
+}
+
+function saveCart(){
+
+  try{
+
+    localStorage.setItem(
+      "faceOfStyleCart",
+      JSON.stringify(cart)
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Could not save cart:",
+      error
+    );
+
+  }
+
+}
+
+function loadSavedCart(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        "faceOfStyleCart"
+      );
+
+    if(!saved){
+      return;
+    }
+
+    const parsed =
+      JSON.parse(saved);
+
+    if(
+      Array.isArray(parsed)
+    ){
+
+      cart =
+        parsed
+          .filter(
+            item =>
+              item &&
+              Number.isInteger(
+                Number(item.id)
+              ) &&
+              Number(item.qty) > 0
+          )
+          .map(
+            item => ({
+              ...item,
+              id:Number(item.id),
+              qty:Number(item.qty)
+            })
+          );
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Could not load saved cart:",
+      error
+    );
+
+    cart = [];
+
+  }
+
+}
+
+/* =========================================================
+   CART OPEN / CLOSE
+========================================================= */
+
+function openCart(){
+
+  document
+    .getElementById(
+      "cartOverlay"
+    )
+    .classList.add(
+      "show"
+    );
+
+  setBodyLock();
+
+}
+
+function closeCart(event){
+
+  if(
+    event &&
+    event.target !==
+    event.currentTarget
+  ){
+    return;
+  }
+
+  document
+    .getElementById(
+      "cartOverlay"
+    )
+    .classList.remove(
+      "show"
+    );
+
+  setBodyLock();
+
+}
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+function openCheckout(){
+
+  if(!cart.length){
+
+    alert(
+      "Your cart is empty."
+    );
+
+    return;
+  }
+
+  closeCart();
+
+  document
+    .getElementById(
+      "checkoutModal"
+    )
+    .classList.add(
+      "show"
+    );
+
+  setBodyLock();
+
+}
+
+function closeCheckout(){
+
+  document
+    .getElementById(
+      "checkoutModal"
+    )
+    .classList.remove(
+      "show"
+    );
+
+  setBodyLock();
+
+}
+
+/* =========================================================
+   WHATSAPP ORDER
+========================================================= */
+
+function order(id){
+
+  const p =
+    products.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
+
+  if(!p){
+    return;
+  }
+
+  if(
+    Number(p.stock ?? 0) < 1
+  ){
+
+    alert(
+      "This product is currently out of stock."
+    );
+
+    return;
+  }
+
+  const msg =
+    `Assalamu alaikum, Ina son yin order: ${p.name} — ${money(Number(p.price))}. Don Allah a bani bayani kan available colours/sizes.`;
+
+  const url =
+    "https://wa.me/" +
+    whatsappNumber +
+    "?text=" +
+    encodeURIComponent(msg);
+
+  window.open(
+    url,
+    "_blank",
+    "noopener,noreferrer"
+  );
+
+}
+
+/* =========================================================
+   PAYSTACK PAYMENT
+========================================================= */
+
+async function startPayment(){
+
+  if(!cart.length){
+
+    alert(
+      "Your cart is empty."
+    );
+
+    return;
+  }
+
+  const name =
+    document
+      .getElementById(
+        "customerName"
+      )
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById(
+        "customerEmail"
+      )
+      .value
+      .trim();
+
+  const phone =
+    document
+      .getElementById(
+        "customerPhone"
+      )
+      .value
+      .trim();
+
+  const address =
+    document
+      .getElementById(
+        "deliveryAddress"
+      )
+      .value
+      .trim();
+
+  if(
+    !name ||
+    !email ||
+    !phone ||
+    !address
+  ){
+
+    alert(
+      "Please complete all customer details."
+    );
+
+    return;
+  }
+
+  const button =
+    document.querySelector(
+      ".pay"
+    );
+
+  if(!button){
+    return;
+  }
+
+  const oldText =
+    button.textContent;
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Processing...";
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/paystack/initialize",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json",
+
+            "Accept":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              customer:{
+                name,
+                email,
+                phone,
+                address
+              },
+
+              items:
+                cart.map(
+                  item => ({
+                    id:
+                      Number(item.id),
+
+                    qty:
+                      Number(item.qty)
+                  })
+                )
+
+            })
+        }
+      );
+
+    let data;
+
+    try{
+
+      data =
+        await response.json();
+
+    }catch{
+
+      throw new Error(
+        "The server returned an invalid response."
+      );
+
+    }
+
+    if(
+      !response.ok ||
+      !data.ok ||
+      !data.authorization_url
+    ){
+
+      throw new Error(
+        data.message ||
+        "Unable to initialize payment."
+      );
+
+    }
+
+    window.location.href =
+      data.authorization_url;
+
+  }catch(error){
+
+    console.error(
+      "Payment error:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "Payment initialization failed."
+    );
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      oldText;
+
+  }
+
+}
+
+/* =========================================================
+   LOAD PUBLIC CONFIG
+========================================================= */
+
+async function loadConfig(){
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/config",
+        {
+          headers:{
+            "Accept":
+              "application/json"
+          },
+          cache:"no-store"
+        }
+      );
+
+    if(!response.ok){
+      return;
+    }
+
+    const data =
+      await response.json();
+
+    if(
+      data &&
+      data.whatsapp
+    ){
+
+      whatsappNumber =
+        String(
+          data.whatsapp
+        ).replace(
+          /[^0-9]/g,
+          ""
+        );
+
+    }
+
+    const whatsappUrl =
+      "https://wa.me/" +
+      whatsappNumber;
+
+    const heroWhatsApp =
+      document.getElementById(
+        "heroWhatsApp"
+      );
+
+    const contactWhatsApp =
+      document.getElementById(
+        "contactWhatsApp"
+      );
+
+    if(heroWhatsApp){
+
+      heroWhatsApp.href =
+        whatsappUrl;
+
+    }
+
+    if(contactWhatsApp){
+
+      contactWhatsApp.href =
+        whatsappUrl;
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Unable to load public config:",
+      error
+    );
+
+  }
+
+}
+
+/* =========================================================
+   MODAL / KEYBOARD
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key ===
+      "Escape"
+    ){
+
+      closeCart();
+
+      closeCheckout();
+
+    }
+
+  }
+);
+
+/* =========================================================
+   START
+========================================================= */
+
+loadSavedCart();
+
+updateCart();
+
+loadConfig();
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
