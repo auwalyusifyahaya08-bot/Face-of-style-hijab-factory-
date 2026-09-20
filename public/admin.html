@@ -1,2090 +1,4313 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Dashboard | Face of Style</title>
+<title>Face of Style Hijab Factory</title>
+
+<meta
+  name="description"
+  content="Face of Style Hijab Factory - Elegant hijabs, abayas, gowns and modest outfits."
+>
 
 <style>
+
 :root{
   --wine:#651630;
-  --wine2:#7b1b3b;
+  --wine2:#4d1024;
   --gold:#c9a45b;
-  --bg:#f7f2eb;
-  --line:#e6dacf;
-  --text:#292025;
+  --cream:#fcf8f1;
+  --paper:#ffffff;
+  --text:#251c20;
   --muted:#756a6f;
+  --line:#eadfd4;
+  --danger:#a33;
   --green:#176a35;
-  --red:#9a2222;
-  --yellow:#8a5a00;
 }
 
 *{
   box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
 }
 
 body{
-  margin:0;
-  background:var(--bg);
-  font-family:Arial,Helvetica,sans-serif;
+  background:var(--cream);
   color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  line-height:1.6;
+}
+
+body.lock{
+  overflow:hidden;
 }
 
 button,
 input,
-select,
-textarea{
-  font:inherit;
+textarea,
+select{
+  font-family:inherit;
 }
 
 button{
   cursor:pointer;
 }
 
+a{
+  text-decoration:none;
+  color:inherit;
+}
+
+/* =========================================================
+   TOP
+========================================================= */
+
 .top{
-  background:#fff;
-  border-bottom:1px solid var(--line);
-  padding:14px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  background:var(--wine2);
+  color:#fff;
+  text-align:center;
+  padding:8px 12px;
+  font-size:12px;
+  letter-spacing:.4px;
+}
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.nav{
   position:sticky;
   top:0;
-  z-index:20;
-}
-
-.top b{
-  font:22px Georgia,serif;
-  color:var(--wine);
-}
-
-.logout{
+  z-index:60;
   background:#fff;
-  border:1px solid var(--line);
-  padding:10px 17px;
-  border-radius:22px;
-}
-
-.logout:hover{
-  border-color:var(--wine);
-  color:var(--wine);
-}
-
-.layout{
-  max-width:1440px;
-  margin:auto;
-  padding:25px 18px;
-}
-
-/* LOGIN */
-
-.login{
-  max-width:430px;
-  margin:10vh auto;
-  background:#fff;
-  padding:34px;
-  border-radius:24px;
-  box-shadow:0 10px 35px rgba(50,18,27,.08);
-}
-
-.login h1{
-  margin:0 0 8px;
-  font:42px Georgia,serif;
-  color:var(--wine);
-}
-
-.login p{
-  line-height:1.6;
-}
-
-label{
-  display:block;
-  margin-top:8px;
-  font-weight:600;
-}
-
-input,
-select,
-textarea{
-  width:100%;
-  padding:13px;
-  border:1px solid var(--line);
-  border-radius:11px;
-  margin:7px 0 14px;
-  background:#fff;
-  color:var(--text);
-}
-
-textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-  outline:2px solid rgba(101,22,48,.12);
-  border-color:var(--wine);
-}
-
-.primary{
-  background:var(--wine);
-  color:#fff;
-  border:0;
-  padding:13px 20px;
-  border-radius:24px;
-  font-weight:bold;
-}
-
-.primary:hover{
-  background:var(--wine2);
-}
-
-.error{
-  color:#a33;
-  font-size:14px;
-  min-height:20px;
-}
-
-.notice{
-  background:#fcf8f1;
-  padding:13px;
-  border-radius:11px;
-  color:#665d60;
-  font-size:13px;
-  line-height:1.6;
-}
-
-/* DASHBOARD */
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-}
-
-.stat{
-  background:#fff;
-  border:1px solid var(--line);
-  padding:19px;
-  border-radius:17px;
-}
-
-.stat small{
-  color:var(--muted);
-}
-
-.stat b{
-  display:block;
-  color:var(--wine);
-  font-size:27px;
-  margin-top:7px;
-}
-
-.tabs{
-  display:flex;
-  gap:8px;
-  margin:25px 0;
-  flex-wrap:wrap;
-}
-
-.tab{
-  padding:11px 18px;
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:23px;
-}
-
-.tab.active{
-  background:var(--wine);
-  color:#fff;
-}
-
-.panel{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:20px;
-  overflow:auto;
-}
-
-.panel h2{
-  margin-top:0;
-  font:27px Georgia,serif;
-  color:var(--wine);
-}
-
-.panelHead{
+  border-bottom:1px solid var(--line);
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  margin-bottom:18px;
+  gap:14px;
+  padding:10px max(16px,calc((100% - 1200px)/2));
 }
 
-.addBtn{
-  background:var(--wine);
-  color:#fff;
-  border:0;
-  border-radius:23px;
-  padding:12px 18px;
-  font-weight:bold;
+.logo{
+  width:56px;
+  height:56px;
+  object-fit:contain;
+}
+
+.brand{
+  color:var(--wine);
+  font:700 17px Georgia,serif;
+  line-height:1.05;
   white-space:nowrap;
 }
 
-/* TABLE */
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:850px;
-}
-
-th,
-td{
-  text-align:left;
-  padding:12px 10px;
-  border-bottom:1px solid var(--line);
-  vertical-align:middle;
-}
-
-th{
-  color:var(--wine);
-  font-size:13px;
-  background:#fcf8f1;
-}
-
-td{
-  font-size:14px;
-}
-
-.order-ref{
-  font-weight:bold;
-  color:var(--wine);
-}
-
-.order-customer{
-  line-height:1.5;
-}
-
-.status-select{
-  padding:7px 10px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  background:#fff;
-  margin:0;
-  width:auto;
-}
-
-.pill{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:14px;
-  font-size:11px;
-  font-weight:bold;
-  text-transform:uppercase;
-}
-
-.paid{
-  background:#e5f5ea;
-  color:var(--green);
-}
-
-.pending{
-  background:#fff1cf;
-  color:var(--yellow);
-}
-
-.failed{
-  background:#fde7e7;
-  color:var(--red);
-}
-
-.processing{
-  background:#e9eefc;
-  color:#31528a;
-}
-
-.shipped{
-  background:#eee7fa;
-  color:#67409a;
-}
-
-.delivered{
-  background:#e5f5ea;
-  color:var(--green);
-}
-
-.cancelled{
-  background:#fde7e7;
-  color:var(--red);
-}
-
-.actions button{
-  padding:8px 12px;
-  border-radius:17px;
-  border:1px solid var(--line);
-  background:#fff;
-}
-
-/* PRODUCTS */
-
-.productGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-}
-
-.productCard{
-  border:1px solid var(--line);
-  border-radius:16px;
-  overflow:hidden;
-  background:#fff;
-}
-
-.productCard img{
-  width:100%;
-  height:230px;
-  object-fit:cover;
-  background:#f4eee7;
+.brand small{
   display:block;
+  color:var(--gold);
+  font:10px Arial,sans-serif;
+  letter-spacing:3px;
+  margin-top:3px;
 }
 
-.productInfo{
-  padding:15px;
-}
-
-.productInfo h3{
-  margin:0 0 7px;
-  color:var(--wine);
-  font-family:Georgia,serif;
-}
-
-.productMeta{
-  font-size:13px;
-  color:#6d6367;
-  line-height:1.7;
-}
-
-.productPrice{
-  font-weight:bold;
-  font-size:19px;
-  margin:10px 0;
-  color:var(--wine);
-}
-
-.stock{
-  font-size:13px;
-  margin-bottom:10px;
-}
-
-.productActions{
+.navlinks{
   display:flex;
-  gap:8px;
+  gap:18px;
+  margin-left:auto;
+  font-size:14px;
+  font-weight:600;
 }
 
-.productActions button{
-  flex:1;
-  padding:9px;
-  border-radius:18px;
+.navlinks a:hover{
+  color:var(--wine);
+}
+
+.navBtns{
+  display:flex;
+  gap:7px;
+}
+
+.iconBtn{
+  position:relative;
   border:1px solid var(--line);
   background:#fff;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  cursor:pointer;
 }
 
-.productActions .edit{
-  background:#fff8e8;
+.count{
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  min-width:18px;
+  padding:3px 5px;
+  border-radius:50%;
+  background:var(--wine);
+  color:#fff;
+  font-size:10px;
 }
 
-.productActions .delete{
-  color:var(--red);
-}
+/* =========================================================
+   HERO
+========================================================= */
 
-/* FORM */
-
-.formGrid{
+.hero{
+  max-width:1200px;
+  margin:auto;
+  padding:25px 18px;
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0 16px;
+  grid-template-columns:1fr 1.05fr;
+  gap:25px;
 }
 
-.formGrid .full{
-  grid-column:1/-1;
+.heroText{
+  background:var(--wine);
+  color:#fff;
+  border-radius:20px;
+  padding:clamp(30px,5vw,65px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 }
 
-.preview{
+.heroText .tag{
+  color:#e6c979;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:4px;
+}
+
+.heroText h1{
+  font:clamp(40px,6vw,68px) Georgia,serif;
+  line-height:1.02;
+  margin:15px 0;
+}
+
+.heroText p{
+  max-width:560px;
+  color:#f4e9ec;
+}
+
+.heroBtn{
+  display:inline-block;
+  width:max-content;
+  margin-top:18px;
+  padding:13px 21px;
+  background:#fff;
+  color:var(--wine);
+  border-radius:25px;
+  font-weight:bold;
+}
+
+.heroImg{
+  min-height:430px;
+  border-radius:20px;
+  overflow:hidden;
+  background:#eadde1;
+}
+
+.heroImg img{
   width:100%;
-  max-height:300px;
+  height:100%;
+  min-height:430px;
   object-fit:cover;
-  border-radius:12px;
-  background:#f4eee7;
-  margin-bottom:10px;
   display:block;
 }
 
-/* LOADING */
+/* =========================================================
+   SECTIONS
+========================================================= */
 
-.loading{
-  padding:35px;
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:50px 18px;
+}
+
+.sectionTitle{
   text-align:center;
+  margin-bottom:28px;
+}
+
+.sectionTitle h2{
+  color:var(--wine);
+  font:38px Georgia,serif;
+}
+
+.sectionTitle p{
   color:var(--muted);
-}
-
-.empty{
-  padding:35px;
-  text-align:center;
-  color:var(--muted);
-}
-
-/* MOBILE */
-
-@media(max-width:1000px){
-
-  .cards{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .productGrid{
-    grid-template-columns:1fr 1fr;
-  }
-}
-
-@media(max-width:650px){
-
-  .cards,
-  .productGrid,
-  .formGrid{
-    grid-template-columns:1fr;
-  }
-
-  .formGrid .full{
-    grid-column:auto;
-  }
-
-  .top{
-    padding:12px 16px;
-  }
-
-  .top b{
-    font-size:18px;
-  }
-
-  .layout{
-    padding:18px 12px;
-  }
-
-  .panelHead{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
-  .addBtn{
-    width:100%;
-  }
-
-  .login{
-    margin:7vh 12px;
-    padding:25px;
-  }
-
-  .login h1{
-    font-size:34px;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<div class="top">
-  <b>FACE OF STYLE — ADMIN</b>
-  <button class="logout" onclick="logout()">Logout</button>
-</div>
-
-<div id="app"></div>
-
-<script>
-
-const app = document.getElementById('app');
-
-let token = sessionStorage.getItem('adminToken') || '';
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function money(value){
-  return Number(value || 0).toLocaleString('en-NG');
-}
-
-function escapeHtml(value){
-  return String(value ?? '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
-}
-
-function imageUrl(image){
-
-  if(!image){
-    return '';
-  }
-
-  return image;
-}
-
-function paymentClass(status){
-
-  const s = String(status || '').toLowerCase();
-
-  if(s === 'paid'){
-    return 'paid';
-  }
-
-  if(s === 'failed'){
-    return 'failed';
-  }
-
-  return 'pending';
-}
-
-function orderClass(status){
-
-  const s = String(status || '').toLowerCase();
-
-  if(
-    s === 'processing' ||
-    s === 'shipped' ||
-    s === 'delivered' ||
-    s === 'cancelled'
-  ){
-    return s;
-  }
-
-  return 'pending';
+  margin-top:5px;
 }
 
 /* =========================================================
-   LOGIN
+   SHOP TOOLBAR
 ========================================================= */
 
-function login(){
-
-  app.innerHTML = `
-    <div class="login">
-
-      <h1>Admin Login</h1>
-
-      <p>
-        Face of Style Hijab Factory
-      </p>
-
-      <label>Username</label>
-
-      <input
-        id="username"
-        value="admin"
-        autocomplete="username"
-      >
-
-      <label>Password</label>
-
-      <input
-        id="password"
-        type="password"
-        autocomplete="current-password"
-      >
-
-      <button
-        class="primary"
-        onclick="doLogin()"
-      >
-        LOGIN
-      </button>
-
-      <p id="loginError" class="error"></p>
-
-      <div class="notice">
-        Enter the administrator username and password
-        configured in your Render environment variables.
-      </div>
-
-    </div>
-  `;
-
-  password.addEventListener('keydown',function(e){
-
-    if(e.key === 'Enter'){
-      doLogin();
-    }
-
-  });
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
 }
 
-/* =========================================================
-   DO LOGIN
-========================================================= */
-
-async function doLogin(){
-
-  const usernameValue =
-    document.getElementById('username').value.trim();
-
-  const passwordValue =
-    document.getElementById('password').value;
-
-  const errorBox =
-    document.getElementById('loginError');
-
-  errorBox.textContent = 'Logging in...';
-
-  try{
-
-    const response = await fetch(
-      '/api/admin/login',
-      {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json'
-        },
-        body:JSON.stringify({
-          username:usernameValue,
-          password:passwordValue
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if(data && data.token){
-
-      token = data.token;
-
-      sessionStorage.setItem(
-        'adminToken',
-        token
-      );
-
-      await dashboard();
-
-      return;
-    }
-
-    errorBox.textContent =
-      data?.message ||
-      'Login failed. Please check your username and password.';
-
-  }catch(error){
-
-    console.error(error);
-
-    errorBox.textContent =
-      'Unable to connect to the server. Please try again.';
-
-  }
+.cats{
+  display:flex;
+  gap:7px;
+  overflow:auto;
 }
 
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-async function logout(){
-
-  try{
-
-    if(token){
-
-      await fetch(
-        '/api/admin/logout',
-        {
-          method:'POST',
-          headers:{
-            Authorization:'Bearer ' + token
-          }
-        }
-      );
-
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-
-  sessionStorage.removeItem('adminToken');
-
-  token = '';
-
-  login();
+.cat{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:9px 14px;
+  border-radius:22px;
+  white-space:nowrap;
+  cursor:pointer;
+  font-weight:600;
 }
 
-/* =========================================================
-   API HELPER
-========================================================= */
-
-async function api(url,options={}){
-
-  options.headers = {
-    ...(options.headers || {}),
-    Authorization:'Bearer ' + token
-  };
-
-  const response =
-    await fetch(url,options);
-
-  let data = null;
-
-  try{
-
-    data = await response.json();
-
-  }catch(error){
-
-    data = {
-      ok:false,
-      message:'Invalid server response.'
-    };
-
-  }
-
-  if(response.status === 401){
-
-    sessionStorage.removeItem('adminToken');
-
-    token = '';
-
-    login();
-
-    return null;
-  }
-
-  return data;
+.cat.active,
+.cat:hover{
+  background:var(--wine);
+  color:#fff;
+  border-color:var(--wine);
 }
 
-/* =========================================================
-   LOAD ORDERS FOR DASHBOARD
-========================================================= */
-
-async function getOrders(){
-
-  const data =
-    await api('/api/admin/orders');
-
-  if(!data){
-    return null;
-  }
-
-  return Array.isArray(data.orders)
-    ? data.orders
-    : [];
+.search{
+  width:230px;
+  padding:11px 14px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  outline:none;
 }
 
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-async function dashboard(){
-
-  app.innerHTML = `
-    <div class="layout">
-
-      <div class="loading">
-        Loading dashboard...
-      </div>
-
-    </div>
-  `;
-
-  const orders =
-    await getOrders();
-
-  if(orders === null){
-    return;
-  }
-
-  const totalOrders =
-    orders.length;
-
-  const paidOrders =
-    orders.filter(
-      o =>
-        String(o.payment_status || '')
-          .toUpperCase() === 'PAID'
-    ).length;
-
-  const pendingOrders =
-    orders.filter(
-      o =>
-        String(o.payment_status || '')
-          .toUpperCase() === 'PENDING'
-    ).length;
-
-  const revenue =
-    orders
-      .filter(
-        o =>
-          String(o.payment_status || '')
-            .toUpperCase() === 'PAID'
-      )
-      .reduce(
-        (sum,o) =>
-          sum + Number(o.total || 0),
-        0
-      );
-
-  app.innerHTML = `
-    <div class="layout">
-
-      <div class="cards">
-
-        <div class="stat">
-          <small>Total Orders</small>
-          <b>${totalOrders}</b>
-        </div>
-
-        <div class="stat">
-          <small>Paid Orders</small>
-          <b>${paidOrders}</b>
-        </div>
-
-        <div class="stat">
-          <small>Pending Payments</small>
-          <b>${pendingOrders}</b>
-        </div>
-
-        <div class="stat">
-          <small>Revenue</small>
-          <b>₦${money(revenue)}</b>
-        </div>
-
-      </div>
-
-      <div class="tabs">
-
-        <button
-          id="ordersTab"
-          class="tab active"
-          onclick="showOrders()"
-        >
-          Orders
-        </button>
-
-        <button
-          id="productsTab"
-          class="tab"
-          onclick="showProducts()"
-        >
-          Products
-        </button>
-
-        <button
-          id="settingsTab"
-          class="tab"
-          onclick="showSettings()"
-        >
-          Settings
-        </button>
-
-      </div>
-
-      <div id="content">
-      </div>
-
-    </div>
-  `;
-
-  await showOrders();
-}
-
-/* =========================================================
-   TAB ACTIVE STATE
-========================================================= */
-
-function activateTab(tabName){
-
-  const tabs = [
-    'ordersTab',
-    'productsTab',
-    'settingsTab'
-  ];
-
-  tabs.forEach(id => {
-
-    const element =
-      document.getElementById(id);
-
-    if(element){
-      element.classList.remove('active');
-    }
-
-  });
-
-  const selected =
-    document.getElementById(tabName);
-
-  if(selected){
-    selected.classList.add('active');
-  }
-}
-
-/* =========================================================
-   ORDERS
-========================================================= */
-
-async function showOrders(){
-
-  activateTab('ordersTab');
-
-  const content =
-    document.getElementById('content');
-
-  if(!content){
-    return;
-  }
-
-  content.innerHTML = `
-    <div class="panel">
-      <div class="loading">
-        Loading customer orders...
-      </div>
-    </div>
-  `;
-
-  const orders =
-    await getOrders();
-
-  if(orders === null){
-    return;
-  }
-
-  if(!orders.length){
-
-    content.innerHTML = `
-      <div class="panel">
-        <h2>Customer Orders</h2>
-
-        <div class="empty">
-          No customer orders yet.
-        </div>
-      </div>
-    `;
-
-    return;
-  }
-
-  content.innerHTML = `
-    <div class="panel">
-
-      <div class="panelHead">
-
-        <div>
-          <h2>Customer Orders</h2>
-
-          <div class="notice">
-            Payment status comes from Paystack.
-            Order status is for your delivery workflow.
-          </div>
-        </div>
-
-        <button
-          class="addBtn"
-          onclick="showOrders()"
-        >
-          ↻ Refresh
-        </button>
-
-      </div>
-
-      <table>
-
-        <thead>
-          <tr>
-            <th>Reference</th>
-            <th>Customer</th>
-            <th>Total</th>
-            <th>Payment</th>
-            <th>Order Status</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          ${orders.map(order => {
-
-            const paymentStatus =
-              String(
-                order.payment_status || 'PENDING'
-              ).toLowerCase();
-
-            const orderStatus =
-              String(
-                order.order_status || 'PENDING'
-              ).toUpperCase();
-
-            return `
-              <tr>
-
-                <td>
-                  <span class="order-ref">
-                    ${escapeHtml(order.reference || '-')}
-                  </span>
-                </td>
-
-                <td>
-                  <div class="order-customer">
-                    <b>
-                      ${escapeHtml(order.customer_name || '-')}
-                    </b>
-                    <br>
-                    ${escapeHtml(order.customer_phone || '-')}
-                    <br>
-                    ${escapeHtml(order.customer_email || '-')}
-                  </div>
-                </td>
-
-                <td>
-                  <b>
-                    ₦${money(order.total)}
-                  </b>
-                </td>
-
-                <td>
-
-                  <span
-                    class="pill ${paymentClass(paymentStatus)}"
-                  >
-                    ${escapeHtml(paymentStatus)}
-                  </span>
-
-                </td>
-
-                <td>
-
-                  <select
-                    class="status-select"
-                    onchange="updateOrderStatus('${order.id}',this.value)"
-                  >
-
-                    <option
-                      value="PENDING"
-                      ${orderStatus === 'PENDING' ? 'selected' : ''}
-                    >
-                      PENDING
-                    </option>
-
-                    <option
-                      value="PROCESSING"
-                      ${orderStatus === 'PROCESSING' ? 'selected' : ''}
-                    >
-                      PROCESSING
-                    </option>
-
-                    <option
-                      value="SHIPPED"
-                      ${orderStatus === 'SHIPPED' ? 'selected' : ''}
-                    >
-                      SHIPPED
-                    </option>
-
-                    <option
-                      value="DELIVERED"
-                      ${orderStatus === 'DELIVERED' ? 'selected' : ''}
-                    >
-                      DELIVERED
-                    </option>
-
-                    <option
-                      value="CANCELLED"
-                      ${orderStatus === 'CANCELLED' ? 'selected' : ''}
-                    >
-                      CANCELLED
-                    </option>
-
-                  </select>
-
-                </td>
-
-                <td>
-                  ${formatDate(order.created_at)}
-                </td>
-
-                <td class="actions">
-
-                  <button
-                    onclick="viewOrder('${order.id}')"
-                  >
-                    View
-                  </button>
-
-                </td>
-
-              </tr>
-            `;
-
-          }).join('')}
-
-        </tbody>
-
-      </table>
-
-    </div>
-  `;
-}
-
-/* =========================================================
-   FORMAT DATE
-========================================================= */
-
-function formatDate(value){
-
-  if(!value){
-    return '-';
-  }
-
-  const date =
-    new Date(value);
-
-  if(Number.isNaN(date.getTime())){
-    return escapeHtml(value);
-  }
-
-  return date.toLocaleString();
-}
-
-/* =========================================================
-   UPDATE ORDER STATUS
-========================================================= */
-
-async function updateOrderStatus(id,status){
-
-  if(!id){
-    return;
-  }
-
-  try{
-
-    const data =
-      await api(
-        '/api/admin/orders/' + id,
-        {
-          method:'PATCH',
-          headers:{
-            'Content-Type':'application/json'
-          },
-          body:JSON.stringify({
-            order_status:status
-          })
-        }
-      );
-
-    if(data?.ok){
-
-      await showOrders();
-
-      return;
-    }
-
-    alert(
-      data?.message ||
-      'Could not update order status.'
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      'Unable to update order status.'
-    );
-
-  }
-}
-
-/* =========================================================
-   VIEW ORDER
-========================================================= */
-
-async function viewOrder(id){
-
-  const data =
-    await api(
-      '/api/admin/orders'
-    );
-
-  if(!data){
-    return;
-  }
-
-  const orders =
-    Array.isArray(data.orders)
-      ? data.orders
-      : [];
-
-  const order =
-    orders.find(
-      o => String(o.id) === String(id)
-    );
-
-  if(!order){
-
-    alert('Order not found.');
-
-    return;
-  }
-
-  const items =
-    Array.isArray(order.items)
-      ? order.items
-      : [];
-
-  const itemText =
-    items.length
-      ? items.map(
-          item =>
-            `${item.product_name || '-'} — ${item.quantity || 0} × ₦${money(item.price)} = ₦${money(item.subtotal)}`
-        ).join('\n')
-      : '-';
-
-  alert(
-`ORDER DETAILS
-
-Reference: ${order.reference || '-'}
-
-Customer:
-${order.customer_name || '-'}
-
-Phone:
-${order.customer_phone || '-'}
-
-Email:
-${order.customer_email || '-'}
-
-Delivery Address:
-${order.delivery_address || '-'}
-
-Items:
-${itemText}
-
-Total:
-₦${money(order.total)}
-
-Payment:
-${order.payment_status || 'PENDING'}
-
-Order Status:
-${order.order_status || 'PENDING'}
-
-Date:
-${formatDate(order.created_at)}`
-  );
+.search:focus{
+  border-color:var(--wine);
 }
 
 /* =========================================================
    PRODUCTS
 ========================================================= */
 
-async function showProducts(){
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
 
-  activateTab('productsTab');
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 8px 22px rgba(60,25,38,.05);
+  transition:.2s ease;
+}
 
-  const content =
-    document.getElementById('content');
+.card:hover{
+  transform:translateY(-2px);
+}
 
-  if(!content){
-    return;
+.pic{
+  position:relative;
+  background:#eee;
+}
+
+.pic img{
+  width:100%;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  display:block;
+}
+
+.badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:var(--wine);
+  color:#fff;
+  font-size:10px;
+  font-weight:bold;
+  padding:6px 9px;
+  border-radius:14px;
+}
+
+.heart{
+  position:absolute;
+  right:10px;
+  top:10px;
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  color:var(--wine);
+  font-size:18px;
+}
+
+.body{
+  padding:15px;
+}
+
+.body h3{
+  color:var(--wine);
+  font:20px Georgia,serif;
+  margin-bottom:6px;
+}
+
+.body p{
+  color:var(--muted);
+  font-size:13px;
+  min-height:42px;
+}
+
+.price{
+  color:var(--wine);
+  font-size:19px;
+  font-weight:bold;
+  margin:10px 0 5px;
+}
+
+.stock{
+  color:var(--muted);
+  display:block;
+  font-size:11px;
+  margin-bottom:10px;
+}
+
+.stock.out{
+  color:var(--danger);
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+}
+
+.add,
+.view{
+  border-radius:22px;
+  padding:10px 12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.add{
+  flex:1;
+  border:0;
+  background:var(--wine);
+  color:#fff;
+}
+
+.view{
+  border:1px solid var(--wine);
+  background:#fff;
+  color:var(--wine);
+}
+
+.add:disabled,
+.view:disabled,
+.heart:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.loading,
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:50px 12px;
+  color:var(--muted);
+}
+
+.error{
+  color:var(--danger);
+}
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:48px;
+}
+
+.feature{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:20px;
+  text-align:center;
+}
+
+.feature b{
+  display:block;
+  color:var(--wine);
+  margin:7px 0 4px;
+}
+
+.feature span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* =========================================================
+   CUSTOM
+========================================================= */
+
+.custom{
+  margin-top:45px;
+  background:var(--wine2);
+  color:#fff;
+  border-radius:20px;
+  padding:42px;
+  text-align:center;
+}
+
+.custom h2{
+  font:34px Georgia,serif;
+}
+
+.custom p{
+  color:#ebdfe3;
+  max-width:720px;
+  margin:8px auto 15px;
+}
+
+.custom a{
+  display:inline-block;
+  background:var(--gold);
+  color:#2e1b16;
+  padding:12px 20px;
+  border-radius:24px;
+  font-weight:bold;
+}
+
+/* =========================================================
+   ACCOUNT + TRACKING
+========================================================= */
+
+.accountGrid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+
+.accountTile{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px;
+  cursor:pointer;
+}
+
+.accountTile b{
+  display:block;
+  color:var(--wine);
+  margin-bottom:5px;
+}
+
+.accountTile span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer{
+  margin-top:50px;
+  background:#24151b;
+  color:#eee;
+  padding:40px 18px;
+}
+
+.foot{
+  max-width:1200px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr;
+  gap:25px;
+}
+
+.foot h3{
+  font-family:Georgia,serif;
+  margin-bottom:7px;
+}
+
+.foot p,
+.foot a{
+  color:#cdbfc4;
+  font-size:13px;
+  line-height:1.8;
+}
+
+.copy{
+  text-align:center;
+  border-top:1px solid #49373d;
+  padding-top:17px;
+  margin-top:25px;
+  color:#aaa;
+  font-size:12px;
+}
+
+/* =========================================================
+   CART
+========================================================= */
+
+.drawer{
+  position:fixed;
+  right:-430px;
+  top:0;
+  width:min(420px,100%);
+  height:100%;
+  background:#fff;
+  z-index:100;
+  transition:.3s ease;
+  padding:20px;
+  box-shadow:-10px 0 35px rgba(0,0,0,.2);
+  display:flex;
+  flex-direction:column;
+}
+
+.drawer.open{
+  right:0;
+}
+
+.close{
+  margin-left:auto;
+  border:0;
+  background:#eee;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:23px;
+}
+
+.cartItems{
+  flex:1;
+  overflow:auto;
+  margin-top:12px;
+}
+
+.cartItem{
+  display:flex;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.cartItem img{
+  width:64px;
+  height:76px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.cartContent{
+  flex:1;
+}
+
+.cartContent b{
+  display:block;
+  color:var(--wine);
+}
+
+.cartContent small{
+  color:var(--muted);
+}
+
+.qty{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+}
+
+.qty button{
+  width:28px;
+  height:28px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:8px;
+  color:var(--wine);
+}
+
+.remove{
+  color:var(--danger);
+  font-size:11px;
+  cursor:pointer;
+  margin-left:6px;
+}
+
+.total{
+  border-top:1px solid var(--line);
+  padding:14px 0;
+  color:var(--wine);
+  font-size:20px;
+  font-weight:bold;
+}
+
+.checkoutBtn{
+  width:100%;
+  border:0;
+  background:var(--wine);
+  color:#fff;
+  padding:14px;
+  border-radius:25px;
+  font-weight:bold;
+}
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:120;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modalBox{
+  background:#fff;
+  width:min(600px,100%);
+  max-height:92vh;
+  overflow:auto;
+  border-radius:20px;
+  padding:24px;
+}
+
+.modalBox h2{
+  color:var(--wine);
+  font:30px Georgia,serif;
+  margin-bottom:10px;
+}
+
+.formRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  outline:none;
+}
+
+.field textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:var(--wine);
+}
+
+.modalActions{
+  display:flex;
+  gap:8px;
+  margin-top:15px;
+}
+
+.modalActions button{
+  flex:1;
+  padding:12px;
+  border-radius:22px;
+  font-weight:bold;
+}
+
+.cancelBtn{
+  border:0;
+  background:#eee;
+}
+
+.primaryBtn{
+  border:0;
+  background:var(--wine);
+  color:#fff;
+}
+
+/* =========================================================
+   ACCOUNT MODAL
+========================================================= */
+
+.accountTabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-bottom:15px;
+}
+
+.accountTab{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:8px 11px;
+  border-radius:18px;
+  font-size:12px;
+}
+
+.accountTab.active{
+  color:#fff;
+  background:var(--wine);
+}
+
+.accountPanel{
+  display:none;
+}
+
+.accountPanel.active{
+  display:block;
+}
+
+.infoCard{
+  background:var(--cream);
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:10px;
+}
+
+.infoCard b{
+  color:var(--wine);
+}
+
+.smallBtn{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:8px 11px;
+  border-radius:18px;
+}
+
+.orderStatus{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:12px;
+  background:#f2e6ea;
+  color:var(--wine);
+  font-size:11px;
+  font-weight:bold;
+}
+
+.credit{
+  color:var(--green);
+  font-weight:bold;
+  font-size:24px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1000px){
+
+  .grid{
+    grid-template-columns:repeat(3,1fr);
   }
 
-  content.innerHTML = `
-    <div class="panel">
-      <div class="loading">
-        Loading products...
-      </div>
+  .features{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .accountGrid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:900px){
+
+  .hero{
+    grid-template-columns:1fr;
+  }
+
+  .heroImg,
+  .heroImg img{
+    min-height:360px;
+  }
+
+  .navlinks{
+    display:none;
+  }
+
+  .foot{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+
+@media(max-width:650px){
+
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+
+  .body{
+    padding:11px;
+  }
+
+  .body h3{
+    font-size:16px;
+  }
+
+  .body p{
+    font-size:12px;
+    min-height:39px;
+  }
+
+  .price{
+    font-size:16px;
+  }
+
+  .actions{
+    flex-direction:column;
+  }
+
+  .features{
+    grid-template-columns:1fr;
+  }
+
+  .accountGrid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .formRow{
+    grid-template-columns:1fr;
+  }
+
+  .foot{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:430px){
+
+  .logo{
+    width:48px;
+    height:48px;
+  }
+
+  .brand{
+    font-size:14px;
+  }
+
+  .brand small{
+    font-size:8px;
+  }
+
+  .grid{
+    gap:8px;
+  }
+
+  .body h3{
+    font-size:14px;
+  }
+
+  .add,
+  .view{
+    font-size:12px;
+    padding:9px;
+  }
+
+  .accountGrid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="top" id="topBar">
+  ✨ QUALITY MODEST FASHION • ORDER DIRECT ON WHATSAPP
+</div>
+
+<header class="nav">
+
+  <a href="#home">
+    <img
+      id="logo"
+      class="logo"
+      src="assets/logo.png"
+      alt="Face of Style Hijab Factory"
+      onerror="this.onerror=null;this.src='/logo.png'"
+    >
+  </a>
+
+  <div class="brand">
+    <span id="brandName">
+      FACE OF STYLE
+    </span>
+
+    <small id="brandTagline">
+      HIJAB FACTORY
+    </small>
+  </div>
+
+  <nav class="navlinks">
+    <a href="#shop">Shop</a>
+    <a href="#account">My Account</a>
+    <a href="#tracking">Order Tracking</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="navBtns">
+
+    <button
+      type="button"
+      class="iconBtn"
+      onclick="openAccount()"
+      aria-label="My Account"
+    >
+      👤
+    </button>
+
+    <button
+      type="button"
+      class="iconBtn"
+      onclick="openCart()"
+      aria-label="Cart"
+    >
+      🛍️
+
+      <span
+        id="cartCount"
+        class="count"
+      >
+        0
+      </span>
+    </button>
+
+  </div>
+
+</header>
+
+<main id="home">
+
+<section class="hero">
+
+  <div class="heroText">
+
+    <div class="tag">
+      FACE OF STYLE
     </div>
-  `;
 
-  const data =
-    await api('/api/admin/products');
+    <h1 id="heroTitle">
+      Modesty, Elegance & Style.
+    </h1>
 
-  if(!data){
-    return;
-  }
+    <p id="heroText">
+      Discover carefully crafted hijabs,
+      abayas, gowns and modest outfits.
+    </p>
 
-  if(!data.ok){
+    <a
+      href="#shop"
+      class="heroBtn"
+    >
+      SHOP COLLECTION →
+    </a>
 
-    content.innerHTML = `
-      <div class="panel">
+  </div>
 
-        <h2>Product Management</h2>
+  <div class="heroImg">
 
-        <div class="notice">
-          ${escapeHtml(
-            data.message ||
-            'Unable to load products.'
-          )}
-        </div>
+    <img
+      src="assets/product-1.jpg"
+      alt="Face of Style collection"
+      onerror="this.onerror=null;this.src='assets/logo.png'"
+    >
+
+  </div>
+
+</section>
+
+<section
+  class="wrap"
+  id="shop"
+>
+
+  <div class="sectionTitle">
+
+    <div
+      style="
+        color:var(--gold);
+        letter-spacing:4px;
+        font-size:11px;
+        font-weight:bold;
+      "
+    >
+      SHOP ONLINE
+    </div>
+
+    <h2>
+      Our Latest Collection
+    </h2>
+
+    <p>
+      Browse our styles and add your favourites to your cart.
+    </p>
+
+  </div>
+
+  <div class="toolbar">
+
+    <div class="cats">
+
+      <button
+        class="cat active"
+        onclick="filterProducts('All',this)"
+      >
+        All
+      </button>
+
+      <button
+        class="cat"
+        onclick="filterProducts('Abaya',this)"
+      >
+        Abayas
+      </button>
+
+      <button
+        class="cat"
+        onclick="filterProducts('Gown',this)"
+      >
+        Gowns
+      </button>
+
+      <button
+        class="cat"
+        onclick="filterProducts('Hijab',this)"
+      >
+        Hijabs
+      </button>
+
+      <button
+        class="cat"
+        onclick="filterProducts('Custom',this)"
+      >
+        Custom
+      </button>
+
+      <button
+        class="cat"
+        onclick="filterProducts('Fashion',this)"
+      >
+        Fashion
+      </button>
+
+    </div>
+
+    <input
+      id="search"
+      class="search"
+      type="search"
+      placeholder="Search products..."
+      oninput="renderProducts()"
+    >
+
+  </div>
+
+  <div
+    id="products"
+    class="grid"
+  >
+
+    <div class="loading">
+      Loading products...
+    </div>
+
+  </div>
+
+  <div class="features">
+
+    <div class="feature">
+      🧵
+      <b>Quality Sewing</b>
+      <span>
+        Neat finishing and careful craftsmanship.
+      </span>
+    </div>
+
+    <div class="feature">
+      🎨
+      <b>Choose Your Style</b>
+      <span>
+        Colours, fabrics and designs to suit you.
+      </span>
+    </div>
+
+    <div class="feature">
+      📱
+      <b>Easy Ordering</b>
+      <span>
+        Order quickly through WhatsApp.
+      </span>
+    </div>
+
+    <div class="feature">
+      ✨
+      <b>Made With Care</b>
+      <span>
+        Modest fashion with a refined finish.
+      </span>
+    </div>
+
+  </div>
+
+  <div
+    id="custom"
+    class="custom"
+  >
+
+    <h2>
+      Want Something Made Just For You?
+    </h2>
+
+    <p>
+      Send us your preferred style,
+      fabric, colour and measurements.
+      We also accept custom sewing requests.
+    </p>
+
+    <a
+      id="customWhatsApp"
+      href="#"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      START CUSTOM ORDER
+    </a>
+
+  </div>
+
+</section>
+
+<section
+  class="wrap"
+  id="account"
+>
+
+  <div class="sectionTitle">
+
+    <h2>
+      My Account
+    </h2>
+
+    <p>
+      Sign in to manage your profile, orders,
+      addresses, store credit and refunds.
+    </p>
+
+  </div>
+
+  <div class="accountGrid">
+
+    <div
+      class="accountTile"
+      onclick="openAccount('profile')"
+    >
+      👤
+      <b>Profile</b>
+      <span>
+        Personal information
+      </span>
+    </div>
+
+    <div
+      class="accountTile"
+      onclick="openAccount('orders')"
+    >
+      📦
+      <b>Orders</b>
+      <span>
+        Your order history
+      </span>
+    </div>
+
+    <div
+      class="accountTile"
+      onclick="openAccount('addresses')"
+    >
+      📍
+      <b>Addresses</b>
+      <span>
+        Delivery addresses
+      </span>
+    </div>
+
+    <div
+      class="accountTile"
+      onclick="openAccount('credit')"
+    >
+      💳
+      <b>Store Credit</b>
+      <span>
+        Credit balance
+      </span>
+    </div>
+
+    <div
+      class="accountTile"
+      onclick="openAccount('refunds')"
+    >
+      ↩️
+      <b>Refund History</b>
+      <span>
+        Refund requests
+      </span>
+    </div>
+
+  </div>
+
+</section>
+
+<section
+  class="wrap"
+  id="tracking"
+>
+
+  <div class="sectionTitle">
+
+    <h2>
+      Order Tracking
+    </h2>
+
+    <p>
+      Enter your order reference to see its latest status.
+    </p>
+
+  </div>
+
+  <div
+    style="
+      max-width:600px;
+      margin:auto;
+      display:flex;
+      gap:8px;
+    "
+  >
+
+    <input
+      id="trackingReference"
+      style="
+        flex:1;
+        padding:12px;
+        border:1px solid var(--line);
+        border-radius:22px;
+        outline:none;
+      "
+      placeholder="Example: FS-XXXX"
+    >
+
+    <button
+      type="button"
+      class="add"
+      style="
+        flex:0 0 auto;
+        padding:12px 18px;
+      "
+      onclick="trackOrder()"
+    >
+      TRACK
+    </button>
+
+  </div>
+
+  <div
+    id="trackingResult"
+    style="
+      max-width:600px;
+      margin:15px auto 0;
+    "
+  ></div>
+
+</section>
+
+<section
+  class="wrap"
+  id="about"
+>
+
+  <div class="sectionTitle">
+
+    <h2>
+      About Face of Style
+    </h2>
+
+    <p>
+      We create modest fashion that feels
+      comfortable, elegant and personal.
+    </p>
+
+  </div>
+
+</section>
+
+</main>
+
+<footer id="contact">
+
+  <div class="foot">
+
+    <div>
+      <h3 id="footerStoreName">
+        Face of Style Hijab Factory
+      </h3>
+
+      <p>
+        Elegant hijabs, abayas,
+        gowns and custom modest wear.
+      </p>
+    </div>
+
+    <div>
+
+      <h3>
+        Quick Links
+      </h3>
+
+      <p>
+        <a href="#shop">
+          Shop Collection
+        </a>
+        <br>
+        <a href="#account">
+          My Account
+        </a>
+        <br>
+        <a href="#tracking">
+          Order Tracking
+        </a>
+        <br>
+        <a href="#custom">
+          Custom Order
+        </a>
+      </p>
+
+    </div>
+
+    <div>
+
+      <h3>
+        Contact
+      </h3>
+
+      <p>
+        WhatsApp:
+        <span id="footerWhatsApp">
+          0906 582 8886
+        </span>
+
+        <br>
+
+        Orders & enquiries welcome.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="copy">
+    © 2026 Face of Style Hijab Factory.
+    All rights reserved.
+  </div>
+
+  <p style="text-align:center;margin-top:14px">
+
+    <a
+      href="/admin.html"
+      style="color:#d8b96b"
+    >
+      Admin Dashboard
+    </a>
+
+  </p>
+
+</footer>
+
+<!-- ======================================================
+     CART
+======================================================= -->
+
+<aside
+  id="drawer"
+  class="drawer"
+>
+
+  <button
+    class="close"
+    onclick="closeCart()"
+    aria-label="Close cart"
+  >
+    ×
+  </button>
+
+  <h2>
+    Your Cart
+  </h2>
+
+  <div
+    id="cartItems"
+    class="cartItems"
+  ></div>
+
+  <div
+    id="cartTotal"
+    class="total"
+  >
+    Total: ₦0
+  </div>
+
+  <button
+    id="checkoutButton"
+    class="checkoutBtn"
+    onclick="openCheckout()"
+    disabled
+  >
+    CHECKOUT & PAY
+  </button>
+
+</aside>
+
+<!-- ======================================================
+     CHECKOUT
+======================================================= -->
+
+<div
+  id="checkoutModal"
+  class="modal"
+>
+
+  <div class="modalBox">
+
+    <button
+      class="close"
+      onclick="closeCheckout()"
+    >
+      ×
+    </button>
+
+    <h2>
+      Secure Checkout
+    </h2>
+
+    <div
+      id="checkoutTotal"
+      style="
+        color:var(--muted);
+        margin-bottom:12px;
+      "
+    >
+      Order total: ₦0
+    </div>
+
+    <div class="formRow">
+
+      <div class="field">
+
+        <label>
+          Full Name
+        </label>
+
+        <input
+          id="customerName"
+          autocomplete="name"
+        >
 
       </div>
-    `;
 
-    return;
-  }
+      <div class="field">
 
-  const products =
-    Array.isArray(data.products)
-      ? data.products
-      : [];
+        <label>
+          Email
+        </label>
 
-  if(!products.length){
-
-    content.innerHTML = `
-      <div class="panel">
-
-        <div class="panelHead">
-
-          <div>
-            <h2>Product Management</h2>
-
-            <div class="notice">
-              Add new styles, prices, colors,
-              descriptions, stock and product photos.
-            </div>
-          </div>
-
-          <button
-            class="addBtn"
-            onclick="productForm()"
-          >
-            ＋ Add New Product
-          </button>
-
-        </div>
-
-        <div class="empty">
-          No products found.
-          Click "Add New Product" to create your first product.
-        </div>
+        <input
+          id="customerEmail"
+          type="email"
+          autocomplete="email"
+        >
 
       </div>
-    `;
 
-    return;
-  }
+    </div>
 
-  content.innerHTML = `
-    <div class="panel">
+    <div class="formRow">
 
-      <div class="panelHead">
+      <div class="field">
 
-        <div>
-          <h2>Product Management</h2>
+        <label>
+          Phone
+        </label>
 
-          <div class="notice">
-            Add new styles, update prices, colors,
-            descriptions, stock and product photos from here.
-          </div>
-        </div>
+        <input
+          id="customerPhone"
+          autocomplete="tel"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>
+          Delivery Address
+        </label>
+
+        <input
+          id="customerAddress"
+          autocomplete="street-address"
+        >
+
+      </div>
+
+    </div>
+
+    <div class="field">
+
+      <label>
+        Payment Method
+      </label>
+
+      <select
+        id="paymentMethod"
+      >
+
+        <option value="paystack">
+          Paystack
+        </option>
+
+        <option value="bank_transfer">
+          Bank Transfer
+        </option>
+
+        <option value="store_credit">
+          Store Credit
+        </option>
+
+      </select>
+
+    </div>
+
+    <div class="infoCard">
+
+      <b>
+        Paystack
+      </b>
+
+      <div style="color:var(--muted)">
+        Card, bank and supported Paystack channels.
+      </div>
+
+    </div>
+
+    <div class="modalActions">
+
+      <button
+        class="cancelBtn"
+        onclick="closeCheckout()"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="primaryBtn"
+        id="continuePayment"
+        onclick="startCheckout()"
+      >
+        CONTINUE
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ======================================================
+     ACCOUNT MODAL
+======================================================= -->
+
+<div
+  id="accountModal"
+  class="modal"
+>
+
+  <div class="modalBox">
+
+    <button
+      class="close"
+      onclick="closeAccount()"
+    >
+      ×
+    </button>
+
+    <h2>
+      My Account
+    </h2>
+
+    <div
+      id="accountAuth"
+    ></div>
+
+    <div
+      id="accountContent"
+      style="display:none"
+    >
+
+      <div class="accountTabs">
 
         <button
-          class="addBtn"
-          onclick="productForm()"
+          class="accountTab active"
+          onclick="accountTab('profile',this)"
         >
-          ＋ Add New Product
+          Profile
+        </button>
+
+        <button
+          class="accountTab"
+          onclick="accountTab('orders',this)"
+        >
+          Orders
+        </button>
+
+        <button
+          class="accountTab"
+          onclick="accountTab('addresses',this)"
+        >
+          Addresses
+        </button>
+
+        <button
+          class="accountTab"
+          onclick="accountTab('credit',this)"
+        >
+          Store Credit
+        </button>
+
+        <button
+          class="accountTab"
+          onclick="accountTab('refunds',this)"
+        >
+          Refund History
         </button>
 
       </div>
 
-      <div class="productGrid">
+      <div
+        id="panelProfile"
+        class="accountPanel active"
+      ></div>
 
-        ${products.map(product => {
+      <div
+        id="panelOrders"
+        class="accountPanel"
+      ></div>
 
-          const image =
-            imageUrl(
+      <div
+        id="panelAddresses"
+        class="accountPanel"
+      ></div>
+
+      <div
+        id="panelCredit"
+        class="accountPanel"
+      ></div>
+
+      <div
+        id="panelRefunds"
+        class="accountPanel"
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   STATE
+========================================================= */
+
+"use strict";
+
+let products = [];
+let cart = [];
+let selectedCategory = "All";
+
+let customerToken =
+  localStorage.getItem(
+    "faceOfStyleCustomerToken"
+  ) || "";
+
+let storeSettings = {};
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function money(value){
+
+  return new Intl.NumberFormat(
+    "en-NG",
+    {
+      style:"currency",
+      currency:"NGN",
+      maximumFractionDigits:0
+    }
+  ).format(
+    Number(value) || 0
+  );
+
+}
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  )
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+function imagePath(value){
+
+  const src =
+    String(
+      value || ""
+    ).trim();
+
+  if(!src){
+    return "assets/product-1.jpg";
+  }
+
+  if(
+    src.startsWith("data:") ||
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("/")
+  ){
+    return src;
+  }
+
+  if(
+    src.startsWith("assets/")
+  ){
+    return src;
+  }
+
+  return (
+    "assets/" +
+    src.replace(/^\.?\//,"")
+  );
+
+}
+
+function lockBody(){
+
+  const open =
+    document
+      .querySelectorAll(
+        ".modal.open"
+      ).length > 0 ||
+
+    document
+      .getElementById(
+        "drawer"
+      )
+      .classList.contains(
+        "open"
+      );
+
+  document.body.classList.toggle(
+    "lock",
+    open
+  );
+
+}
+
+/* =========================================================
+   SAVE CART
+========================================================= */
+
+function saveCart(){
+
+  localStorage.setItem(
+    "faceOfStyleCart",
+    JSON.stringify(cart)
+  );
+
+}
+
+function loadCart(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        "faceOfStyleCart"
+      );
+
+    if(!saved){
+      return;
+    }
+
+    const parsed =
+      JSON.parse(saved);
+
+    if(
+      Array.isArray(parsed)
+    ){
+
+      cart =
+        parsed
+          .filter(
+            item =>
+              item &&
+              Number(item.qty) > 0
+          )
+          .map(
+            item => ({
+              ...item,
+              id:
+                Number(item.id),
+              qty:
+                Number(item.qty)
+            })
+          );
+
+    }
+
+  }catch{
+
+    cart = [];
+
+  }
+
+}
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+async function loadConfig(){
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/config",
+        {
+          cache:"no-store"
+        }
+      );
+
+    const data =
+      await response.json();
+
+    storeSettings =
+      data?.settings ||
+      {};
+
+    const root =
+      document.documentElement;
+
+    if(
+      storeSettings.primary_color
+    ){
+      root.style.setProperty(
+        "--wine",
+        storeSettings.primary_color
+      );
+    }
+
+    if(
+      storeSettings.secondary_color
+    ){
+      root.style.setProperty(
+        "--wine2",
+        storeSettings.secondary_color
+      );
+    }
+
+    if(
+      storeSettings.gold_color
+    ){
+      root.style.setProperty(
+        "--gold",
+        storeSettings.gold_color
+      );
+    }
+
+    if(
+      storeSettings.background_color
+    ){
+      root.style.setProperty(
+        "--cream",
+        storeSettings.background_color
+      );
+    }
+
+    if(
+      storeSettings.text_color
+    ){
+      root.style.setProperty(
+        "--text",
+        storeSettings.text_color
+      );
+    }
+
+    const storeName =
+      storeSettings.store_name ||
+      "Face of Style Hijab Factory";
+
+    document.title =
+      storeName;
+
+    document
+      .getElementById(
+        "footerStoreName"
+      )
+      .textContent =
+      storeName;
+
+    document
+      .getElementById(
+        "brandName"
+      )
+      .textContent =
+      String(
+        storeName
+      )
+      .replace(
+        / Hijab Factory/i,
+        ""
+      )
+      .toUpperCase();
+
+    document
+      .getElementById(
+        "brandTagline"
+      )
+      .textContent =
+      storeSettings.tagline ||
+      "HIJAB FACTORY";
+
+    document
+      .getElementById(
+        "heroTitle"
+      )
+      .textContent =
+      storeSettings.hero_title ||
+      "Modesty, Elegance & Style.";
+
+    document
+      .getElementById(
+        "heroText"
+      )
+      .textContent =
+      storeSettings.hero_text ||
+      "Discover carefully crafted hijabs, abayas, gowns and modest outfits.";
+
+    const whatsapp =
+      String(
+        data?.whatsapp ||
+        storeSettings.whatsapp ||
+        "2349065828886"
+      ).replace(
+        /[^0-9]/g,
+        ""
+      );
+
+    document
+      .getElementById(
+        "footerWhatsApp"
+      )
+      .textContent =
+      whatsapp.startsWith("234")
+        ? "0" +
+          whatsapp.slice(3)
+        : whatsapp;
+
+    const customMessage =
+      encodeURIComponent(
+        "Hello Face of Style Hijab Factory,\n\nI would like to place a custom order.\n\nStyle:\nFabric:\nColour:\nMeasurements:\n\nPlease let me know if you need any additional information."
+      );
+
+    document
+      .getElementById(
+        "customWhatsApp"
+      )
+      .href =
+      "https://wa.me/" +
+      whatsapp +
+      "?text=" +
+      customMessage;
+
+  }catch(error){
+
+    console.warn(
+      "Config load error:",
+      error
+    );
+
+  }
+
+}
+
+/* =========================================================
+   LOAD PRODUCTS
+========================================================= */
+
+async function loadProducts(){
+
+  const box =
+    document.getElementById(
+      "products"
+    );
+
+  try{
+
+    box.innerHTML = `
+      <div class="loading">
+        Loading products...
+      </div>
+    `;
+
+    const response =
+      await fetch(
+        "/api/products",
+        {
+          cache:"no-store"
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(
+      !response.ok ||
+      !Array.isArray(
+        data.products
+      )
+    ){
+      throw new Error(
+        "Unable to load products."
+      );
+    }
+
+    products =
+      data.products.map(
+        p => ({
+          ...p,
+
+          id:
+            Number(p.id),
+
+          cat:
+            p.cat ||
+            p.category ||
+            "Fashion",
+
+          image:
+            imagePath(
+              p.image ||
+              p.img
+            ),
+
+          img:
+            imagePath(
+              p.image ||
+              p.img
+            ),
+
+          desc:
+            p.desc ||
+            p.description ||
+            "",
+
+          stock:
+            Number(
+              p.stock
+            ) || 0
+        })
+      );
+
+    renderProducts();
+
+    updateCart();
+
+  }catch(error){
+
+    console.error(
+      "Products error:",
+      error
+    );
+
+    box.innerHTML = `
+      <div class="loading error">
+        Unable to load products.
+        Please refresh the page.
+      </div>
+    `;
+  }
+
+}
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+function filterProducts(
+  category,
+  button
+){
+
+  selectedCategory =
+    category;
+
+  document
+    .querySelectorAll(
+      ".cat"
+    )
+    .forEach(
+      el =>
+        el.classList.remove(
+          "active"
+        )
+    );
+
+  if(button){
+    button.classList.add(
+      "active"
+    );
+  }
+
+  renderProducts();
+
+}
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderProducts(){
+
+  const box =
+    document.getElementById(
+      "products"
+    );
+
+  if(!box){
+    return;
+  }
+
+  const query =
+    String(
+      document
+        .getElementById(
+          "search"
+        )
+        ?.value ||
+      ""
+    )
+    .trim()
+    .toLowerCase();
+
+  const list =
+    products.filter(
+      product => {
+
+        const category =
+          String(
+            product.cat ||
+            product.category ||
+            ""
+          );
+
+        const matchCategory =
+          selectedCategory ===
+            "All" ||
+          category.toLowerCase() ===
+            selectedCategory.toLowerCase();
+
+        const haystack =
+          (
+            String(
+              product.name ||
+              ""
+            ) +
+            " " +
+            String(
+              product.desc ||
+              ""
+            ) +
+            " " +
+            String(
+              product.color ||
+              ""
+            )
+          ).toLowerCase();
+
+        return (
+          matchCategory &&
+          (
+            !query ||
+            haystack.includes(
+              query
+            )
+          )
+        );
+
+      }
+    );
+
+  if(!list.length){
+
+    box.innerHTML = `
+      <div class="empty">
+        No products found.
+      </div>
+    `;
+
+    return;
+
+  }
+
+  box.innerHTML =
+    list.map(
+      product => {
+
+        const id =
+          Number(
+            product.id
+          );
+
+        const stock =
+          Number(
+            product.stock
+          );
+
+        const out =
+          stock < 1;
+
+        const image =
+          escapeHTML(
+            imagePath(
               product.image ||
               product.img
-            );
+            )
+          );
 
-          return `
-            <div class="productCard">
+        const name =
+          escapeHTML(
+            product.name
+          );
 
-              ${
-                image
-                ?
-                `
-                <img
-                  src="${escapeHtml(image)}"
-                  alt="${escapeHtml(product.name)}"
-                  onerror="this.style.display='none'"
+        const category =
+          escapeHTML(
+            product.cat ||
+            product.category ||
+            "Fashion"
+          );
+
+        const desc =
+          escapeHTML(
+            product.desc ||
+            product.description ||
+            ""
+          );
+
+        return `
+
+          <article class="card">
+
+            <div class="pic">
+
+              <img
+                src="${image}"
+                alt="${name}"
+
+                onerror="
+                  this.onerror=null;
+                  this.src='assets/product-1.jpg'
+                "
+              >
+
+              <span class="badge">
+                ${category}
+              </span>
+
+              <button
+                class="heart"
+                type="button"
+                onclick="addToCart(${id})"
+                ${
+                  out
+                    ? "disabled"
+                    : ""
+                }
+              >
+                ♡
+              </button>
+
+            </div>
+
+            <div class="body">
+
+              <h3>
+                ${name}
+              </h3>
+
+              <p>
+                ${desc}
+              </p>
+
+              <div class="price">
+                ${money(
+                  product.price
+                )}
+              </div>
+
+              <span
+                class="stock ${
+                  out
+                    ? "out"
+                    : ""
+                }"
+              >
+                ${
+                  out
+                    ? "Out of stock"
+                    : `${stock} in stock`
+                }
+              </span>
+
+              <div class="actions">
+
+                <button
+                  class="add"
+                  type="button"
+                  onclick="addToCart(${id})"
+                  ${
+                    out
+                      ? "disabled"
+                      : ""
+                  }
                 >
-                `
-                :
-                `
-                <div
-                  style="
-                    height:230px;
-                    background:#f4eee7;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    color:#756a6f;
-                  "
+                  ${
+                    out
+                      ? "Out of Stock"
+                      : "Add to Cart"
+                  }
+                </button>
+
+                <button
+                  class="view"
+                  type="button"
+                  onclick="openProductOrder(${id})"
+                  ${
+                    out
+                      ? "disabled"
+                      : ""
+                  }
                 >
-                  No Product Photo
-                </div>
-                `
-              }
-
-              <div class="productInfo">
-
-                <h3>
-                  ${escapeHtml(product.name)}
-                </h3>
-
-                <div class="productMeta">
-
-                  Category:
-                  ${escapeHtml(product.category || product.cat || 'Fashion')}
-
-                  <br>
-
-                  Colors:
-                  ${escapeHtml(product.color || 'Not set')}
-
-                </div>
-
-                <div class="productPrice">
-                  ₦${money(product.price)}
-                </div>
-
-                <div class="stock">
-                  Stock:
-                  <b>
-                    ${Number(product.stock || 0)}
-                  </b>
-                </div>
-
-                <div class="productActions">
-
-                  <button
-                    class="edit"
-                    onclick='productForm(${JSON.stringify(product).replace(/'/g,"&#39;")})'
-                  >
-                    ✏️ Edit
-                  </button>
-
-                  <button
-                    class="delete"
-                    onclick="deleteProduct('${product.id}')"
-                  >
-                    🗑️ Delete
-                  </button>
-
-                </div>
+                  Order
+                </button>
 
               </div>
 
             </div>
-          `;
 
-        }).join('')}
+          </article>
 
-      </div>
+        `;
 
-    </div>
-  `;
+      }
+    ).join("");
+
 }
 
 /* =========================================================
-   PRODUCT FORM
+   CART
 ========================================================= */
 
-function productForm(product = {}){
-
-  const p = product || {};
-
-  const category =
-    p.category ||
-    p.cat ||
-    'Abaya';
-
-  const description =
-    p.description ||
-    p.desc ||
-    '';
-
-  const image =
-    p.image ||
-    p.img ||
-    '';
-
-  const stock =
-    Number.isInteger(Number(p.stock))
-      ? Number(p.stock)
-      : 0;
-
-  const productId =
-    p.id
-      ? String(p.id)
-      : '';
-
-  const isEdit =
-    Boolean(productId);
-
-  const content =
-    document.getElementById('content');
-
-  content.innerHTML = `
-
-    <div class="panel">
-
-      <div class="panelHead">
-
-        <div>
-
-          <h2>
-            ${isEdit ? 'Edit Product' : 'Add New Product'}
-          </h2>
-
-          <div class="notice">
-            Everything you enter here will appear
-            on the store catalogue.
-          </div>
-
-        </div>
-
-        <button
-          class="logout"
-          onclick="showProducts()"
-        >
-          ← Back
-        </button>
-
-      </div>
-
-      <div class="formGrid">
-
-        <div>
-
-          <label>
-            Product Name
-          </label>
-
-          <input
-            id="productName"
-            value="${escapeHtml(p.name || '')}"
-            placeholder="e.g. Premium Abaya"
-          >
-
-        </div>
-
-        <div>
-
-          <label>
-            Category
-          </label>
-
-          <select id="productCategory">
-
-            <option
-              value="Abaya"
-              ${category === 'Abaya' ? 'selected' : ''}
-            >
-              Abaya
-            </option>
-
-            <option
-              value="Gown"
-              ${category === 'Gown' ? 'selected' : ''}
-            >
-              Gown
-            </option>
-
-            <option
-              value="Hijab"
-              ${category === 'Hijab' ? 'selected' : ''}
-            >
-              Hijab
-            </option>
-
-            <option
-              value="Custom"
-              ${category === 'Custom' ? 'selected' : ''}
-            >
-              Custom
-            </option>
-
-            <option
-              value="Fashion"
-              ${category === 'Fashion' ? 'selected' : ''}
-            >
-              Fashion
-            </option>
-
-          </select>
-
-        </div>
-
-        <div>
-
-          <label>
-            Price (NGN)
-          </label>
-
-          <input
-            id="productPrice"
-            type="number"
-            min="0"
-            step="0.01"
-            value="${p.price ?? ''}"
-            placeholder="25000"
-          >
-
-        </div>
-
-        <div>
-
-          <label>
-            Stock Quantity
-          </label>
-
-          <input
-            id="productStock"
-            type="number"
-            min="0"
-            step="1"
-            value="${stock}"
-            placeholder="10"
-          >
-
-        </div>
-
-        <div class="full">
-
-          <label>
-            Colors
-          </label>
-
-          <input
-            id="productColor"
-            value="${escapeHtml(p.color || '')}"
-            placeholder="Black, Navy, Rose"
-          >
-
-        </div>
-
-        <div class="full">
-
-          <label>
-            Description
-          </label>
-
-          <textarea
-            id="productDescription"
-            placeholder="Short product description"
-          >${escapeHtml(description)}</textarea>
-
-        </div>
-
-        <div class="full">
-
-          <label>
-            Product Photo
-          </label>
-
-          <input
-            id="productImage"
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            onchange="previewProductPhoto()"
-          >
-
-          ${
-            image
-            ?
-            `
-            <img
-              id="photoPreview"
-              class="preview"
-              src="${escapeHtml(image)}"
-              onerror="this.style.display='none'"
-            >
-            `
-            :
-            `
-            <div
-              id="photoPreviewBox"
-              class="notice"
-            >
-              No photo selected.
-            </div>
-
-            <img
-              id="photoPreview"
-              class="preview"
-              style="display:none"
-            >
-            `
-          }
-
-        </div>
-
-        <div class="full">
-
-          <button
-            class="primary"
-            onclick="saveProduct('${productId}')"
-          >
-            ${isEdit ? 'SAVE CHANGES' : 'ADD PRODUCT'}
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-  `;
-}
-
-/* =========================================================
-   PREVIEW PRODUCT PHOTO
-========================================================= */
-
-function previewProductPhoto(){
-
-  const fileInput =
-    document.getElementById('productImage');
-
-  const preview =
-    document.getElementById('photoPreview');
-
-  if(!fileInput || !preview){
-    return;
-  }
-
-  const file =
-    fileInput.files &&
-    fileInput.files[0];
-
-  if(!file){
-    return;
-  }
-
-  if(file.size > 2000000){
-
-    alert(
-      'Please choose an image smaller than 2MB.'
+function addToCart(id){
+
+  const product =
+    products.find(
+      item =>
+        Number(item.id) ===
+        Number(id)
     );
 
-    fileInput.value = '';
-
+  if(!product){
     return;
   }
 
-  const reader =
-    new FileReader();
+  const stock =
+    Number(
+      product.stock
+    );
 
-  reader.onload = function(){
+  if(stock < 1){
 
-    preview.src =
-      reader.result;
+    alert(
+      "This product is currently out of stock."
+    );
 
-    preview.style.display =
-      'block';
+    return;
 
-    const box =
-      document.getElementById(
-        'photoPreviewBox'
+  }
+
+  const item =
+    cart.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
+
+  if(item){
+
+    if(
+      Number(item.qty) >=
+      Math.min(
+        99,
+        stock
+      )
+    ){
+
+      alert(
+        "You cannot add more than the available stock."
       );
 
-    if(box){
-      box.style.display =
-        'none';
+      return;
     }
-  };
 
-  reader.readAsDataURL(file);
+    item.qty =
+      Number(item.qty) + 1;
+
+  }else{
+
+    cart.push({
+      ...product,
+      qty:1
+    });
+
+  }
+
+  saveCart();
+  updateCart();
+  openCart();
+
 }
 
-/* =========================================================
-   SAVE PRODUCT
-========================================================= */
+function changeQty(
+  id,
+  delta
+){
 
-async function saveProduct(id){
+  const item =
+    cart.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
+    );
 
-  const name =
-    document.getElementById(
-      'productName'
-    ).value.trim();
+  if(!item){
+    return;
+  }
 
-  const category =
-    document.getElementById(
-      'productCategory'
-    ).value;
-
-  const price =
-    Number(
-      document.getElementById(
-        'productPrice'
-      ).value
+  const product =
+    products.find(
+      x =>
+        Number(x.id) ===
+        Number(id)
     );
 
   const stock =
     Number(
-      document.getElementById(
-        'productStock'
-      ).value
+      product?.stock ??
+      item.stock ??
+      99
     );
 
-  const color =
-    document.getElementById(
-      'productColor'
-    ).value.trim();
+  const next =
+    Number(item.qty) +
+    Number(delta);
 
-  const description =
-    document.getElementById(
-      'productDescription'
-    ).value.trim();
+  if(next < 1){
 
-  if(!name){
-
-    alert(
-      'Please enter a product name.'
-    );
-
-    return;
-  }
-
-  if(!Number.isFinite(price) || price < 0){
-
-    alert(
-      'Please enter a valid product price.'
-    );
+    removeItem(id);
 
     return;
   }
 
   if(
-    !Number.isInteger(stock) ||
-    stock < 0
+    next >
+    Math.min(
+      99,
+      stock
+    )
   ){
 
     alert(
-      'Please enter a valid stock quantity.'
+      "You cannot add more than the available stock."
     );
 
     return;
   }
 
-  const payload = {
-    name,
-    category,
-    price,
-    stock,
-    color,
-    description
-  };
+  item.qty =
+    next;
 
-  const fileInput =
-    document.getElementById(
-      'productImage'
+  saveCart();
+  updateCart();
+
+}
+
+function removeItem(id){
+
+  cart =
+    cart.filter(
+      item =>
+        Number(item.id) !==
+        Number(id)
     );
 
-  const file =
-    fileInput &&
-    fileInput.files &&
-    fileInput.files[0];
+  saveCart();
+  updateCart();
 
-  if(file){
+}
 
-    if(file.size > 2000000){
+function updateCart(){
 
-      alert(
-        'Please choose an image smaller than 2MB.'
-      );
+  const count =
+    cart.reduce(
+      (sum,item) =>
+        sum +
+        Number(
+          item.qty
+        ),
+      0
+    );
 
-      return;
-    }
+  document
+    .getElementById(
+      "cartCount"
+    )
+    .textContent =
+    count;
 
-    try{
+  const box =
+    document.getElementById(
+      "cartItems"
+    );
 
-      payload.image =
-        await fileToDataURL(file);
+  const total =
+    cart.reduce(
+      (sum,item) =>
+        sum +
+        Number(
+          item.price
+        ) *
+        Number(
+          item.qty
+        ),
+      0
+    );
 
-    }catch(error){
+  document
+    .getElementById(
+      "cartTotal"
+    )
+    .textContent =
+    "Total: " +
+    money(total);
 
-      alert(
-        'Unable to read the selected image.'
-      );
+  const checkoutButton =
+    document.getElementById(
+      "checkoutButton"
+    );
 
-      return;
-    }
+  checkoutButton.disabled =
+    cart.length === 0;
+
+  if(!cart.length){
+
+    box.innerHTML = `
+      <div class="loading">
+        Your cart is empty.
+      </div>
+    `;
+
+    return;
+
   }
+
+  box.innerHTML =
+    cart.map(
+      item => `
+
+        <div class="cartItem">
+
+          <img
+            src="${escapeHTML(
+              imagePath(
+                item.img ||
+                item.image
+              )
+            )}"
+            alt="${escapeHTML(
+              item.name
+            )}"
+
+            onerror="
+              this.onerror=null;
+              this.src='assets/product-1.jpg'
+            "
+          >
+
+          <div class="cartContent">
+
+            <b>
+              ${escapeHTML(
+                item.name
+              )}
+            </b>
+
+            <small>
+              ${money(
+                item.price
+              )}
+            </small>
+
+            <div class="qty">
+
+              <button
+                onclick="changeQty(${Number(item.id)},-1)"
+              >
+                −
+              </button>
+
+              <strong>
+                ${Number(item.qty)}
+              </strong>
+
+              <button
+                onclick="changeQty(${Number(item.id)},1)"
+              >
+                +
+              </button>
+
+              <span
+                class="remove"
+                onclick="removeItem(${Number(item.id)})"
+              >
+                Remove
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `
+    ).join("");
+
+}
+
+/* =========================================================
+   CART OPEN / CLOSE
+========================================================= */
+
+function openCart(){
+
+  document
+    .getElementById(
+      "drawer"
+    )
+    .classList.add(
+      "open"
+    );
+
+  lockBody();
+
+}
+
+function closeCart(){
+
+  document
+    .getElementById(
+      "drawer"
+    )
+    .classList.remove(
+      "open"
+    );
+
+  lockBody();
+
+}
+
+/* =========================================================
+   ORDER BUTTON
+========================================================= */
+
+function openProductOrder(id){
+
+  const product =
+    products.find(
+      p =>
+        Number(p.id) ===
+        Number(id)
+    );
+
+  if(!product){
+    return;
+  }
+
+  addToCart(id);
+
+}
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+function openCheckout(){
+
+  if(!cart.length){
+
+    alert(
+      "Your cart is empty."
+    );
+
+    return;
+  }
+
+  document
+    .getElementById(
+      "checkoutTotal"
+    )
+    .textContent =
+    "Order total: " +
+    money(
+      cart.reduce(
+        (sum,item) =>
+          sum +
+          Number(item.price) *
+          Number(item.qty),
+        0
+      )
+    );
+
+  document
+    .getElementById(
+      "checkoutModal"
+    )
+    .classList.add(
+      "open"
+    );
+
+  closeCart();
+
+  lockBody();
+
+}
+
+function closeCheckout(){
+
+  document
+    .getElementById(
+      "checkoutModal"
+    )
+    .classList.remove(
+      "open"
+    );
+
+  lockBody();
+
+}
+
+async function startCheckout(){
+
+  if(!cart.length){
+    return;
+  }
+
+  const name =
+    document
+      .getElementById(
+        "customerName"
+      )
+      .value.trim();
+
+  const email =
+    document
+      .getElementById(
+        "customerEmail"
+      )
+      .value.trim();
+
+  const phone =
+    document
+      .getElementById(
+        "customerPhone"
+      )
+      .value.trim();
+
+  const address =
+    document
+      .getElementById(
+        "customerAddress"
+      )
+      .value.trim();
+
+  const method =
+    document
+      .getElementById(
+        "paymentMethod"
+      )
+      .value;
+
+  if(
+    !name ||
+    !email ||
+    !phone ||
+    !address
+  ){
+
+    alert(
+      "Please complete all customer details."
+    );
+
+    return;
+  }
+
+  const button =
+    document
+      .getElementById(
+        "continuePayment"
+      );
+
+  const oldText =
+    button.textContent;
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "PROCESSING...";
+
+  const payload = {
+
+    customer:{
+      name,
+      email,
+      phone,
+      address
+    },
+
+    items:
+      cart.map(
+        item => ({
+          id:
+            Number(item.id),
+          qty:
+            Number(item.qty)
+        })
+      )
+
+  };
 
   try{
 
-    const isEdit =
-      Boolean(id);
+    if(
+      method ===
+      "bank_transfer"
+    ){
 
-    const url =
-      isEdit
-        ? '/api/admin/products/' + id
-        : '/api/admin/products';
+      const response =
+        await fetch(
+          "/api/orders/manual",
+          {
+            method:"POST",
 
-    const data =
-      await api(
-        url,
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                payload
+              )
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if(
+        !response.ok ||
+        !data.ok
+      ){
+
+        throw new Error(
+          data.message ||
+          "Unable to create bank transfer order."
+        );
+
+      }
+
+      cart = [];
+      saveCart();
+      updateCart();
+
+      closeCheckout();
+
+      alert(
+        `Order created successfully.\n\nReference: ${data.reference}\n\nPlease contact us on WhatsApp for bank transfer instructions.`
+      );
+
+      return;
+    }
+
+    if(
+      method ===
+      "store_credit"
+    ){
+
+      if(!customerToken){
+
+        throw new Error(
+          "Please login to your customer account before using Store Credit."
+        );
+
+      }
+
+      const response =
+        await fetch(
+          "/api/customer/store-credit"
+        );
+
+      const credit =
+        await response.json();
+
+      if(
+        !response.ok ||
+        !credit.ok
+      ){
+
+        throw new Error(
+          "Unable to check store credit."
+        );
+
+      }
+
+      const total =
+        cart.reduce(
+          (sum,item) =>
+            sum +
+            Number(item.price) *
+            Number(item.qty),
+          0
+        );
+
+      if(
+        Number(
+          credit.balance
+        ) < total
+      ){
+
+        throw new Error(
+          `Insufficient store credit. Available: ${money(credit.balance)}`
+        );
+
+      }
+
+      alert(
+        "Store Credit checkout will be completed from your account. Please contact the store if confirmation is needed."
+      );
+
+      return;
+    }
+
+    const response =
+      await fetch(
+        "/api/paystack/initialize",
         {
-          method:
-            isEdit
-              ? 'PUT'
-              : 'POST',
+          method:"POST",
 
           headers:{
-            'Content-Type':
-              'application/json'
+            "Content-Type":
+              "application/json",
+            Accept:
+              "application/json"
           },
 
           body:
-            JSON.stringify(payload)
+            JSON.stringify(
+              payload
+            )
         }
       );
 
-    if(data?.product){
+    const data =
+      await response.json();
 
-      alert(
-        isEdit
-          ? 'Product updated successfully.'
-          : 'Product added successfully.'
+    if(
+      !response.ok ||
+      !data.ok ||
+      !data.authorization_url
+    ){
+
+      throw new Error(
+        data.message ||
+        "Unable to initialize payment."
       );
 
-      await showProducts();
-
-      return;
     }
 
-    alert(
-      data?.message ||
-      'Could not save product.'
-    );
+    window.location.href =
+      data.authorization_url;
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      error
+    );
 
     alert(
-      'Unable to save product.'
+      error.message ||
+      "Checkout failed."
     );
 
+    button.disabled =
+      false;
+
+    button.textContent =
+      oldText;
+
   }
+
 }
 
 /* =========================================================
-   FILE TO DATA URL
+   ACCOUNT
 ========================================================= */
 
-function fileToDataURL(file){
+function openAccount(
+  panel = "profile"
+){
 
-  return new Promise(
-    (resolve,reject) => {
-
-      const reader =
-        new FileReader();
-
-      reader.onload =
-        () => resolve(
-          reader.result
-        );
-
-      reader.onerror =
-        reject;
-
-      reader.readAsDataURL(file);
-    }
-  );
-}
-
-/* =========================================================
-   DELETE PRODUCT
-========================================================= */
-
-async function deleteProduct(id){
-
-  if(!id){
-    return;
-  }
-
-  const confirmed =
-    confirm(
-      'Delete this product from the store?'
+  document
+    .getElementById(
+      "accountModal"
+    )
+    .classList.add(
+      "open"
     );
 
-  if(!confirmed){
-    return;
+  lockBody();
+
+  if(customerToken){
+
+    document
+      .getElementById(
+        "accountAuth"
+      )
+      .style.display =
+      "none";
+
+    document
+      .getElementById(
+        "accountContent"
+      )
+      .style.display =
+      "block";
+
+    loadProfile();
+
+    accountTab(
+      panel,
+      document.querySelector(
+        `.accountTab`
+      )
+    );
+
+  }else{
+
+    renderAccountAuth();
+
   }
+
+}
+
+function closeAccount(){
+
+  document
+    .getElementById(
+      "accountModal"
+    )
+    .classList.remove(
+      "open"
+    );
+
+  lockBody();
+
+}
+
+function renderAccountAuth(){
+
+  document
+    .getElementById(
+      "accountAuth"
+    )
+    .style.display =
+    "block";
+
+  document
+    .getElementById(
+      "accountContent"
+    )
+    .style.display =
+    "none";
+
+  document
+    .getElementById(
+      "accountAuth"
+    )
+    .innerHTML = `
+
+      <div
+        class="infoCard"
+      >
+
+        <b>
+          Customer Account
+        </b>
+
+        <p
+          style="
+            color:var(--muted);
+            margin-top:5px
+          "
+        >
+          Sign in or create an account
+          to access Orders, Addresses,
+          Store Credit and Refund History.
+        </p>
+
+      </div>
+
+      <div class="formRow">
+
+        <div class="field">
+
+          <label>
+            Email
+          </label>
+
+          <input
+            id="accountEmail"
+            type="email"
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label>
+            Password
+          </label>
+
+          <input
+            id="accountPassword"
+            type="password"
+          >
+
+        </div>
+
+      </div>
+
+      <button
+        class="primaryBtn"
+        style="
+          width:100%;
+          padding:12px;
+          border-radius:22px;
+        "
+        onclick="customerLogin()"
+      >
+        LOGIN
+      </button>
+
+      <div
+        id="loginMessage"
+        style="
+          margin-top:8px;
+          color:var(--danger);
+          font-size:13px
+        "
+      ></div>
+
+      <hr
+        style="
+          margin:18px 0;
+          border:0;
+          border-top:1px solid var(--line)
+        "
+      >
+
+      <h3
+        style="
+          color:var(--wine);
+          margin-bottom:8px
+        "
+      >
+        New Customer
+      </h3>
+
+      <div class="field">
+
+        <label>
+          Full Name
+        </label>
+
+        <input
+          id="signupName"
+        >
+
+      </div>
+
+      <div class="formRow">
+
+        <div class="field">
+
+          <label>
+            Email
+          </label>
+
+          <input
+            id="signupEmail"
+            type="email"
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label>
+            Phone
+          </label>
+
+          <input
+            id="signupPhone"
+          >
+
+        </div>
+
+      </div>
+
+      <div class="field">
+
+        <label>
+          Password
+        </label>
+
+        <input
+          id="signupPassword"
+          type="password"
+        >
+
+      </div>
+
+      <button
+        class="smallBtn"
+        onclick="customerSignup()"
+        style="width:100%"
+      >
+        CREATE ACCOUNT
+      </button>
+    `;
+
+}
+
+async function customerLogin(){
+
+  const email =
+    document
+      .getElementById(
+        "accountEmail"
+      )
+      .value.trim();
+
+  const password =
+    document
+      .getElementById(
+        "accountPassword"
+      )
+      .value;
+
+  const message =
+    document
+      .getElementById(
+        "loginMessage"
+      );
 
   try{
 
-    const data =
-      await api(
-        '/api/admin/products/' + id,
+    const response =
+      await fetch(
+        "/api/customer/login",
         {
-          method:'DELETE'
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              email,
+              password
+            })
         }
       );
 
-    if(data?.ok){
+    const data =
+      await response.json();
 
-      alert(
+    if(
+      !response.ok ||
+      !data.ok
+    ){
+
+      throw new Error(
         data.message ||
-        'Product removed from the store.'
+        "Login failed."
       );
 
-      await showProducts();
-
-      return;
     }
 
-    alert(
-      data?.message ||
-      'Could not delete product.'
+    customerToken =
+      data.token;
+
+    localStorage.setItem(
+      "faceOfStyleCustomerToken",
+      customerToken
     );
+
+    openAccount();
 
   }catch(error){
 
-    console.error(error);
+    message.textContent =
+      error.message;
+
+  }
+
+}
+
+async function customerSignup(){
+
+  const name =
+    document
+      .getElementById(
+        "signupName"
+      )
+      .value.trim();
+
+  const email =
+    document
+      .getElementById(
+        "signupEmail"
+      )
+      .value.trim();
+
+  const phone =
+    document
+      .getElementById(
+        "signupPhone"
+      )
+      .value.trim();
+
+  const password =
+    document
+      .getElementById(
+        "signupPassword"
+      )
+      .value;
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/customer/signup",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              name,
+              email,
+              phone,
+              password
+            })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(
+      !response.ok ||
+      !data.ok
+    ){
+
+      throw new Error(
+        data.message ||
+        "Unable to create account."
+      );
+
+    }
+
+    customerToken =
+      data.token;
+
+    localStorage.setItem(
+      "faceOfStyleCustomerToken",
+      customerToken
+    );
+
+    openAccount();
+
+  }catch(error){
 
     alert(
-      'Unable to delete product.'
+      error.message
     );
 
   }
+
+}
+
+async function accountFetch(
+  url,
+  options={}
+){
+
+  options.headers = {
+    ...(options.headers || {}),
+    Authorization:
+      "Bearer " +
+      customerToken
+  };
+
+  const response =
+    await fetch(
+      url,
+      options
+    );
+
+  const data =
+    await response.json();
+
+  if(
+    response.status ===
+    401
+  ){
+
+    customerLogout();
+
+    return null;
+  }
+
+  return data;
+
+}
+
+function accountTab(
+  name,
+  button
+){
+
+  document
+    .querySelectorAll(
+      ".accountTab"
+    )
+    .forEach(
+      el =>
+        el.classList.remove(
+          "active"
+        )
+    );
+
+  if(button){
+    button.classList.add(
+      "active"
+    );
+  }
+
+  document
+    .querySelectorAll(
+      ".accountPanel"
+    )
+    .forEach(
+      el =>
+        el.classList.remove(
+          "active"
+        )
+    );
+
+  const panel =
+    document.getElementById(
+      "panel" +
+      name.charAt(0).toUpperCase() +
+      name.slice(1)
+    );
+
+  if(panel){
+    panel.classList.add(
+      "active"
+    );
+  }
+
+  if(name === "profile"){
+    loadProfile();
+  }
+
+  if(name === "orders"){
+    loadCustomerOrders();
+  }
+
+  if(name === "addresses"){
+    loadAddresses();
+  }
+
+  if(name === "credit"){
+    loadCredit();
+  }
+
+  if(name === "refunds"){
+    loadRefunds();
+  }
+
+}
+
+async function loadProfile(){
+
+  const panel =
+    document.getElementById(
+      "panelProfile"
+    );
+
+  const data =
+    await accountFetch(
+      "/api/customer/me"
+    );
+
+  if(!data){
+    return;
+  }
+
+  const c =
+    data.customer ||
+    {};
+
+  panel.innerHTML = `
+
+    <div class="infoCard">
+
+      <b>
+        Profile
+      </b>
+
+      <div
+        class="field"
+        style="margin-top:10px"
+      >
+
+        <label>
+          Name
+        </label>
+
+        <input
+          id="profileName"
+          value="${escapeHTML(
+            c.name
+          )}"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>
+          Email
+        </label>
+
+        <input
+          value="${escapeHTML(
+            c.email
+          )}"
+          disabled
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>
+          Phone
+        </label>
+
+        <input
+          id="profilePhone"
+          value="${escapeHTML(
+            c.phone || ""
+          )}"
+        >
+
+      </div>
+
+      <button
+        class="primaryBtn"
+        style="
+          width:100%;
+          padding:12px;
+          border-radius:22px;
+        "
+        onclick="saveProfile()"
+      >
+        SAVE PROFILE
+      </button>
+
+    </div>
+
+    <button
+      class="smallBtn"
+      onclick="customerLogout()"
+    >
+      Logout
+    </button>
+  `;
+
+}
+
+async function saveProfile(){
+
+  const name =
+    document
+      .getElementById(
+        "profileName"
+      )
+      .value.trim();
+
+  const phone =
+    document
+      .getElementById(
+        "profilePhone"
+      )
+      .value.trim();
+
+  const data =
+    await accountFetch(
+      "/api/customer/me",
+      {
+        method:"PUT",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify({
+            name,
+            phone
+          })
+      }
+    );
+
+  if(
+    data?.ok
+  ){
+
+    alert(
+      "Profile updated successfully."
+    );
+
+    loadProfile();
+
+  }else{
+
+    alert(
+      data?.message ||
+      "Unable to update profile."
+    );
+
+  }
+
+}
+
+async function loadCustomerOrders(){
+
+  const panel =
+    document.getElementById(
+      "panelOrders"
+    );
+
+  const data =
+    await accountFetch(
+      "/api/customer/orders"
+    );
+
+  if(!data){
+    return;
+  }
+
+  const orders =
+    data.orders ||
+    [];
+
+  if(!orders.length){
+
+    panel.innerHTML = `
+      <div class="infoCard">
+        <b>
+          Orders
+        </b>
+
+        <p
+          style="
+            color:var(--muted);
+            margin-top:5px
+          "
+        >
+          No orders yet.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  panel.innerHTML =
+    orders.map(
+      order => `
+
+        <div class="infoCard">
+
+          <b>
+            ${escapeHTML(
+              order.reference
+            )}
+          </b>
+
+          <div
+            style="
+              color:var(--muted);
+              font-size:13px;
+              margin:4px 0
+            "
+          >
+            ${money(
+              order.total
+            )}
+          </div>
+
+          <span class="orderStatus">
+            ${escapeHTML(
+              order.order_status ||
+              "PENDING"
+            )}
+          </span>
+
+          <div
+            style="
+              margin-top:7px;
+              color:var(--muted);
+              font-size:12px
+            "
+          >
+            Payment:
+            ${escapeHTML(
+              order.payment_status
+            )}
+          </div>
+
+        </div>
+      `
+    ).join("");
+
+}
+
+async function loadAddresses(){
+
+  const panel =
+    document.getElementById(
+      "panelAddresses"
+    );
+
+  const data =
+    await accountFetch(
+      "/api/customer/addresses"
+    );
+
+  if(!data){
+    return;
+  }
+
+  const addresses =
+    data.addresses ||
+    [];
+
+  panel.innerHTML = `
+
+    <div class="infoCard">
+
+      <b>
+        Add Delivery Address
+      </b>
+
+      <div class="field">
+
+        <label>
+          Label
+        </label>
+
+        <input
+          id="addressLabel"
+          value="Home"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>
+          Address
+        </label>
+
+        <textarea
+          id="addressText"
+        ></textarea>
+
+      </div>
+
+      <div class="formRow">
+
+        <div class="field">
+
+          <label>
+            City
+          </label>
+
+          <input
+            id="addressCity"
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label>
+            State
+          </label>
+
+          <input
+            id="addressState"
+          >
+
+        </div>
+
+      </div>
+
+      <button
+        class="primaryBtn"
+        style="
+          width:100%;
+          padding:11px;
+          border-radius:22px
+        "
+        onclick="saveAddress()"
+      >
+        SAVE ADDRESS
+      </button>
+
+    </div>
+
+    ${
+      addresses.length
+        ? addresses
+            .map(
+              address => `
+
+                <div class="infoCard">
+
+                  <b>
+                    ${escapeHTML(
+                      address.label
+                    )}
+                  </b>
+
+                  <p
+                    style="
+                      color:var(--muted)
+                    "
+                  >
+                    ${escapeHTML(
+                      address.address
+                    )}
+                    <br>
+                    ${escapeHTML(
+                      address.city || ""
+                    )}
+                    ${
+                      address.state
+                        ? ", " +
+                          escapeHTML(
+                            address.state
+                          )
+                        : ""
+                    }
+                  </p>
+
+                </div>
+              `
+            )
+            .join("")
+        : ""
+    }
+  `;
+
+}
+
+async function saveAddress(){
+
+  const payload = {
+
+    label:
+      document
+        .getElementById(
+          "addressLabel"
+        )
+        .value.trim(),
+
+    address:
+      document
+        .getElementById(
+          "addressText"
+        )
+        .value.trim(),
+
+    city:
+      document
+        .getElementById(
+          "addressCity"
+        )
+        .value.trim(),
+
+    state:
+      document
+        .getElementById(
+          "addressState"
+        )
+        .value.trim()
+
+  };
+
+  const data =
+    await accountFetch(
+      "/api/customer/addresses",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify(
+            payload
+          )
+      }
+    );
+
+  if(
+    data?.ok
+  ){
+
+    alert(
+      "Address saved."
+    );
+
+    loadAddresses();
+
+  }else{
+
+    alert(
+      data?.message ||
+      "Unable to save address."
+    );
+
+  }
+
+}
+
+async function loadCredit(){
+
+  const panel =
+    document.getElementById(
+      "panelCredit"
+    );
+
+  const data =
+    await accountFetch(
+      "/api/customer/store-credit"
+    );
+
+  if(!data){
+    return;
+  }
+
+  panel.innerHTML = `
+
+    <div class="infoCard">
+
+      <b>
+        Available Store Credit
+      </b>
+
+      <div
+        class="credit"
+        style="margin-top:7px"
+      >
+        ${money(
+          data.balance
+        )}
+      </div>
+
+    </div>
+
+  `;
+
+  if(
+    data.transactions?.length
+  ){
+
+    panel.innerHTML +=
+      data.transactions
+        .map(
+          tx => `
+
+            <div class="infoCard">
+
+              <b>
+                ${escapeHTML(
+                  tx.type
+                )}
+              </b>
+
+              <div>
+                ${money(
+                  tx.amount
+                )}
+              </div>
+
+              <small
+                style="
+                  color:var(--muted)
+                "
+              >
+                ${escapeHTML(
+                  tx.note || ""
+                )}
+              </small>
+
+            </div>
+          `
+        ).join("");
+
+  }
+
+}
+
+async function loadRefunds(){
+
+  const panel =
+    document.getElementById(
+      "panelRefunds"
+    );
+
+  const data =
+    await accountFetch(
+      "/api/customer/refunds"
+    );
+
+  if(!data){
+    return;
+  }
+
+  if(
+    !data.refunds?.length
+  ){
+
+    panel.innerHTML = `
+      <div class="infoCard">
+        <b>
+          Refund History
+        </b>
+
+        <p
+          style="
+            color:var(--muted);
+            margin-top:6px
+          "
+        >
+          No refunds yet.
+        </p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+  panel.innerHTML =
+    data.refunds.map(
+      refund => `
+
+        <div class="infoCard">
+
+          <b>
+            ${escapeHTML(
+              refund.reference ||
+              "Refund"
+            )}
+          </b>
+
+          <div>
+            ${money(
+              refund.amount
+            )}
+          </div>
+
+          <span class="orderStatus">
+            ${escapeHTML(
+              refund.status
+            )}
+          </span>
+
+        </div>
+      `
+    ).join("");
+
+}
+
+function customerLogout(){
+
+  customerToken = "";
+
+  localStorage.removeItem(
+    "faceOfStyleCustomerToken"
+  );
+
+  renderAccountAuth();
+
 }
 
 /* =========================================================
-   SETTINGS
+   ORDER TRACKING
 ========================================================= */
 
-async function showSettings(){
+async function trackOrder(){
 
-  activateTab('settingsTab');
+  const reference =
+    document
+      .getElementById(
+        "trackingReference"
+      )
+      .value.trim();
 
-  const content =
-    document.getElementById('content');
+  const box =
+    document.getElementById(
+      "trackingResult"
+    );
 
-  content.innerHTML = `
-    <div class="panel">
+  if(!reference){
 
-      <h2>Store Settings</h2>
-
-      <div class="loading">
-        Checking store configuration...
+    box.innerHTML = `
+      <div class="infoCard">
+        Please enter an order reference.
       </div>
+    `;
 
+    return;
+  }
+
+  box.innerHTML = `
+    <div class="infoCard">
+      Checking order...
     </div>
   `;
 
@@ -2092,105 +4315,122 @@ async function showSettings(){
 
     const response =
       await fetch(
-        '/api/health'
+        "/api/order-tracking/" +
+        encodeURIComponent(
+          reference
+        )
       );
 
     const data =
       await response.json();
 
-    content.innerHTML = `
+    if(
+      !response.ok ||
+      !data.ok
+    ){
 
-      <div class="panel">
+      throw new Error(
+        data.message ||
+        "Order not found."
+      );
 
-        <h2>Store Settings</h2>
+    }
 
-        <p>
-          <b>Store:</b>
-          Face of Style Hijab Factory
+    box.innerHTML = `
+      <div class="infoCard">
+
+        <b>
+          ${escapeHTML(
+            data.order.reference
+          )}
+        </b>
+
+        <p
+          style="
+            color:var(--muted);
+            margin-top:5px
+          "
+        >
+          Payment:
+          ${escapeHTML(
+            data.order.payment_status
+          )}
         </p>
 
-        <p>
-          <b>Database:</b>
-          ${
-            data.database
-              ? 'Configured ✓'
-              : 'Not configured'
-          }
+        <p
+          style="
+            color:var(--muted)
+          "
+        >
+          Order Status:
+          <span class="orderStatus">
+            ${escapeHTML(
+              data.order.order_status
+            )}
+          </span>
         </p>
 
-        <p>
-          <b>Paystack:</b>
-          ${
-            data.paystackConfigured
-              ? 'Configured ✓'
-              : 'Not configured'
-          }
+        <p
+          style="
+            color:var(--muted)
+          "
+        >
+          Total:
+          ${money(
+            data.order.total
+          )}
         </p>
-
-        <p>
-          <b>Admin:</b>
-          ${
-            data.adminConfigured
-              ? 'Configured ✓'
-              : 'Not configured'
-          }
-        </p>
-
-        <p>
-          <b>WhatsApp:</b>
-          0906 582 8886
-        </p>
-
-        <div class="notice">
-
-          <b>Security:</b>
-
-          Never place the Paystack Secret Key
-          inside this HTML file or in the browser.
-
-          Keep the secret key inside the Render
-          server environment variables.
-
-        </div>
 
       </div>
-
     `;
 
   }catch(error){
 
-    console.error(error);
-
-    content.innerHTML = `
-
-      <div class="panel">
-
-        <h2>Store Settings</h2>
-
-        <div class="notice">
-          Unable to check server configuration.
-        </div>
-
+    box.innerHTML = `
+      <div class="infoCard error">
+        ${escapeHTML(
+          error.message
+        )}
       </div>
-
     `;
 
   }
+
 }
+
+/* =========================================================
+   ESC KEY
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key ===
+      "Escape"
+    ){
+
+      closeCart();
+      closeCheckout();
+      closeAccount();
+
+    }
+
+  }
+);
 
 /* =========================================================
    START
 ========================================================= */
 
-if(token){
+loadCart();
 
-  dashboard();
+updateCart();
 
-}else{
+loadConfig();
 
-  login();
-
-}
+loadProducts();
 
 </script>
 
