@@ -1835,6 +1835,7 @@ function productForm(
                 "Abaya",
                 "Gown",
                 "Hijab",
+                "cap",
                 "Custom",
                 "Fashion"
               ].map(
@@ -1872,7 +1873,7 @@ function productForm(
             <input
               id="productPrice"
               type="number"
-              min="0"
+              min="1"
               step="0.01"
               value="${Number(
                 product.price ||
@@ -1891,7 +1892,7 @@ function productForm(
             <input
               id="productStock"
               type="number"
-              min="0"
+              min="1"
               step="1"
               value="${Number(
                 product.stock ||
