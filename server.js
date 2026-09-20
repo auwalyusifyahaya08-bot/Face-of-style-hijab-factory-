@@ -1,57 +1,366 @@
 import 'dotenv/config';
 import express from 'express';
-import pg from 'pg';
-import crypto from 'crypto';
 import path from 'path';
+import crypto from 'crypto';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-const { Pool } = pg;
+const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = Number(process.env.PORT || 3000);
+const BASE_URL = (
+  process.env.BASE_URL ||
+  `http://localhost:${PORT}`
+).replace(/\/$/, '');
+
+const DATA = path.join(__dirname, 'data');
+const ORDERS_FILE = path.join(DATA, 'orders.json');
+const PRODUCTS_FILE = path.join(DATA, 'products.json');
+
+fs.mkdirSync(DATA, { recursive: true });
+
+if (!fs.existsSync(ORDERS_FILE)) {
+  fs.writeFileSync(ORDERS_FILE, '[]');
+}
+
+const DEFAULT_PRODUCTS = [
+  {
+    id: 1,
+    name: 'Elegant Zip Abaya',
+    cat: 'Abaya',
+    price: 25000,
+    color: 'Black',
+    colors: ['Black'],
+    sizes: 'Free Size',
+    stock: 10,
+    image: 'assets/product-1.jpg',
+    images: ['assets/product-1.jpg'],
+    desc: 'Flowing full-length abaya with refined finishing.'
+  },
+  {
+    id: 2,
+    name: 'Two-Tone Signature Gown',
+    cat: 'Gown',
+    price: 22000,
+    color: 'Two Tone',
+    colors: ['Black', 'White'],
+    sizes: 'Free Size',
+    stock: 10,
+    image: 'assets/product-2.jpg',
+    images: ['assets/product-2.jpg'],
+    desc: 'Elegant two-tone modest gown design.'
+  },
+  {
+    id: 3,
+    name: 'Teal Classic Hijab Dress',
+    cat: 'Gown',
+    price: 20000,
+    color: 'Teal',
+    colors: ['Teal'],
+    sizes: 'Free Size',
+    stock: 10,
+    image: 'assets/product-3.jpg',
+    images: ['assets/product-3.jpg'],
+    desc: 'Comfortable modest dress with clean detailing.'
+  },
+  {
+    id: 4,
+    name: 'Premium Black & White',
+    cat: 'Fashion',
+    price: 28000,
+    color: 'Black & White',
+    colors: ['Black', 'White'],
+    sizes: 'Free Size',
+    stock: 10,
+    image: 'assets/product-4.jpg',
+    images: ['assets/product-4.jpg'],
+    desc: 'Statement modest outfit with premium contrast.'
+  },
+  {
+    id: 5,
+    name: 'Ruffle Hijab Collection',
+    cat: 'Hijab',
+    price: 12000,
+    color: 'Mixed',
+    colors: ['Black', 'Rose', 'Navy'],
+    sizes: 'Free Size',
+    stock: 10,
+    image: 'assets/product-5.jpg',
+    images: ['assets/product-5.jpg'],
+    desc: 'Soft colourful hijab styles with beautiful ruffles.'
+  },
+  {
+    id: 6,
+    name: 'Rose Signature Gown',
+    cat: 'Custom',
+    price: 24000,
+    color: 'Rose',
+    colors: ['Rose'],
+    sizes: 'Custom',
+    stock: 10,
+    image: 'assets/product-6.jpg',
+    images: ['assets/product-6.jpg'],
+    desc: 'Elegant flowing gown; custom colours available.'
+  }
+];
+
+if (!fs.existsSync(PRODUCTS_FILE)) {
+  fs.writeFileSync(
+    PRODUCTS_FILE,
+    JSON.stringify(DEFAULT_PRODUCTS, null, 2)
+  );
+}
 
 /* =========================================================
-   FACE OF STYLE HIJAB FACTORY — VERSION 2
-   SERVER.JS
+   FILE HELPERS
 ========================================================= */
+
+function safeReadJSON(file, fallback = []) {
+  try {
+    if (!fs.existsSync(file)) {
+      fs.writeFileSync(file, JSON.stringify(fallback, null, 2));
+      return fallback;
+    }
+
+    const text = fs.readFileSync(file, 'utf8').trim();
+
+    if (!text) return fallback;
+
+    const data = JSON.parse(text);
+
+    return Array.isArray(data) ? data : fallback;
+  } catch (error) {
+    console.error(`JSON read error: ${file}`, error);
+    return fallback;
+  }
+}
+
+function safeWriteJSON(file, data) {
+  const temp = `${file}.tmp`;
+
+  fs.writeFileSync(
+    temp,
+    JSON.stringify(data, null, 2),
+    'utf8'
+  );
+
+  fs.renameSync(temp, file);
+}
 
 /* =========================================================
-   CONFIGURATION
+   PRODUCT NORMALIZATION
 ========================================================= */
 
-const PAYSTACK_SECRET_KEY =
-  process.env.PAYSTACK_SECRET_KEY || '';
+function normalizeProduct(product, index = 0) {
+  const id = Number(product.id) || index + 1;
 
-const ADMIN_USERNAME =
-  process.env.ADMIN_USERNAME || '';
+  const category =
+    product.cat ||
+    product.category ||
+    'Fashion';
 
-const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD || '';
+  const description =
+    product.desc ||
+    product.description ||
+    '';
 
-const DATABASE_URL =
-  process.env.DATABASE_URL || '';
+  const price = Number(product.price) || 0;
 
-const WHATSAPP_NUMBER =
-  process.env.WHATSAPP_NUMBER || '2349065828886';
+  let colors = [];
 
-const isProduction =
-  process.env.NODE_ENV === 'production';
+  if (Array.isArray(product.colors)) {
+    colors = product.colors;
+  } else if (product.color) {
+    colors = String(product.color)
+      .split(',')
+      .map(x => x.trim())
+      .filter(Boolean);
+  }
+
+  let image =
+    product.image ||
+    product.img ||
+    '';
+
+  let images = [];
+
+  if (Array.isArray(product.images)) {
+    images = product.images.filter(Boolean);
+  }
+
+  if (!images.length && image) {
+    images = [image];
+  }
+
+  /*
+   * IMPORTANT:
+   * If an old V2 product has no image saved,
+   * automatically connect it to the matching
+   * assets/product-X.jpg image.
+   */
+  if (!image && id >= 1 && id <= 6) {
+    image = `assets/product-${id}.jpg`;
+    images = [image];
+  }
+
+  return {
+    ...product,
+
+    id,
+    name: String(product.name || 'Unnamed Product'),
+
+    cat: String(category),
+
+    category: String(category),
+
+    price,
+
+    color:
+      product.color ||
+      colors.join(', '),
+
+    colors,
+
+    sizes:
+      product.sizes ||
+      'Free Size',
+
+    stock:
+      Number.isFinite(Number(product.stock))
+        ? Number(product.stock)
+        : 0,
+
+    image,
+
+    img: image,
+
+    images,
+
+    desc: String(description),
+
+    description: String(description)
+  };
+}
+
+function readProducts() {
+  const raw = safeReadJSON(
+    PRODUCTS_FILE,
+    DEFAULT_PRODUCTS
+  );
+
+  return raw.map(normalizeProduct);
+}
+
+function writeProducts(products) {
+  const normalized = products.map(normalizeProduct);
+
+  safeWriteJSON(
+    PRODUCTS_FILE,
+    normalized
+  );
+}
+
+function readOrders() {
+  return safeReadJSON(
+    ORDERS_FILE,
+    []
+  );
+}
+
+function writeOrders(orders) {
+  safeWriteJSON(
+    ORDERS_FILE,
+    orders
+  );
+}
 
 /* =========================================================
-   DATABASE
+   ADMIN SESSIONS
 ========================================================= */
 
-const pool = DATABASE_URL
-  ? new Pool({
-      connectionString: DATABASE_URL,
-      ssl: isProduction
-        ? { rejectUnauthorized: false }
-        : false
-    })
-  : null;
+const adminSessions = new Set();
+
+function adminAuth(req, res, next) {
+  const header =
+    req.headers.authorization || '';
+
+  const token =
+    header.startsWith('Bearer ')
+      ? header.slice(7)
+      : '';
+
+  if (!token || !adminSessions.has(token)) {
+    return res.status(401).json({
+      message: 'Unauthorized'
+    });
+  }
+
+  next();
+}
+
+/* =========================================================
+   ORDER HELPERS
+========================================================= */
+
+function createReference() {
+  return (
+    `FS-${Date.now()}-${crypto
+      .randomBytes(3)
+      .toString('hex')}`
+  ).toUpperCase();
+}
+
+function calculateOrder(items) {
+  if (!Array.isArray(items) || !items.length) {
+    return null;
+  }
+
+  const products = readProducts();
+
+  let total = 0;
+
+  const cleanItems = [];
+
+  for (const item of items) {
+    const product = products.find(
+      p => Number(p.id) === Number(item.id)
+    );
+
+    const qty =
+      Math.floor(Number(item.qty));
+
+    if (
+      !product ||
+      !Number.isInteger(qty) ||
+      qty < 1 ||
+      qty > 99
+    ) {
+      return null;
+    }
+
+    if (Number(product.stock) < qty) {
+      return null;
+    }
+
+    total +=
+      Number(product.price) * qty;
+
+    cleanItems.push({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      qty
+    });
+  }
+
+  return {
+    items: cleanItems,
+    total
+  };
+}
 
 /* =========================================================
    EXPRESS
@@ -59,887 +368,219 @@ const pool = DATABASE_URL
 
 app.use(
   express.json({
-    limit: '1mb',
-
+    limit: '6mb',
     verify: (req, res, buf) => {
-      req.rawBody =
-        Buffer.from(buf);
+      req.rawBody = buf;
     }
   })
 );
 
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: '1mb'
-  })
-);
+app.use(express.urlencoded({
+  extended: true,
+  limit: '6mb'
+}));
 
 app.use(
-  express.static(
-    path.join(
-      __dirname,
-      'public'
-    )
-  )
+  express.static(__dirname)
 );
 
 /* =========================================================
-   SIMPLE AUTH TOKENS
+   HOME / ADMIN ALIASES
 ========================================================= */
 
-const sessions =
-  new Map();
-
-function createSession(
-  username
-) {
-  const token =
-    crypto
-      .randomBytes(32)
-      .toString('hex');
-
-  sessions.set(
-    token,
-    {
-      username,
-      createdAt:
-        Date.now()
-    }
+app.get('/admin', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, 'admin.html')
   );
-
-  return token;
-}
-
-function getSession(req) {
-
-  const auth =
-    req.headers.authorization || '';
-
-  if (
-    !auth.startsWith(
-      'Bearer '
-    )
-  ) {
-    return null;
-  }
-
-  const token =
-    auth
-      .slice(7)
-      .trim();
-
-  if (!token) {
-    return null;
-  }
-
-  const session =
-    sessions.get(token);
-
-  if (!session) {
-    return null;
-  }
-
-  const maxAge =
-    1000 *
-    60 *
-    60 *
-    24;
-
-  if (
-    Date.now() -
-      session.createdAt >
-    maxAge
-  ) {
-
-    sessions.delete(token);
-
-    return null;
-  }
-
-  return {
-    token,
-    ...session
-  };
-}
-
-function requireAdmin(
-  req,
-  res,
-  next
-) {
-
-  const session =
-    getSession(req);
-
-  if (!session) {
-
-    return res
-      .status(401)
-      .json({
-        ok: false,
-        message:
-          'Admin authentication required.'
-      });
-  }
-
-  req.admin =
-    session;
-
-  next();
-}
-
-/* =========================================================
-   DATABASE INITIALIZATION
-   FIXED FOR FACE OF STYLE VERSION 2
-
-   IMPORTANT:
-   The old database may contain an index based on:
-
-       orders.status
-
-   Version 2 no longer uses orders.status.
-
-   Version 2 uses:
-
-       orders.payment_status
-       orders.order_status
-
-   This initialization removes old status indexes safely
-   and makes sure the Version 2 columns exist.
-========================================================= */
-
-async function initDatabase() {
-
-  if (!pool) {
-
-    console.warn(
-      'DATABASE_URL is not configured. Database features are disabled.'
-    );
-
-    return;
-  }
-
-  /* =======================================================
-     PRODUCTS TABLE
-  ======================================================= */
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS products (
-      id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL,
-      category TEXT NOT NULL DEFAULT 'Fashion',
-      description TEXT DEFAULT '',
-      price NUMERIC(12,2) NOT NULL DEFAULT 0,
-      color TEXT DEFAULT '',
-      image TEXT DEFAULT '',
-      stock INTEGER NOT NULL DEFAULT 0,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  `);
-
-  /* =======================================================
-     PRODUCTS MIGRATION
-  ======================================================= */
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS category
-    TEXT NOT NULL DEFAULT 'Fashion'
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS description
-    TEXT DEFAULT ''
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS price
-    NUMERIC(12,2) NOT NULL DEFAULT 0
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS color
-    TEXT DEFAULT ''
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS image
-    TEXT DEFAULT ''
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS stock
-    INTEGER NOT NULL DEFAULT 0
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS active
-    BOOLEAN NOT NULL DEFAULT TRUE
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS created_at
-    TIMESTAMPTZ NOT NULL DEFAULT NOW()
-  `);
-
-  await pool.query(`
-    ALTER TABLE products
-    ADD COLUMN IF NOT EXISTS updated_at
-    TIMESTAMPTZ NOT NULL DEFAULT NOW()
-  `);
-
-  /* =======================================================
-     ORDERS TABLE
-  ======================================================= */
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS orders (
-      id BIGSERIAL PRIMARY KEY,
-      reference TEXT UNIQUE NOT NULL,
-      customer_name TEXT NOT NULL,
-      customer_email TEXT NOT NULL,
-      customer_phone TEXT NOT NULL,
-      delivery_address TEXT NOT NULL,
-      payment_method TEXT NOT NULL DEFAULT 'paystack',
-      payment_status TEXT NOT NULL DEFAULT 'PENDING',
-      order_status TEXT NOT NULL DEFAULT 'PENDING',
-      total NUMERIC(12,2) NOT NULL DEFAULT 0,
-      currency TEXT NOT NULL DEFAULT 'NGN',
-      paystack_reference TEXT,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  `);
-
-  /* =======================================================
-     ORDERS MIGRATION
-  ======================================================= */
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS reference
-    TEXT
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS customer_name
-    TEXT
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS customer_email
-    TEXT
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS customer_phone
-    TEXT
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS delivery_address
-    TEXT
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS payment_method
-    TEXT DEFAULT 'paystack'
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS payment_status
-    TEXT DEFAULT 'PENDING'
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS order_status
-    TEXT DEFAULT 'PENDING'
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS total
-    NUMERIC(12,2) DEFAULT 0
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS currency
-    TEXT DEFAULT 'NGN'
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS paystack_reference
-    TEXT
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS created_at
-    TIMESTAMPTZ DEFAULT NOW()
-  `);
-
-  await pool.query(`
-    ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS updated_at
-    TIMESTAMPTZ DEFAULT NOW()
-  `);
-
-  /* =======================================================
-     IMPORTANT VERSION 2 MIGRATION
-
-     Old versions used:
-
-         orders.status
-
-     Version 2 uses:
-
-         payment_status
-         order_status
-
-     First detect whether an old status column exists.
-  ======================================================= */
-
-  const oldStatusColumn =
-    await pool.query(`
-      SELECT 1
-      FROM information_schema.columns
-      WHERE table_schema = current_schema()
-        AND table_name = 'orders'
-        AND column_name = 'status'
-      LIMIT 1
-    `);
-
-  if (
-    oldStatusColumn.rowCount
-  ) {
-
-    console.log(
-      'Old orders.status column detected. Migrating values to Version 2 fields...'
-    );
-
-    await pool.query(`
-      UPDATE orders
-      SET
-        payment_status =
-          CASE
-            WHEN LOWER(COALESCE(status,'')) IN
-              ('paid','success','successful')
-            THEN 'PAID'
-
-            WHEN LOWER(COALESCE(status,'')) IN
-              ('failed','cancelled')
-            THEN 'FAILED'
-
-            ELSE COALESCE(
-              NULLIF(payment_status,''),
-              'PENDING'
-            )
-          END,
-
-        order_status =
-          CASE
-            WHEN LOWER(COALESCE(status,'')) = 'delivered'
-            THEN 'DELIVERED'
-
-            WHEN LOWER(COALESCE(status,'')) = 'shipped'
-            THEN 'SHIPPED'
-
-            WHEN LOWER(COALESCE(status,'')) = 'processing'
-            THEN 'PROCESSING'
-
-            WHEN LOWER(COALESCE(status,'')) = 'cancelled'
-            THEN 'CANCELLED'
-
-            ELSE COALESCE(
-              NULLIF(order_status,''),
-              'PENDING'
-            )
-          END
-      WHERE TRUE
-    `);
-
-  }
-
-  /* =======================================================
-     REMOVE OLD INDEXES THAT USE orders.status
-
-     This is the main fix for:
-
-       error: column "status" does not exist
-
-     We inspect PostgreSQL itself and remove every index
-     belonging to orders whose definition references status.
-  ======================================================= */
-
-  const legacyIndexes =
-    await pool.query(`
-      SELECT
-        schemaname,
-        indexname
-      FROM pg_indexes
-      WHERE tablename = 'orders'
-        AND indexdef ILIKE '%(status)%'
-    `);
-
-  for (
-    const row
-    of legacyIndexes.rows
-  ) {
-
-    const schema =
-      String(
-        row.schemaname || ''
-      ).replace(
-        /"/g,
-        '""'
-      );
-
-    const indexName =
-      String(
-        row.indexname || ''
-      ).replace(
-        /"/g,
-        '""'
-      );
-
-    if (
-      schema &&
-      indexName
-    ) {
-
-      console.log(
-        `Removing legacy orders.status index: ${row.indexname}`
-      );
-
-      await pool.query(
-        `DROP INDEX IF EXISTS "${schema}"."${indexName}"`
-      );
-
-    }
-  }
-
-  /* =======================================================
-     FIX POSSIBLE OLD NULL VALUES
-  ======================================================= */
-
-  await pool.query(`
-    UPDATE orders
-    SET payment_status = 'PENDING'
-    WHERE payment_status IS NULL
-       OR TRIM(payment_status) = ''
-  `);
-
-  await pool.query(`
-    UPDATE orders
-    SET order_status = 'PENDING'
-    WHERE order_status IS NULL
-       OR TRIM(order_status) = ''
-  `);
-
-  await pool.query(`
-    UPDATE orders
-    SET currency = 'NGN'
-    WHERE currency IS NULL
-       OR TRIM(currency) = ''
-  `);
-
-  await pool.query(`
-    UPDATE orders
-    SET payment_method = 'paystack'
-    WHERE payment_method IS NULL
-       OR TRIM(payment_method) = ''
-  `);
-
-  /* =======================================================
-     ORDER ITEMS TABLE
-  ======================================================= */
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS order_items (
-      id BIGSERIAL PRIMARY KEY,
-      order_id BIGINT NOT NULL
-        REFERENCES orders(id)
-        ON DELETE CASCADE,
-      product_id INTEGER NOT NULL,
-      product_name TEXT NOT NULL,
-      price NUMERIC(12,2) NOT NULL,
-      quantity INTEGER NOT NULL,
-      subtotal NUMERIC(12,2) NOT NULL
-    )
-  `);
-
-  /* =======================================================
-     INDEXES — VERSION 2
-  ======================================================= */
-
-  await pool.query(`
-    CREATE INDEX IF NOT EXISTS
-    idx_products_active
-    ON products(active)
-  `);
-
-  await pool.query(`
-    CREATE INDEX IF NOT EXISTS
-    idx_orders_created
-    ON orders(created_at DESC)
-  `);
-
-  await pool.query(`
-    CREATE INDEX IF NOT EXISTS
-    idx_orders_payment_status
-    ON orders(payment_status)
-  `);
-
-  await pool.query(`
-    CREATE INDEX IF NOT EXISTS
-    idx_orders_order_status
-    ON orders(order_status)
-  `);
-
-  /* =======================================================
-     UNIQUE REFERENCE
-
-     Only create it when possible.
-  ======================================================= */
-
-  await pool.query(`
-    CREATE UNIQUE INDEX IF NOT EXISTS
-    idx_orders_reference_unique
-    ON orders(reference)
-  `);
-
-  console.log(
-    'Face of Style Version 2 database initialized successfully.'
-  );
-}
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function cleanString(
-  value,
-  max = 500
-) {
-
-  return String(
-    value ?? ''
-  )
-    .trim()
-    .slice(
-      0,
-      max
-    );
-}
-
-function positiveInteger(
-  value
-) {
-
-  const number =
-    Number(value);
-
-  if (
-    !Number.isInteger(number) ||
-    number < 1
-  ) {
-    return null;
-  }
-
-  return number;
-}
-
-function positivePrice(
-  value
-) {
-
-  const number =
-    Number(value);
-
-  if (
-    !Number.isFinite(number) ||
-    number < 0
-  ) {
-    return null;
-  }
-
-  return (
-    Math.round(
-      number * 100
-    ) / 100
-  );
-}
-
-function createOrderReference() {
-
-  return (
-    'FS-' +
-    Date.now()
-      .toString(36)
-      .toUpperCase() +
-    '-' +
-    crypto
-      .randomBytes(4)
-      .toString('hex')
-      .toUpperCase()
-  );
-}
-
-function validEmail(
-  email
-) {
-
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-    email
-  );
-}
-
-function validPhone(
-  phone
-) {
-
-  return /^[0-9+\-\s()]{7,25}$/.test(
-    phone
-  );
-}
-
-function normalizeCategory(
-  value
-) {
-
-  const category =
-    cleanString(
-      value,
-      50
-    );
-
-  return (
-    category ||
-    'Fashion'
-  );
-}
-
-/* =========================================================
-   HEALTH CHECK
-========================================================= */
-
-app.get(
-  '/api/health',
-  async (req, res) => {
-
-    let database = false;
-
-    if (pool) {
-
-      try {
-
-        await pool.query(
-          'SELECT 1'
-        );
-
-        database = true;
-
-      } catch (error) {
-
-        console.error(
-          'Database health check error:',
-          error
-        );
-
-      }
-    }
-
-    res.json({
-      ok: true,
-
-      service:
-        'Face of Style Hijab Factory',
-
-      database,
-
-      paystackConfigured:
-        Boolean(
-          PAYSTACK_SECRET_KEY
-        ),
-
-      adminConfigured:
-        Boolean(
-          ADMIN_USERNAME &&
-          ADMIN_PASSWORD
-        )
-    });
-  }
-);
+});
 
 /* =========================================================
    PUBLIC PRODUCTS
 ========================================================= */
 
-app.get(
-  '/api/products',
-  async (req, res) => {
-
-    if (!pool) {
-
-      return res.json({
-        products: []
-      });
-    }
-
-    try {
-
-      const result =
-        await pool.query(`
-          SELECT
-            id,
-            name,
-            category AS cat,
-            description,
-            price,
-            color,
-            image AS img,
-            stock
-          FROM products
-          WHERE active = TRUE
-          ORDER BY created_at DESC
-        `);
-
-      res.json({
-        products:
-          result.rows
-      });
-
-    } catch (error) {
-
-      console.error(
-        'Products error:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Unable to load products.'
-      });
-
-    }
-  }
-);
+app.get('/api/products', (req, res) => {
+  res.json({
+    products: readProducts()
+  });
+});
 
 /* =========================================================
    ADMIN LOGIN
 ========================================================= */
 
-app.post(
-  '/api/admin/login',
-  (req, res) => {
+app.post('/api/admin/login', (req, res) => {
+  const username =
+    String(req.body?.username || '');
 
-    const username =
-      cleanString(
-        req.body?.username,
-        100
-      );
+  const password =
+    String(req.body?.password || '');
 
-    const password =
-      String(
-        req.body?.password ||
-        ''
-      );
+  const expectedUsername =
+    process.env.ADMIN_USERNAME ||
+    process.env.ADMIN_USER;
 
-    if (
-      !ADMIN_USERNAME ||
-      !ADMIN_PASSWORD
-    ) {
+  const expectedPassword =
+    process.env.ADMIN_PASSWORD;
 
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Admin credentials are not configured on the server.'
-        });
-    }
-
-    if (
-      username !==
-        ADMIN_USERNAME ||
-      password !==
-        ADMIN_PASSWORD
-    ) {
-
-      return res
-        .status(401)
-        .json({
-          ok: false,
-          message:
-            'Invalid admin credentials.'
-        });
-    }
-
-    const token =
-      createSession(
-        username
-      );
-
-    res.json({
-      ok: true,
-      token,
-      username
+  if (
+    !expectedUsername ||
+    !expectedPassword
+  ) {
+    return res.status(503).json({
+      message:
+        'Admin credentials are not configured on the server.'
     });
   }
-);
 
-/* =========================================================
-   ADMIN LOGOUT
-========================================================= */
-
-app.post(
-  '/api/admin/logout',
-  requireAdmin,
-  (req, res) => {
-
-    sessions.delete(
-      req.admin.token
-    );
-
-    res.json({
-      ok: true
+  if (
+    username !== expectedUsername ||
+    password !== expectedPassword
+  ) {
+    return res.status(401).json({
+      message:
+        'Invalid username or password.'
     });
   }
-);
+
+  const token =
+    crypto.randomBytes(32).toString('hex');
+
+  adminSessions.add(token);
+
+  res.json({
+    token
+  });
+});
 
 /* =========================================================
-   ADMIN SESSION
+   ADMIN DASHBOARD
 ========================================================= */
 
 app.get(
-  '/api/admin/me',
-  requireAdmin,
+  '/api/admin/dashboard',
+  adminAuth,
   (req, res) => {
+    const orders = readOrders();
+
+    res.json({
+      stats: {
+        orders: orders.length,
+
+        paid: orders.filter(
+          x => x.status === 'paid'
+        ).length,
+
+        pending: orders.filter(
+          x => x.status === 'pending'
+        ).length,
+
+        revenue:
+          orders
+            .filter(
+              x => x.status === 'paid'
+            )
+            .reduce(
+              (sum, x) =>
+                sum + Number(x.total || 0),
+              0
+            )
+      }
+    });
+  }
+);
+
+/* =========================================================
+   ADMIN ORDERS
+========================================================= */
+
+app.get(
+  '/api/admin/orders',
+  adminAuth,
+  (req, res) => {
+    const orders =
+      readOrders()
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        );
+
+    res.json({
+      orders
+    });
+  }
+);
+
+app.get(
+  '/api/admin/orders/:id',
+  adminAuth,
+  (req, res) => {
+    const order =
+      readOrders().find(
+        x => String(x.id) ===
+          String(req.params.id)
+      );
+
+    if (!order) {
+      return res.status(404).json({
+        message: 'Order not found.'
+      });
+    }
+
+    res.json({
+      order
+    });
+  }
+);
+
+app.put(
+  '/api/admin/orders/:id/status',
+  adminAuth,
+  (req, res) => {
+    const allowed = [
+      'new',
+      'processing',
+      'shipped',
+      'delivered',
+      'cancelled'
+    ];
+
+    const status =
+      String(
+        req.body?.status || ''
+      ).toLowerCase();
+
+    if (!allowed.includes(status)) {
+      return res.status(400).json({
+        message:
+          'Invalid order status.'
+      });
+    }
+
+    const orders = readOrders();
+
+    const order =
+      orders.find(
+        x => String(x.id) ===
+          String(req.params.id)
+      );
+
+    if (!order) {
+      return res.status(404).json({
+        message: 'Order not found.'
+      });
+    }
+
+    order.orderStatus = status;
+
+    order.orderStatusUpdatedAt =
+      new Date().toISOString();
+
+    writeOrders(orders);
 
     res.json({
       ok: true,
-      username:
-        req.admin.username
+      order
     });
   }
 );
@@ -950,733 +591,357 @@ app.get(
 
 app.get(
   '/api/admin/products',
-  requireAdmin,
-  async (req, res) => {
-
-    if (!pool) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Database is not configured.'
-        });
-    }
-
-    try {
-
-      const result =
-        await pool.query(`
-          SELECT
-            id,
-            name,
-            category AS cat,
-            description,
-            price,
-            color,
-            image AS img,
-            stock,
-            active,
-            created_at,
-            updated_at
-          FROM products
-          ORDER BY created_at DESC
-        `);
-
-      res.json({
-        ok: true,
-        products:
-          result.rows
-      });
-
-    } catch (error) {
-
-      console.error(
-        'Admin products error:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Unable to load admin products.'
-      });
-
-    }
+  adminAuth,
+  (req, res) => {
+    res.json({
+      products: readProducts()
+    });
   }
 );
-
-/* =========================================================
-   CREATE PRODUCT
-========================================================= */
 
 app.post(
   '/api/admin/products',
-  requireAdmin,
-  async (req, res) => {
-
-    if (!pool) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Database is not configured.'
-        });
-    }
+  adminAuth,
+  (req, res) => {
+    const body = req.body || {};
 
     const name =
-      cleanString(
-        req.body?.name,
-        150
-      );
+      String(body.name || '').trim();
 
     const category =
-      normalizeCategory(
-        req.body?.category ||
-        req.body?.cat
-      );
-
-    const description =
-      cleanString(
-        req.body?.description ||
-        req.body?.desc,
-        1000
-      );
-
-    const color =
-      cleanString(
-        req.body?.color,
-        100
-      );
-
-    const image =
-      cleanString(
-        req.body?.image ||
-        req.body?.img,
-        1000
-      );
+      String(
+        body.cat ||
+        body.category ||
+        'Fashion'
+      ).trim();
 
     const price =
-      positivePrice(
-        req.body?.price
-      );
-
-    const stock =
-      Number(
-        req.body?.stock
-      );
-
-    const safeStock =
-      Number.isInteger(stock)
-        ? stock
-        : 0;
-
-    if (!name) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Product name is required.'
-        });
-    }
-
-    if (price === null) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'A valid product price is required.'
-        });
-    }
-
-    if (
-      safeStock < 0 ||
-      safeStock > 1000000
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Invalid stock quantity.'
-        });
-    }
-
-    try {
-
-      const result =
-        await pool.query(
-          `
-          INSERT INTO products
-          (
-            name,
-            category,
-            description,
-            price,
-            color,
-            image,
-            stock
-          )
-          VALUES
-          ($1,$2,$3,$4,$5,$6,$7)
-          RETURNING *
-          `,
-          [
-            name,
-            category,
-            description,
-            price,
-            color,
-            image,
-            safeStock
-          ]
-        );
-
-      res
-        .status(201)
-        .json({
-          ok: true,
-          product:
-            result.rows[0]
-        });
-
-    } catch (error) {
-
-      console.error(
-        'Create product error:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Unable to create product.'
-      });
-
-    }
-  }
-);
-
-/* =========================================================
-   UPDATE PRODUCT
-========================================================= */
-
-app.put(
-  '/api/admin/products/:id',
-  requireAdmin,
-  async (req, res) => {
-
-    if (!pool) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Database is not configured.'
-        });
-    }
-
-    const id =
-      positiveInteger(
-        req.params.id
-      );
-
-    if (!id) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Invalid product ID.'
-        });
-    }
-
-    const name =
-      cleanString(
-        req.body?.name,
-        150
-      );
-
-    const category =
-      normalizeCategory(
-        req.body?.category ||
-        req.body?.cat
-      );
-
-    const description =
-      cleanString(
-        req.body?.description ||
-        req.body?.desc,
-        1000
-      );
-
-    const color =
-      cleanString(
-        req.body?.color,
-        100
-      );
-
-    const image =
-      cleanString(
-        req.body?.image ||
-        req.body?.img,
-        1000
-      );
-
-    const price =
-      positivePrice(
-        req.body?.price
-      );
-
-    const stock =
-      Number(
-        req.body?.stock
-      );
-
-    const active =
-      req.body?.active !== false;
+      Number(body.price);
 
     if (
       !name ||
-      price === null
+      !Number.isFinite(price) ||
+      price < 0
     ) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Product name and valid price are required.'
-        });
-    }
-
-    if (
-      !Number.isInteger(stock) ||
-      stock < 0 ||
-      stock > 1000000
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Invalid stock quantity.'
-        });
-    }
-
-    try {
-
-      const result =
-        await pool.query(
-          `
-          UPDATE products
-          SET
-            name = $1,
-            category = $2,
-            description = $3,
-            price = $4,
-            color = $5,
-            image = $6,
-            stock = $7,
-            active = $8,
-            updated_at = NOW()
-          WHERE id = $9
-          RETURNING *
-          `,
-          [
-            name,
-            category,
-            description,
-            price,
-            color,
-            image,
-            stock,
-            active,
-            id
-          ]
-        );
-
-      if (!result.rowCount) {
-
-        return res
-          .status(404)
-          .json({
-            ok: false,
-            message:
-              'Product not found.'
-          });
-      }
-
-      res.json({
-        ok: true,
-        product:
-          result.rows[0]
+      return res.status(400).json({
+        message:
+          'Product name and valid price are required.'
       });
+    }
 
-    } catch (error) {
+    const products =
+      readProducts();
 
-      console.error(
-        'Update product error:',
-        error
+    const newId =
+      products.length
+        ? Math.max(
+            ...products.map(
+              p => Number(p.id) || 0
+            )
+          ) + 1
+        : 1;
+
+    const colors =
+      Array.isArray(body.colors)
+        ? body.colors
+        : String(
+            body.color || ''
+          )
+            .split(',')
+            .map(x => x.trim())
+            .filter(Boolean);
+
+    const image =
+      String(
+        body.image || ''
       );
 
-      res.status(500).json({
-        ok: false,
-        message:
-          'Unable to update product.'
-      });
+    const images =
+      Array.isArray(body.images)
+        ? body.images
+        : image
+          ? [image]
+          : [];
 
-    }
+    const product = {
+      id: newId,
+
+      name,
+
+      cat: category,
+
+      category,
+
+      price,
+
+      color:
+        body.color ||
+        colors.join(', '),
+
+      colors,
+
+      sizes:
+        body.sizes ||
+        'Free Size',
+
+      stock:
+        Number(body.stock || 0),
+
+      image,
+
+      img: image,
+
+      images,
+
+      desc:
+        String(
+          body.desc ||
+          body.description ||
+          ''
+        ).slice(0, 1000),
+
+      description:
+        String(
+          body.desc ||
+          body.description ||
+          ''
+        ).slice(0, 1000)
+    };
+
+    products.push(product);
+
+    writeProducts(products);
+
+    res.status(201).json({
+      product
+    });
   }
 );
 
-/* =========================================================
-   DELETE / DEACTIVATE PRODUCT
-========================================================= */
+app.put(
+  '/api/admin/products/:id',
+  adminAuth,
+  (req, res) => {
+    const products =
+      readProducts();
+
+    const index =
+      products.findIndex(
+        p =>
+          Number(p.id) ===
+          Number(req.params.id)
+      );
+
+    if (index < 0) {
+      return res.status(404).json({
+        message:
+          'Product not found.'
+      });
+    }
+
+    const old =
+      products[index];
+
+    const body =
+      req.body || {};
+
+    const name =
+      String(
+        body.name ??
+        old.name
+      ).trim();
+
+    const category =
+      String(
+        body.cat ??
+        body.category ??
+        old.cat
+      ).trim();
+
+    const price =
+      Number(
+        body.price ??
+        old.price
+      );
+
+    if (
+      !name ||
+      !Number.isFinite(price) ||
+      price < 0
+    ) {
+      return res.status(400).json({
+        message:
+          'Product name and valid price are required.'
+      });
+    }
+
+    const colors =
+      Array.isArray(body.colors)
+        ? body.colors
+        : String(
+            body.color ??
+            old.color ??
+            ''
+          )
+            .split(',')
+            .map(x => x.trim())
+            .filter(Boolean);
+
+    const image =
+      body.image !== undefined
+        ? String(body.image || '')
+        : String(
+            old.image ||
+            old.img ||
+            ''
+          );
+
+    const images =
+      Array.isArray(body.images)
+        ? body.images
+        : image
+          ? [image]
+          : (
+              Array.isArray(old.images)
+                ? old.images
+                : []
+            );
+
+    const description =
+      String(
+        body.desc ??
+        body.description ??
+        old.desc ??
+        old.description ??
+        ''
+      );
+
+    products[index] = {
+      ...old,
+
+      id: old.id,
+
+      name,
+
+      cat: category,
+
+      category,
+
+      price,
+
+      color:
+        body.color !== undefined
+          ? String(body.color)
+          : colors.join(', '),
+
+      colors,
+
+      sizes:
+        body.sizes !== undefined
+          ? String(body.sizes)
+          : (
+              old.sizes ||
+              'Free Size'
+            ),
+
+      stock:
+        body.stock !== undefined
+          ? Number(body.stock)
+          : Number(old.stock || 0),
+
+      image,
+
+      img: image,
+
+      images,
+
+      desc: description,
+
+      description
+    };
+
+    writeProducts(products);
+
+    res.json({
+      product: products[index]
+    });
+  }
+);
 
 app.delete(
   '/api/admin/products/:id',
-  requireAdmin,
-  async (req, res) => {
+  adminAuth,
+  (req, res) => {
+    const products =
+      readProducts();
 
-    if (!pool) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Database is not configured.'
-        });
-    }
-
-    const id =
-      positiveInteger(
-        req.params.id
+    const next =
+      products.filter(
+        p =>
+          Number(p.id) !==
+          Number(req.params.id)
       );
 
-    if (!id) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Invalid product ID.'
-        });
+    if (
+      next.length ===
+      products.length
+    ) {
+      return res.status(404).json({
+        message:
+          'Product not found.'
+      });
     }
 
-    try {
+    writeProducts(next);
 
-      const result =
-        await pool.query(
-          `
-          UPDATE products
-          SET
-            active = FALSE,
-            updated_at = NOW()
-          WHERE id = $1
-          RETURNING id
-          `,
-          [id]
-        );
-
-      if (!result.rowCount) {
-
-        return res
-          .status(404)
-          .json({
-            ok: false,
-            message:
-              'Product not found.'
-          });
-      }
-
-      res.json({
-        ok: true,
-        message:
-          'Product removed from the store.'
-      });
-
-    } catch (error) {
-
-      console.error(
-        'Delete product error:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Unable to remove product.'
-      });
-
-    }
+    res.json({
+      ok: true
+    });
   }
 );
 
 /* =========================================================
-   ADMIN ORDERS
+   ADMIN SETTINGS
 ========================================================= */
 
 app.get(
-  '/api/admin/orders',
-  requireAdmin,
-  async (req, res) => {
+  '/api/admin/settings',
+  adminAuth,
+  (req, res) => {
+    res.json({
+      store:
+        'Face of Style Hijab Factory',
 
-    if (!pool) {
+      version:
+        '2.0.0',
 
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Database is not configured.'
-        });
-    }
+      database:
+        'JSON File Storage',
 
-    try {
+      databaseConfigured:
+        fs.existsSync(PRODUCTS_FILE) &&
+        fs.existsSync(ORDERS_FILE),
 
-      const ordersResult =
-        await pool.query(`
-          SELECT
-            id,
-            reference,
-            customer_name,
-            customer_email,
-            customer_phone,
-            delivery_address,
-            payment_method,
-            payment_status,
-            order_status,
-            total,
-            currency,
-            paystack_reference,
-            created_at,
-            updated_at
-          FROM orders
-          ORDER BY created_at DESC
-        `);
+      paystackConfigured:
+        Boolean(
+          process.env.PAYSTACK_SECRET_KEY
+        ),
 
-      const orders =
-        ordersResult.rows;
+      adminConfigured:
+        Boolean(
+          (
+            process.env.ADMIN_USERNAME ||
+            process.env.ADMIN_USER
+          ) &&
+          process.env.ADMIN_PASSWORD
+        ),
 
-      if (!orders.length) {
+      whatsapp:
+        '0906 582 8886',
 
-        return res.json({
-          ok: true,
-          orders: []
-        });
-      }
-
-      const ids =
-        orders.map(
-          order => order.id
-        );
-
-      const itemsResult =
-        await pool.query(
-          `
-          SELECT
-            id,
-            order_id,
-            product_id,
-            product_name,
-            price,
-            quantity,
-            subtotal
-          FROM order_items
-          WHERE order_id =
-            ANY($1::bigint[])
-          ORDER BY id ASC
-          `,
-          [ids]
-        );
-
-      const itemsByOrder =
-        new Map();
-
-      for (
-        const item
-        of itemsResult.rows
-      ) {
-
-        if (
-          !itemsByOrder.has(
-            item.order_id
-          )
-        ) {
-
-          itemsByOrder.set(
-            item.order_id,
-            []
-          );
-        }
-
-        itemsByOrder
-          .get(item.order_id)
-          .push(item);
-      }
-
-      const output =
-        orders.map(
-          order => ({
-            ...order,
-            items:
-              itemsByOrder.get(
-                order.id
-              ) || []
-          })
-        );
-
-      res.json({
-        ok: true,
-        orders:
-          output
-      });
-
-    } catch (error) {
-
-      console.error(
-        'Orders error:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Unable to load orders.'
-      });
-
-    }
-  }
-);
-
-/* =========================================================
-   UPDATE ORDER STATUS
-========================================================= */
-
-app.patch(
-  '/api/admin/orders/:id',
-  requireAdmin,
-  async (req, res) => {
-
-    if (!pool) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Database is not configured.'
-        });
-    }
-
-    const id =
-      positiveInteger(
-        req.params.id
-      );
-
-    const orderStatus =
-      cleanString(
-        req.body?.order_status,
-        30
-      ).toUpperCase();
-
-    const allowed = [
-      'PENDING',
-      'PROCESSING',
-      'SHIPPED',
-      'DELIVERED',
-      'CANCELLED'
-    ];
-
-    if (!id) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Invalid order ID.'
-        });
-    }
-
-    if (
-      !allowed.includes(
-        orderStatus
-      )
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Invalid order status.'
-        });
-    }
-
-    try {
-
-      const result =
-        await pool.query(
-          `
-          UPDATE orders
-          SET
-            order_status = $1,
-            updated_at = NOW()
-          WHERE id = $2
-          RETURNING *
-          `,
-          [
-            orderStatus,
-            id
-          ]
-        );
-
-      if (!result.rowCount) {
-
-        return res
-          .status(404)
-          .json({
-            ok: false,
-            message:
-              'Order not found.'
-          });
-      }
-
-      res.json({
-        ok: true,
-        order:
-          result.rows[0]
-      });
-
-    } catch (error) {
-
-      console.error(
-        'Update order status error:',
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-        message:
-          'Unable to update order.'
-      });
-
-    }
+      baseUrl:
+        BASE_URL
+    });
   }
 );
 
@@ -1687,504 +952,176 @@ app.patch(
 app.post(
   '/api/paystack/initialize',
   async (req, res) => {
-
-    if (!pool) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Database is not configured.'
-        });
-    }
-
-    if (!PAYSTACK_SECRET_KEY) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Paystack is not configured on the server.'
-        });
-    }
-
-    const customer =
-      req.body?.customer ||
-      {};
-
-    const name =
-      cleanString(
-        customer.name,
-        150
-      );
-
-    const email =
-      cleanString(
-        customer.email,
-        200
-      );
-
-    const phone =
-      cleanString(
-        customer.phone,
-        40
-      );
-
-    const address =
-      cleanString(
-        customer.address,
-        1000
-      );
-
-    const rawItems =
-      Array.isArray(
-        req.body?.items
-      )
-        ? req.body.items
-        : [];
-
-    if (
-      !name ||
-      !email ||
-      !phone ||
-      !address
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Complete customer details are required.'
-        });
-    }
-
-    if (
-      !validEmail(email)
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Please provide a valid email address.'
-        });
-    }
-
-    if (
-      !validPhone(phone)
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Please provide a valid phone number.'
-        });
-    }
-
-    if (
-      !rawItems.length
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Your cart is empty.'
-        });
-    }
-
-    const client =
-      await pool.connect();
-
     try {
-
-      await client.query(
-        'BEGIN'
-      );
-
-      const productIds =
-        rawItems
-          .map(
-            item =>
-              positiveInteger(
-                item.id
-              )
-          )
-          .filter(Boolean);
-
       if (
-        !productIds.length
+        !process.env.PAYSTACK_SECRET_KEY
       ) {
-
-        throw new Error(
-          'Invalid cart items.'
-        );
-      }
-
-      const productsResult =
-        await client.query(
-          `
-          SELECT
-            id,
-            name,
-            price,
-            stock,
-            active
-          FROM products
-          WHERE id =
-            ANY($1::int[])
-          FOR UPDATE
-          `,
-          [productIds]
-        );
-
-      const productMap =
-        new Map(
-          productsResult.rows.map(
-            product => [
-              Number(
-                product.id
-              ),
-              product
-            ]
-          )
-        );
-
-      const orderItems = [];
-
-      let total = 0;
-
-      for (
-        const rawItem
-        of rawItems
-      ) {
-
-        const productId =
-          positiveInteger(
-            rawItem.id
-          );
-
-        const quantity =
-          positiveInteger(
-            rawItem.qty
-          );
-
-        if (
-          !productId ||
-          !quantity
-        ) {
-
-          throw new Error(
-            'Invalid cart quantity.'
-          );
-        }
-
-        if (
-          quantity > 99
-        ) {
-
-          throw new Error(
-            'Maximum quantity per item is 99.'
-          );
-        }
-
-        const product =
-          productMap.get(
-            productId
-          );
-
-        if (
-          !product ||
-          !product.active
-        ) {
-
-          throw new Error(
-            'One of the products is no longer available.'
-          );
-        }
-
-        if (
-          Number(
-            product.stock
-          ) < quantity
-        ) {
-
-          throw new Error(
-            `${product.name} does not have enough stock.`
-          );
-        }
-
-        const price =
-          Number(
-            product.price
-          );
-
-        const subtotal =
-          price *
-          quantity;
-
-        total +=
-          subtotal;
-
-        orderItems.push({
-          productId,
-          name:
-            product.name,
-          price,
-          quantity,
-          subtotal
+        return res.status(500).json({
+          message:
+            'Paystack is not configured. Add PAYSTACK_SECRET_KEY on Render.'
         });
       }
 
-      total =
-        Math.round(
-          total * 100
-        ) / 100;
+      const customer =
+        req.body?.customer;
+
+      const calculated =
+        calculateOrder(
+          req.body?.items
+        );
 
       if (
-        !Number.isFinite(
-          total
-        ) ||
-        total <= 0
+        !customer?.name ||
+        !customer?.email ||
+        !customer?.phone ||
+        !customer?.address ||
+        !calculated
       ) {
-
-        throw new Error(
-          'Invalid order total.'
-        );
+        return res.status(400).json({
+          message:
+            'Incomplete order details or unavailable product.'
+        });
       }
+
+      const id =
+        crypto.randomUUID();
 
       const reference =
-        createOrderReference();
+        createReference();
 
-      const orderResult =
-        await client.query(
-          `
-          INSERT INTO orders
-          (
-            reference,
-            customer_name,
-            customer_email,
-            customer_phone,
-            delivery_address,
-            payment_method,
-            payment_status,
-            order_status,
-            total,
-            currency
-          )
-          VALUES
-          (
-            $1,$2,$3,$4,$5,
-            'paystack',
-            'PENDING',
-            'PENDING',
-            $6,
-            'NGN'
-          )
-          RETURNING
-            id,
-            reference,
-            total
-          `,
-          [
-            reference,
-            name,
-            email,
-            phone,
-            address,
-            total
-          ]
-        );
+      const order = {
+        id,
 
-      const order =
-        orderResult.rows[0];
-
-      for (
-        const item
-        of orderItems
-      ) {
-
-        await client.query(
-          `
-          INSERT INTO order_items
-          (
-            order_id,
-            product_id,
-            product_name,
-            price,
-            quantity,
-            subtotal
-          )
-          VALUES
-          ($1,$2,$3,$4,$5,$6)
-          `,
-          [
-            order.id,
-            item.productId,
-            item.name,
-            item.price,
-            item.quantity,
-            item.subtotal
-          ]
-        );
-      }
-
-      await client.query(
-        'COMMIT'
-      );
-
-      const amountInKobo =
-        Math.round(
-          total * 100
-        );
-
-      const callbackUrl =
-        process.env
-          .PAYSTACK_CALLBACK_URL ||
-        undefined;
-
-      const paystackPayload = {
-        email,
-        amount:
-          amountInKobo,
-        currency:
-          'NGN',
         reference,
 
-        metadata: {
-          order_id:
+        status: 'pending',
+
+        orderStatus: 'new',
+
+        customer: {
+          name:
             String(
-              order.id
-            ),
+              customer.name
+            ).slice(0, 120),
 
-          order_reference:
-            reference,
+          email:
+            String(
+              customer.email
+            ).slice(0, 200),
 
-          customer_name:
-            name,
+          phone:
+            String(
+              customer.phone
+            ).slice(0, 40),
 
-          customer_phone:
-            phone
-        }
+          address:
+            String(
+              customer.address
+            ).slice(0, 500)
+        },
+
+        items:
+          calculated.items,
+
+        total:
+          calculated.total,
+
+        payment: {
+          provider:
+            'paystack',
+
+          reference
+        },
+
+        createdAt:
+          new Date().toISOString()
       };
 
-      if (callbackUrl) {
+      const orders =
+        readOrders();
 
-        paystackPayload
-          .callback_url =
-          callbackUrl;
-      }
+      orders.push(order);
 
-      const paystackResponse =
+      writeOrders(orders);
+
+      const response =
         await fetch(
           'https://api.paystack.co/transaction/initialize',
           {
-            method:
-              'POST',
+            method: 'POST',
 
             headers: {
               Authorization:
-                `Bearer ${PAYSTACK_SECRET_KEY}`,
+                `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
 
               'Content-Type':
                 'application/json'
             },
 
             body:
-              JSON.stringify(
-                paystackPayload
-              )
+              JSON.stringify({
+                email:
+                  order.customer.email,
+
+                amount:
+                  calculated.total * 100,
+
+                currency:
+                  'NGN',
+
+                reference,
+
+                callback_url:
+                  `${BASE_URL}/payment-success.html`,
+
+                metadata: {
+                  order_id:
+                    id
+                }
+              })
           }
         );
 
-      const paystackData =
-        await paystackResponse
-          .json();
+      const data =
+        await response.json();
 
       if (
-        !paystackResponse.ok ||
-        !paystackData.status ||
-        !paystackData.data
-          ?.authorization_url
+        !response.ok ||
+        !data.status
       ) {
+        order.status =
+          'failed';
 
-        console.error(
-          'Paystack initialize error:',
-          paystackData
-        );
+        order.payment.error =
+          data.message ||
+          'Paystack initialization failed';
 
-        return res
-          .status(502)
-          .json({
-            ok: false,
-            message:
-              paystackData.message ||
-              'Unable to initialize Paystack payment.'
-          });
+        writeOrders(orders);
+
+        return res.status(400).json({
+          message:
+            data.message ||
+            'Paystack initialization failed.'
+        });
       }
 
-      await pool.query(
-        `
-        UPDATE orders
-        SET
-          paystack_reference = $1,
-          updated_at = NOW()
-        WHERE reference = $2
-        `,
-        [
-          paystackData.data
-            .reference ||
-            reference,
-
-          reference
-        ]
-      );
-
       res.json({
-        ok: true,
-
-        reference,
-
         authorization_url:
-          paystackData.data
-            .authorization_url
+          data.data.authorization_url,
+
+        reference
       });
 
     } catch (error) {
-
-      try {
-
-        await client.query(
-          'ROLLBACK'
-        );
-
-      } catch {}
-
       console.error(
-        'Payment initialization error:',
+        'PAYSTACK INITIALIZE ERROR:',
         error
       );
 
-      res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            error.message ||
-            'Payment initialization failed.'
-        });
-
-    } finally {
-
-      client.release();
-
+      res.status(500).json({
+        message:
+          'Payment service error.'
+      });
     }
   }
 );
@@ -2196,47 +1133,35 @@ app.post(
 app.get(
   '/api/paystack/verify/:reference',
   async (req, res) => {
-
-    if (!pool) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Database is not configured.'
-        });
-    }
-
-    if (!PAYSTACK_SECRET_KEY) {
-
-      return res
-        .status(503)
-        .json({
-          ok: false,
-          message:
-            'Paystack is not configured on the server.'
-        });
-    }
-
-    const reference =
-      cleanString(
-        req.params.reference,
-        200
-      );
-
-    if (!reference) {
-
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          message:
-            'Payment reference is required.'
-        });
-    }
-
     try {
+      if (
+        !process.env.PAYSTACK_SECRET_KEY
+      ) {
+        return res.status(500).json({
+          message:
+            'Paystack is not configured.'
+        });
+      }
+
+      const reference =
+        req.params.reference;
+
+      const orders =
+        readOrders();
+
+      const order =
+        orders.find(
+          x =>
+            x.reference ===
+            reference
+        );
+
+      if (!order) {
+        return res.status(404).json({
+          message:
+            'Order not found.'
+        });
+      }
 
       const response =
         await fetch(
@@ -2244,7 +1169,7 @@ app.get(
           {
             headers: {
               Authorization:
-                `Bearer ${PAYSTACK_SECRET_KEY}`
+                `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
             }
           }
         );
@@ -2252,252 +1177,67 @@ app.get(
       const data =
         await response.json();
 
-      if (
-        !response.ok ||
-        !data.status ||
-        !data.data
-      ) {
-
-        return res
-          .status(502)
-          .json({
-            ok: false,
-            message:
-              data.message ||
-              'Unable to verify payment.'
-          });
-      }
-
       const transaction =
         data.data;
 
-      const orderResult =
-        await pool.query(
-          `
-          SELECT *
-          FROM orders
-          WHERE reference = $1
-          LIMIT 1
-          `,
-          [reference]
-        );
+      const expected =
+        Number(order.total) * 100;
 
       if (
-        !orderResult.rowCount
-      ) {
-
-        return res
-          .status(404)
-          .json({
-            ok: false,
-            message:
-              'Order not found.'
-          });
-      }
-
-      const order =
-        orderResult.rows[0];
-
-      const expectedAmount =
-        Math.round(
-          Number(
-            order.total
-          ) * 100
-        );
-
-      const paidAmount =
-        Number(
-          transaction.amount
-        );
-
-      const amountMatches =
-        expectedAmount ===
-        paidAmount;
-
-      const success =
-        transaction.status ===
+        data.status &&
+        transaction?.status ===
           'success' &&
+        Number(transaction.amount) ===
+          expected &&
         transaction.currency ===
-          'NGN' &&
-        amountMatches;
+          'NGN'
+      ) {
+        order.status =
+          'paid';
 
-      if (!success) {
+        order.payment.verifiedAt =
+          new Date().toISOString();
 
-        await pool.query(
-          `
-          UPDATE orders
-          SET
-            payment_status = 'FAILED',
-            updated_at = NOW()
-          WHERE id = $1
-            AND payment_status <> 'PAID'
-          `,
-          [order.id]
-        );
+        order.payment.channel =
+          transaction.channel;
 
-        return res
-          .status(400)
-          .json({
-            ok: false,
-            paid: false,
-            message:
-              'Payment verification failed.'
-          });
+        order.payment.paidAt =
+          transaction.paid_at;
+
+        writeOrders(orders);
+
+        return res.json({
+          success: true,
+
+          reference
+        });
       }
 
-      const client =
-        await pool.connect();
+      order.status =
+        transaction?.status ===
+        'failed'
+          ? 'failed'
+          : 'pending';
 
-      try {
-
-        await client.query(
-          'BEGIN'
-        );
-
-        const lockedOrderResult =
-          await client.query(
-            `
-            SELECT *
-            FROM orders
-            WHERE id = $1
-            FOR UPDATE
-            `,
-            [order.id]
-          );
-
-        const lockedOrder =
-          lockedOrderResult
-            .rows[0];
-
-        if (!lockedOrder) {
-
-          throw new Error(
-            'Order not found.'
-          );
-        }
-
-        if (
-          lockedOrder.payment_status !==
-          'PAID'
-        ) {
-
-          const itemsResult =
-            await client.query(
-              `
-              SELECT *
-              FROM order_items
-              WHERE order_id = $1
-              ORDER BY id ASC
-              `,
-              [order.id]
-            );
-
-          for (
-            const item
-            of itemsResult.rows
-          ) {
-
-            const stockResult =
-              await client.query(
-                `
-                UPDATE products
-                SET
-                  stock = stock - $1,
-                  updated_at = NOW()
-                WHERE id = $2
-                  AND active = TRUE
-                  AND stock >= $1
-                RETURNING id
-                `,
-                [
-                  item.quantity,
-                  item.product_id
-                ]
-              );
-
-            if (
-              !stockResult.rowCount
-            ) {
-
-              throw new Error(
-                `Insufficient stock for ${item.product_name}.`
-              );
-            }
-          }
-        }
-
-        await client.query(
-          `
-          UPDATE orders
-          SET
-            payment_status = 'PAID',
-            order_status = 'PROCESSING',
-            paystack_reference = $1,
-            updated_at = NOW()
-          WHERE id = $2
-          `,
-          [
-            transaction.reference ||
-              reference,
-
-            order.id
-          ]
-        );
-
-        await client.query(
-          'COMMIT'
-        );
-
-      } catch (error) {
-
-        try {
-
-          await client.query(
-            'ROLLBACK'
-          );
-
-        } catch {}
-
-        throw error;
-
-      } finally {
-
-        client.release();
-
-      }
+      writeOrders(orders);
 
       res.json({
-        ok: true,
-        paid: true,
-        reference,
+        success: false,
 
-        order_reference:
-          order.reference,
-
-        amount:
-          Number(
-            order.total
-          ),
-
-        customer_name:
-          order.customer_name
+        message:
+          'Payment has not been verified as successful.'
       });
 
     } catch (error) {
-
       console.error(
-        'Verify error:',
+        'PAYSTACK VERIFY ERROR:',
         error
       );
 
-      res
-        .status(500)
-        .json({
-          ok: false,
-          message:
-            error.message ||
-            'Payment verification error.'
-        });
+      res.status(500).json({
+        message:
+          'Verification error.'
+      });
     }
   }
 );
@@ -2508,504 +1248,163 @@ app.get(
 
 app.post(
   '/api/paystack/webhook',
-  async (req, res) => {
-
-    if (
-      !PAYSTACK_SECRET_KEY ||
-      !pool
-    ) {
-
-      return res.sendStatus(
-        200
-      );
-    }
-
-    const signature =
-      String(
+  (req, res) => {
+    try {
+      const signature =
         req.headers[
           'x-paystack-signature'
-        ] || ''
-      );
+        ];
 
-    if (
-      !signature ||
-      !req.rawBody
-    ) {
-
-      return res.sendStatus(
-        401
-      );
-    }
-
-    const hash =
-      crypto
-        .createHmac(
-          'sha512',
-          PAYSTACK_SECRET_KEY
-        )
-        .update(
-          req.rawBody
-        )
-        .digest('hex');
-
-    try {
+      if (
+        !signature ||
+        !process.env.PAYSTACK_SECRET_KEY ||
+        !req.rawBody
+      ) {
+        return res.sendStatus(401);
+      }
 
       const expected =
+        crypto
+          .createHmac(
+            'sha512',
+            process.env.PAYSTACK_SECRET_KEY
+          )
+          .update(req.rawBody)
+          .digest('hex');
+
+      const a =
         Buffer.from(
-          hash,
-          'utf8'
+          String(signature)
         );
 
-      const received =
+      const b =
         Buffer.from(
-          signature,
-          'utf8'
+          expected
         );
 
       if (
-        expected.length !==
-          received.length ||
+        a.length !== b.length ||
         !crypto.timingSafeEqual(
-          expected,
-          received
+          a,
+          b
         )
       ) {
-
-        return res.sendStatus(
-          401
-        );
+        return res.sendStatus(401);
       }
-
-    } catch {
-
-      return res.sendStatus(
-        401
-      );
-    }
-
-    try {
 
       const event =
-        req.body &&
-        typeof req.body ===
-          'object'
-
-          ? req.body
-
-          : JSON.parse(
-              req.rawBody.toString(
-                'utf8'
-              )
-            );
+        req.body;
 
       if (
-        event.event !==
+        event?.event ===
         'charge.success'
       ) {
+        const transaction =
+          event.data;
 
-        return res.sendStatus(
-          200
-        );
-      }
+        const orders =
+          readOrders();
 
-      const transaction =
-        event.data || {};
-
-      const reference =
-        cleanString(
-          transaction.reference,
-          200
-        );
-
-      if (!reference) {
-
-        return res.sendStatus(
-          200
-        );
-      }
-
-      const orderResult =
-        await pool.query(
-          `
-          SELECT *
-          FROM orders
-          WHERE reference = $1
-          LIMIT 1
-          `,
-          [reference]
-        );
-
-      if (
-        !orderResult.rowCount
-      ) {
-
-        return res.sendStatus(
-          200
-        );
-      }
-
-      const order =
-        orderResult.rows[0];
-
-      const expectedAmount =
-        Math.round(
-          Number(
-            order.total
-          ) * 100
-        );
-
-      if (
-        transaction.status !==
-          'success' ||
-        transaction.currency !==
-          'NGN' ||
-        Number(
-          transaction.amount
-        ) !== expectedAmount
-      ) {
-
-        return res.sendStatus(
-          200
-        );
-      }
-
-      const client =
-        await pool.connect();
-
-      try {
-
-        await client.query(
-          'BEGIN'
-        );
-
-        const locked =
-          await client.query(
-            `
-            SELECT *
-            FROM orders
-            WHERE id = $1
-            FOR UPDATE
-            `,
-            [order.id]
+        const order =
+          orders.find(
+            x =>
+              x.reference ===
+              transaction.reference
           );
-
-        const lockedOrder =
-          locked.rows[0];
-
-        if (!lockedOrder) {
-
-          throw new Error(
-            'Order not found.'
-          );
-        }
 
         if (
-          lockedOrder.payment_status !==
-          'PAID'
+          order &&
+          Number(transaction.amount) ===
+            Number(order.total) * 100 &&
+          transaction.currency ===
+            'NGN'
         ) {
+          order.status =
+            'paid';
 
-          const items =
-            await client.query(
-              `
-              SELECT *
-              FROM order_items
-              WHERE order_id = $1
-              ORDER BY id ASC
-              `,
-              [order.id]
-            );
+          order.payment.verifiedAt =
+            new Date().toISOString();
 
-          for (
-            const item
-            of items.rows
-          ) {
+          order.payment.channel =
+            transaction.channel;
 
-            const stock =
-              await client.query(
-                `
-                UPDATE products
-                SET
-                  stock = stock - $1,
-                  updated_at = NOW()
-                WHERE id = $2
-                  AND active = TRUE
-                  AND stock >= $1
-                RETURNING id
-                `,
-                [
-                  item.quantity,
-                  item.product_id
-                ]
-              );
+          order.payment.paidAt =
+            transaction.paid_at;
 
-            if (
-              !stock.rowCount
-            ) {
-
-              throw new Error(
-                `Insufficient stock for ${item.product_name}.`
-              );
-            }
-          }
+          writeOrders(orders);
         }
-
-        await client.query(
-          `
-          UPDATE orders
-          SET
-            payment_status = 'PAID',
-            order_status = 'PROCESSING',
-            paystack_reference = $1,
-            updated_at = NOW()
-          WHERE id = $2
-          `,
-          [
-            transaction.reference ||
-              reference,
-
-            order.id
-          ]
-        );
-
-        await client.query(
-          'COMMIT'
-        );
-
-      } catch (error) {
-
-        try {
-
-          await client.query(
-            'ROLLBACK'
-          );
-
-        } catch {}
-
-        console.error(
-          'Webhook transaction error:',
-          error
-        );
-
-      } finally {
-
-        client.release();
-
       }
 
-      return res.sendStatus(
-        200
-      );
+      res.sendStatus(200);
 
     } catch (error) {
-
       console.error(
-        'Webhook error:',
+        'WEBHOOK ERROR:',
         error
       );
 
-      return res.sendStatus(
-        200
-      );
+      res.sendStatus(500);
     }
   }
 );
 
 /* =========================================================
-   APP CONFIG
+   HEALTH
 ========================================================= */
 
 app.get(
-  '/api/config',
+  '/api/health',
   (req, res) => {
-
     res.json({
       ok: true,
 
-      whatsapp:
-        WHATSAPP_NUMBER,
+      version:
+        '2.0.0',
 
       paystackConfigured:
         Boolean(
-          PAYSTACK_SECRET_KEY
+          process.env.PAYSTACK_SECRET_KEY
+        ),
+
+      adminConfigured:
+        Boolean(
+          (
+            process.env.ADMIN_USERNAME ||
+            process.env.ADMIN_USER
+          ) &&
+          process.env.ADMIN_PASSWORD
+        ),
+
+      databaseConfigured:
+        fs.existsSync(
+          PRODUCTS_FILE
+        ) &&
+        fs.existsSync(
+          ORDERS_FILE
         )
     });
   }
 );
 
 /* =========================================================
-   FRONTEND ROUTES
+   START
 ========================================================= */
 
-app.get(
-  '/',
-  (req, res) => {
+app.listen(
+  PORT,
+  () => {
+    console.log(
+      `Face of Style Version 2 running at ${BASE_URL}`
+    );
 
-    res.sendFile(
-      path.join(
-        __dirname,
-        'public',
-        'index.html'
-      )
+    console.log(
+      `Database: JSON`
+    );
+
+    console.log(
+      `Paystack configured: ${Boolean(
+        process.env.PAYSTACK_SECRET_KEY
+      )}`
     );
   }
 );
-
-app.get(
-  '/admin',
-  (req, res) => {
-
-    res.sendFile(
-      path.join(
-        __dirname,
-        'public',
-        'admin.html'
-      )
-    );
-  }
-);
-
-app.get(
-  '/payment-success',
-  (req, res) => {
-
-    res.sendFile(
-      path.join(
-        __dirname,
-        'public',
-        'payment-success.html'
-      )
-    );
-  }
-);
-
-app.get(
-  '/payment-failed',
-  (req, res) => {
-
-    const file =
-      path.join(
-        __dirname,
-        'public',
-        'payment-failed.html'
-      );
-
-    res.sendFile(
-      file,
-      error => {
-
-        if (error) {
-          res.redirect('/');
-        }
-
-      }
-    );
-  }
-);
-
-/* =========================================================
-   404 API
-========================================================= */
-
-app.use(
-  '/api',
-  (req, res) => {
-
-    res
-      .status(404)
-      .json({
-        ok: false,
-        message:
-          'API endpoint not found.'
-      });
-  }
-);
-
-/* =========================================================
-   ERROR HANDLER
-========================================================= */
-
-app.use(
-  (
-    error,
-    req,
-    res,
-    next
-  ) => {
-
-    console.error(
-      'Server error:',
-      error
-    );
-
-    if (
-      res.headersSent
-    ) {
-
-      return next(
-        error
-      );
-    }
-
-    res
-      .status(500)
-      .json({
-        ok: false,
-        message:
-          'Internal server error.'
-      });
-  }
-);
-
-/* =========================================================
-   START SERVER
-========================================================= */
-
-async function startServer() {
-
-  try {
-
-    await initDatabase();
-
-    app.listen(
-      PORT,
-      '0.0.0.0',
-      () => {
-
-        console.log(
-          `Face of Style Version 2 running at port ${PORT}`
-        );
-
-        console.log(
-          `Paystack configured: ${Boolean(
-            PAYSTACK_SECRET_KEY
-          )}`
-        );
-
-        console.log(
-          `Admin configured: ${Boolean(
-            ADMIN_USERNAME &&
-            ADMIN_PASSWORD
-          )}`
-        );
-
-        console.log(
-          `Database configured: ${Boolean(
-            pool
-          )}`
-        );
-
-      }
-    );
-
-  } catch (error) {
-
-    console.error(
-      'Server startup failed:',
-      error
-    );
-
-    process.exit(1);
-  }
-}
-
-startServer();
