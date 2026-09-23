@@ -24,6 +24,7 @@
   --line:#eadfd4;
   --danger:#a33;
   --green:#176a35;
+  --shadow:0 8px 22px rgba(60,25,38,.06);
 }
 
 *{
@@ -58,13 +59,21 @@ button{
   cursor:pointer;
 }
 
+button:disabled{
+  cursor:not-allowed;
+}
+
 a{
   text-decoration:none;
   color:inherit;
 }
 
+img{
+  max-width:100%;
+}
+
 /* =========================================================
-   TOP
+   TOP BAR
 ========================================================= */
 
 .top{
@@ -77,7 +86,7 @@ a{
 }
 
 /* =========================================================
-   NAV
+   NAVIGATION
 ========================================================= */
 
 .nav{
@@ -96,6 +105,7 @@ a{
   width:56px;
   height:56px;
   object-fit:contain;
+  border-radius:8px;
 }
 
 .brand{
@@ -121,6 +131,10 @@ a{
   font-weight:600;
 }
 
+.navlinks a{
+  transition:.2s ease;
+}
+
 .navlinks a:hover{
   color:var(--wine);
 }
@@ -138,6 +152,12 @@ a{
   height:42px;
   border-radius:50%;
   cursor:pointer;
+  transition:.2s ease;
+}
+
+.iconBtn:hover{
+  border-color:var(--wine);
+  color:var(--wine);
 }
 
 .count{
@@ -202,7 +222,16 @@ a{
   color:var(--wine);
   border-radius:25px;
   font-weight:bold;
+  transition:.2s ease;
 }
+
+.heroBtn:hover{
+  transform:translateY(-1px);
+}
+
+/* =========================================================
+   HERO IMAGE
+========================================================= */
 
 .heroImg{
   min-height:430px;
@@ -245,7 +274,7 @@ a{
 }
 
 /* =========================================================
-   SHOP TOOLBAR
+   TOOLBAR
 ========================================================= */
 
 .toolbar{
@@ -261,6 +290,7 @@ a{
   display:flex;
   gap:7px;
   overflow:auto;
+  padding-bottom:3px;
 }
 
 .cat{
@@ -271,6 +301,7 @@ a{
   white-space:nowrap;
   cursor:pointer;
   font-weight:600;
+  transition:.2s ease;
 }
 
 .cat.active,
@@ -286,6 +317,7 @@ a{
   border:1px solid var(--line);
   border-radius:22px;
   outline:none;
+  background:#fff;
 }
 
 .search:focus{
@@ -307,7 +339,7 @@ a{
   border:1px solid var(--line);
   border-radius:16px;
   overflow:hidden;
-  box-shadow:0 8px 22px rgba(60,25,38,.05);
+  box-shadow:var(--shadow);
   transition:.2s ease;
 }
 
@@ -318,6 +350,7 @@ a{
 .pic{
   position:relative;
   background:#eee;
+  overflow:hidden;
 }
 
 .pic img{
@@ -413,11 +446,19 @@ a{
   color:var(--wine);
 }
 
+.add:hover{
+  background:var(--wine2);
+}
+
+.view:hover{
+  background:var(--wine);
+  color:#fff;
+}
+
 .add:disabled,
 .view:disabled,
 .heart:disabled{
   opacity:.4;
-  cursor:not-allowed;
 }
 
 .loading,
@@ -463,7 +504,7 @@ a{
 }
 
 /* =========================================================
-   CUSTOM
+   CUSTOM ORDER
 ========================================================= */
 
 .custom{
@@ -495,7 +536,7 @@ a{
 }
 
 /* =========================================================
-   ACCOUNT + TRACKING
+   ACCOUNT
 ========================================================= */
 
 .accountGrid{
@@ -510,6 +551,12 @@ a{
   border-radius:14px;
   padding:16px;
   cursor:pointer;
+  transition:.2s ease;
+}
+
+.accountTile:hover{
+  border-color:var(--wine);
+  transform:translateY(-1px);
 }
 
 .accountTile b{
@@ -554,6 +601,10 @@ footer{
   line-height:1.8;
 }
 
+.foot a:hover{
+  color:#fff;
+}
+
 .copy{
   text-align:center;
   border-top:1px solid #49373d;
@@ -564,7 +615,7 @@ footer{
 }
 
 /* =========================================================
-   CART
+   CART DRAWER
 ========================================================= */
 
 .drawer{
@@ -595,6 +646,7 @@ footer{
   border-radius:50%;
   cursor:pointer;
   font-size:23px;
+  line-height:1;
 }
 
 .cartItems{
@@ -615,6 +667,7 @@ footer{
   height:76px;
   object-fit:cover;
   border-radius:8px;
+  background:#eee;
 }
 
 .cartContent{
@@ -730,6 +783,7 @@ footer{
   border:1px solid var(--line);
   border-radius:10px;
   outline:none;
+  background:#fff;
 }
 
 .field textarea{
@@ -767,6 +821,11 @@ footer{
   color:#fff;
 }
 
+.primaryBtn:disabled,
+.checkoutBtn:disabled{
+  opacity:.55;
+}
+
 /* =========================================================
    ACCOUNT MODAL
 ========================================================= */
@@ -789,6 +848,7 @@ footer{
 .accountTab.active{
   color:#fff;
   background:var(--wine);
+  border-color:var(--wine);
 }
 
 .accountPanel{
@@ -918,9 +978,21 @@ footer{
     grid-template-columns:1fr;
   }
 
+  .toolbar{
+    align-items:stretch;
+  }
+
+  .search{
+    width:100%;
+  }
+
 }
 
 @media(max-width:430px){
+
+  .nav{
+    gap:8px;
+  }
 
   .logo{
     width:48px;
@@ -933,6 +1005,15 @@ footer{
 
   .brand small{
     font-size:8px;
+  }
+
+  .navBtns{
+    margin-left:auto;
+  }
+
+  .iconBtn{
+    width:38px;
+    height:38px;
   }
 
   .grid{
@@ -953,6 +1034,14 @@ footer{
     grid-template-columns:1fr;
   }
 
+  .custom{
+    padding:28px 18px;
+  }
+
+  .custom h2{
+    font-size:27px;
+  }
+
 }
 
 </style>
@@ -966,17 +1055,20 @@ footer{
 
 <header class="nav">
 
-  <a href="#home">
+  <a href="#home" aria-label="Home">
+
     <img
       id="logo"
       class="logo"
-      src="assets/logo.png"
+      src="/assets/logo.png"
       alt="Face of Style Hijab Factory"
-      onerror="this.onerror=null;this.src='/logo.png'"
+      onerror="handleImageError(this,'/logo.png')"
     >
+
   </a>
 
   <div class="brand">
+
     <span id="brandName">
       FACE OF STYLE
     </span>
@@ -984,14 +1076,31 @@ footer{
     <small id="brandTagline">
       HIJAB FACTORY
     </small>
+
   </div>
 
   <nav class="navlinks">
-    <a href="#shop">Shop</a>
-    <a href="#account">My Account</a>
-    <a href="#tracking">Order Tracking</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
+
+    <a href="#shop">
+      Shop
+    </a>
+
+    <a href="#account">
+      My Account
+    </a>
+
+    <a href="#tracking">
+      Order Tracking
+    </a>
+
+    <a href="#about">
+      About
+    </a>
+
+    <a href="#contact">
+      Contact
+    </a>
+
   </nav>
 
   <div class="navBtns">
@@ -999,7 +1108,7 @@ footer{
     <button
       type="button"
       class="iconBtn"
-      onclick="openAccount()"
+      onclick="openAccount('profile')"
       aria-label="My Account"
     >
       👤
@@ -1019,6 +1128,7 @@ footer{
       >
         0
       </span>
+
     </button>
 
   </div>
@@ -1026,6 +1136,10 @@ footer{
 </header>
 
 <main id="home">
+
+<!-- ======================================================
+     HERO
+======================================================= -->
 
 <section class="hero">
 
@@ -1056,14 +1170,19 @@ footer{
   <div class="heroImg">
 
     <img
-      src="assets/product-1.jpg"
+      id="heroImage"
+      src="/assets/product-1.jpg"
       alt="Face of Style collection"
-      onerror="this.onerror=null;this.src='assets/logo.png'"
+      onerror="handleImageError(this,'/assets/logo.png')"
     >
 
   </div>
 
 </section>
+
+<!-- ======================================================
+     SHOP
+======================================================= -->
 
 <section
   class="wrap"
@@ -1098,6 +1217,7 @@ footer{
     <div class="cats">
 
       <button
+        type="button"
         class="cat active"
         onclick="filterProducts('All',this)"
       >
@@ -1105,6 +1225,7 @@ footer{
       </button>
 
       <button
+        type="button"
         class="cat"
         onclick="filterProducts('Abaya',this)"
       >
@@ -1112,6 +1233,7 @@ footer{
       </button>
 
       <button
+        type="button"
         class="cat"
         onclick="filterProducts('Gown',this)"
       >
@@ -1119,6 +1241,7 @@ footer{
       </button>
 
       <button
+        type="button"
         class="cat"
         onclick="filterProducts('Hijab',this)"
       >
@@ -1126,6 +1249,7 @@ footer{
       </button>
 
       <button
+        type="button"
         class="cat"
         onclick="filterProducts('Custom',this)"
       >
@@ -1133,6 +1257,7 @@ footer{
       </button>
 
       <button
+        type="button"
         class="cat"
         onclick="filterProducts('Fashion',this)"
       >
@@ -1146,7 +1271,7 @@ footer{
       class="search"
       type="search"
       placeholder="Search products..."
-      oninput="renderProducts()"
+      autocomplete="off"
     >
 
   </div>
@@ -1161,6 +1286,8 @@ footer{
     </div>
 
   </div>
+
+  <!-- FEATURES -->
 
   <div class="features">
 
@@ -1198,6 +1325,8 @@ footer{
 
   </div>
 
+  <!-- CUSTOM -->
+
   <div
     id="custom"
     class="custom"
@@ -1225,6 +1354,10 @@ footer{
   </div>
 
 </section>
+
+<!-- ======================================================
+     ACCOUNT SECTION
+======================================================= -->
 
 <section
   class="wrap"
@@ -1305,6 +1438,10 @@ footer{
 
 </section>
 
+<!-- ======================================================
+     ORDER TRACKING
+======================================================= -->
+
 <section
   class="wrap"
   id="tracking"
@@ -1322,7 +1459,8 @@ footer{
 
   </div>
 
-  <div
+  <form
+    id="trackingForm"
     style="
       max-width:600px;
       margin:auto;
@@ -1341,21 +1479,21 @@ footer{
         outline:none;
       "
       placeholder="Example: FS-XXXX"
+      autocomplete="off"
     >
 
     <button
-      type="button"
+      type="submit"
       class="add"
       style="
         flex:0 0 auto;
         padding:12px 18px;
       "
-      onclick="trackOrder()"
     >
       TRACK
     </button>
 
-  </div>
+  </form>
 
   <div
     id="trackingResult"
@@ -1366,6 +1504,10 @@ footer{
   ></div>
 
 </section>
+
+<!-- ======================================================
+     ABOUT
+======================================================= -->
 
 <section
   class="wrap"
@@ -1389,11 +1531,16 @@ footer{
 
 </main>
 
+<!-- ======================================================
+     FOOTER
+======================================================= -->
+
 <footer id="contact">
 
   <div class="foot">
 
     <div>
+
       <h3 id="footerStoreName">
         Face of Style Hijab Factory
       </h3>
@@ -1402,6 +1549,7 @@ footer{
         Elegant hijabs, abayas,
         gowns and custom modest wear.
       </p>
+
     </div>
 
     <div>
@@ -1411,21 +1559,29 @@ footer{
       </h3>
 
       <p>
+
         <a href="#shop">
           Shop Collection
         </a>
+
         <br>
+
         <a href="#account">
           My Account
         </a>
+
         <br>
+
         <a href="#tracking">
           Order Tracking
         </a>
+
         <br>
+
         <a href="#custom">
           Custom Order
         </a>
+
       </p>
 
     </div>
@@ -1437,6 +1593,7 @@ footer{
       </h3>
 
       <p>
+
         WhatsApp:
         <span id="footerWhatsApp">
           0906 582 8886
@@ -1445,6 +1602,7 @@ footer{
         <br>
 
         Orders & enquiries welcome.
+
       </p>
 
     </div>
@@ -1470,12 +1628,13 @@ footer{
 </footer>
 
 <!-- ======================================================
-     CART
+     CART DRAWER
 ======================================================= -->
 
 <aside
   id="drawer"
   class="drawer"
+  aria-label="Shopping cart"
 >
 
   <button
@@ -1514,7 +1673,7 @@ footer{
 </aside>
 
 <!-- ======================================================
-     CHECKOUT
+     CHECKOUT MODAL
 ======================================================= -->
 
 <div
@@ -1527,6 +1686,7 @@ footer{
     <button
       class="close"
       onclick="closeCheckout()"
+      aria-label="Close checkout"
     >
       ×
     </button>
@@ -1549,7 +1709,7 @@ footer{
 
       <div class="field">
 
-        <label>
+        <label for="customerName">
           Full Name
         </label>
 
@@ -1562,7 +1722,7 @@ footer{
 
       <div class="field">
 
-        <label>
+        <label for="customerEmail">
           Email
         </label>
 
@@ -1580,7 +1740,7 @@ footer{
 
       <div class="field">
 
-        <label>
+        <label for="customerPhone">
           Phone
         </label>
 
@@ -1593,7 +1753,7 @@ footer{
 
       <div class="field">
 
-        <label>
+        <label for="customerAddress">
           Delivery Address
         </label>
 
@@ -1608,13 +1768,11 @@ footer{
 
     <div class="field">
 
-      <label>
+      <label for="paymentMethod">
         Payment Method
       </label>
 
-      <select
-        id="paymentMethod"
-      >
+      <select id="paymentMethod">
 
         <option value="paystack">
           Paystack
@@ -1681,6 +1839,7 @@ footer{
     <button
       class="close"
       onclick="closeAccount()"
+      aria-label="Close account"
     >
       ×
     </button>
@@ -1689,9 +1848,7 @@ footer{
       My Account
     </h2>
 
-    <div
-      id="accountAuth"
-    ></div>
+    <div id="accountAuth"></div>
 
     <div
       id="accountContent"
@@ -1701,35 +1858,45 @@ footer{
       <div class="accountTabs">
 
         <button
+          type="button"
           class="accountTab active"
+          data-tab="profile"
           onclick="accountTab('profile',this)"
         >
           Profile
         </button>
 
         <button
+          type="button"
           class="accountTab"
+          data-tab="orders"
           onclick="accountTab('orders',this)"
         >
           Orders
         </button>
 
         <button
+          type="button"
           class="accountTab"
+          data-tab="addresses"
           onclick="accountTab('addresses',this)"
         >
           Addresses
         </button>
 
         <button
+          type="button"
           class="accountTab"
+          data-tab="credit"
           onclick="accountTab('credit',this)"
         >
           Store Credit
         </button>
 
         <button
+          type="button"
           class="accountTab"
+          data-tab="refunds"
           onclick="accountTab('refunds',this)"
         >
           Refund History
@@ -1770,11 +1937,11 @@ footer{
 
 <script>
 
-/* =========================================================
-   STATE
-========================================================= */
-
 "use strict";
+
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
 
 let products = [];
 let cart = [];
@@ -1787,8 +1954,14 @@ let customerToken =
 
 let storeSettings = {};
 
+const CART_KEY =
+  "faceOfStyleCart";
+
+const CUSTOMER_TOKEN_KEY =
+  "faceOfStyleCustomerToken";
+
 /* =========================================================
-   HELPERS
+   BASIC HELPERS
 ========================================================= */
 
 function money(value){
@@ -1819,6 +1992,38 @@ function escapeHTML(value){
 
 }
 
+function safeNumber(value){
+
+  const number =
+    Number(value);
+
+  return Number.isFinite(number)
+    ? number
+    : 0;
+
+}
+
+function handleImageError(
+  image,
+  fallback
+){
+
+  if(
+    !image ||
+    image.dataset.fallbackUsed === "1"
+  ){
+    return;
+  }
+
+  image.dataset.fallbackUsed =
+    "1";
+
+  image.src =
+    fallback ||
+    "/assets/logo.png";
+
+}
+
 function imagePath(value){
 
   const src =
@@ -1827,64 +2032,186 @@ function imagePath(value){
     ).trim();
 
   if(!src){
-    return "assets/product-1.jpg";
+
+    return "/assets/product-1.jpg";
+
   }
 
   if(
-    src.startsWith("data:") ||
+    src.startsWith("data:")
+  ){
+
+    return src;
+
+  }
+
+  if(
     src.startsWith("http://") ||
-    src.startsWith("https://") ||
+    src.startsWith("https://")
+  ){
+
+    return src;
+
+  }
+
+  if(
     src.startsWith("/")
   ){
+
     return src;
+
   }
 
   if(
     src.startsWith("assets/")
   ){
-    return src;
+
+    return "/" + src;
+
+  }
+
+  if(
+    src.startsWith("./assets/")
+  ){
+
+    return src.replace(
+      "./",
+      "/"
+    );
+
   }
 
   return (
-    "assets/" +
-    src.replace(/^\.?\//,"")
+    "/assets/" +
+    src.replace(
+      /^\.?\//,
+      ""
+    )
   );
+
+}
+
+async function parseJSON(
+  response
+){
+
+  const text =
+    await response.text();
+
+  if(!text){
+
+    return {};
+
+  }
+
+  try{
+
+    return JSON.parse(
+      text
+    );
+
+  }catch{
+
+    return {
+      ok:false,
+      message:
+        "The server returned an invalid response."
+    };
+
+  }
 
 }
 
 function lockBody(){
 
-  const open =
-    document
-      .querySelectorAll(
-        ".modal.open"
-      ).length > 0 ||
+  const drawer =
+    document.getElementById(
+      "drawer"
+    );
 
+  const modalOpen =
     document
-      .getElementById(
-        "drawer"
-      )
-      .classList.contains(
-        "open"
+      .querySelector(
+        ".modal.open"
       );
+
+  const drawerOpen =
+    drawer &&
+    drawer.classList.contains(
+      "open"
+    );
 
   document.body.classList.toggle(
     "lock",
-    open
+    Boolean(
+      modalOpen ||
+      drawerOpen
+    )
   );
 
 }
 
+function setButtonLoading(
+  button,
+  loading,
+  loadingText,
+  normalText
+){
+
+  if(!button){
+    return;
+  }
+
+  if(loading){
+
+    button.disabled =
+      true;
+
+    button.dataset.oldText =
+      normalText ||
+      button.textContent;
+
+    button.textContent =
+      loadingText ||
+      "PROCESSING...";
+
+  }else{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      normalText ||
+      button.dataset.oldText ||
+      "CONTINUE";
+
+  }
+
+}
+
 /* =========================================================
-   SAVE CART
+   CART STORAGE
 ========================================================= */
 
 function saveCart(){
 
-  localStorage.setItem(
-    "faceOfStyleCart",
-    JSON.stringify(cart)
-  );
+  try{
+
+    localStorage.setItem(
+      CART_KEY,
+      JSON.stringify(
+        cart
+      )
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Unable to save cart:",
+      error
+    );
+
+  }
 
 }
 
@@ -1894,40 +2221,61 @@ function loadCart(){
 
     const saved =
       localStorage.getItem(
-        "faceOfStyleCart"
+        CART_KEY
       );
 
     if(!saved){
+
+      cart = [];
+
       return;
+
     }
 
     const parsed =
-      JSON.parse(saved);
+      JSON.parse(
+        saved
+      );
 
     if(
-      Array.isArray(parsed)
+      !Array.isArray(
+        parsed
+      )
     ){
 
-      cart =
-        parsed
-          .filter(
-            item =>
-              item &&
-              Number(item.qty) > 0
-          )
-          .map(
-            item => ({
-              ...item,
-              id:
-                Number(item.id),
-              qty:
-                Number(item.qty)
-            })
-          );
+      cart = [];
+
+      return;
 
     }
 
-  }catch{
+    cart =
+      parsed
+        .filter(
+          item =>
+            item &&
+            Number(item.id) > 0 &&
+            Number(item.qty) > 0
+        )
+        .map(
+          item => ({
+            ...item,
+            id:
+              Number(item.id),
+            qty:
+              Math.max(
+                1,
+                Number(item.qty)
+              )
+          })
+        );
+
+  }catch(error){
+
+    console.warn(
+      "Cart load error:",
+      error
+    );
 
     cart = [];
 
@@ -1947,12 +2295,30 @@ async function loadConfig(){
       await fetch(
         "/api/config",
         {
-          cache:"no-store"
+          method:"GET",
+          cache:"no-store",
+          headers:{
+            Accept:
+              "application/json"
+          }
         }
       );
 
     const data =
-      await response.json();
+      await parseJSON(
+        response
+      );
+
+    if(
+      !response.ok
+    ){
+
+      throw new Error(
+        data.message ||
+        "Unable to load store configuration."
+      );
+
+    }
 
     storeSettings =
       data?.settings ||
@@ -1964,134 +2330,206 @@ async function loadConfig(){
     if(
       storeSettings.primary_color
     ){
+
       root.style.setProperty(
         "--wine",
         storeSettings.primary_color
       );
+
     }
 
     if(
       storeSettings.secondary_color
     ){
+
       root.style.setProperty(
         "--wine2",
         storeSettings.secondary_color
       );
+
     }
 
     if(
       storeSettings.gold_color
     ){
+
       root.style.setProperty(
         "--gold",
         storeSettings.gold_color
       );
+
     }
 
     if(
       storeSettings.background_color
     ){
+
       root.style.setProperty(
         "--cream",
         storeSettings.background_color
       );
+
     }
 
     if(
       storeSettings.text_color
     ){
+
       root.style.setProperty(
         "--text",
         storeSettings.text_color
       );
+
     }
 
     const storeName =
-      storeSettings.store_name ||
-      "Face of Style Hijab Factory";
+      String(
+        storeSettings.store_name ||
+        "Face of Style Hijab Factory"
+      );
 
     document.title =
       storeName;
 
-    document
-      .getElementById(
+    const footerStoreName =
+      document.getElementById(
         "footerStoreName"
-      )
-      .textContent =
-      storeName;
+      );
 
-    document
-      .getElementById(
+    if(footerStoreName){
+
+      footerStoreName.textContent =
+        storeName;
+
+    }
+
+    const brandName =
+      document.getElementById(
         "brandName"
-      )
-      .textContent =
-      String(
+      );
+
+    if(brandName){
+
+      brandName.textContent =
         storeName
-      )
-      .replace(
-        / Hijab Factory/i,
-        ""
-      )
-      .toUpperCase();
+          .replace(
+            / Hijab Factory/i,
+            ""
+          )
+          .toUpperCase();
 
-    document
-      .getElementById(
+    }
+
+    const brandTagline =
+      document.getElementById(
         "brandTagline"
-      )
-      .textContent =
-      storeSettings.tagline ||
-      "HIJAB FACTORY";
+      );
 
-    document
-      .getElementById(
+    if(brandTagline){
+
+      brandTagline.textContent =
+        storeSettings.tagline ||
+        "HIJAB FACTORY";
+
+    }
+
+    const heroTitle =
+      document.getElementById(
         "heroTitle"
-      )
-      .textContent =
-      storeSettings.hero_title ||
-      "Modesty, Elegance & Style.";
+      );
 
-    document
-      .getElementById(
+    if(heroTitle){
+
+      heroTitle.textContent =
+        storeSettings.hero_title ||
+        "Modesty, Elegance & Style.";
+
+    }
+
+    const heroText =
+      document.getElementById(
         "heroText"
+      );
+
+    if(heroText){
+
+      heroText.textContent =
+        storeSettings.hero_text ||
+        "Discover carefully crafted hijabs, abayas, gowns and modest outfits.";
+
+    }
+
+    const heroImage =
+      document.getElementById(
+        "heroImage"
+      );
+
+    if(
+      heroImage &&
+      (
+        storeSettings.hero_image ||
+        storeSettings.banner_image
       )
-      .textContent =
-      storeSettings.hero_text ||
-      "Discover carefully crafted hijabs, abayas, gowns and modest outfits.";
+    ){
+
+      heroImage.src =
+        imagePath(
+          storeSettings.hero_image ||
+          storeSettings.banner_image
+        );
+
+      heroImage.dataset.fallbackUsed =
+        "0";
+
+    }
+
+    const rawWhatsapp =
+      data?.whatsapp ||
+      storeSettings.whatsapp ||
+      "2349065828886";
 
     const whatsapp =
       String(
-        data?.whatsapp ||
-        storeSettings.whatsapp ||
-        "2349065828886"
+        rawWhatsapp
       ).replace(
         /[^0-9]/g,
         ""
       );
 
-    document
-      .getElementById(
+    const footerWhatsApp =
+      document.getElementById(
         "footerWhatsApp"
-      )
-      .textContent =
-      whatsapp.startsWith("234")
-        ? "0" +
-          whatsapp.slice(3)
-        : whatsapp;
+      );
+
+    if(footerWhatsApp){
+
+      footerWhatsApp.textContent =
+        whatsapp.startsWith("234")
+          ? "0" +
+            whatsapp.slice(3)
+          : whatsapp;
+
+    }
 
     const customMessage =
       encodeURIComponent(
         "Hello Face of Style Hijab Factory,\n\nI would like to place a custom order.\n\nStyle:\nFabric:\nColour:\nMeasurements:\n\nPlease let me know if you need any additional information."
       );
 
-    document
-      .getElementById(
+    const customWhatsApp =
+      document.getElementById(
         "customWhatsApp"
-      )
-      .href =
-      "https://wa.me/" +
-      whatsapp +
-      "?text=" +
-      customMessage;
+      );
+
+    if(customWhatsApp){
+
+      customWhatsApp.href =
+        "https://wa.me/" +
+        whatsapp +
+        "?text=" +
+        customMessage;
+
+    }
 
   }catch(error){
 
@@ -2105,7 +2543,7 @@ async function loadConfig(){
 }
 
 /* =========================================================
-   LOAD PRODUCTS
+   PRODUCTS
 ========================================================= */
 
 async function loadProducts(){
@@ -2115,24 +2553,35 @@ async function loadProducts(){
       "products"
     );
 
-  try{
+  if(!box){
+    return;
+  }
 
-    box.innerHTML = `
-      <div class="loading">
-        Loading products...
-      </div>
-    `;
+  box.innerHTML = `
+    <div class="loading">
+      Loading products...
+    </div>
+  `;
+
+  try{
 
     const response =
       await fetch(
         "/api/products",
         {
-          cache:"no-store"
+          method:"GET",
+          cache:"no-store",
+          headers:{
+            Accept:
+              "application/json"
+          }
         }
       );
 
     const data =
-      await response.json();
+      await parseJSON(
+        response
+      );
 
     if(
       !response.ok ||
@@ -2140,47 +2589,90 @@ async function loadProducts(){
         data.products
       )
     ){
+
       throw new Error(
+        data.message ||
         "Unable to load products."
       );
+
     }
 
     products =
       data.products.map(
-        p => ({
-          ...p,
+        product => {
 
-          id:
-            Number(p.id),
+          const normalized =
+            {
+              ...product,
 
-          cat:
-            p.cat ||
-            p.category ||
-            "Fashion",
+              id:
+                Number(
+                  product.id
+                ),
 
-          image:
-            imagePath(
-              p.image ||
-              p.img
-            ),
+              name:
+                String(
+                  product.name ||
+                  "Unnamed Product"
+                ),
 
-          img:
-            imagePath(
-              p.image ||
-              p.img
-            ),
+              cat:
+                product.cat ||
+                product.category ||
+                "Fashion",
 
-          desc:
-            p.desc ||
-            p.description ||
-            "",
+              category:
+                product.category ||
+                product.cat ||
+                "Fashion",
 
-          stock:
-            Number(
-              p.stock
-            ) || 0
-        })
+              image:
+                imagePath(
+                  product.image ||
+                  product.img
+                ),
+
+              img:
+                imagePath(
+                  product.image ||
+                  product.img
+                ),
+
+              desc:
+                product.desc ||
+                product.description ||
+                "",
+
+              description:
+                product.description ||
+                product.desc ||
+                "",
+
+              price:
+                safeNumber(
+                  product.price
+                ),
+
+              stock:
+                Math.max(
+                  0,
+                  safeNumber(
+                    product.stock
+                  )
+                )
+
+            };
+
+          return normalized;
+
+        }
+      )
+      .filter(
+        product =>
+          product.id > 0
       );
+
+    syncCartWithProducts();
 
     renderProducts();
 
@@ -2195,11 +2687,84 @@ async function loadProducts(){
 
     box.innerHTML = `
       <div class="loading error">
-        Unable to load products.
-        Please refresh the page.
+        ${escapeHTML(
+          error.message ||
+          "Unable to load products."
+        )}
+
+        <br><br>
+
+        <button
+          type="button"
+          class="smallBtn"
+          onclick="loadProducts()"
+        >
+          TRY AGAIN
+        </button>
       </div>
     `;
+
   }
+
+}
+
+function syncCartWithProducts(){
+
+  if(!products.length){
+
+    return;
+
+  }
+
+  cart =
+    cart
+      .map(
+        item => {
+
+          const product =
+            products.find(
+              p =>
+                Number(p.id) ===
+                Number(item.id)
+            );
+
+          if(!product){
+
+            return null;
+
+          }
+
+          const stock =
+            Number(
+              product.stock
+            );
+
+          if(stock < 1){
+
+            return null;
+
+          }
+
+          return {
+            ...product,
+            qty:
+              Math.min(
+                Math.max(
+                  1,
+                  Number(item.qty) || 1
+                ),
+                Math.min(
+                  99,
+                  stock
+                )
+              )
+          };
+
+        }
+      )
+      .filter(Boolean);
+
+  saveCart();
 
 }
 
@@ -2213,23 +2778,26 @@ function filterProducts(
 ){
 
   selectedCategory =
-    category;
+    category ||
+    "All";
 
   document
     .querySelectorAll(
       ".cat"
     )
     .forEach(
-      el =>
-        el.classList.remove(
+      element =>
+        element.classList.remove(
           "active"
         )
     );
 
   if(button){
+
     button.classList.add(
       "active"
     );
+
   }
 
   renderProducts();
@@ -2237,7 +2805,7 @@ function filterProducts(
 }
 
 /* =========================================================
-   RENDER
+   RENDER PRODUCTS
 ========================================================= */
 
 function renderProducts(){
@@ -2251,13 +2819,14 @@ function renderProducts(){
     return;
   }
 
+  const searchElement =
+    document.getElementById(
+      "search"
+    );
+
   const query =
     String(
-      document
-        .getElementById(
-          "search"
-        )
-        ?.value ||
+      searchElement?.value ||
       ""
     )
     .trim()
@@ -2272,13 +2841,20 @@ function renderProducts(){
             product.cat ||
             product.category ||
             ""
-          );
+          )
+          .trim()
+          .toLowerCase();
+
+        const selected =
+          String(
+            selectedCategory
+          )
+          .trim()
+          .toLowerCase();
 
         const matchCategory =
-          selectedCategory ===
-            "All" ||
-          category.toLowerCase() ===
-            selectedCategory.toLowerCase();
+          selected === "all" ||
+          category === selected;
 
         const haystack =
           (
@@ -2295,8 +2871,14 @@ function renderProducts(){
             String(
               product.color ||
               ""
+            ) +
+            " " +
+            String(
+              product.cat ||
+              ""
             )
-          ).toLowerCase();
+          )
+          .toLowerCase();
 
         return (
           matchCategory &&
@@ -2324,161 +2906,148 @@ function renderProducts(){
   }
 
   box.innerHTML =
-    list.map(
-      product => {
+    list
+      .map(
+        product => {
 
-        const id =
-          Number(
-            product.id
-          );
+          const id =
+            Number(
+              product.id
+            );
 
-        const stock =
-          Number(
-            product.stock
-          );
+          const stock =
+            Math.max(
+              0,
+              Number(
+                product.stock
+              ) || 0
+            );
 
-        const out =
-          stock < 1;
+          const out =
+            stock < 1;
 
-        const image =
-          escapeHTML(
-            imagePath(
-              product.image ||
-              product.img
-            )
-          );
+          const image =
+            escapeHTML(
+              imagePath(
+                product.image ||
+                product.img
+              )
+            );
 
-        const name =
-          escapeHTML(
-            product.name
-          );
+          const name =
+            escapeHTML(
+              product.name
+            );
 
-        const category =
-          escapeHTML(
-            product.cat ||
-            product.category ||
-            "Fashion"
-          );
+          const category =
+            escapeHTML(
+              product.cat ||
+              product.category ||
+              "Fashion"
+            );
 
-        const desc =
-          escapeHTML(
-            product.desc ||
-            product.description ||
-            ""
-          );
+          const desc =
+            escapeHTML(
+              product.desc ||
+              product.description ||
+              ""
+            );
 
-        return `
+          return `
 
-          <article class="card">
+            <article class="card">
 
-            <div class="pic">
+              <div class="pic">
 
-              <img
-                src="${image}"
-                alt="${name}"
+                <img
+                  src="${image}"
+                  alt="${name}"
+                  loading="lazy"
+                  onerror="handleImageError(this,'/assets/product-1.jpg')"
+                >
 
-                onerror="
-                  this.onerror=null;
-                  this.src='assets/product-1.jpg'
-                "
-              >
-
-              <span class="badge">
-                ${category}
-              </span>
-
-              <button
-                class="heart"
-                type="button"
-                onclick="addToCart(${id})"
-                ${
-                  out
-                    ? "disabled"
-                    : ""
-                }
-              >
-                ♡
-              </button>
-
-            </div>
-
-            <div class="body">
-
-              <h3>
-                ${name}
-              </h3>
-
-              <p>
-                ${desc}
-              </p>
-
-              <div class="price">
-                ${money(
-                  product.price
-                )}
-              </div>
-
-              <span
-                class="stock ${
-                  out
-                    ? "out"
-                    : ""
-                }"
-              >
-                ${
-                  out
-                    ? "Out of stock"
-                    : `${stock} in stock`
-                }
-              </span>
-
-              <div class="actions">
+                <span class="badge">
+                  ${category}
+                </span>
 
                 <button
-                  class="add"
+                  class="heart"
                   type="button"
+                  aria-label="Add ${name} to cart"
                   onclick="addToCart(${id})"
-                  ${
-                    out
-                      ? "disabled"
-                      : ""
-                  }
+                  ${out ? "disabled" : ""}
                 >
-                  ${
-                    out
-                      ? "Out of Stock"
-                      : "Add to Cart"
-                  }
-                </button>
-
-                <button
-                  class="view"
-                  type="button"
-                  onclick="openProductOrder(${id})"
-                  ${
-                    out
-                      ? "disabled"
-                      : ""
-                  }
-                >
-                  Order
+                  ♡
                 </button>
 
               </div>
 
-            </div>
+              <div class="body">
 
-          </article>
+                <h3>
+                  ${name}
+                </h3>
 
-        `;
+                <p>
+                  ${desc}
+                </p>
 
-      }
-    ).join("");
+                <div class="price">
+                  ${money(
+                    product.price
+                  )}
+                </div>
+
+                <span
+                  class="stock ${out ? "out" : ""}"
+                >
+                  ${
+                    out
+                      ? "Out of stock"
+                      : `${stock} in stock`
+                  }
+                </span>
+
+                <div class="actions">
+
+                  <button
+                    class="add"
+                    type="button"
+                    onclick="addToCart(${id})"
+                    ${out ? "disabled" : ""}
+                  >
+                    ${
+                      out
+                        ? "Out of Stock"
+                        : "Add to Cart"
+                    }
+                  </button>
+
+                  <button
+                    class="view"
+                    type="button"
+                    onclick="openProductOrder(${id})"
+                    ${out ? "disabled" : ""}
+                  >
+                    Order
+                  </button>
+
+                </div>
+
+              </div>
+
+            </article>
+
+          `;
+
+        }
+      )
+      .join("");
 
 }
 
 /* =========================================================
-   CART
+   ADD TO CART
 ========================================================= */
 
 function addToCart(id){
@@ -2491,7 +3060,13 @@ function addToCart(id){
     );
 
   if(!product){
+
+    alert(
+      "This product could not be found."
+    );
+
     return;
+
   }
 
   const stock =
@@ -2509,17 +3084,22 @@ function addToCart(id){
 
   }
 
-  const item =
+  const existing =
     cart.find(
-      x =>
-        Number(x.id) ===
+      item =>
+        Number(item.id) ===
         Number(id)
     );
 
-  if(item){
+  if(existing){
+
+    const next =
+      Number(
+        existing.qty
+      ) + 1;
 
     if(
-      Number(item.qty) >=
+      next >
       Math.min(
         99,
         stock
@@ -2531,10 +3111,16 @@ function addToCart(id){
       );
 
       return;
+
     }
 
-    item.qty =
-      Number(item.qty) + 1;
+    existing.qty =
+      next;
+
+    Object.assign(
+      existing,
+      product
+    );
 
   }else{
 
@@ -2546,10 +3132,16 @@ function addToCart(id){
   }
 
   saveCart();
+
   updateCart();
+
   openCart();
 
 }
+
+/* =========================================================
+   CHANGE QUANTITY
+========================================================= */
 
 function changeQty(
   id,
@@ -2574,11 +3166,17 @@ function changeQty(
         Number(id)
     );
 
+  if(!product){
+
+    removeItem(id);
+
+    return;
+
+  }
+
   const stock =
     Number(
-      product?.stock ??
-      item.stock ??
-      99
+      product.stock
     );
 
   const next =
@@ -2590,6 +3188,7 @@ function changeQty(
     removeItem(id);
 
     return;
+
   }
 
   if(
@@ -2605,15 +3204,26 @@ function changeQty(
     );
 
     return;
+
   }
 
   item.qty =
     next;
 
+  Object.assign(
+    item,
+    product
+  );
+
   saveCart();
+
   updateCart();
 
 }
+
+/* =========================================================
+   REMOVE CART ITEM
+========================================================= */
 
 function removeItem(id){
 
@@ -2625,15 +3235,23 @@ function removeItem(id){
     );
 
   saveCart();
+
   updateCart();
 
 }
+
+/* =========================================================
+   CART UPDATE
+========================================================= */
 
 function updateCart(){
 
   const count =
     cart.reduce(
-      (sum,item) =>
+      (
+        sum,
+        item
+      ) =>
         sum +
         Number(
           item.qty
@@ -2641,12 +3259,17 @@ function updateCart(){
       0
     );
 
-  document
-    .getElementById(
+  const cartCount =
+    document.getElementById(
       "cartCount"
-    )
-    .textContent =
-    count;
+    );
+
+  if(cartCount){
+
+    cartCount.textContent =
+      count;
+
+  }
 
   const box =
     document.getElementById(
@@ -2655,32 +3278,50 @@ function updateCart(){
 
   const total =
     cart.reduce(
-      (sum,item) =>
+      (
+        sum,
+        item
+      ) =>
         sum +
-        Number(
-          item.price
-        ) *
-        Number(
-          item.qty
+        (
+          Number(
+            item.price
+          ) *
+          Number(
+            item.qty
+          )
         ),
       0
     );
 
-  document
-    .getElementById(
+  const totalBox =
+    document.getElementById(
       "cartTotal"
-    )
-    .textContent =
-    "Total: " +
-    money(total);
+    );
+
+  if(totalBox){
+
+    totalBox.textContent =
+      "Total: " +
+      money(total);
+
+  }
 
   const checkoutButton =
     document.getElementById(
       "checkoutButton"
     );
 
-  checkoutButton.disabled =
-    cart.length === 0;
+  if(checkoutButton){
+
+    checkoutButton.disabled =
+      cart.length === 0;
+
+  }
+
+  if(!box){
+    return;
+  }
 
   if(!cart.length){
 
@@ -2695,75 +3336,101 @@ function updateCart(){
   }
 
   box.innerHTML =
-    cart.map(
-      item => `
+    cart
+      .map(
+        item => {
 
-        <div class="cartItem">
+          const product =
+            products.find(
+              p =>
+                Number(p.id) ===
+                Number(item.id)
+            );
 
-          <img
-            src="${escapeHTML(
-              imagePath(
-                item.img ||
-                item.image
-              )
-            )}"
-            alt="${escapeHTML(
-              item.name
-            )}"
+          const stock =
+            Number(
+              product?.stock ??
+              item.stock ??
+              99
+            );
 
-            onerror="
-              this.onerror=null;
-              this.src='assets/product-1.jpg'
-            "
-          >
+          const qty =
+            Number(
+              item.qty
+            );
 
-          <div class="cartContent">
+          return `
 
-            <b>
-              ${escapeHTML(
-                item.name
-              )}
-            </b>
+            <div class="cartItem">
 
-            <small>
-              ${money(
-                item.price
-              )}
-            </small>
-
-            <div class="qty">
-
-              <button
-                onclick="changeQty(${Number(item.id)},-1)"
+              <img
+                src="${escapeHTML(
+                  imagePath(
+                    item.image ||
+                    item.img
+                  )
+                )}"
+                alt="${escapeHTML(
+                  item.name
+                )}"
+                onerror="handleImageError(this,'/assets/product-1.jpg')"
               >
-                −
-              </button>
 
-              <strong>
-                ${Number(item.qty)}
-              </strong>
+              <div class="cartContent">
 
-              <button
-                onclick="changeQty(${Number(item.id)},1)"
-              >
-                +
-              </button>
+                <b>
+                  ${escapeHTML(
+                    item.name
+                  )}
+                </b>
 
-              <span
-                class="remove"
-                onclick="removeItem(${Number(item.id)})"
-              >
-                Remove
-              </span>
+                <small>
+                  ${money(
+                    item.price
+                  )}
+                </small>
+
+                <div class="qty">
+
+                  <button
+                    type="button"
+                    onclick="changeQty(${Number(item.id)},-1)"
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+
+                  <strong>
+                    ${qty}
+                  </strong>
+
+                  <button
+                    type="button"
+                    onclick="changeQty(${Number(item.id)},1)"
+                    aria-label="Increase quantity"
+                    ${qty >= Math.min(99,stock) ? "disabled" : ""}
+                  >
+                    +
+                  </button>
+
+                  <span
+                    class="remove"
+                    onclick="removeItem(${Number(item.id)})"
+                  >
+                    Remove
+                  </span>
+
+                </div>
+
+              </div>
 
             </div>
 
-          </div>
+          `;
 
-        </div>
-
-      `
-    ).join("");
+        }
+      )
+      .join("");
 
 }
 
@@ -2773,13 +3440,18 @@ function updateCart(){
 
 function openCart(){
 
-  document
-    .getElementById(
+  const drawer =
+    document.getElementById(
       "drawer"
-    )
-    .classList.add(
-      "open"
     );
+
+  if(!drawer){
+    return;
+  }
+
+  drawer.classList.add(
+    "open"
+  );
 
   lockBody();
 
@@ -2787,33 +3459,52 @@ function openCart(){
 
 function closeCart(){
 
-  document
-    .getElementById(
+  const drawer =
+    document.getElementById(
       "drawer"
-    )
-    .classList.remove(
-      "open"
     );
+
+  if(!drawer){
+    return;
+  }
+
+  drawer.classList.remove(
+    "open"
+  );
 
   lockBody();
 
 }
 
 /* =========================================================
-   ORDER BUTTON
+   PRODUCT ORDER
 ========================================================= */
 
 function openProductOrder(id){
 
   const product =
     products.find(
-      p =>
-        Number(p.id) ===
+      item =>
+        Number(item.id) ===
         Number(id)
     );
 
   if(!product){
     return;
+  }
+
+  if(
+    Number(
+      product.stock
+    ) < 1
+  ){
+
+    alert(
+      "This product is currently out of stock."
+    );
+
+    return;
+
   }
 
   addToCart(id);
@@ -2824,6 +3515,27 @@ function openProductOrder(id){
    CHECKOUT
 ========================================================= */
 
+function getCartTotal(){
+
+  return cart.reduce(
+    (
+      sum,
+      item
+    ) =>
+      sum +
+      (
+        Number(
+          item.price
+        ) *
+        Number(
+          item.qty
+        )
+      ),
+    0
+  );
+
+}
+
 function openCheckout(){
 
   if(!cart.length){
@@ -2833,23 +3545,36 @@ function openCheckout(){
     );
 
     return;
+
   }
 
-  document
-    .getElementById(
-      "checkoutTotal"
-    )
-    .textContent =
-    "Order total: " +
-    money(
-      cart.reduce(
-        (sum,item) =>
-          sum +
-          Number(item.price) *
-          Number(item.qty),
-        0
-      )
+  syncCartWithProducts();
+
+  if(!cart.length){
+
+    alert(
+      "The products in your cart are no longer available."
     );
+
+    return;
+
+  }
+
+  const total =
+    getCartTotal();
+
+  const checkoutTotal =
+    document.getElementById(
+      "checkoutTotal"
+    );
+
+  if(checkoutTotal){
+
+    checkoutTotal.textContent =
+      "Order total: " +
+      money(total);
+
+  }
 
   document
     .getElementById(
@@ -2879,39 +3604,62 @@ function closeCheckout(){
 
 }
 
+function validateEmail(
+  email
+){
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    .test(
+      email
+    );
+
+}
+
 async function startCheckout(){
 
   if(!cart.length){
+
+    alert(
+      "Your cart is empty."
+    );
+
     return;
+
   }
+
+  syncCartWithProducts();
 
   const name =
     document
       .getElementById(
         "customerName"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const email =
     document
       .getElementById(
         "customerEmail"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const phone =
     document
       .getElementById(
         "customerPhone"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const address =
     document
       .getElementById(
         "customerAddress"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const method =
     document
@@ -2932,22 +3680,40 @@ async function startCheckout(){
     );
 
     return;
+
+  }
+
+  if(!validateEmail(email)){
+
+    alert(
+      "Please enter a valid email address."
+    );
+
+    return;
+
+  }
+
+  if(!method){
+
+    alert(
+      "Please select a payment method."
+    );
+
+    return;
+
   }
 
   const button =
-    document
-      .getElementById(
-        "continuePayment"
-      );
+    document.getElementById(
+      "continuePayment"
+    );
 
-  const oldText =
-    button.textContent;
-
-  button.disabled =
-    true;
-
-  button.textContent =
-    "PROCESSING...";
+  setButtonLoading(
+    button,
+    true,
+    "PROCESSING...",
+    "CONTINUE"
+  );
 
   const payload = {
 
@@ -2962,15 +3728,23 @@ async function startCheckout(){
       cart.map(
         item => ({
           id:
-            Number(item.id),
+            Number(
+              item.id
+            ),
           qty:
-            Number(item.qty)
+            Number(
+              item.qty
+            )
         })
       )
 
   };
 
   try{
+
+    /* =====================================================
+       BANK TRANSFER
+    ===================================================== */
 
     if(
       method ===
@@ -2985,6 +3759,8 @@ async function startCheckout(){
 
             headers:{
               "Content-Type":
+                "application/json",
+              Accept:
                 "application/json"
             },
 
@@ -2996,7 +3772,9 @@ async function startCheckout(){
         );
 
       const data =
-        await response.json();
+        await parseJSON(
+          response
+        );
 
       if(
         !response.ok ||
@@ -3011,17 +3789,40 @@ async function startCheckout(){
       }
 
       cart = [];
+
       saveCart();
+
       updateCart();
 
       closeCheckout();
 
+      const reference =
+        data.reference ||
+        data.order?.reference ||
+        "N/A";
+
       alert(
-        `Order created successfully.\n\nReference: ${data.reference}\n\nPlease contact us on WhatsApp for bank transfer instructions.`
+        "Order created successfully.\n\n" +
+        "Reference: " +
+        reference +
+        "\n\n" +
+        "Please contact us on WhatsApp for bank transfer instructions."
+      );
+
+      setButtonLoading(
+        button,
+        false,
+        "",
+        "CONTINUE"
       );
 
       return;
+
     }
+
+    /* =====================================================
+       STORE CREDIT
+    ===================================================== */
 
     if(
       method ===
@@ -3036,52 +3837,87 @@ async function startCheckout(){
 
       }
 
-      const response =
+      const creditResponse =
         await fetch(
-          "/api/customer/store-credit"
+          "/api/customer/store-credit",
+          {
+            method:"GET",
+
+            headers:{
+              Accept:
+                "application/json",
+              Authorization:
+                "Bearer " +
+                customerToken
+            }
+          }
         );
 
       const credit =
-        await response.json();
+        await parseJSON(
+          creditResponse
+        );
 
       if(
-        !response.ok ||
+        creditResponse.status ===
+        401
+      ){
+
+        customerLogout();
+
+        throw new Error(
+          "Your customer session has expired. Please login again."
+        );
+
+      }
+
+      if(
+        !creditResponse.ok ||
         !credit.ok
       ){
 
         throw new Error(
+          credit.message ||
           "Unable to check store credit."
         );
 
       }
 
       const total =
-        cart.reduce(
-          (sum,item) =>
-            sum +
-            Number(item.price) *
-            Number(item.qty),
-          0
-        );
+        getCartTotal();
 
-      if(
+      const balance =
         Number(
           credit.balance
-        ) < total
+        ) || 0;
+
+      if(
+        balance <
+        total
       ){
 
         throw new Error(
-          `Insufficient store credit. Available: ${money(credit.balance)}`
+          "Insufficient store credit. Available: " +
+          money(balance)
         );
 
       }
 
-      alert(
-        "Store Credit checkout will be completed from your account. Please contact the store if confirmation is needed."
+      /*
+        The Version 2 backend controls the actual
+        store-credit transaction. We do not deduct
+        credit directly from the browser.
+      */
+
+      throw new Error(
+        "Store Credit is available in your account, but checkout must be completed through the store's customer-account order flow."
       );
 
-      return;
     }
+
+    /* =====================================================
+       PAYSTACK
+    ===================================================== */
 
     const response =
       await fetch(
@@ -3092,6 +3928,7 @@ async function startCheckout(){
           headers:{
             "Content-Type":
               "application/json",
+
             Accept:
               "application/json"
           },
@@ -3104,7 +3941,9 @@ async function startCheckout(){
       );
 
     const data =
-      await response.json();
+      await parseJSON(
+        response
+      );
 
     if(
       !response.ok ||
@@ -3125,19 +3964,21 @@ async function startCheckout(){
   }catch(error){
 
     console.error(
+      "Checkout error:",
       error
     );
 
     alert(
       error.message ||
-      "Checkout failed."
+      "Checkout failed. Please try again."
     );
 
-    button.disabled =
-      false;
-
-    button.textContent =
-      oldText;
+    setButtonLoading(
+      button,
+      false,
+      "",
+      "CONTINUE"
+    );
 
   }
 
@@ -3151,13 +3992,18 @@ function openAccount(
   panel = "profile"
 ){
 
-  document
-    .getElementById(
+  const modal =
+    document.getElementById(
       "accountModal"
-    )
-    .classList.add(
-      "open"
     );
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.add(
+    "open"
+  );
 
   lockBody();
 
@@ -3177,13 +4023,17 @@ function openAccount(
       .style.display =
       "block";
 
-    loadProfile();
+    const button =
+      document.querySelector(
+        `.accountTab[data-tab="${panel}"]`
+      ) ||
+      document.querySelector(
+        ".accountTab[data-tab='profile']"
+      );
 
     accountTab(
       panel,
-      document.querySelector(
-        `.accountTab`
-      )
+      button
     );
 
   }else{
@@ -3208,181 +4058,212 @@ function closeAccount(){
 
 }
 
+/* =========================================================
+   ACCOUNT AUTH UI
+========================================================= */
+
 function renderAccountAuth(){
 
-  document
-    .getElementById(
+  const auth =
+    document.getElementById(
       "accountAuth"
-    )
-    .style.display =
+    );
+
+  const content =
+    document.getElementById(
+      "accountContent"
+    );
+
+  if(!auth){
+    return;
+  }
+
+  auth.style.display =
     "block";
 
-  document
-    .getElementById(
-      "accountContent"
-    )
-    .style.display =
-    "none";
+  if(content){
 
-  document
-    .getElementById(
-      "accountAuth"
-    )
-    .innerHTML = `
+    content.style.display =
+      "none";
 
-      <div
-        class="infoCard"
-      >
+  }
 
-        <b>
-          Customer Account
-        </b>
+  auth.innerHTML = `
 
-        <p
-          style="
-            color:var(--muted);
-            margin-top:5px
-          "
-        >
-          Sign in or create an account
-          to access Orders, Addresses,
-          Store Credit and Refund History.
-        </p>
+    <div class="infoCard">
 
-      </div>
+      <b>
+        Customer Account
+      </b>
 
-      <div class="formRow">
-
-        <div class="field">
-
-          <label>
-            Email
-          </label>
-
-          <input
-            id="accountEmail"
-            type="email"
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label>
-            Password
-          </label>
-
-          <input
-            id="accountPassword"
-            type="password"
-          >
-
-        </div>
-
-      </div>
-
-      <button
-        class="primaryBtn"
+      <p
         style="
-          width:100%;
-          padding:12px;
-          border-radius:22px;
-        "
-        onclick="customerLogin()"
-      >
-        LOGIN
-      </button>
-
-      <div
-        id="loginMessage"
-        style="
-          margin-top:8px;
-          color:var(--danger);
-          font-size:13px
-        "
-      ></div>
-
-      <hr
-        style="
-          margin:18px 0;
-          border:0;
-          border-top:1px solid var(--line)
+          color:var(--muted);
+          margin-top:5px
         "
       >
+        Sign in or create an account
+        to access Orders, Addresses,
+        Store Credit and Refund History.
+      </p>
 
-      <h3
-        style="
-          color:var(--wine);
-          margin-bottom:8px
-        "
-      >
-        New Customer
-      </h3>
+    </div>
+
+    <h3
+      style="
+        color:var(--wine);
+        margin-bottom:8px
+      "
+    >
+      Login
+    </h3>
+
+    <div class="formRow">
 
       <div class="field">
 
-        <label>
-          Full Name
+        <label for="accountEmail">
+          Email
         </label>
 
         <input
-          id="signupName"
+          id="accountEmail"
+          type="email"
+          autocomplete="email"
         >
-
-      </div>
-
-      <div class="formRow">
-
-        <div class="field">
-
-          <label>
-            Email
-          </label>
-
-          <input
-            id="signupEmail"
-            type="email"
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label>
-            Phone
-          </label>
-
-          <input
-            id="signupPhone"
-          >
-
-        </div>
 
       </div>
 
       <div class="field">
 
-        <label>
+        <label for="accountPassword">
           Password
         </label>
 
         <input
-          id="signupPassword"
+          id="accountPassword"
           type="password"
+          autocomplete="current-password"
         >
 
       </div>
 
-      <button
-        class="smallBtn"
-        onclick="customerSignup()"
-        style="width:100%"
+    </div>
+
+    <button
+      class="primaryBtn"
+      style="
+        width:100%;
+        padding:12px;
+        border-radius:22px;
+      "
+      onclick="customerLogin()"
+    >
+      LOGIN
+    </button>
+
+    <div
+      id="loginMessage"
+      style="
+        margin-top:8px;
+        color:var(--danger);
+        font-size:13px
+      "
+    ></div>
+
+    <hr
+      style="
+        margin:18px 0;
+        border:0;
+        border-top:1px solid var(--line)
+      "
+    >
+
+    <h3
+      style="
+        color:var(--wine);
+        margin-bottom:8px
+      "
+    >
+      New Customer
+    </h3>
+
+    <div class="field">
+
+      <label for="signupName">
+        Full Name
+      </label>
+
+      <input
+        id="signupName"
+        autocomplete="name"
       >
-        CREATE ACCOUNT
-      </button>
-    `;
+
+    </div>
+
+    <div class="formRow">
+
+      <div class="field">
+
+        <label for="signupEmail">
+          Email
+        </label>
+
+        <input
+          id="signupEmail"
+          type="email"
+          autocomplete="email"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label for="signupPhone">
+          Phone
+        </label>
+
+        <input
+          id="signupPhone"
+          autocomplete="tel"
+        >
+
+      </div>
+
+    </div>
+
+    <div class="field">
+
+      <label for="signupPassword">
+        Password
+      </label>
+
+      <input
+        id="signupPassword"
+        type="password"
+        autocomplete="new-password"
+      >
+
+    </div>
+
+    <button
+      class="smallBtn"
+      onclick="customerSignup()"
+      style="
+        width:100%;
+        padding:12px;
+      "
+    >
+      CREATE ACCOUNT
+    </button>
+
+  `;
 
 }
+
+/* =========================================================
+   CUSTOMER LOGIN
+========================================================= */
 
 async function customerLogin(){
 
@@ -3391,7 +4272,8 @@ async function customerLogin(){
       .getElementById(
         "accountEmail"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const password =
     document
@@ -3401,10 +4283,22 @@ async function customerLogin(){
       .value;
 
   const message =
-    document
-      .getElementById(
-        "loginMessage"
-      );
+    document.getElementById(
+      "loginMessage"
+    );
+
+  if(!email || !password){
+
+    if(message){
+
+      message.textContent =
+        "Please enter your email and password.";
+
+    }
+
+    return;
+
+  }
 
   try{
 
@@ -3416,6 +4310,8 @@ async function customerLogin(){
 
           headers:{
             "Content-Type":
+              "application/json",
+            Accept:
               "application/json"
           },
 
@@ -3428,11 +4324,14 @@ async function customerLogin(){
       );
 
     const data =
-      await response.json();
+      await parseJSON(
+        response
+      );
 
     if(
       !response.ok ||
-      !data.ok
+      !data.ok ||
+      !data.token
     ){
 
       throw new Error(
@@ -3446,20 +4345,31 @@ async function customerLogin(){
       data.token;
 
     localStorage.setItem(
-      "faceOfStyleCustomerToken",
+      CUSTOMER_TOKEN_KEY,
       customerToken
     );
 
-    openAccount();
+    openAccount(
+      "profile"
+    );
 
   }catch(error){
 
-    message.textContent =
-      error.message;
+    if(message){
+
+      message.textContent =
+        error.message ||
+        "Login failed.";
+
+    }
 
   }
 
 }
+
+/* =========================================================
+   CUSTOMER SIGNUP
+========================================================= */
 
 async function customerSignup(){
 
@@ -3468,21 +4378,24 @@ async function customerSignup(){
       .getElementById(
         "signupName"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const email =
     document
       .getElementById(
         "signupEmail"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const phone =
     document
       .getElementById(
         "signupPhone"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const password =
     document
@@ -3490,6 +4403,41 @@ async function customerSignup(){
         "signupPassword"
       )
       .value;
+
+  if(
+    !name ||
+    !email ||
+    !phone ||
+    !password
+  ){
+
+    alert(
+      "Please complete all registration fields."
+    );
+
+    return;
+
+  }
+
+  if(!validateEmail(email)){
+
+    alert(
+      "Please enter a valid email address."
+    );
+
+    return;
+
+  }
+
+  if(password.length < 6){
+
+    alert(
+      "Password must be at least 6 characters."
+    );
+
+    return;
+
+  }
 
   try{
 
@@ -3501,6 +4449,8 @@ async function customerSignup(){
 
           headers:{
             "Content-Type":
+              "application/json",
+            Accept:
               "application/json"
           },
 
@@ -3515,11 +4465,14 @@ async function customerSignup(){
       );
 
     const data =
-      await response.json();
+      await parseJSON(
+        response
+      );
 
     if(
       !response.ok ||
-      !data.ok
+      !data.ok ||
+      !data.token
     ){
 
       throw new Error(
@@ -3533,42 +4486,68 @@ async function customerSignup(){
       data.token;
 
     localStorage.setItem(
-      "faceOfStyleCustomerToken",
+      CUSTOMER_TOKEN_KEY,
       customerToken
     );
 
-    openAccount();
+    openAccount(
+      "profile"
+    );
 
   }catch(error){
 
     alert(
-      error.message
+      error.message ||
+      "Unable to create account."
     );
 
   }
 
 }
 
+/* =========================================================
+   AUTHENTICATED ACCOUNT FETCH
+========================================================= */
+
 async function accountFetch(
   url,
-  options={}
+  options = {}
 ){
 
-  options.headers = {
+  if(!customerToken){
+
+    renderAccountAuth();
+
+    return null;
+
+  }
+
+  const headers = {
+
+    Accept:
+      "application/json",
+
     ...(options.headers || {}),
+
     Authorization:
       "Bearer " +
       customerToken
+
   };
 
   const response =
     await fetch(
       url,
-      options
+      {
+        ...options,
+        headers
+      }
     );
 
   const data =
-    await response.json();
+    await parseJSON(
+      response
+    );
 
   if(
     response.status ===
@@ -3578,32 +4557,77 @@ async function accountFetch(
     customerLogout();
 
     return null;
+
+  }
+
+  if(
+    !response.ok
+  ){
+
+    return {
+      ok:false,
+      message:
+        data.message ||
+        "Request failed."
+    };
+
   }
 
   return data;
 
 }
 
+/* =========================================================
+   ACCOUNT TABS
+========================================================= */
+
 function accountTab(
   name,
   button
 ){
+
+  const allowed = [
+    "profile",
+    "orders",
+    "addresses",
+    "credit",
+    "refunds"
+  ];
+
+  if(
+    !allowed.includes(
+      name
+    )
+  ){
+
+    name =
+      "profile";
+
+  }
 
   document
     .querySelectorAll(
       ".accountTab"
     )
     .forEach(
-      el =>
-        el.classList.remove(
+      element =>
+        element.classList.remove(
           "active"
         )
     );
 
-  if(button){
-    button.classList.add(
+  const activeButton =
+    button ||
+    document.querySelector(
+      `.accountTab[data-tab="${name}"]`
+    );
+
+  if(activeButton){
+
+    activeButton.classList.add(
       "active"
     );
+
   }
 
   document
@@ -3611,8 +4635,8 @@ function accountTab(
       ".accountPanel"
     )
     .forEach(
-      el =>
-        el.classList.remove(
+      element =>
+        element.classList.remove(
           "active"
         )
     );
@@ -3620,37 +4644,55 @@ function accountTab(
   const panel =
     document.getElementById(
       "panel" +
-      name.charAt(0).toUpperCase() +
+      name
+        .charAt(0)
+        .toUpperCase() +
       name.slice(1)
     );
 
   if(panel){
+
     panel.classList.add(
       "active"
     );
+
   }
 
   if(name === "profile"){
+
     loadProfile();
+
   }
 
   if(name === "orders"){
+
     loadCustomerOrders();
+
   }
 
   if(name === "addresses"){
+
     loadAddresses();
+
   }
 
   if(name === "credit"){
+
     loadCredit();
+
   }
 
   if(name === "refunds"){
+
     loadRefunds();
+
   }
 
 }
+
+/* =========================================================
+   PROFILE
+========================================================= */
 
 async function loadProfile(){
 
@@ -3658,6 +4700,16 @@ async function loadProfile(){
     document.getElementById(
       "panelProfile"
     );
+
+  if(!panel){
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="infoCard">
+      Loading profile...
+    </div>
+  `;
 
   const data =
     await accountFetch(
@@ -3668,7 +4720,22 @@ async function loadProfile(){
     return;
   }
 
-  const c =
+  if(!data.ok){
+
+    panel.innerHTML = `
+      <div class="infoCard error">
+        ${escapeHTML(
+          data.message ||
+          "Unable to load profile."
+        )}
+      </div>
+    `;
+
+    return;
+
+  }
+
+  const customer =
     data.customer ||
     {};
 
@@ -3685,14 +4752,14 @@ async function loadProfile(){
         style="margin-top:10px"
       >
 
-        <label>
+        <label for="profileName">
           Name
         </label>
 
         <input
           id="profileName"
           value="${escapeHTML(
-            c.name
+            customer.name
           )}"
         >
 
@@ -3706,7 +4773,7 @@ async function loadProfile(){
 
         <input
           value="${escapeHTML(
-            c.email
+            customer.email
           )}"
           disabled
         >
@@ -3715,14 +4782,15 @@ async function loadProfile(){
 
       <div class="field">
 
-        <label>
+        <label for="profilePhone">
           Phone
         </label>
 
         <input
           id="profilePhone"
           value="${escapeHTML(
-            c.phone || ""
+            customer.phone ||
+            ""
           )}"
         >
 
@@ -3748,9 +4816,14 @@ async function loadProfile(){
     >
       Logout
     </button>
+
   `;
 
 }
+
+/* =========================================================
+   SAVE PROFILE
+========================================================= */
 
 async function saveProfile(){
 
@@ -3759,14 +4832,26 @@ async function saveProfile(){
       .getElementById(
         "profileName"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const phone =
     document
       .getElementById(
         "profilePhone"
       )
-      .value.trim();
+      .value
+      .trim();
+
+  if(!name){
+
+    alert(
+      "Name is required."
+    );
+
+    return;
+
+  }
 
   const data =
     await accountFetch(
@@ -3808,12 +4893,26 @@ async function saveProfile(){
 
 }
 
+/* =========================================================
+   CUSTOMER ORDERS
+========================================================= */
+
 async function loadCustomerOrders(){
 
   const panel =
     document.getElementById(
       "panelOrders"
     );
+
+  if(!panel){
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="infoCard">
+      Loading orders...
+    </div>
+  `;
 
   const data =
     await accountFetch(
@@ -3824,14 +4923,33 @@ async function loadCustomerOrders(){
     return;
   }
 
+  if(!data.ok){
+
+    panel.innerHTML = `
+      <div class="infoCard error">
+        ${escapeHTML(
+          data.message ||
+          "Unable to load orders."
+        )}
+      </div>
+    `;
+
+    return;
+
+  }
+
   const orders =
-    data.orders ||
-    [];
+    Array.isArray(
+      data.orders
+    )
+      ? data.orders
+      : [];
 
   if(!orders.length){
 
     panel.innerHTML = `
       <div class="infoCard">
+
         <b>
           Orders
         </b>
@@ -3844,61 +4962,72 @@ async function loadCustomerOrders(){
         >
           No orders yet.
         </p>
+
       </div>
     `;
 
     return;
+
   }
 
   panel.innerHTML =
-    orders.map(
-      order => `
+    orders
+      .map(
+        order => `
 
-        <div class="infoCard">
+          <div class="infoCard">
 
-          <b>
-            ${escapeHTML(
-              order.reference
-            )}
-          </b>
+            <b>
+              ${escapeHTML(
+                order.reference ||
+                "Order"
+              )}
+            </b>
 
-          <div
-            style="
-              color:var(--muted);
-              font-size:13px;
-              margin:4px 0
-            "
-          >
-            ${money(
-              order.total
-            )}
+            <div
+              style="
+                color:var(--muted);
+                font-size:13px;
+                margin:4px 0
+              "
+            >
+              ${money(
+                order.total
+              )}
+            </div>
+
+            <span class="orderStatus">
+              ${escapeHTML(
+                order.order_status ||
+                "PENDING"
+              )}
+            </span>
+
+            <div
+              style="
+                margin-top:7px;
+                color:var(--muted);
+                font-size:12px
+              "
+            >
+              Payment:
+              ${escapeHTML(
+                order.payment_status ||
+                "PENDING"
+              )}
+            </div>
+
           </div>
 
-          <span class="orderStatus">
-            ${escapeHTML(
-              order.order_status ||
-              "PENDING"
-            )}
-          </span>
-
-          <div
-            style="
-              margin-top:7px;
-              color:var(--muted);
-              font-size:12px
-            "
-          >
-            Payment:
-            ${escapeHTML(
-              order.payment_status
-            )}
-          </div>
-
-        </div>
-      `
-    ).join("");
+        `
+      )
+      .join("");
 
 }
+
+/* =========================================================
+   ADDRESSES
+========================================================= */
 
 async function loadAddresses(){
 
@@ -3906,6 +5035,16 @@ async function loadAddresses(){
     document.getElementById(
       "panelAddresses"
     );
+
+  if(!panel){
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="infoCard">
+      Loading addresses...
+    </div>
+  `;
 
   const data =
     await accountFetch(
@@ -3916,9 +5055,27 @@ async function loadAddresses(){
     return;
   }
 
+  if(!data.ok){
+
+    panel.innerHTML = `
+      <div class="infoCard error">
+        ${escapeHTML(
+          data.message ||
+          "Unable to load addresses."
+        )}
+      </div>
+    `;
+
+    return;
+
+  }
+
   const addresses =
-    data.addresses ||
-    [];
+    Array.isArray(
+      data.addresses
+    )
+      ? data.addresses
+      : [];
 
   panel.innerHTML = `
 
@@ -3930,7 +5087,7 @@ async function loadAddresses(){
 
       <div class="field">
 
-        <label>
+        <label for="addressLabel">
           Label
         </label>
 
@@ -3943,7 +5100,7 @@ async function loadAddresses(){
 
       <div class="field">
 
-        <label>
+        <label for="addressText">
           Address
         </label>
 
@@ -3957,7 +5114,7 @@ async function loadAddresses(){
 
         <div class="field">
 
-          <label>
+          <label for="addressCity">
             City
           </label>
 
@@ -3969,7 +5126,7 @@ async function loadAddresses(){
 
         <div class="field">
 
-          <label>
+          <label for="addressState">
             State
           </label>
 
@@ -4005,7 +5162,8 @@ async function loadAddresses(){
 
                   <b>
                     ${escapeHTML(
-                      address.label
+                      address.label ||
+                      "Address"
                     )}
                   </b>
 
@@ -4014,13 +5172,19 @@ async function loadAddresses(){
                       color:var(--muted)
                     "
                   >
+
                     ${escapeHTML(
-                      address.address
+                      address.address ||
+                      ""
                     )}
+
                     <br>
+
                     ${escapeHTML(
-                      address.city || ""
+                      address.city ||
+                      ""
                     )}
+
                     ${
                       address.state
                         ? ", " +
@@ -4029,51 +5193,80 @@ async function loadAddresses(){
                           )
                         : ""
                     }
+
                   </p>
 
                 </div>
+
               `
             )
             .join("")
-        : ""
+        : `
+            <div
+              class="infoCard"
+              style="color:var(--muted)"
+            >
+              No saved addresses yet.
+            </div>
+          `
     }
+
   `;
 
 }
 
+/* =========================================================
+   SAVE ADDRESS
+========================================================= */
+
 async function saveAddress(){
 
-  const payload = {
+  const label =
+    document
+      .getElementById(
+        "addressLabel"
+      )
+      .value
+      .trim();
 
-    label:
-      document
-        .getElementById(
-          "addressLabel"
-        )
-        .value.trim(),
+  const address =
+    document
+      .getElementById(
+        "addressText"
+      )
+      .value
+      .trim();
 
-    address:
-      document
-        .getElementById(
-          "addressText"
-        )
-        .value.trim(),
+  const city =
+    document
+      .getElementById(
+        "addressCity"
+      )
+      .value
+      .trim();
 
-    city:
-      document
-        .getElementById(
-          "addressCity"
-        )
-        .value.trim(),
+  const state =
+    document
+      .getElementById(
+        "addressState"
+      )
+      .value
+      .trim();
 
-    state:
-      document
-        .getElementById(
-          "addressState"
-        )
-        .value.trim()
+  if(
+    !label ||
+    !address ||
+    !city ||
+    !state
+  ){
 
-  };
+    alert(
+      "Please complete the address fields."
+    );
+
+    return;
+
+  }
 
   const data =
     await accountFetch(
@@ -4087,9 +5280,12 @@ async function saveAddress(){
         },
 
         body:
-          JSON.stringify(
-            payload
-          )
+          JSON.stringify({
+            label,
+            address,
+            city,
+            state
+          })
       }
     );
 
@@ -4098,7 +5294,7 @@ async function saveAddress(){
   ){
 
     alert(
-      "Address saved."
+      "Address saved successfully."
     );
 
     loadAddresses();
@@ -4114,12 +5310,26 @@ async function saveAddress(){
 
 }
 
+/* =========================================================
+   STORE CREDIT
+========================================================= */
+
 async function loadCredit(){
 
   const panel =
     document.getElementById(
       "panelCredit"
     );
+
+  if(!panel){
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="infoCard">
+      Loading store credit...
+    </div>
+  `;
 
   const data =
     await accountFetch(
@@ -4128,6 +5338,21 @@ async function loadCredit(){
 
   if(!data){
     return;
+  }
+
+  if(!data.ok){
+
+    panel.innerHTML = `
+      <div class="infoCard error">
+        ${escapeHTML(
+          data.message ||
+          "Unable to load store credit."
+        )}
+      </div>
+    `;
+
+    return;
+
   }
 
   panel.innerHTML = `
@@ -4152,7 +5377,10 @@ async function loadCredit(){
   `;
 
   if(
-    data.transactions?.length
+    Array.isArray(
+      data.transactions
+    ) &&
+    data.transactions.length
   ){
 
     panel.innerHTML +=
@@ -4164,7 +5392,8 @@ async function loadCredit(){
 
               <b>
                 ${escapeHTML(
-                  tx.type
+                  tx.type ||
+                  "Transaction"
                 )}
               </b>
 
@@ -4180,17 +5409,24 @@ async function loadCredit(){
                 "
               >
                 ${escapeHTML(
-                  tx.note || ""
+                  tx.note ||
+                  ""
                 )}
               </small>
 
             </div>
+
           `
-        ).join("");
+        )
+        .join("");
 
   }
 
 }
+
+/* =========================================================
+   REFUNDS
+========================================================= */
 
 async function loadRefunds(){
 
@@ -4198,6 +5434,16 @@ async function loadRefunds(){
     document.getElementById(
       "panelRefunds"
     );
+
+  if(!panel){
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="infoCard">
+      Loading refund history...
+    </div>
+  `;
 
   const data =
     await accountFetch(
@@ -4208,12 +5454,33 @@ async function loadRefunds(){
     return;
   }
 
-  if(
-    !data.refunds?.length
-  ){
+  if(!data.ok){
+
+    panel.innerHTML = `
+      <div class="infoCard error">
+        ${escapeHTML(
+          data.message ||
+          "Unable to load refund history."
+        )}
+      </div>
+    `;
+
+    return;
+
+  }
+
+  const refunds =
+    Array.isArray(
+      data.refunds
+    )
+      ? data.refunds
+      : [];
+
+  if(!refunds.length){
 
     panel.innerHTML = `
       <div class="infoCard">
+
         <b>
           Refund History
         </b>
@@ -4226,6 +5493,7 @@ async function loadRefunds(){
         >
           No refunds yet.
         </p>
+
       </div>
     `;
 
@@ -4234,42 +5502,50 @@ async function loadRefunds(){
   }
 
   panel.innerHTML =
-    data.refunds.map(
-      refund => `
+    refunds
+      .map(
+        refund => `
 
-        <div class="infoCard">
+          <div class="infoCard">
 
-          <b>
-            ${escapeHTML(
-              refund.reference ||
-              "Refund"
-            )}
-          </b>
+            <b>
+              ${escapeHTML(
+                refund.reference ||
+                "Refund"
+              )}
+            </b>
 
-          <div>
-            ${money(
-              refund.amount
-            )}
+            <div>
+              ${money(
+                refund.amount
+              )}
+            </div>
+
+            <span class="orderStatus">
+              ${escapeHTML(
+                refund.status ||
+                "PENDING"
+              )}
+            </span>
+
           </div>
 
-          <span class="orderStatus">
-            ${escapeHTML(
-              refund.status
-            )}
-          </span>
-
-        </div>
-      `
-    ).join("");
+        `
+      )
+      .join("");
 
 }
+
+/* =========================================================
+   CUSTOMER LOGOUT
+========================================================= */
 
 function customerLogout(){
 
   customerToken = "";
 
   localStorage.removeItem(
-    "faceOfStyleCustomerToken"
+    CUSTOMER_TOKEN_KEY
   );
 
   renderAccountAuth();
@@ -4287,7 +5563,8 @@ async function trackOrder(){
       .getElementById(
         "trackingReference"
       )
-      .value.trim();
+      .value
+      .trim();
 
   const box =
     document.getElementById(
@@ -4303,6 +5580,7 @@ async function trackOrder(){
     `;
 
     return;
+
   }
 
   box.innerHTML = `
@@ -4318,15 +5596,26 @@ async function trackOrder(){
         "/api/order-tracking/" +
         encodeURIComponent(
           reference
-        )
+        ),
+        {
+          method:"GET",
+          cache:"no-store",
+          headers:{
+            Accept:
+              "application/json"
+          }
+        }
       );
 
     const data =
-      await response.json();
+      await parseJSON(
+        response
+      );
 
     if(
       !response.ok ||
-      !data.ok
+      !data.ok ||
+      !data.order
     ){
 
       throw new Error(
@@ -4336,12 +5625,17 @@ async function trackOrder(){
 
     }
 
+    const order =
+      data.order;
+
     box.innerHTML = `
+
       <div class="infoCard">
 
         <b>
           ${escapeHTML(
-            data.order.reference
+            order.reference ||
+            reference
           )}
         </b>
 
@@ -4353,7 +5647,8 @@ async function trackOrder(){
         >
           Payment:
           ${escapeHTML(
-            data.order.payment_status
+            order.payment_status ||
+            "PENDING"
           )}
         </p>
 
@@ -4363,11 +5658,14 @@ async function trackOrder(){
           "
         >
           Order Status:
+
           <span class="orderStatus">
             ${escapeHTML(
-              data.order.order_status
+              order.order_status ||
+              "PENDING"
             )}
           </span>
+
         </p>
 
         <p
@@ -4377,11 +5675,12 @@ async function trackOrder(){
         >
           Total:
           ${money(
-            data.order.total
+            order.total
           )}
         </p>
 
       </div>
+
     `;
 
   }catch(error){
@@ -4389,7 +5688,8 @@ async function trackOrder(){
     box.innerHTML = `
       <div class="infoCard error">
         ${escapeHTML(
-          error.message
+          error.message ||
+          "Unable to find this order."
         )}
       </div>
     `;
@@ -4399,7 +5699,32 @@ async function trackOrder(){
 }
 
 /* =========================================================
-   ESC KEY
+   CLOSE MODALS WHEN CLICKING BACKDROP
+========================================================= */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target.classList.contains(
+        "modal"
+      )
+    ){
+
+      event.target.classList.remove(
+        "open"
+      );
+
+      lockBody();
+
+    }
+
+  }
+);
+
+/* =========================================================
+   ESCAPE KEY
 ========================================================= */
 
 document.addEventListener(
@@ -4412,7 +5737,9 @@ document.addEventListener(
     ){
 
       closeCart();
+
       closeCheckout();
+
       closeAccount();
 
     }
@@ -4421,16 +5748,138 @@ document.addEventListener(
 );
 
 /* =========================================================
-   START
+   SEARCH
 ========================================================= */
 
-loadCart();
+const searchInput =
+  document.getElementById(
+    "search"
+  );
 
-updateCart();
+if(searchInput){
 
-loadConfig();
+  searchInput.addEventListener(
+    "input",
+    renderProducts
+  );
 
-loadProducts();
+}
+
+/* =========================================================
+   TRACKING FORM
+========================================================= */
+
+const trackingForm =
+  document.getElementById(
+    "trackingForm"
+  );
+
+if(trackingForm){
+
+  trackingForm.addEventListener(
+    "submit",
+    event => {
+
+      event.preventDefault();
+
+      trackOrder();
+
+    }
+  );
+
+}
+
+/* =========================================================
+   PAYMENT METHOD
+========================================================= */
+
+const paymentMethod =
+  document.getElementById(
+    "paymentMethod"
+  );
+
+if(paymentMethod){
+
+  paymentMethod.addEventListener(
+    "change",
+    () => {
+
+      const info =
+        document.querySelector(
+          "#checkoutModal .infoCard"
+        );
+
+      if(!info){
+        return;
+      }
+
+      if(
+        paymentMethod.value ===
+        "paystack"
+      ){
+
+        info.innerHTML = `
+          <b>
+            Paystack
+          </b>
+
+          <div style="color:var(--muted)">
+            Card, bank and supported Paystack channels.
+          </div>
+        `;
+
+      }else if(
+        paymentMethod.value ===
+        "bank_transfer"
+      ){
+
+        info.innerHTML = `
+          <b>
+            Bank Transfer
+          </b>
+
+          <div style="color:var(--muted)">
+            Your order will be created and the store will provide the bank transfer instructions.
+          </div>
+        `;
+
+      }else{
+
+        info.innerHTML = `
+          <b>
+            Store Credit
+          </b>
+
+          <div style="color:var(--muted)">
+            Your available store credit will be checked before completing the order.
+          </div>
+        `;
+
+      }
+
+    }
+  );
+
+}
+
+/* =========================================================
+   START APPLICATION
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
+
+    loadCart();
+
+    updateCart();
+
+    await loadConfig();
+
+    await loadProducts();
+
+  }
+);
 
 </script>
 
