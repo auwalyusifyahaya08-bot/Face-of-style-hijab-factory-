@@ -1,874 +1,494 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#651630">
 
-<title>Face of Style Hijab Factory</title>
-
-<meta
-  name="description"
-  content="Face of Style Hijab Factory - Elegant hijabs, abayas, gowns and modest outfits."
->
+<title>Admin Dashboard | Face of Style</title>
 
 <style>
-
 :root{
   --wine:#651630;
-  --wine2:#4d1024;
+  --wine2:#7d1e3b;
   --gold:#c9a45b;
-  --cream:#fcf8f1;
-  --paper:#ffffff;
-  --text:#251c20;
+  --bg:#f7f2eb;
+  --line:#e6dacf;
+  --text:#292025;
   --muted:#756a6f;
-  --line:#eadfd4;
-  --danger:#a33;
-  --green:#176a35;
+  --white:#fff;
+  --green:#16803c;
+  --red:#a32626;
 }
 
 *{
   box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-html{
-  scroll-behavior:smooth;
 }
 
 body{
-  background:var(--cream);
+  margin:0;
+  background:var(--bg);
+  font-family:Arial,sans-serif;
   color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
-  line-height:1.6;
-}
-
-body.lock{
-  overflow:hidden;
 }
 
 button,
 input,
-textarea,
-select{
-  font-family:inherit;
+select,
+textarea{
+  font:inherit;
 }
 
 button{
   cursor:pointer;
 }
 
-a{
-  text-decoration:none;
-  color:inherit;
-}
-
-/* =========================================================
-   TOP
-========================================================= */
-
 .top{
-  background:var(--wine2);
-  color:#fff;
-  text-align:center;
-  padding:8px 12px;
-  font-size:12px;
-  letter-spacing:.4px;
-}
-
-/* =========================================================
-   NAV
-========================================================= */
-
-.nav{
-  position:sticky;
-  top:0;
-  z-index:60;
   background:#fff;
   border-bottom:1px solid var(--line);
+  padding:14px 20px;
   display:flex;
   align-items:center;
-  gap:14px;
-  padding:10px max(16px,calc((100% - 1200px)/2));
-}
-
-.logo{
-  width:56px;
-  height:56px;
-  object-fit:contain;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:20;
 }
 
 .brand{
-  color:var(--wine);
-  font:700 17px Georgia,serif;
-  line-height:1.05;
-  white-space:nowrap;
-}
-
-.brand small{
-  display:block;
-  color:var(--gold);
-  font:10px Arial,sans-serif;
-  letter-spacing:3px;
-  margin-top:3px;
-}
-
-.navlinks{
-  display:flex;
-  gap:18px;
-  margin-left:auto;
-  font-size:14px;
-  font-weight:600;
-}
-
-.navlinks a:hover{
+  font:22px Georgia;
   color:var(--wine);
 }
 
-.navBtns{
-  display:flex;
-  gap:7px;
-}
-
-.iconBtn{
-  position:relative;
+.logout{
+  background:#fff;
   border:1px solid var(--line);
-  background:#fff;
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  cursor:pointer;
-}
-
-.count{
-  position:absolute;
-  top:-4px;
-  right:-4px;
-  min-width:18px;
-  padding:3px 5px;
-  border-radius:50%;
-  background:var(--wine);
-  color:#fff;
-  font-size:10px;
-}
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero{
-  max-width:1200px;
-  margin:auto;
-  padding:25px 18px;
-  display:grid;
-  grid-template-columns:1fr 1.05fr;
-  gap:25px;
-}
-
-.heroText{
-  background:var(--wine);
-  color:#fff;
-  border-radius:20px;
-  padding:clamp(30px,5vw,65px);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.heroText .tag{
-  color:#e6c979;
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:4px;
-}
-
-.heroText h1{
-  font:clamp(40px,6vw,68px) Georgia,serif;
-  line-height:1.02;
-  margin:15px 0;
-}
-
-.heroText p{
-  max-width:560px;
-  color:#f4e9ec;
-}
-
-.heroBtn{
-  display:inline-block;
-  width:max-content;
-  margin-top:18px;
-  padding:13px 21px;
-  background:#fff;
-  color:var(--wine);
-  border-radius:25px;
-  font-weight:bold;
-}
-
-.heroImg{
-  min-height:430px;
-  border-radius:20px;
-  overflow:hidden;
-  background:#eadde1;
-}
-
-.heroImg img{
-  width:100%;
-  height:100%;
-  min-height:430px;
-  object-fit:cover;
-  display:block;
-}
-
-/* =========================================================
-   SECTIONS
-========================================================= */
-
-.wrap{
-  max-width:1200px;
-  margin:auto;
-  padding:50px 18px;
-}
-
-.sectionTitle{
-  text-align:center;
-  margin-bottom:28px;
-}
-
-.sectionTitle h2{
-  color:var(--wine);
-  font:38px Georgia,serif;
-}
-
-.sectionTitle p{
-  color:var(--muted);
-  margin-top:5px;
-}
-
-/* =========================================================
-   SHOP TOOLBAR
-========================================================= */
-
-.toolbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:20px;
-  flex-wrap:wrap;
-}
-
-.cats{
-  display:flex;
-  gap:7px;
-  overflow:auto;
-}
-
-.cat{
-  border:1px solid var(--line);
-  background:#fff;
-  padding:9px 14px;
+  padding:9px 15px;
   border-radius:22px;
-  white-space:nowrap;
-  cursor:pointer;
-  font-weight:600;
 }
 
-.cat.active,
-.cat:hover{
-  background:var(--wine);
-  color:#fff;
-  border-color:var(--wine);
+.layout{
+  max-width:1440px;
+  margin:auto;
+  padding:22px 18px 50px;
 }
 
-.search{
-  width:230px;
-  padding:11px 14px;
-  border:1px solid var(--line);
+/* =========================
+   LOGIN
+========================= */
+
+.login{
+  max-width:410px;
+  margin:9vh auto;
+  background:#fff;
+  padding:32px;
   border-radius:22px;
-  outline:none;
+  box-shadow:0 12px 35px #32121b16;
 }
 
-.search:focus{
-  border-color:var(--wine);
+.login h1,
+.panel h2{
+  font-family:Georgia;
+  color:var(--wine);
 }
 
-/* =========================================================
-   PRODUCTS
-========================================================= */
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:18px;
+.login h1{
+  font-size:31px;
+  margin:0 0 8px;
 }
 
-.card{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 8px 22px rgba(60,25,38,.05);
-  transition:.2s ease;
-}
-
-.card:hover{
-  transform:translateY(-2px);
-}
-
-.pic{
-  position:relative;
-  background:#eee;
-}
-
-.pic img{
-  width:100%;
-  aspect-ratio:4/5;
-  object-fit:cover;
+label{
   display:block;
-}
-
-.badge{
-  position:absolute;
-  top:10px;
-  left:10px;
-  background:var(--wine);
-  color:#fff;
-  font-size:10px;
   font-weight:bold;
-  padding:6px 9px;
-  border-radius:14px;
-}
-
-.heart{
-  position:absolute;
-  right:10px;
-  top:10px;
-  width:38px;
-  height:38px;
-  border:0;
-  border-radius:50%;
-  background:#fff;
-  box-shadow:0 2px 8px rgba(0,0,0,.12);
-  color:var(--wine);
-  font-size:18px;
-}
-
-.body{
-  padding:15px;
-}
-
-.body h3{
-  color:var(--wine);
-  font:20px Georgia,serif;
-  margin-bottom:6px;
-}
-
-.body p{
-  color:var(--muted);
   font-size:13px;
-  min-height:42px;
+  margin-top:4px;
 }
 
-.price{
-  color:var(--wine);
-  font-size:19px;
-  font-weight:bold;
-  margin:10px 0 5px;
+input,
+select,
+textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  margin:7px 0 14px;
+  background:#fff;
+  color:var(--text);
 }
 
-.stock{
-  color:var(--muted);
-  display:block;
-  font-size:11px;
-  margin-bottom:10px;
+textarea{
+  min-height:105px;
+  resize:vertical;
 }
 
-.stock.out{
-  color:var(--danger);
-}
-
-.actions{
-  display:flex;
-  gap:7px;
-}
-
-.add,
-.view{
-  border-radius:22px;
-  padding:10px 12px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.add{
-  flex:1;
-  border:0;
+.primary,
+.addBtn{
   background:var(--wine);
   color:#fff;
+  border:0;
+  padding:12px 18px;
+  border-radius:23px;
+  font-weight:bold;
 }
 
-.view{
-  border:1px solid var(--wine);
-  background:#fff;
-  color:var(--wine);
-}
-
-.add:disabled,
-.view:disabled,
-.heart:disabled{
-  opacity:.4;
-  cursor:not-allowed;
-}
-
-.loading,
-.empty{
-  grid-column:1/-1;
-  text-align:center;
-  padding:50px 12px;
-  color:var(--muted);
+.primary:hover,
+.addBtn:hover{
+  background:var(--wine2);
 }
 
 .error{
-  color:var(--danger);
+  color:var(--red);
+  font-size:13px;
 }
 
-/* =========================================================
-   FEATURES
-========================================================= */
+.success{
+  color:var(--green);
+  font-size:13px;
+}
 
-.features{
+.notice{
+  background:#fcf8f1;
+  padding:13px;
+  border-radius:11px;
+  color:#665d60;
+  font-size:13px;
+  line-height:1.6;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.cards{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-top:48px;
+  gap:14px;
 }
 
-.feature{
+.stat{
   background:#fff;
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:20px;
-  text-align:center;
+  padding:18px;
+  border-radius:17px;
 }
 
-.feature b{
-  display:block;
-  color:var(--wine);
-  margin:7px 0 4px;
-}
-
-.feature span{
-  color:var(--muted);
-  font-size:12px;
-}
-
-/* =========================================================
-   CUSTOM
-========================================================= */
-
-.custom{
-  margin-top:45px;
-  background:var(--wine2);
-  color:#fff;
-  border-radius:20px;
-  padding:42px;
-  text-align:center;
-}
-
-.custom h2{
-  font:34px Georgia,serif;
-}
-
-.custom p{
-  color:#ebdfe3;
-  max-width:720px;
-  margin:8px auto 15px;
-}
-
-.custom a{
-  display:inline-block;
-  background:var(--gold);
-  color:#2e1b16;
-  padding:12px 20px;
-  border-radius:24px;
-  font-weight:bold;
-}
-
-/* =========================================================
-   ACCOUNT + TRACKING
-========================================================= */
-
-.accountGrid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:10px;
-}
-
-.accountTile{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:16px;
-  cursor:pointer;
-}
-
-.accountTile b{
-  display:block;
-  color:var(--wine);
-  margin-bottom:5px;
-}
-
-.accountTile span{
-  color:var(--muted);
-  font-size:12px;
-}
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-footer{
-  margin-top:50px;
-  background:#24151b;
-  color:#eee;
-  padding:40px 18px;
-}
-
-.foot{
-  max-width:1200px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:1.4fr 1fr 1fr;
-  gap:25px;
-}
-
-.foot h3{
-  font-family:Georgia,serif;
-  margin-bottom:7px;
-}
-
-.foot p,
-.foot a{
-  color:#cdbfc4;
-  font-size:13px;
-  line-height:1.8;
-}
-
-.copy{
-  text-align:center;
-  border-top:1px solid #49373d;
-  padding-top:17px;
-  margin-top:25px;
-  color:#aaa;
-  font-size:12px;
-}
-
-/* =========================================================
-   CART
-========================================================= */
-
-.drawer{
-  position:fixed;
-  right:-430px;
-  top:0;
-  width:min(420px,100%);
-  height:100%;
-  background:#fff;
-  z-index:100;
-  transition:.3s ease;
-  padding:20px;
-  box-shadow:-10px 0 35px rgba(0,0,0,.2);
-  display:flex;
-  flex-direction:column;
-}
-
-.drawer.open{
-  right:0;
-}
-
-.close{
-  margin-left:auto;
-  border:0;
-  background:#eee;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  cursor:pointer;
-  font-size:23px;
-}
-
-.cartItems{
-  flex:1;
-  overflow:auto;
-  margin-top:12px;
-}
-
-.cartItem{
-  display:flex;
-  gap:10px;
-  padding:12px 0;
-  border-bottom:1px solid var(--line);
-}
-
-.cartItem img{
-  width:64px;
-  height:76px;
-  object-fit:cover;
-  border-radius:8px;
-}
-
-.cartContent{
-  flex:1;
-}
-
-.cartContent b{
-  display:block;
-  color:var(--wine);
-}
-
-.cartContent small{
+.stat small{
   color:var(--muted);
 }
 
-.qty{
+.stat b{
+  display:block;
+  color:var(--wine);
+  font-size:25px;
+  margin-top:6px;
+}
+
+/* =========================
+   TABS
+========================= */
+
+.tabs{
   display:flex;
-  align-items:center;
   gap:8px;
-  margin-top:8px;
+  margin:22px 0;
+  flex-wrap:wrap;
 }
 
-.qty button{
-  width:28px;
-  height:28px;
+.tab{
+  padding:10px 17px;
   border:1px solid var(--line);
   background:#fff;
-  border-radius:8px;
-  color:var(--wine);
+  border-radius:22px;
 }
 
-.remove{
-  color:var(--danger);
-  font-size:11px;
-  cursor:pointer;
-  margin-left:6px;
-}
-
-.total{
-  border-top:1px solid var(--line);
-  padding:14px 0;
-  color:var(--wine);
-  font-size:20px;
-  font-weight:bold;
-}
-
-.checkoutBtn{
-  width:100%;
-  border:0;
+.tab.active{
   background:var(--wine);
   color:#fff;
-  padding:14px;
-  border-radius:25px;
-  font-weight:bold;
 }
 
-/* =========================================================
-   MODALS
-========================================================= */
+/* =========================
+   PANELS
+========================= */
 
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  z-index:120;
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:19px;
+  padding:20px;
+  margin-bottom:20px;
+}
+
+.panelHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.panel h2{
+  font-size:25px;
+  margin:0;
+}
+
+.search{
+  max-width:360px;
+}
+
+/* =========================
+   PRODUCTS
+========================= */
+
+.productGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:17px;
+}
+
+.productCard{
+  border:1px solid var(--line);
+  border-radius:17px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.productImage{
+  width:100%;
+  height:235px;
+  object-fit:cover;
+  background:#f4eee7;
+  display:block;
+}
+
+.noImage{
+  width:100%;
+  height:235px;
+  background:#f4eee7;
+  display:flex;
   align-items:center;
   justify-content:center;
+  color:#8b7d83;
+  font-size:14px;
+}
+
+.productInfo{
   padding:15px;
 }
 
-.modal.open{
+.productInfo h3{
+  margin:0 0 7px;
+  color:var(--wine);
+  font-family:Georgia;
+}
+
+.productMeta{
+  font-size:13px;
+  color:#6d6367;
+  line-height:1.7;
+}
+
+.productPrice{
+  font-weight:bold;
+  font-size:19px;
+  margin:9px 0;
+  color:var(--wine);
+}
+
+.productActions{
   display:flex;
+  gap:8px;
+}
+
+.productActions button{
+  flex:1;
+  padding:9px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:#fff;
+}
+
+.edit{
+  background:#fff8e8!important;
+}
+
+.delete{
+  color:#9a2222!important;
+}
+
+.stockIn{
+  color:var(--green);
+  font-weight:bold;
+}
+
+.stockOut{
+  color:var(--red);
+  font-weight:bold;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.formGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0 16px;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.uploadBox{
+  border:2px dashed var(--line);
+  border-radius:14px;
+  padding:18px;
+  text-align:center;
+  background:#fcfaf7;
+  margin:7px 0 14px;
+}
+
+.uploadBox input{
+  display:none;
+}
+
+.uploadBtn{
+  display:inline-block;
+  background:var(--wine);
+  color:#fff;
+  padding:11px 17px;
+  border-radius:22px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.previewGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+  margin:10px 0;
+}
+
+.previewGrid img{
+  width:100%;
+  height:110px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid var(--line);
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.tableWrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px;
+}
+
+th,
+td{
+  text-align:left;
+  padding:12px 10px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+
+th{
+  color:var(--wine);
+  font-family:Georgia;
+}
+
+.pill{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:14px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.paid{
+  background:#e5f5ea;
+  color:#176a35;
+}
+
+.pending{
+  background:#fff1cf;
+  color:#8a5a00;
+}
+
+.failed{
+  background:#fde7e7;
+  color:#9a2222;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:50;
 }
 
 .modalBox{
   background:#fff;
-  width:min(600px,100%);
+  width:min(700px,100%);
   max-height:92vh;
   overflow:auto;
   border-radius:20px;
-  padding:24px;
+  padding:22px;
 }
 
-.modalBox h2{
-  color:var(--wine);
-  font:30px Georgia,serif;
-  margin-bottom:10px;
-}
-
-.formRow{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.field{
-  margin-bottom:12px;
-}
-
-.field label{
-  display:block;
-  font-size:13px;
-  font-weight:bold;
-  margin-bottom:5px;
-}
-
-.field input,
-.field textarea,
-.field select{
-  width:100%;
-  padding:11px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  outline:none;
-}
-
-.field textarea{
-  min-height:80px;
-  resize:vertical;
-}
-
-.field input:focus,
-.field textarea:focus,
-.field select:focus{
-  border-color:var(--wine);
-}
-
-.modalActions{
+.modalHead{
   display:flex;
-  gap:8px;
-  margin-top:15px;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.modalActions button{
-  flex:1;
-  padding:12px;
-  border-radius:22px;
-  font-weight:bold;
-}
-
-.cancelBtn{
+.close{
   border:0;
-  background:#eee;
+  background:#f4eee7;
+  border-radius:50%;
+  width:38px;
+  height:38px;
+  font-size:20px;
 }
 
-.primaryBtn{
-  border:0;
-  background:var(--wine);
-  color:#fff;
+.loading{
+  padding:20px;
+  text-align:center;
+  color:var(--muted);
 }
 
-/* =========================================================
-   ACCOUNT MODAL
-========================================================= */
-
-.accountTabs{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-bottom:15px;
+.empty{
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
 }
 
-.accountTab{
-  border:1px solid var(--line);
-  background:#fff;
-  padding:8px 11px;
-  border-radius:18px;
-  font-size:12px;
-}
-
-.accountTab.active{
-  color:#fff;
-  background:var(--wine);
-}
-
-.accountPanel{
-  display:none;
-}
-
-.accountPanel.active{
-  display:block;
-}
-
-.infoCard{
-  background:var(--cream);
-  border-radius:12px;
-  padding:14px;
-  margin-bottom:10px;
-}
-
-.infoCard b{
-  color:var(--wine);
-}
-
-.smallBtn{
-  border:1px solid var(--line);
-  background:#fff;
-  padding:8px 11px;
-  border-radius:18px;
-}
-
-.orderStatus{
-  display:inline-block;
-  padding:4px 8px;
-  border-radius:12px;
-  background:#f2e6ea;
-  color:var(--wine);
-  font-size:11px;
-  font-weight:bold;
-}
-
-.credit{
-  color:var(--green);
-  font-weight:bold;
-  font-size:24px;
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:1000px){
 
-  .grid{
-    grid-template-columns:repeat(3,1fr);
+  .cards{
+    grid-template-columns:1fr 1fr;
   }
 
-  .features{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .accountGrid{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-}
-
-@media(max-width:900px){
-
-  .hero{
-    grid-template-columns:1fr;
-  }
-
-  .heroImg,
-  .heroImg img{
-    min-height:360px;
-  }
-
-  .navlinks{
-    display:none;
-  }
-
-  .foot{
+  .productGrid{
     grid-template-columns:1fr 1fr;
   }
 
@@ -876,81 +496,43 @@ footer{
 
 @media(max-width:650px){
 
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
-  }
-
-  .body{
-    padding:11px;
-  }
-
-  .body h3{
-    font-size:16px;
-  }
-
-  .body p{
-    font-size:12px;
-    min-height:39px;
-  }
-
-  .price{
-    font-size:16px;
-  }
-
-  .actions{
-    flex-direction:column;
-  }
-
-  .features{
+  .cards,
+  .productGrid,
+  .formGrid{
     grid-template-columns:1fr;
   }
 
-  .accountGrid{
-    grid-template-columns:1fr 1fr;
+  .full{
+    grid-column:auto;
   }
 
-  .formRow{
-    grid-template-columns:1fr;
-  }
-
-  .foot{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:430px){
-
-  .logo{
-    width:48px;
-    height:48px;
+  .top{
+    padding:12px 14px;
   }
 
   .brand{
-    font-size:14px;
+    font-size:18px;
   }
 
-  .brand small{
-    font-size:8px;
+  .layout{
+    padding:16px 11px 40px;
   }
 
-  .grid{
-    gap:8px;
+  .panel{
+    padding:15px;
   }
 
-  .body h3{
-    font-size:14px;
+  .panelHead{
+    align-items:stretch;
+    flex-direction:column;
   }
 
-  .add,
-  .view{
-    font-size:12px;
-    padding:9px;
+  .search{
+    max-width:none;
   }
 
-  .accountGrid{
-    grid-template-columns:1fr;
+  .previewGrid{
+    grid-template-columns:repeat(2,1fr);
   }
 
 }
@@ -960,1515 +542,974 @@ footer{
 
 <body>
 
-<div class="top" id="topBar">
-  ✨ QUALITY MODEST FASHION • ORDER DIRECT ON WHATSAPP
-</div>
-
-<header class="nav">
-
-  <a href="#home">
-    <img
-      id="logo"
-      class="logo"
-      src="assets/logo.png"
-      alt="Face of Style Hijab Factory"
-      onerror="this.onerror=null;this.src='/logo.png'"
-    >
-  </a>
-
-  <div class="brand">
-    <span id="brandName">
-      FACE OF STYLE
-    </span>
-
-    <small id="brandTagline">
-      HIJAB FACTORY
-    </small>
-  </div>
-
-  <nav class="navlinks">
-    <a href="#shop">Shop</a>
-    <a href="#account">My Account</a>
-    <a href="#tracking">Order Tracking</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
-  </nav>
-
-  <div class="navBtns">
-
-    <button
-      type="button"
-      class="iconBtn"
-      onclick="openAccount()"
-      aria-label="My Account"
-    >
-      👤
-    </button>
-
-    <button
-      type="button"
-      class="iconBtn"
-      onclick="openCart()"
-      aria-label="Cart"
-    >
-      🛍️
-
-      <span
-        id="cartCount"
-        class="count"
-      >
-        0
-      </span>
-    </button>
-
-  </div>
-
-</header>
-
-<main id="home">
-
-<section class="hero">
-
-  <div class="heroText">
-
-    <div class="tag">
-      FACE OF STYLE
-    </div>
-
-    <h1 id="heroTitle">
-      Modesty, Elegance & Style.
-    </h1>
-
-    <p id="heroText">
-      Discover carefully crafted hijabs,
-      abayas, gowns and modest outfits.
-    </p>
-
-    <a
-      href="#shop"
-      class="heroBtn"
-    >
-      SHOP COLLECTION →
-    </a>
-
-  </div>
-
-  <div class="heroImg">
-
-    <img
-      src="assets/product-1.jpg"
-      alt="Face of Style collection"
-      onerror="this.onerror=null;this.src='assets/logo.png'"
-    >
-
-  </div>
-
-</section>
-
-<section
-  class="wrap"
-  id="shop"
->
-
-  <div class="sectionTitle">
-
-    <div
-      style="
-        color:var(--gold);
-        letter-spacing:4px;
-        font-size:11px;
-        font-weight:bold;
-      "
-    >
-      SHOP ONLINE
-    </div>
-
-    <h2>
-      Our Latest Collection
-    </h2>
-
-    <p>
-      Browse our styles and add your favourites to your cart.
-    </p>
-
-  </div>
-
-  <div class="toolbar">
-
-    <div class="cats">
-
-      <button
-        class="cat active"
-        onclick="filterProducts('All',this)"
-      >
-        All
-      </button>
-
-      <button
-        class="cat"
-        onclick="filterProducts('Abaya',this)"
-      >
-        Abayas
-      </button>
-
-      <button
-        class="cat"
-        onclick="filterProducts('Gown',this)"
-      >
-        Gowns
-      </button>
-
-      <button
-        class="cat"
-        onclick="filterProducts('Hijab',this)"
-      >
-        Hijabs
-      </button>
-
-      <button
-        class="cat"
-        onclick="filterProducts('Custom',this)"
-      >
-        Custom
-      </button>
-
-      <button
-        class="cat"
-        onclick="filterProducts('Fashion',this)"
-      >
-        Fashion
-      </button>
-
-    </div>
-
-    <input
-      id="search"
-      class="search"
-      type="search"
-      placeholder="Search products..."
-      oninput="renderProducts()"
-    >
-
-  </div>
-
-  <div
-    id="products"
-    class="grid"
-  >
-
-    <div class="loading">
-      Loading products...
-    </div>
-
-  </div>
-
-  <div class="features">
-
-    <div class="feature">
-      🧵
-      <b>Quality Sewing</b>
-      <span>
-        Neat finishing and careful craftsmanship.
-      </span>
-    </div>
-
-    <div class="feature">
-      🎨
-      <b>Choose Your Style</b>
-      <span>
-        Colours, fabrics and designs to suit you.
-      </span>
-    </div>
-
-    <div class="feature">
-      📱
-      <b>Easy Ordering</b>
-      <span>
-        Order quickly through WhatsApp.
-      </span>
-    </div>
-
-    <div class="feature">
-      ✨
-      <b>Made With Care</b>
-      <span>
-        Modest fashion with a refined finish.
-      </span>
-    </div>
-
-  </div>
-
-  <div
-    id="custom"
-    class="custom"
-  >
-
-    <h2>
-      Want Something Made Just For You?
-    </h2>
-
-    <p>
-      Send us your preferred style,
-      fabric, colour and measurements.
-      We also accept custom sewing requests.
-    </p>
-
-    <a
-      id="customWhatsApp"
-      href="#"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      START CUSTOM ORDER
-    </a>
-
-  </div>
-
-</section>
-
-<section
-  class="wrap"
-  id="account"
->
-
-  <div class="sectionTitle">
-
-    <h2>
-      My Account
-    </h2>
-
-    <p>
-      Sign in to manage your profile, orders,
-      addresses, store credit and refunds.
-    </p>
-
-  </div>
-
-  <div class="accountGrid">
-
-    <div
-      class="accountTile"
-      onclick="openAccount('profile')"
-    >
-      👤
-      <b>Profile</b>
-      <span>
-        Personal information
-      </span>
-    </div>
-
-    <div
-      class="accountTile"
-      onclick="openAccount('orders')"
-    >
-      📦
-      <b>Orders</b>
-      <span>
-        Your order history
-      </span>
-    </div>
-
-    <div
-      class="accountTile"
-      onclick="openAccount('addresses')"
-    >
-      📍
-      <b>Addresses</b>
-      <span>
-        Delivery addresses
-      </span>
-    </div>
-
-    <div
-      class="accountTile"
-      onclick="openAccount('credit')"
-    >
-      💳
-      <b>Store Credit</b>
-      <span>
-        Credit balance
-      </span>
-    </div>
-
-    <div
-      class="accountTile"
-      onclick="openAccount('refunds')"
-    >
-      ↩️
-      <b>Refund History</b>
-      <span>
-        Refund requests
-      </span>
-    </div>
-
-  </div>
-
-</section>
-
-<section
-  class="wrap"
-  id="tracking"
->
-
-  <div class="sectionTitle">
-
-    <h2>
-      Order Tracking
-    </h2>
-
-    <p>
-      Enter your order reference to see its latest status.
-    </p>
-
-  </div>
-
-  <div
-    style="
-      max-width:600px;
-      margin:auto;
-      display:flex;
-      gap:8px;
-    "
-  >
-
-    <input
-      id="trackingReference"
-      style="
-        flex:1;
-        padding:12px;
-        border:1px solid var(--line);
-        border-radius:22px;
-        outline:none;
-      "
-      placeholder="Example: FS-XXXX"
-    >
-
-    <button
-      type="button"
-      class="add"
-      style="
-        flex:0 0 auto;
-        padding:12px 18px;
-      "
-      onclick="trackOrder()"
-    >
-      TRACK
-    </button>
-
-  </div>
-
-  <div
-    id="trackingResult"
-    style="
-      max-width:600px;
-      margin:15px auto 0;
-    "
-  ></div>
-
-</section>
-
-<section
-  class="wrap"
-  id="about"
->
-
-  <div class="sectionTitle">
-
-    <h2>
-      About Face of Style
-    </h2>
-
-    <p>
-      We create modest fashion that feels
-      comfortable, elegant and personal.
-    </p>
-
-  </div>
-
-</section>
-
-</main>
-
-<footer id="contact">
-
-  <div class="foot">
-
-    <div>
-      <h3 id="footerStoreName">
-        Face of Style Hijab Factory
-      </h3>
-
-      <p>
-        Elegant hijabs, abayas,
-        gowns and custom modest wear.
-      </p>
-    </div>
-
-    <div>
-
-      <h3>
-        Quick Links
-      </h3>
-
-      <p>
-        <a href="#shop">
-          Shop Collection
-        </a>
-        <br>
-        <a href="#account">
-          My Account
-        </a>
-        <br>
-        <a href="#tracking">
-          Order Tracking
-        </a>
-        <br>
-        <a href="#custom">
-          Custom Order
-        </a>
-      </p>
-
-    </div>
-
-    <div>
-
-      <h3>
-        Contact
-      </h3>
-
-      <p>
-        WhatsApp:
-        <span id="footerWhatsApp">
-          0906 582 8886
-        </span>
-
-        <br>
-
-        Orders & enquiries welcome.
-      </p>
-
-    </div>
-
-  </div>
-
-  <div class="copy">
-    © 2026 Face of Style Hijab Factory.
-    All rights reserved.
-  </div>
-
-  <p style="text-align:center;margin-top:14px">
-
-    <a
-      href="/admin.html"
-      style="color:#d8b96b"
-    >
-      Admin Dashboard
-    </a>
-
-  </p>
-
-</footer>
-
-<!-- ======================================================
-     CART
-======================================================= -->
-
-<aside
-  id="drawer"
-  class="drawer"
->
+<div class="top">
+
+  <b class="brand">
+    FACE OF STYLE — ADMIN
+  </b>
 
   <button
-    class="close"
-    onclick="closeCart()"
-    aria-label="Close cart"
+    class="logout"
+    onclick="logout()"
   >
-    ×
+    Logout
   </button>
-
-  <h2>
-    Your Cart
-  </h2>
-
-  <div
-    id="cartItems"
-    class="cartItems"
-  ></div>
-
-  <div
-    id="cartTotal"
-    class="total"
-  >
-    Total: ₦0
-  </div>
-
-  <button
-    id="checkoutButton"
-    class="checkoutBtn"
-    onclick="openCheckout()"
-    disabled
-  >
-    CHECKOUT & PAY
-  </button>
-
-</aside>
-
-<!-- ======================================================
-     CHECKOUT
-======================================================= -->
-
-<div
-  id="checkoutModal"
-  class="modal"
->
-
-  <div class="modalBox">
-
-    <button
-      class="close"
-      onclick="closeCheckout()"
-    >
-      ×
-    </button>
-
-    <h2>
-      Secure Checkout
-    </h2>
-
-    <div
-      id="checkoutTotal"
-      style="
-        color:var(--muted);
-        margin-bottom:12px;
-      "
-    >
-      Order total: ₦0
-    </div>
-
-    <div class="formRow">
-
-      <div class="field">
-
-        <label>
-          Full Name
-        </label>
-
-        <input
-          id="customerName"
-          autocomplete="name"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>
-          Email
-        </label>
-
-        <input
-          id="customerEmail"
-          type="email"
-          autocomplete="email"
-        >
-
-      </div>
-
-    </div>
-
-    <div class="formRow">
-
-      <div class="field">
-
-        <label>
-          Phone
-        </label>
-
-        <input
-          id="customerPhone"
-          autocomplete="tel"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>
-          Delivery Address
-        </label>
-
-        <input
-          id="customerAddress"
-          autocomplete="street-address"
-        >
-
-      </div>
-
-    </div>
-
-    <div class="field">
-
-      <label>
-        Payment Method
-      </label>
-
-      <select
-        id="paymentMethod"
-      >
-
-        <option value="paystack">
-          Paystack
-        </option>
-
-        <option value="bank_transfer">
-          Bank Transfer
-        </option>
-
-        <option value="store_credit">
-          Store Credit
-        </option>
-
-      </select>
-
-    </div>
-
-    <div class="infoCard">
-
-      <b>
-        Paystack
-      </b>
-
-      <div style="color:var(--muted)">
-        Card, bank and supported Paystack channels.
-      </div>
-
-    </div>
-
-    <div class="modalActions">
-
-      <button
-        class="cancelBtn"
-        onclick="closeCheckout()"
-      >
-        Cancel
-      </button>
-
-      <button
-        class="primaryBtn"
-        id="continuePayment"
-        onclick="startCheckout()"
-      >
-        CONTINUE
-      </button>
-
-    </div>
-
-  </div>
 
 </div>
 
-<!-- ======================================================
-     ACCOUNT MODAL
-======================================================= -->
+<div id="app"></div>
 
-<div
-  id="accountModal"
-  class="modal"
->
-
-  <div class="modalBox">
-
-    <button
-      class="close"
-      onclick="closeAccount()"
-    >
-      ×
-    </button>
-
-    <h2>
-      My Account
-    </h2>
-
-    <div
-      id="accountAuth"
-    ></div>
-
-    <div
-      id="accountContent"
-      style="display:none"
-    >
-
-      <div class="accountTabs">
-
-        <button
-          class="accountTab active"
-          onclick="accountTab('profile',this)"
-        >
-          Profile
-        </button>
-
-        <button
-          class="accountTab"
-          onclick="accountTab('orders',this)"
-        >
-          Orders
-        </button>
-
-        <button
-          class="accountTab"
-          onclick="accountTab('addresses',this)"
-        >
-          Addresses
-        </button>
-
-        <button
-          class="accountTab"
-          onclick="accountTab('credit',this)"
-        >
-          Store Credit
-        </button>
-
-        <button
-          class="accountTab"
-          onclick="accountTab('refunds',this)"
-        >
-          Refund History
-        </button>
-
-      </div>
-
-      <div
-        id="panelProfile"
-        class="accountPanel active"
-      ></div>
-
-      <div
-        id="panelOrders"
-        class="accountPanel"
-      ></div>
-
-      <div
-        id="panelAddresses"
-        class="accountPanel"
-      ></div>
-
-      <div
-        id="panelCredit"
-        class="accountPanel"
-      ></div>
-
-      <div
-        id="panelRefunds"
-        class="accountPanel"
-      ></div>
-
-    </div>
-
-  </div>
-
-</div>
 
 <script>
 
 /* =========================================================
-   STATE
+   GLOBAL
 ========================================================= */
 
-"use strict";
+const app =
+  document.getElementById("app");
 
-let products = [];
-let cart = [];
-let selectedCategory = "All";
+let token =
+  sessionStorage.getItem("adminToken") || "";
 
-let customerToken =
-  localStorage.getItem(
-    "faceOfStyleCustomerToken"
-  ) || "";
+let allProducts = [];
 
-let storeSettings = {};
+let selectedImages = [];
+
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
+function esc(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
 function money(value){
 
-  return new Intl.NumberFormat(
-    "en-NG",
-    {
-      style:"currency",
-      currency:"NGN",
-      maximumFractionDigits:0
-    }
-  ).format(
-    Number(value) || 0
-  );
+  const number =
+    Number(value || 0);
+
+  return "₦" +
+    number.toLocaleString("en-NG");
 
 }
 
-function escapeHTML(value){
-
-  return String(
-    value ?? ""
-  )
-  .replace(/&/g,"&amp;")
-  .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;")
-  .replace(/'/g,"&#039;");
-
-}
-
-function imagePath(value){
-
-  const src =
-    String(
-      value || ""
-    ).trim();
-
-  if(!src){
-    return "assets/product-1.jpg";
-  }
-
-  if(
-    src.startsWith("data:") ||
-    src.startsWith("http://") ||
-    src.startsWith("https://") ||
-    src.startsWith("/")
-  ){
-    return src;
-  }
-
-  if(
-    src.startsWith("assets/")
-  ){
-    return src;
-  }
-
-  return (
-    "assets/" +
-    src.replace(/^\.?\//,"")
-  );
-
-}
-
-function lockBody(){
-
-  const open =
-    document
-      .querySelectorAll(
-        ".modal.open"
-      ).length > 0 ||
-
-    document
-      .getElementById(
-        "drawer"
-      )
-      .classList.contains(
-        "open"
-      );
-
-  document.body.classList.toggle(
-    "lock",
-    open
-  );
-
-}
 
 /* =========================================================
-   SAVE CART
+   IMAGE FALLBACK
 ========================================================= */
 
-function saveCart(){
+function productImage(product){
 
-  localStorage.setItem(
-    "faceOfStyleCart",
-    JSON.stringify(cart)
-  );
+  if(product && product.image){
 
-}
-
-function loadCart(){
-
-  try{
-
-    const saved =
-      localStorage.getItem(
-        "faceOfStyleCart"
-      );
-
-    if(!saved){
-      return;
-    }
-
-    const parsed =
-      JSON.parse(saved);
-
-    if(
-      Array.isArray(parsed)
-    ){
-
-      cart =
-        parsed
-          .filter(
-            item =>
-              item &&
-              Number(item.qty) > 0
-          )
-          .map(
-            item => ({
-              ...item,
-              id:
-                Number(item.id),
-              qty:
-                Number(item.qty)
-            })
-          );
-
-    }
-
-  }catch{
-
-    cart = [];
+    return product.image;
 
   }
 
+  const id =
+    Number(product?.id || 1);
+
+  return `/assets/product-${id}.jpg`;
+
 }
 
+
 /* =========================================================
-   CONFIG
+   LOGIN
 ========================================================= */
 
-async function loadConfig(){
+function login(){
+
+  app.innerHTML = `
+
+    <div class="login">
+
+      <h1>
+        Admin Login
+      </h1>
+
+      <p>
+        Face of Style Hijab Factory
+      </p>
+
+      <label>
+        Username
+      </label>
+
+      <input
+        id="username"
+        value="admin"
+        autocomplete="username"
+      >
+
+      <label>
+        Password
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+      >
+
+      <button
+        class="primary"
+        style="width:100%"
+        onclick="doLogin()"
+      >
+        LOGIN
+      </button>
+
+      <p
+        id="loginError"
+        class="error"
+      ></p>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   LOGIN ACTION
+========================================================= */
+
+async function doLogin(){
+
+  const error =
+    document.getElementById("loginError");
+
+  error.textContent = "";
 
   try{
 
     const response =
       await fetch(
-        "/api/config",
+        "/api/admin/login",
         {
-          cache:"no-store"
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+
+            username:
+              document
+                .getElementById("username")
+                .value
+                .trim(),
+
+            password:
+              document
+                .getElementById("password")
+                .value
+
+          })
+
         }
       );
 
     const data =
       await response.json();
 
-    storeSettings =
-      data?.settings ||
-      {};
+    if(data.token){
 
-    const root =
-      document.documentElement;
+      token =
+        data.token;
 
-    if(
-      storeSettings.primary_color
-    ){
-      root.style.setProperty(
-        "--wine",
-        storeSettings.primary_color
+      sessionStorage.setItem(
+        "adminToken",
+        token
       );
+
+      dashboard();
+
+    }else{
+
+      error.textContent =
+        data.message ||
+        "Login failed.";
+
     }
 
-    if(
-      storeSettings.secondary_color
-    ){
-      root.style.setProperty(
-        "--wine2",
-        storeSettings.secondary_color
-      );
-    }
+  }catch(errorObject){
 
-    if(
-      storeSettings.gold_color
-    ){
-      root.style.setProperty(
-        "--gold",
-        storeSettings.gold_color
-      );
-    }
+    console.error(errorObject);
 
-    if(
-      storeSettings.background_color
-    ){
-      root.style.setProperty(
-        "--cream",
-        storeSettings.background_color
-      );
-    }
-
-    if(
-      storeSettings.text_color
-    ){
-      root.style.setProperty(
-        "--text",
-        storeSettings.text_color
-      );
-    }
-
-    const storeName =
-      storeSettings.store_name ||
-      "Face of Style Hijab Factory";
-
-    document.title =
-      storeName;
-
-    document
-      .getElementById(
-        "footerStoreName"
-      )
-      .textContent =
-      storeName;
-
-    document
-      .getElementById(
-        "brandName"
-      )
-      .textContent =
-      String(
-        storeName
-      )
-      .replace(
-        / Hijab Factory/i,
-        ""
-      )
-      .toUpperCase();
-
-    document
-      .getElementById(
-        "brandTagline"
-      )
-      .textContent =
-      storeSettings.tagline ||
-      "HIJAB FACTORY";
-
-    document
-      .getElementById(
-        "heroTitle"
-      )
-      .textContent =
-      storeSettings.hero_title ||
-      "Modesty, Elegance & Style.";
-
-    document
-      .getElementById(
-        "heroText"
-      )
-      .textContent =
-      storeSettings.hero_text ||
-      "Discover carefully crafted hijabs, abayas, gowns and modest outfits.";
-
-    const whatsapp =
-      String(
-        data?.whatsapp ||
-        storeSettings.whatsapp ||
-        "2349065828886"
-      ).replace(
-        /[^0-9]/g,
-        ""
-      );
-
-    document
-      .getElementById(
-        "footerWhatsApp"
-      )
-      .textContent =
-      whatsapp.startsWith("234")
-        ? "0" +
-          whatsapp.slice(3)
-        : whatsapp;
-
-    const customMessage =
-      encodeURIComponent(
-        "Hello Face of Style Hijab Factory,\n\nI would like to place a custom order.\n\nStyle:\nFabric:\nColour:\nMeasurements:\n\nPlease let me know if you need any additional information."
-      );
-
-    document
-      .getElementById(
-        "customWhatsApp"
-      )
-      .href =
-      "https://wa.me/" +
-      whatsapp +
-      "?text=" +
-      customMessage;
-
-  }catch(error){
-
-    console.warn(
-      "Config load error:",
-      error
-    );
+    error.textContent =
+      "Unable to connect to server.";
 
   }
 
 }
 
+
 /* =========================================================
-   LOAD PRODUCTS
+   LOGOUT
 ========================================================= */
 
-async function loadProducts(){
+function logout(){
 
-  const box =
-    document.getElementById(
-      "products"
-    );
+  sessionStorage.removeItem(
+    "adminToken"
+  );
 
-  try{
+  token = "";
 
-    box.innerHTML = `
-      <div class="loading">
-        Loading products...
-      </div>
-    `;
-
-    const response =
-      await fetch(
-        "/api/products",
-        {
-          cache:"no-store"
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if(
-      !response.ok ||
-      !Array.isArray(
-        data.products
-      )
-    ){
-      throw new Error(
-        "Unable to load products."
-      );
-    }
-
-    products =
-      data.products.map(
-        p => ({
-          ...p,
-
-          id:
-            Number(p.id),
-
-          cat:
-            p.cat ||
-            p.category ||
-            "Fashion",
-
-          image:
-            imagePath(
-              p.image ||
-              p.img
-            ),
-
-          img:
-            imagePath(
-              p.image ||
-              p.img
-            ),
-
-          desc:
-            p.desc ||
-            p.description ||
-            "",
-
-          stock:
-            Number(
-              p.stock
-            ) || 0
-        })
-      );
-
-    renderProducts();
-
-    updateCart();
-
-  }catch(error){
-
-    console.error(
-      "Products error:",
-      error
-    );
-
-    box.innerHTML = `
-      <div class="loading error">
-        Unable to load products.
-        Please refresh the page.
-      </div>
-    `;
-  }
+  login();
 
 }
 
+
 /* =========================================================
-   FILTER
+   API HELPER
 ========================================================= */
 
-function filterProducts(
-  category,
-  button
+async function api(
+  url,
+  options={}
 ){
 
-  selectedCategory =
-    category;
+  options.headers = {
+
+    ...(options.headers || {}),
+
+    Authorization:
+      "Bearer " + token
+
+  };
+
+  try{
+
+    const response =
+      await fetch(
+        url,
+        options
+      );
+
+    if(response.status === 401){
+
+      logout();
+
+      return null;
+
+    }
+
+    const text =
+      await response.text();
+
+    try{
+
+      return JSON.parse(text);
+
+    }catch{
+
+      return {
+
+        error:
+          text ||
+          "Server returned invalid response."
+
+      };
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    return {
+
+      error:
+        "Unable to connect to server."
+
+    };
+
+  }
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+async function dashboard(){
+
+  const data =
+    await api(
+      "/api/admin/dashboard"
+    );
+
+  if(!data) return;
+
+  const stats =
+    data.stats || {};
+
+  app.innerHTML = `
+
+    <div class="layout">
+
+      <div class="cards">
+
+        <div class="stat">
+
+          <small>
+            Total Orders
+          </small>
+
+          <b>
+            ${stats.orders || 0}
+          </b>
+
+        </div>
+
+
+        <div class="stat">
+
+          <small>
+            Paid Orders
+          </small>
+
+          <b>
+            ${stats.paid || 0}
+          </b>
+
+        </div>
+
+
+        <div class="stat">
+
+          <small>
+            Pending Orders
+          </small>
+
+          <b>
+            ${stats.pending || 0}
+          </b>
+
+        </div>
+
+
+        <div class="stat">
+
+          <small>
+            Revenue
+          </small>
+
+          <b>
+            ${money(stats.revenue)}
+          </b>
+
+        </div>
+
+      </div>
+
+
+      <div class="tabs">
+
+        <button
+          id="tabOrders"
+          class="tab active"
+          onclick="showOrders()"
+        >
+          Orders
+        </button>
+
+
+        <button
+          id="tabProducts"
+          class="tab"
+          onclick="showProducts()"
+        >
+          Products
+        </button>
+
+
+        <button
+          id="tabSettings"
+          class="tab"
+          onclick="showSettings()"
+        >
+          Settings
+        </button>
+
+      </div>
+
+
+      <div id="content"></div>
+
+    </div>
+
+  `;
+
+  showOrders();
+
+}
+
+
+/* =========================================================
+   ACTIVE TAB
+========================================================= */
+
+function activeTab(id){
 
   document
-    .querySelectorAll(
-      ".cat"
-    )
+    .querySelectorAll(".tab")
     .forEach(
-      el =>
-        el.classList.remove(
+      element =>
+        element.classList.remove(
           "active"
         )
     );
 
-  if(button){
-    button.classList.add(
+  const element =
+    document.getElementById(id);
+
+  if(element){
+
+    element.classList.add(
       "active"
     );
-  }
 
-  renderProducts();
+  }
 
 }
 
+
 /* =========================================================
-   RENDER
+   ORDERS
 ========================================================= */
 
-function renderProducts(){
+async function showOrders(){
 
-  const box =
+  activeTab("tabOrders");
+
+  const content =
     document.getElementById(
-      "products"
+      "content"
     );
 
-  if(!box){
-    return;
-  }
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <h2>
+        Orders
+      </h2>
+
+      <div class="loading">
+        Loading orders...
+      </div>
+
+    </div>
+
+  `;
+
+  const data =
+    await api(
+      "/api/admin/orders"
+    );
+
+  if(!data) return;
+
+  const orders =
+    Array.isArray(data)
+      ? data
+      : (data.orders || []);
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <div class="panelHead">
+
+        <h2>
+          Customer Orders
+        </h2>
+
+        <button
+          class="addBtn"
+          onclick="showOrders()"
+        >
+          Refresh
+        </button>
+
+      </div>
+
+      ${
+        orders.length
+
+        ?
+
+        `
+
+        <div class="tableWrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Reference
+                </th>
+
+                <th>
+                  Customer
+                </th>
+
+                <th>
+                  Phone
+                </th>
+
+                <th>
+                  Total
+                </th>
+
+                <th>
+                  Payment
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th>
+                  Date
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              ${
+                orders.map(order => {
+
+                  const paymentStatus =
+                    String(
+                      order.payment_status ||
+                      "pending"
+                    ).toLowerCase();
+
+                  const className =
+                    paymentStatus === "paid"
+                      ? "paid"
+                      : paymentStatus === "failed"
+                        ? "failed"
+                        : "pending";
+
+                  return `
+
+                    <tr>
+
+                      <td>
+                        ${esc(
+                          order.reference || "-"
+                        )}
+                      </td>
+
+                      <td>
+                        ${esc(
+                          order.customer_name || "-"
+                        )}
+                      </td>
+
+                      <td>
+                        ${esc(
+                          order.customer_phone || "-"
+                        )}
+                      </td>
+
+                      <td>
+                        ${money(order.total)}
+                      </td>
+
+                      <td>
+                        ${esc(
+                          order.payment_method || "-"
+                        )}
+                      </td>
+
+                      <td>
+
+                        <span
+                          class="pill ${className}"
+                        >
+                          ${esc(
+                            order.payment_status ||
+                            "PENDING"
+                          )}
+                        </span>
+
+                      </td>
+
+                      <td>
+                        ${
+                          order.created_at
+                            ? new Date(
+                                order.created_at
+                              ).toLocaleString(
+                                "en-NG"
+                              )
+                            : "-"
+                        }
+                      </td>
+
+                    </tr>
+
+                  `;
+
+                }).join("")
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        `
+
+        :
+
+        `
+
+        <div class="empty">
+
+          No orders found.
+
+        </div>
+
+        `
+
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
+async function showProducts(){
+
+  activeTab("tabProducts");
+
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <h2>
+        Products
+      </h2>
+
+      <div class="loading">
+        Loading products...
+      </div>
+
+    </div>
+
+  `;
+
+  const data =
+    await api(
+      "/api/admin/products"
+    );
+
+  if(!data) return;
+
+  allProducts =
+    Array.isArray(data)
+      ? data
+      : (data.products || []);
+
+  renderProducts(
+    allProducts
+  );
+
+}
+
+
+/* =========================================================
+   RENDER PRODUCTS
+========================================================= */
+
+function renderProducts(products){
+
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <div class="panelHead">
+
+        <h2>
+          Products
+        </h2>
+
+        <button
+          class="addBtn"
+          onclick="showAddProduct()"
+        >
+          + Add Product
+        </button>
+
+      </div>
+
+
+      <input
+        class="search"
+        id="productSearch"
+        placeholder="Search products..."
+        oninput="filterProducts(this.value)"
+      >
+
+
+      <div
+        id="productsList"
+        class="productGrid"
+        style="margin-top:15px"
+      ></div>
+
+    </div>
+
+  `;
+
+  drawProductCards(
+    products
+  );
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function filterProducts(value){
 
   const query =
-    String(
-      document
-        .getElementById(
-          "search"
-        )
-        ?.value ||
-      ""
-    )
-    .trim()
-    .toLowerCase();
+    String(value || "")
+      .toLowerCase()
+      .trim();
 
-  const list =
-    products.filter(
+  const filtered =
+    allProducts.filter(
       product => {
+
+        const name =
+          String(
+            product.name || ""
+          ).toLowerCase();
 
         const category =
           String(
-            product.cat ||
             product.category ||
+            product.cat ||
             ""
-          );
-
-        const matchCategory =
-          selectedCategory ===
-            "All" ||
-          category.toLowerCase() ===
-            selectedCategory.toLowerCase();
-
-        const haystack =
-          (
-            String(
-              product.name ||
-              ""
-            ) +
-            " " +
-            String(
-              product.desc ||
-              ""
-            ) +
-            " " +
-            String(
-              product.color ||
-              ""
-            )
           ).toLowerCase();
 
         return (
-          matchCategory &&
-          (
-            !query ||
-            haystack.includes(
-              query
-            )
-          )
+          name.includes(query) ||
+          category.includes(query)
         );
 
       }
     );
 
-  if(!list.length){
+  drawProductCards(
+    filtered
+  );
 
-    box.innerHTML = `
-      <div class="empty">
+}
+
+
+/* =========================================================
+   PRODUCT CARDS
+========================================================= */
+
+function drawProductCards(
+  products
+){
+
+  const list =
+    document.getElementById(
+      "productsList"
+    );
+
+  if(!list) return;
+
+  if(!products.length){
+
+    list.innerHTML = `
+
+      <div
+        class="empty"
+        style="grid-column:1/-1"
+      >
         No products found.
       </div>
+
     `;
 
     return;
 
   }
 
-  box.innerHTML =
-    list.map(
-      product => {
 
-        const id =
-          Number(
-            product.id
-          );
+  list.innerHTML =
+    products.map(
+      product => {
 
         const stock =
           Number(
-            product.stock
+            product.stock ?? 0
           );
-
-        const out =
-          stock < 1;
 
         const image =
-          escapeHTML(
-            imagePath(
-              product.image ||
-              product.img
-            )
+          productImage(
+            product
           );
 
-        const name =
-          escapeHTML(
-            product.name
-          );
+        const stockClass =
+          stock > 0
+            ? "stockIn"
+            : "stockOut";
 
-        const category =
-          escapeHTML(
-            product.cat ||
-            product.category ||
-            "Fashion"
-          );
-
-        const desc =
-          escapeHTML(
-            product.desc ||
-            product.description ||
-            ""
-          );
+        const stockText =
+          stock > 0
+            ? `${stock} in stock`
+            : "Out of Stock";
 
         return `
 
-          <article class="card">
+          <div class="productCard">
 
-            <div class="pic">
+            <img
+              class="productImage"
+              src="${esc(image)}"
+              alt="${esc(
+                product.name ||
+                "Product"
+              )}"
+              onerror="
+                this.onerror=null;
+                this.style.display='none';
+                this.nextElementSibling.style.display='flex';
+              "
+            >
 
-              <img
-                src="${image}"
-                alt="${name}"
-
-                onerror="
-                  this.onerror=null;
-                  this.src='assets/product-1.jpg'
-                "
-              >
-
-              <span class="badge">
-                ${category}
-              </span>
-
-              <button
-                class="heart"
-                type="button"
-                onclick="addToCart(${id})"
-                ${
-                  out
-                    ? "disabled"
-                    : ""
-                }
-              >
-                ♡
-              </button>
-
+            <div
+              class="noImage"
+              style="display:none"
+            >
+              No Image
             </div>
 
-            <div class="body">
+
+            <div class="productInfo">
 
               <h3>
-                ${name}
+                ${esc(
+                  product.name ||
+                  "Unnamed Product"
+                )}
               </h3>
 
-              <p>
-                ${desc}
-              </p>
 
-              <div class="price">
+              <div class="productMeta">
+
+                Category:
+                ${esc(
+                  product.category ||
+                  product.cat ||
+                  "Fashion"
+                )}
+
+                <br>
+
+                Color:
+                ${esc(
+                  product.color ||
+                  "-"
+                )}
+
+                <br>
+
+                Stock:
+                <span
+                  class="${stockClass}"
+                >
+                  ${stockText}
+                </span>
+
+              </div>
+
+
+              <div class="productPrice">
+
                 ${money(
                   product.price
                 )}
+
               </div>
 
-              <span
-                class="stock ${
-                  out
-                    ? "out"
-                    : ""
-                }"
-              >
-                ${
-                  out
-                    ? "Out of stock"
-                    : `${stock} in stock`
-                }
-              </span>
 
-              <div class="actions">
+              <div class="productActions">
 
                 <button
-                  class="add"
-                  type="button"
-                  onclick="addToCart(${id})"
-                  ${
-                    out
-                      ? "disabled"
-                      : ""
-                  }
+                  class="edit"
+                  onclick="editProduct(${Number(product.id)})"
                 >
-                  ${
-                    out
-                      ? "Out of Stock"
-                      : "Add to Cart"
-                  }
+                  Edit
                 </button>
 
                 <button
-                  class="view"
-                  type="button"
-                  onclick="openProductOrder(${id})"
-                  ${
-                    out
-                      ? "disabled"
-                      : ""
-                  }
+                  class="delete"
+                  onclick="deleteProduct(${Number(product.id)})"
                 >
-                  Order
+                  Delete
                 </button>
 
               </div>
 
             </div>
 
-          </article>
+          </div>
 
         `;
 
@@ -2477,1609 +1518,807 @@ function renderProducts(){
 
 }
 
+
 /* =========================================================
-   CART
+   ADD / EDIT PRODUCT
 ========================================================= */
 
-function addToCart(id){
-
-  const product =
-    products.find(
-      item =>
-        Number(item.id) ===
-        Number(id)
-    );
-
-  if(!product){
-    return;
-  }
-
-  const stock =
-    Number(
-      product.stock
-    );
-
-  if(stock < 1){
-
-    alert(
-      "This product is currently out of stock."
-    );
-
-    return;
-
-  }
-
-  const item =
-    cart.find(
-      x =>
-        Number(x.id) ===
-        Number(id)
-    );
-
-  if(item){
-
-    if(
-      Number(item.qty) >=
-      Math.min(
-        99,
-        stock
-      )
-    ){
-
-      alert(
-        "You cannot add more than the available stock."
-      );
-
-      return;
-    }
-
-    item.qty =
-      Number(item.qty) + 1;
-
-  }else{
-
-    cart.push({
-      ...product,
-      qty:1
-    });
-
-  }
-
-  saveCart();
-  updateCart();
-  openCart();
-
-}
-
-function changeQty(
-  id,
-  delta
+function showAddProduct(
+  product=null
 ){
 
-  const item =
-    cart.find(
-      x =>
-        Number(x.id) ===
-        Number(id)
-    );
+  const editing =
+    !!product;
 
-  if(!item){
-    return;
-  }
+  selectedImages = [];
 
-  const product =
-    products.find(
-      x =>
-        Number(x.id) ===
-        Number(id)
-    );
 
-  const stock =
-    Number(
-      product?.stock ??
-      item.stock ??
-      99
-    );
+  document.body.insertAdjacentHTML(
+    "beforeend",
 
-  const next =
-    Number(item.qty) +
-    Number(delta);
+    `
 
-  if(next < 1){
+    <div
+      class="modal"
+      id="productModal"
+    >
 
-    removeItem(id);
+      <div class="modalBox">
 
-    return;
-  }
+        <div class="modalHead">
 
-  if(
-    next >
-    Math.min(
-      99,
-      stock
-    )
-  ){
+          <h2>
+            ${
+              editing
+                ? "Edit Product"
+                : "Add Product"
+            }
+          </h2>
 
-    alert(
-      "You cannot add more than the available stock."
-    );
-
-    return;
-  }
-
-  item.qty =
-    next;
-
-  saveCart();
-  updateCart();
-
-}
-
-function removeItem(id){
-
-  cart =
-    cart.filter(
-      item =>
-        Number(item.id) !==
-        Number(id)
-    );
-
-  saveCart();
-  updateCart();
-
-}
-
-function updateCart(){
-
-  const count =
-    cart.reduce(
-      (sum,item) =>
-        sum +
-        Number(
-          item.qty
-        ),
-      0
-    );
-
-  document
-    .getElementById(
-      "cartCount"
-    )
-    .textContent =
-    count;
-
-  const box =
-    document.getElementById(
-      "cartItems"
-    );
-
-  const total =
-    cart.reduce(
-      (sum,item) =>
-        sum +
-        Number(
-          item.price
-        ) *
-        Number(
-          item.qty
-        ),
-      0
-    );
-
-  document
-    .getElementById(
-      "cartTotal"
-    )
-    .textContent =
-    "Total: " +
-    money(total);
-
-  const checkoutButton =
-    document.getElementById(
-      "checkoutButton"
-    );
-
-  checkoutButton.disabled =
-    cart.length === 0;
-
-  if(!cart.length){
-
-    box.innerHTML = `
-      <div class="loading">
-        Your cart is empty.
-      </div>
-    `;
-
-    return;
-
-  }
-
-  box.innerHTML =
-    cart.map(
-      item => `
-
-        <div class="cartItem">
-
-          <img
-            src="${escapeHTML(
-              imagePath(
-                item.img ||
-                item.image
-              )
-            )}"
-            alt="${escapeHTML(
-              item.name
-            )}"
-
-            onerror="
-              this.onerror=null;
-              this.src='assets/product-1.jpg'
-            "
+          <button
+            class="close"
+            onclick="closeModal()"
           >
+            ×
+          </button>
 
-          <div class="cartContent">
+        </div>
 
-            <b>
-              ${escapeHTML(
-                item.name
-              )}
-            </b>
 
-            <small>
-              ${money(
-                item.price
-              )}
-            </small>
+        <div class="formGrid">
 
-            <div class="qty">
 
-              <button
-                onclick="changeQty(${Number(item.id)},-1)"
+          <div>
+
+            <label>
+              Product Name
+            </label>
+
+            <input
+              id="productName"
+              value="${esc(
+                product?.name || ""
+              )}"
+              placeholder="Elegant Zip Abaya"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Category
+            </label>
+
+            <select
+              id="productCategory"
+            >
+
+              ${
+                [
+                  "Hijab",
+                  "Abaya",
+                  "Gown",
+                  "Caps",
+                  "Modest Outfit",
+                  "Accessories",
+                  "Custom",
+                  "Fashion"
+                ]
+                .map(
+                  category => `
+
+                    <option
+                      value="${esc(category)}"
+                      ${
+                        category ===
+                        (
+                          product?.category ||
+                          product?.cat ||
+                          "Fashion"
+                        )
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      ${esc(category)}
+                    </option>
+
+                  `
+                )
+                .join("")
+              }
+
+            </select>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Price (₦)
+            </label>
+
+            <input
+              id="productPrice"
+              type="number"
+              min="0"
+              value="${Number(
+                product?.price || 0
+              )}"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Discount (%)
+            </label>
+
+            <input
+              id="productDiscount"
+              type="number"
+              min="0"
+              max="100"
+              value="${Number(
+                product?.discount || 0
+              )}"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Color
+            </label>
+
+            <input
+              id="productColor"
+              value="${esc(
+                product?.color || ""
+              )}"
+              placeholder="Wine"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Stock
+            </label>
+
+            <input
+              id="productStock"
+              type="number"
+              min="0"
+              value="${Number(
+                product?.stock ?? 0
+              )}"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Sizes
+            </label>
+
+            <input
+              id="productSizes"
+              value="${esc(
+                product?.sizes || ""
+              )}"
+              placeholder="S, M, L, XL"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Image URL
+            </label>
+
+            <input
+              id="productImage"
+              value="${esc(
+                product?.image || ""
+              )}"
+              placeholder="/assets/product-1.jpg"
+            >
+
+          </div>
+
+
+          <div class="full">
+
+            <label>
+              Product Photo
+            </label>
+
+
+            <div class="uploadBox">
+
+              <label
+                for="galleryInput"
+                class="uploadBtn"
               >
-                −
-              </button>
+                📷 Choose from Gallery
+              </label>
 
-              <strong>
-                ${Number(item.qty)}
-              </strong>
-
-              <button
-                onclick="changeQty(${Number(item.id)},1)"
+              <input
+                id="galleryInput"
+                type="file"
+                accept="image/*"
+                onchange="handleImage(this)"
               >
-                +
-              </button>
 
-              <span
-                class="remove"
-                onclick="removeItem(${Number(item.id)})"
+              <p
+                style="
+                  margin:9px 0 0;
+                  color:#756a6f;
+                  font-size:12px
+                "
               >
-                Remove
-              </span>
+                Select one product image.
+              </p>
+
+            </div>
+
+
+            <div
+              id="previewGrid"
+              class="previewGrid"
+            >
+
+              ${
+                product?.image
+                  ?
+
+                  `<img
+                    src="${esc(product.image)}"
+                    alt="Current product image"
+                  >`
+
+                  :
+
+                  ""
+              }
 
             </div>
 
           </div>
 
+
+          <div class="full">
+
+            <label>
+              Description
+            </label>
+
+            <textarea
+              id="productDescription"
+              placeholder="Describe the product..."
+            >${esc(
+              product?.description ||
+              product?.desc ||
+              ""
+            )}</textarea>
+
+          </div>
+
+
         </div>
 
-      `
-    ).join("");
 
-}
-
-/* =========================================================
-   CART OPEN / CLOSE
-========================================================= */
-
-function openCart(){
-
-  document
-    .getElementById(
-      "drawer"
-    )
-    .classList.add(
-      "open"
-    );
-
-  lockBody();
-
-}
-
-function closeCart(){
-
-  document
-    .getElementById(
-      "drawer"
-    )
-    .classList.remove(
-      "open"
-    );
-
-  lockBody();
-
-}
-
-/* =========================================================
-   ORDER BUTTON
-========================================================= */
-
-function openProductOrder(id){
-
-  const product =
-    products.find(
-      p =>
-        Number(p.id) ===
-        Number(id)
-    );
-
-  if(!product){
-    return;
-  }
-
-  addToCart(id);
-
-}
-
-/* =========================================================
-   CHECKOUT
-========================================================= */
-
-function openCheckout(){
-
-  if(!cart.length){
-
-    alert(
-      "Your cart is empty."
-    );
-
-    return;
-  }
-
-  document
-    .getElementById(
-      "checkoutTotal"
-    )
-    .textContent =
-    "Order total: " +
-    money(
-      cart.reduce(
-        (sum,item) =>
-          sum +
-          Number(item.price) *
-          Number(item.qty),
-        0
-      )
-    );
-
-  document
-    .getElementById(
-      "checkoutModal"
-    )
-    .classList.add(
-      "open"
-    );
-
-  closeCart();
-
-  lockBody();
-
-}
-
-function closeCheckout(){
-
-  document
-    .getElementById(
-      "checkoutModal"
-    )
-    .classList.remove(
-      "open"
-    );
-
-  lockBody();
-
-}
-
-async function startCheckout(){
-
-  if(!cart.length){
-    return;
-  }
-
-  const name =
-    document
-      .getElementById(
-        "customerName"
-      )
-      .value.trim();
-
-  const email =
-    document
-      .getElementById(
-        "customerEmail"
-      )
-      .value.trim();
-
-  const phone =
-    document
-      .getElementById(
-        "customerPhone"
-      )
-      .value.trim();
-
-  const address =
-    document
-      .getElementById(
-        "customerAddress"
-      )
-      .value.trim();
-
-  const method =
-    document
-      .getElementById(
-        "paymentMethod"
-      )
-      .value;
-
-  if(
-    !name ||
-    !email ||
-    !phone ||
-    !address
-  ){
-
-    alert(
-      "Please complete all customer details."
-    );
-
-    return;
-  }
-
-  const button =
-    document
-      .getElementById(
-        "continuePayment"
-      );
-
-  const oldText =
-    button.textContent;
-
-  button.disabled =
-    true;
-
-  button.textContent =
-    "PROCESSING...";
-
-  const payload = {
-
-    customer:{
-      name,
-      email,
-      phone,
-      address
-    },
-
-    items:
-      cart.map(
-        item => ({
-          id:
-            Number(item.id),
-          qty:
-            Number(item.qty)
-        })
-      )
-
-  };
-
-  try{
-
-    if(
-      method ===
-      "bank_transfer"
-    ){
-
-      const response =
-        await fetch(
-          "/api/orders/manual",
-          {
-            method:"POST",
-
-            headers:{
-              "Content-Type":
-                "application/json"
-            },
-
-            body:
-              JSON.stringify(
-                payload
-              )
+        <button
+          class="primary"
+          style="width:100%"
+          onclick="saveProduct(${
+            editing
+              ? Number(product.id)
+              : "null"
+          })"
+        >
+          ${
+            editing
+              ? "UPDATE PRODUCT"
+              : "SAVE PRODUCT"
           }
-        );
+        </button>
 
-      const data =
-        await response.json();
-
-      if(
-        !response.ok ||
-        !data.ok
-      ){
-
-        throw new Error(
-          data.message ||
-          "Unable to create bank transfer order."
-        );
-
-      }
-
-      cart = [];
-      saveCart();
-      updateCart();
-
-      closeCheckout();
-
-      alert(
-        `Order created successfully.\n\nReference: ${data.reference}\n\nPlease contact us on WhatsApp for bank transfer instructions.`
-      );
-
-      return;
-    }
-
-    if(
-      method ===
-      "store_credit"
-    ){
-
-      if(!customerToken){
-
-        throw new Error(
-          "Please login to your customer account before using Store Credit."
-        );
-
-      }
-
-      const response =
-        await fetch(
-          "/api/customer/store-credit"
-        );
-
-      const credit =
-        await response.json();
-
-      if(
-        !response.ok ||
-        !credit.ok
-      ){
-
-        throw new Error(
-          "Unable to check store credit."
-        );
-
-      }
-
-      const total =
-        cart.reduce(
-          (sum,item) =>
-            sum +
-            Number(item.price) *
-            Number(item.qty),
-          0
-        );
-
-      if(
-        Number(
-          credit.balance
-        ) < total
-      ){
-
-        throw new Error(
-          `Insufficient store credit. Available: ${money(credit.balance)}`
-        );
-
-      }
-
-      alert(
-        "Store Credit checkout will be completed from your account. Please contact the store if confirmation is needed."
-      );
-
-      return;
-    }
-
-    const response =
-      await fetch(
-        "/api/paystack/initialize",
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json",
-            Accept:
-              "application/json"
-          },
-
-          body:
-            JSON.stringify(
-              payload
-            )
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if(
-      !response.ok ||
-      !data.ok ||
-      !data.authorization_url
-    ){
-
-      throw new Error(
-        data.message ||
-        "Unable to initialize payment."
-      );
-
-    }
-
-    window.location.href =
-      data.authorization_url;
-
-  }catch(error){
-
-    console.error(
-      error
-    );
-
-    alert(
-      error.message ||
-      "Checkout failed."
-    );
-
-    button.disabled =
-      false;
-
-    button.textContent =
-      oldText;
-
-  }
-
-}
-
-/* =========================================================
-   ACCOUNT
-========================================================= */
-
-function openAccount(
-  panel = "profile"
-){
-
-  document
-    .getElementById(
-      "accountModal"
-    )
-    .classList.add(
-      "open"
-    );
-
-  lockBody();
-
-  if(customerToken){
-
-    document
-      .getElementById(
-        "accountAuth"
-      )
-      .style.display =
-      "none";
-
-    document
-      .getElementById(
-        "accountContent"
-      )
-      .style.display =
-      "block";
-
-    loadProfile();
-
-    accountTab(
-      panel,
-      document.querySelector(
-        `.accountTab`
-      )
-    );
-
-  }else{
-
-    renderAccountAuth();
-
-  }
-
-}
-
-function closeAccount(){
-
-  document
-    .getElementById(
-      "accountModal"
-    )
-    .classList.remove(
-      "open"
-    );
-
-  lockBody();
-
-}
-
-function renderAccountAuth(){
-
-  document
-    .getElementById(
-      "accountAuth"
-    )
-    .style.display =
-    "block";
-
-  document
-    .getElementById(
-      "accountContent"
-    )
-    .style.display =
-    "none";
-
-  document
-    .getElementById(
-      "accountAuth"
-    )
-    .innerHTML = `
-
-      <div
-        class="infoCard"
-      >
-
-        <b>
-          Customer Account
-        </b>
 
         <p
-          style="
-            color:var(--muted);
-            margin-top:5px
-          "
-        >
-          Sign in or create an account
-          to access Orders, Addresses,
-          Store Credit and Refund History.
-        </p>
+          id="productMessage"
+        ></p>
+
 
       </div>
 
-      <div class="formRow">
+    </div>
 
-        <div class="field">
+    `
 
-          <label>
-            Email
-          </label>
-
-          <input
-            id="accountEmail"
-            type="email"
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label>
-            Password
-          </label>
-
-          <input
-            id="accountPassword"
-            type="password"
-          >
-
-        </div>
-
-      </div>
-
-      <button
-        class="primaryBtn"
-        style="
-          width:100%;
-          padding:12px;
-          border-radius:22px;
-        "
-        onclick="customerLogin()"
-      >
-        LOGIN
-      </button>
-
-      <div
-        id="loginMessage"
-        style="
-          margin-top:8px;
-          color:var(--danger);
-          font-size:13px
-        "
-      ></div>
-
-      <hr
-        style="
-          margin:18px 0;
-          border:0;
-          border-top:1px solid var(--line)
-        "
-      >
-
-      <h3
-        style="
-          color:var(--wine);
-          margin-bottom:8px
-        "
-      >
-        New Customer
-      </h3>
-
-      <div class="field">
-
-        <label>
-          Full Name
-        </label>
-
-        <input
-          id="signupName"
-        >
-
-      </div>
-
-      <div class="formRow">
-
-        <div class="field">
-
-          <label>
-            Email
-          </label>
-
-          <input
-            id="signupEmail"
-            type="email"
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label>
-            Phone
-          </label>
-
-          <input
-            id="signupPhone"
-          >
-
-        </div>
-
-      </div>
-
-      <div class="field">
-
-        <label>
-          Password
-        </label>
-
-        <input
-          id="signupPassword"
-          type="password"
-        >
-
-      </div>
-
-      <button
-        class="smallBtn"
-        onclick="customerSignup()"
-        style="width:100%"
-      >
-        CREATE ACCOUNT
-      </button>
-    `;
+  );
 
 }
 
-async function customerLogin(){
 
-  const email =
-    document
-      .getElementById(
-        "accountEmail"
-      )
-      .value.trim();
+/* =========================================================
+   IMAGE COMPRESSION
+========================================================= */
 
-  const password =
-    document
-      .getElementById(
-        "accountPassword"
-      )
-      .value;
+function compressImage(
+  file
+){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        event => {
+
+          const img =
+            new Image();
+
+          img.onload =
+            () => {
+
+              const maxWidth =
+                1200;
+
+              let width =
+                img.width;
+
+              let height =
+                img.height;
+
+
+              if(width > maxWidth){
+
+                height =
+                  Math.round(
+                    height *
+                    maxWidth /
+                    width
+                  );
+
+                width =
+                  maxWidth;
+
+              }
+
+
+              const canvas =
+                document.createElement(
+                  "canvas"
+                );
+
+              canvas.width =
+                width;
+
+              canvas.height =
+                height;
+
+
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
+
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                width,
+                height
+              );
+
+
+              canvas.toBlob(
+                blob => {
+
+                  if(!blob){
+
+                    reject(
+                      new Error(
+                        "Image compression failed."
+                      )
+                    );
+
+                    return;
+
+                  }
+
+
+                  const compressedReader =
+                    new FileReader();
+
+                  compressedReader.onload =
+                    () => {
+
+                      resolve(
+                        compressedReader.result
+                      );
+
+                    };
+
+                  compressedReader.onerror =
+                    reject;
+
+                  compressedReader.readAsDataURL(
+                    blob
+                  );
+
+                },
+
+                "image/jpeg",
+
+                0.78
+              );
+
+            };
+
+
+          img.onerror =
+            reject;
+
+          img.src =
+            event.target.result;
+
+        };
+
+
+      reader.onerror =
+        reject;
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SELECT IMAGE
+========================================================= */
+
+async function handleImage(
+  input
+){
+
+  const file =
+    input.files?.[0];
+
+  if(!file) return;
+
 
   const message =
-    document
-      .getElementById(
-        "loginMessage"
-      );
-
-  try{
-
-    const response =
-      await fetch(
-        "/api/customer/login",
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              email,
-              password
-            })
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if(
-      !response.ok ||
-      !data.ok
-    ){
-
-      throw new Error(
-        data.message ||
-        "Login failed."
-      );
-
-    }
-
-    customerToken =
-      data.token;
-
-    localStorage.setItem(
-      "faceOfStyleCustomerToken",
-      customerToken
+    document.getElementById(
+      "productMessage"
     );
 
-    openAccount();
+  if(message){
 
-  }catch(error){
+    message.className = "";
 
     message.textContent =
-      error.message;
+      "Preparing image...";
 
   }
 
-}
-
-async function customerSignup(){
-
-  const name =
-    document
-      .getElementById(
-        "signupName"
-      )
-      .value.trim();
-
-  const email =
-    document
-      .getElementById(
-        "signupEmail"
-      )
-      .value.trim();
-
-  const phone =
-    document
-      .getElementById(
-        "signupPhone"
-      )
-      .value.trim();
-
-  const password =
-    document
-      .getElementById(
-        "signupPassword"
-      )
-      .value;
 
   try{
 
-    const response =
-      await fetch(
-        "/api/customer/signup",
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              name,
-              email,
-              phone,
-              password
-            })
-        }
+    const image =
+      await compressImage(
+        file
       );
 
-    const data =
-      await response.json();
+    selectedImages =
+      [image];
 
-    if(
-      !response.ok ||
-      !data.ok
-    ){
 
-      throw new Error(
-        data.message ||
-        "Unable to create account."
+    const grid =
+      document.getElementById(
+        "previewGrid"
       );
+
+    if(grid){
+
+      grid.innerHTML = `
+
+        <img
+          src="${image}"
+          alt="New product image"
+        >
+
+      `;
 
     }
 
-    customerToken =
-      data.token;
 
-    localStorage.setItem(
-      "faceOfStyleCustomerToken",
-      customerToken
-    );
+    if(message){
 
-    openAccount();
+      message.textContent =
+        "Image ready.";
+
+    }
 
   }catch(error){
 
-    alert(
-      error.message
-    );
+    console.error(error);
+
+    if(message){
+
+      message.className =
+        "error";
+
+      message.textContent =
+        "Unable to process image.";
+
+    }
 
   }
 
 }
 
-async function accountFetch(
-  url,
-  options={}
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeModal(){
+
+  const modal =
+    document.getElementById(
+      "productModal"
+    );
+
+  if(modal){
+
+    modal.remove();
+
+  }
+
+  selectedImages = [];
+
+}
+
+
+/* =========================================================
+   SAVE PRODUCT
+========================================================= */
+
+async function saveProduct(
+  id
 ){
 
-  options.headers = {
-    ...(options.headers || {}),
-    Authorization:
-      "Bearer " +
-      customerToken
-  };
-
-  const response =
-    await fetch(
-      url,
-      options
-    );
-
-  const data =
-    await response.json();
-
-  if(
-    response.status ===
-    401
-  ){
-
-    customerLogout();
-
-    return null;
-  }
-
-  return data;
-
-}
-
-function accountTab(
-  name,
-  button
-){
-
-  document
-    .querySelectorAll(
-      ".accountTab"
-    )
-    .forEach(
-      el =>
-        el.classList.remove(
-          "active"
-        )
-    );
-
-  if(button){
-    button.classList.add(
-      "active"
-    );
-  }
-
-  document
-    .querySelectorAll(
-      ".accountPanel"
-    )
-    .forEach(
-      el =>
-        el.classList.remove(
-          "active"
-        )
-    );
-
-  const panel =
+  const message =
     document.getElementById(
-      "panel" +
-      name.charAt(0).toUpperCase() +
-      name.slice(1)
+      "productMessage"
     );
 
-  if(panel){
-    panel.classList.add(
-      "active"
-    );
-  }
-
-  if(name === "profile"){
-    loadProfile();
-  }
-
-  if(name === "orders"){
-    loadCustomerOrders();
-  }
-
-  if(name === "addresses"){
-    loadAddresses();
-  }
-
-  if(name === "credit"){
-    loadCredit();
-  }
-
-  if(name === "refunds"){
-    loadRefunds();
-  }
-
-}
-
-async function loadProfile(){
-
-  const panel =
-    document.getElementById(
-      "panelProfile"
-    );
-
-  const data =
-    await accountFetch(
-      "/api/customer/me"
-    );
-
-  if(!data){
-    return;
-  }
-
-  const c =
-    data.customer ||
-    {};
-
-  panel.innerHTML = `
-
-    <div class="infoCard">
-
-      <b>
-        Profile
-      </b>
-
-      <div
-        class="field"
-        style="margin-top:10px"
-      >
-
-        <label>
-          Name
-        </label>
-
-        <input
-          id="profileName"
-          value="${escapeHTML(
-            c.name
-          )}"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>
-          Email
-        </label>
-
-        <input
-          value="${escapeHTML(
-            c.email
-          )}"
-          disabled
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>
-          Phone
-        </label>
-
-        <input
-          id="profilePhone"
-          value="${escapeHTML(
-            c.phone || ""
-          )}"
-        >
-
-      </div>
-
-      <button
-        class="primaryBtn"
-        style="
-          width:100%;
-          padding:12px;
-          border-radius:22px;
-        "
-        onclick="saveProfile()"
-      >
-        SAVE PROFILE
-      </button>
-
-    </div>
-
-    <button
-      class="smallBtn"
-      onclick="customerLogout()"
-    >
-      Logout
-    </button>
-  `;
-
-}
-
-async function saveProfile(){
 
   const name =
     document
       .getElementById(
-        "profileName"
+        "productName"
       )
-      .value.trim();
+      .value
+      .trim();
 
-  const phone =
+
+  const category =
+    document.getElementById(
+      "productCategory"
+    ).value;
+
+
+  const price =
+    Number(
+      document.getElementById(
+        "productPrice"
+      ).value
+    );
+
+
+  const discount =
+    Number(
+      document.getElementById(
+        "productDiscount"
+      ).value || 0
+    );
+
+
+  const color =
     document
       .getElementById(
-        "profilePhone"
+        "productColor"
       )
-      .value.trim();
+      .value
+      .trim();
 
-  const data =
-    await accountFetch(
-      "/api/customer/me",
-      {
-        method:"PUT",
 
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
-
-        body:
-          JSON.stringify({
-            name,
-            phone
-          })
-      }
+  const stock =
+    Number(
+      document.getElementById(
+        "productStock"
+      ).value || 0
     );
+
+
+  const sizes =
+    document
+      .getElementById(
+        "productSizes"
+      )
+      .value
+      .trim();
+
+
+  const imageInput =
+    document
+      .getElementById(
+        "productImage"
+      )
+      .value
+      .trim();
+
+
+  const description =
+    document
+      .getElementById(
+        "productDescription"
+      )
+      .value
+      .trim();
+
+
+  if(!name){
+
+    message.className =
+      "error";
+
+    message.textContent =
+      "Product name is required.";
+
+    return;
+
+  }
+
+
+  if(!Number.isFinite(price) ||
+     price <= 0){
+
+    message.className =
+      "error";
+
+    message.textContent =
+      "A valid product price is required.";
+
+    return;
+
+  }
+
 
   if(
-    data?.ok
+    !Number.isInteger(stock) ||
+    stock < 0 ||
+    stock > 1000000
   ){
 
-    alert(
-      "Profile updated successfully."
-    );
+    message.className =
+      "error";
 
-    loadProfile();
-
-  }else{
-
-    alert(
-      data?.message ||
-      "Unable to update profile."
-    );
-
-  }
-
-}
-
-async function loadCustomerOrders(){
-
-  const panel =
-    document.getElementById(
-      "panelOrders"
-    );
-
-  const data =
-    await accountFetch(
-      "/api/customer/orders"
-    );
-
-  if(!data){
-    return;
-  }
-
-  const orders =
-    data.orders ||
-    [];
-
-  if(!orders.length){
-
-    panel.innerHTML = `
-      <div class="infoCard">
-        <b>
-          Orders
-        </b>
-
-        <p
-          style="
-            color:var(--muted);
-            margin-top:5px
-          "
-        >
-          No orders yet.
-        </p>
-      </div>
-    `;
+    message.textContent =
+      "Stock must be a valid number between 0 and 1,000,000.";
 
     return;
+
   }
 
-  panel.innerHTML =
-    orders.map(
-      order => `
 
-        <div class="infoCard">
+  if(
+    !Number.isFinite(discount) ||
+    discount < 0 ||
+    discount > 100
+  ){
 
-          <b>
-            ${escapeHTML(
-              order.reference
-            )}
-          </b>
+    message.className =
+      "error";
 
-          <div
-            style="
-              color:var(--muted);
-              font-size:13px;
-              margin:4px 0
-            "
-          >
-            ${money(
-              order.total
-            )}
-          </div>
+    message.textContent =
+      "Discount must be between 0 and 100.";
 
-          <span class="orderStatus">
-            ${escapeHTML(
-              order.order_status ||
-              "PENDING"
-            )}
-          </span>
-
-          <div
-            style="
-              margin-top:7px;
-              color:var(--muted);
-              font-size:12px
-            "
-          >
-            Payment:
-            ${escapeHTML(
-              order.payment_status
-            )}
-          </div>
-
-        </div>
-      `
-    ).join("");
-
-}
-
-async function loadAddresses(){
-
-  const panel =
-    document.getElementById(
-      "panelAddresses"
-    );
-
-  const data =
-    await accountFetch(
-      "/api/customer/addresses"
-    );
-
-  if(!data){
     return;
+
   }
 
-  const addresses =
-    data.addresses ||
-    [];
 
-  panel.innerHTML = `
+  /*
+    IMPORTANT:
 
-    <div class="infoCard">
+    If editing and no new image
+    was selected, keep the existing
+    image URL/base64 value.
 
-      <b>
-        Add Delivery Address
-      </b>
+    If a new image was selected,
+    use the compressed image.
+  */
 
-      <div class="field">
+  let finalImage =
+    imageInput;
 
-        <label>
-          Label
-        </label>
 
-        <input
-          id="addressLabel"
-          value="Home"
-        >
+  if(selectedImages.length){
 
-      </div>
+    finalImage =
+      selectedImages[0];
 
-      <div class="field">
+  }
 
-        <label>
-          Address
-        </label>
 
-        <textarea
-          id="addressText"
-        ></textarea>
+  const data = {
 
-      </div>
+    name,
 
-      <div class="formRow">
+    category,
 
-        <div class="field">
+    description,
 
-          <label>
-            City
-          </label>
+    price,
 
-          <input
-            id="addressCity"
-          >
+    color,
 
-        </div>
+    image:
+      finalImage,
 
-        <div class="field">
+    stock,
 
-          <label>
-            State
-          </label>
-
-          <input
-            id="addressState"
-          >
-
-        </div>
-
-      </div>
-
-      <button
-        class="primaryBtn"
-        style="
-          width:100%;
-          padding:11px;
-          border-radius:22px
-        "
-        onclick="saveAddress()"
-      >
-        SAVE ADDRESS
-      </button>
-
-    </div>
-
-    ${
-      addresses.length
-        ? addresses
-            .map(
-              address => `
-
-                <div class="infoCard">
-
-                  <b>
-                    ${escapeHTML(
-                      address.label
-                    )}
-                  </b>
-
-                  <p
-                    style="
-                      color:var(--muted)
-                    "
-                  >
-                    ${escapeHTML(
-                      address.address
-                    )}
-                    <br>
-                    ${escapeHTML(
-                      address.city || ""
-                    )}
-                    ${
-                      address.state
-                        ? ", " +
-                          escapeHTML(
-                            address.state
-                          )
-                        : ""
-                    }
-                  </p>
-
-                </div>
-              `
-            )
-            .join("")
-        : ""
-    }
-  `;
-
-}
-
-async function saveAddress(){
-
-  const payload = {
-
-    label:
-      document
-        .getElementById(
-          "addressLabel"
-        )
-        .value.trim(),
-
-    address:
-      document
-        .getElementById(
-          "addressText"
-        )
-        .value.trim(),
-
-    city:
-      document
-        .getElementById(
-          "addressCity"
-        )
-        .value.trim(),
-
-    state:
-      document
-        .getElementById(
-          "addressState"
-        )
-        .value.trim()
+    active:true
 
   };
 
-  const data =
-    await accountFetch(
-      "/api/customer/addresses",
+
+  message.className = "";
+
+  message.textContent =
+    "Saving product...";
+
+
+  const url =
+    id
+      ? `/api/admin/products/${id}`
+      : "/api/admin/products";
+
+
+  const response =
+    await api(
+      url,
       {
-        method:"POST",
+
+        method:
+          id
+            ? "PUT"
+            : "POST",
 
         headers:{
           "Content-Type":
@@ -4088,349 +2327,210 @@ async function saveAddress(){
 
         body:
           JSON.stringify(
-            payload
+            data
           )
+
       }
     );
 
+
   if(
-    data?.ok
+    response &&
+    !response.error &&
+    response.ok !== false
   ){
 
-    alert(
-      "Address saved."
+    message.className =
+      "success";
+
+    message.textContent =
+      id
+        ? "Product updated successfully."
+        : "Product created successfully.";
+
+
+    setTimeout(
+      () => {
+
+        closeModal();
+
+        showProducts();
+
+      },
+      700
     );
 
-    loadAddresses();
+
+  }else{
+
+    message.className =
+      "error";
+
+    message.textContent =
+      response?.message ||
+      response?.error ||
+      "Unable to save product.";
+
+  }
+
+}
+
+
+/* =========================================================
+   EDIT PRODUCT
+========================================================= */
+
+function editProduct(
+  id
+){
+
+  const product =
+    allProducts.find(
+      item =>
+        Number(item.id) ===
+        Number(id)
+    );
+
+
+  if(!product){
+
+    alert(
+      "Product was not found."
+    );
+
+    return;
+
+  }
+
+
+  showAddProduct(
+    product
+  );
+
+}
+
+
+/* =========================================================
+   DELETE PRODUCT
+========================================================= */
+
+async function deleteProduct(
+  id
+){
+
+  const confirmed =
+    confirm(
+      "Delete this product?"
+    );
+
+
+  if(!confirmed){
+
+    return;
+
+  }
+
+
+  const response =
+    await api(
+      `/api/admin/products/${id}`,
+      {
+        method:"DELETE"
+      }
+    );
+
+
+  if(
+    response &&
+    !response.error &&
+    response.ok !== false
+  ){
+
+    showProducts();
 
   }else{
 
     alert(
-      data?.message ||
-      "Unable to save address."
+      response?.message ||
+      response?.error ||
+      "Unable to delete product."
     );
 
   }
 
 }
 
-async function loadCredit(){
 
-  const panel =
-    document.getElementById(
-      "panelCredit"
-    );
+/* =========================================================
+   SETTINGS
+========================================================= */
 
-  const data =
-    await accountFetch(
-      "/api/customer/store-credit"
-    );
+function showSettings(){
 
-  if(!data){
-    return;
-  }
-
-  panel.innerHTML = `
-
-    <div class="infoCard">
-
-      <b>
-        Available Store Credit
-      </b>
-
-      <div
-        class="credit"
-        style="margin-top:7px"
-      >
-        ${money(
-          data.balance
-        )}
-      </div>
-
-    </div>
-
-  `;
-
-  if(
-    data.transactions?.length
-  ){
-
-    panel.innerHTML +=
-      data.transactions
-        .map(
-          tx => `
-
-            <div class="infoCard">
-
-              <b>
-                ${escapeHTML(
-                  tx.type
-                )}
-              </b>
-
-              <div>
-                ${money(
-                  tx.amount
-                )}
-              </div>
-
-              <small
-                style="
-                  color:var(--muted)
-                "
-              >
-                ${escapeHTML(
-                  tx.note || ""
-                )}
-              </small>
-
-            </div>
-          `
-        ).join("");
-
-  }
-
-}
-
-async function loadRefunds(){
-
-  const panel =
-    document.getElementById(
-      "panelRefunds"
-    );
-
-  const data =
-    await accountFetch(
-      "/api/customer/refunds"
-    );
-
-  if(!data){
-    return;
-  }
-
-  if(
-    !data.refunds?.length
-  ){
-
-    panel.innerHTML = `
-      <div class="infoCard">
-        <b>
-          Refund History
-        </b>
-
-        <p
-          style="
-            color:var(--muted);
-            margin-top:6px
-          "
-        >
-          No refunds yet.
-        </p>
-      </div>
-    `;
-
-    return;
-
-  }
-
-  panel.innerHTML =
-    data.refunds.map(
-      refund => `
-
-        <div class="infoCard">
-
-          <b>
-            ${escapeHTML(
-              refund.reference ||
-              "Refund"
-            )}
-          </b>
-
-          <div>
-            ${money(
-              refund.amount
-            )}
-          </div>
-
-          <span class="orderStatus">
-            ${escapeHTML(
-              refund.status
-            )}
-          </span>
-
-        </div>
-      `
-    ).join("");
-
-}
-
-function customerLogout(){
-
-  customerToken = "";
-
-  localStorage.removeItem(
-    "faceOfStyleCustomerToken"
+  activeTab(
+    "tabSettings"
   );
 
-  renderAccountAuth();
 
-}
+  document.getElementById(
+    "content"
+  ).innerHTML = `
 
-/* =========================================================
-   ORDER TRACKING
-========================================================= */
+    <div class="panel">
 
-async function trackOrder(){
+      <h2>
+        Settings
+      </h2>
 
-  const reference =
-    document
-      .getElementById(
-        "trackingReference"
-      )
-      .value.trim();
 
-  const box =
-    document.getElementById(
-      "trackingResult"
-    );
-
-  if(!reference){
-
-    box.innerHTML = `
-      <div class="infoCard">
-        Please enter an order reference.
-      </div>
-    `;
-
-    return;
-  }
-
-  box.innerHTML = `
-    <div class="infoCard">
-      Checking order...
-    </div>
-  `;
-
-  try{
-
-    const response =
-      await fetch(
-        "/api/order-tracking/" +
-        encodeURIComponent(
-          reference
-        )
-      );
-
-    const data =
-      await response.json();
-
-    if(
-      !response.ok ||
-      !data.ok
-    ){
-
-      throw new Error(
-        data.message ||
-        "Order not found."
-      );
-
-    }
-
-    box.innerHTML = `
-      <div class="infoCard">
+      <div class="notice">
 
         <b>
-          ${escapeHTML(
-            data.order.reference
-          )}
+          Store Configuration
         </b>
 
-        <p
-          style="
-            color:var(--muted);
-            margin-top:5px
-          "
-        >
-          Payment:
-          ${escapeHTML(
-            data.order.payment_status
-          )}
-        </p>
+        <br><br>
 
-        <p
-          style="
-            color:var(--muted)
-          "
-        >
-          Order Status:
-          <span class="orderStatus">
-            ${escapeHTML(
-              data.order.order_status
-            )}
-          </span>
-        </p>
+        Admin credentials,
+        PostgreSQL database,
+        Paystack configuration
+        and WhatsApp settings
+        are managed from the
+        Render Environment.
 
-        <p
-          style="
-            color:var(--muted)
-          "
-        >
-          Total:
-          ${money(
-            data.order.total
-          )}
-        </p>
+        <br><br>
+
+        <b>
+          Important:
+        </b>
+
+        Do not put Paystack
+        secret keys or admin
+        passwords inside this
+        HTML file.
 
       </div>
-    `;
 
-  }catch(error){
+    </div>
 
-    box.innerHTML = `
-      <div class="infoCard error">
-        ${escapeHTML(
-          error.message
-        )}
-      </div>
-    `;
-
-  }
+  `;
 
 }
 
-/* =========================================================
-   ESC KEY
-========================================================= */
-
-document.addEventListener(
-  "keydown",
-  event => {
-
-    if(
-      event.key ===
-      "Escape"
-    ){
-
-      closeCart();
-      closeCheckout();
-      closeAccount();
-
-    }
-
-  }
-);
 
 /* =========================================================
    START
 ========================================================= */
 
-loadCart();
+if(token){
 
-updateCart();
+  dashboard();
 
-loadConfig();
+}else{
 
-loadProducts();
+  login();
+
+}
 
 </script>
 
