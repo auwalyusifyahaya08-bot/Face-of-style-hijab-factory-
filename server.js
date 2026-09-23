@@ -43,6 +43,7 @@ const pool = DATABASE_URL
     })
   : null;
 
+
 /* =========================================================
    EXPRESS
 ========================================================= */
@@ -63,11 +64,22 @@ app.use(
   })
 );
 
+/*
+   IMPORTANT:
+   All public assets are served from:
+
+   public/assets/...
+   
+   Browser URL:
+
+   /assets/...
+*/
 app.use(
   express.static(
     path.join(__dirname, "public")
   )
 );
+
 
 /* =========================================================
    SESSIONS
@@ -210,6 +222,7 @@ function requireCustomer(
   next();
 }
 
+
 /* =========================================================
    HELPERS
 ========================================================= */
@@ -282,43 +295,114 @@ function createOrderReference() {
   );
 }
 
+
+/* =========================================================
+   IMAGE NORMALIZATION
+   VERSION 2 IMAGE FIX
+========================================================= */
+
 function normalizeImage(value) {
-  const image =
+  let image =
     String(value || "").trim();
 
   if (!image) {
     return "";
   }
 
+  /*
+     Keep Base64 images exactly as they are.
+  */
   if (
-    image.startsWith("data:") ||
-    image.startsWith("http://") ||
-    image.startsWith("https://") ||
-    image.startsWith("/")
+    image.startsWith("data:image/")
   ) {
     return image;
   }
 
+  /*
+     Keep external HTTPS/HTTP images.
+  */
+  if (
+    image.startsWith("https://") ||
+    image.startsWith("http://")
+  ) {
+    return image;
+  }
+
+  /*
+     Remove leading ./ or /
+     so we can normalize local assets.
+  */
+  image =
+    image.replace(
+      /^\.?\//,
+      ""
+    );
+
+  /*
+     Convert old database paths:
+     
+     public/assets/Product-1.jpg
+     -> /assets/Product-1.jpg
+     
+     public/Product-1.jpg
+     -> /assets/Product-1.jpg
+  */
+  image =
+    image.replace(
+      /^public\/assets\//i,
+      ""
+    );
+
+  image =
+    image.replace(
+      /^public\//i,
+      ""
+    );
+
+  /*
+     Already assets/...
+  */
   if (
     image.startsWith("assets/")
   ) {
+    return "/" + image;
+  }
+
+  /*
+     If database contains /assets after
+     previous cleanup.
+  */
+  if (
+    image.startsWith("/assets/")
+  ) {
     return image;
   }
 
+  /*
+     If database contains an absolute
+     public file path.
+  */
   if (
-    image.startsWith("public/assets/")
+    image.startsWith("uploads/")
   ) {
-    return image.replace(
-      "public/",
-      ""
-    );
+    return "/" + image;
   }
 
+  /*
+     Normal product filename:
+     
+     Product-1.jpg
+     
+     becomes:
+     
+     /assets/Product-1.jpg
+  */
   return (
-    "assets/" +
-    image.replace(/^\.?\//, "")
+    "/assets/" +
+    image
   );
 }
+
 
 /* =========================================================
    PASSWORD HASHING
@@ -375,6 +459,7 @@ function verifyPassword(
     return false;
   }
 }
+
 
 /* =========================================================
    DATABASE INITIALIZATION
@@ -464,6 +549,7 @@ async function initDatabase() {
     TIMESTAMPTZ DEFAULT NOW()
   `);
 
+
   /* =======================================================
      ORDERS
   ======================================================= */
@@ -541,6 +627,7 @@ async function initDatabase() {
     TIMESTAMPTZ DEFAULT NOW()
   `);
 
+
   /* =======================================================
      OLD STATUS INDEX FIX
   ======================================================= */
@@ -595,6 +682,7 @@ async function initDatabase() {
     }
   }
 
+
   /* =======================================================
      ORDER ITEMS
   ======================================================= */
@@ -612,6 +700,7 @@ async function initDatabase() {
       subtotal NUMERIC(12,2) NOT NULL
     )
   `);
+
 
   /* =======================================================
      CUSTOMERS
@@ -637,6 +726,7 @@ async function initDatabase() {
     ON DELETE SET NULL
   `).catch(() => {});
 
+
   /* =======================================================
      ADDRESSES
   ======================================================= */
@@ -657,6 +747,7 @@ async function initDatabase() {
     )
   `);
 
+
   /* =======================================================
      STORE CREDIT
   ======================================================= */
@@ -674,6 +765,7 @@ async function initDatabase() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
+
 
   /* =======================================================
      REFUNDS
@@ -693,6 +785,7 @@ async function initDatabase() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
+
 
   /* =======================================================
      STORE SETTINGS
@@ -762,6 +855,7 @@ async function initDatabase() {
     );
   }
 
+
   /* =======================================================
      INDEXES
   ======================================================= */
@@ -807,6 +901,7 @@ async function initDatabase() {
   );
 }
 
+
 /* =========================================================
    SETTINGS HELPERS
 ========================================================= */
@@ -835,6 +930,7 @@ async function getSettings() {
   return settings;
 }
 
+
 /* =========================================================
    PRODUCT HELPERS
 ========================================================= */
@@ -844,6 +940,15 @@ function mapProduct(row) {
     normalizeImage(
       row.img
     );
+
+  const stock =
+    Math.max(
+      0,
+      Number(row.stock) || 0
+    );
+
+  const inStock =
+    stock > 0;
 
   return {
     id:
@@ -880,8 +985,17 @@ function mapProduct(row) {
 
     image,
 
-    stock:
-      Number(row.stock) || 0,
+    stock,
+
+    inStock,
+
+    outOfStock:
+      !inStock,
+
+    stockStatus:
+      inStock
+        ? "IN_STOCK"
+        : "OUT_OF_STOCK",
 
     active:
       row.active !== false,
@@ -893,6 +1007,7 @@ function mapProduct(row) {
       row.updated_at
   };
 }
+
 
 /* =========================================================
    PUBLIC CONFIG
@@ -930,27 +1045,38 @@ app.get(
         settings: {
           store_name:
             "Face of Style Hijab Factory",
+
           tagline:
             "HIJAB FACTORY",
+
           primary_color:
             "#651630",
+
           secondary_color:
             "#4d1024",
+
           gold_color:
             "#c9a45b",
+
           background_color:
             "#fcf8f1",
+
           text_color:
             "#251c20",
+
           hero_title:
             "Modesty, Elegance & Style.",
+
           hero_text:
             "Discover carefully crafted hijabs, abayas, gowns and modest outfits.",
+
           whatsapp:
             DEFAULT_WHATSAPP
         },
+
         whatsapp:
           DEFAULT_WHATSAPP,
+
         paystackConfigured:
           Boolean(
             PAYSTACK_SECRET_KEY
@@ -959,6 +1085,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    PUBLIC PRODUCTS
@@ -1019,6 +1146,7 @@ app.get(
   }
 );
 
+
 /* =========================================================
    ADMIN LOGIN
 ========================================================= */
@@ -1078,6 +1206,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    ADMIN LOGOUT
 ========================================================= */
@@ -1097,6 +1226,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    ADMIN ME
 ========================================================= */
@@ -1114,6 +1244,7 @@ app.get(
     });
   }
 );
+
 
 /* =========================================================
    ADMIN DASHBOARD
@@ -1236,6 +1367,7 @@ app.get(
   }
 );
 
+
 /* =========================================================
    ADMIN PRODUCTS
 ========================================================= */
@@ -1297,6 +1429,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    CREATE PRODUCT
@@ -1445,6 +1578,7 @@ app.post(
     }
   }
 );
+
 
 /* =========================================================
    UPDATE PRODUCT
@@ -1639,6 +1773,7 @@ app.put(
   }
 );
 
+
 /* =========================================================
    DELETE PRODUCT
 ========================================================= */
@@ -1713,6 +1848,7 @@ app.delete(
     }
   }
 );
+
 
 /* =========================================================
    ADMIN ORDERS
@@ -1846,6 +1982,7 @@ app.get(
   }
 );
 
+
 /* =========================================================
    UPDATE ORDER STATUS
 ========================================================= */
@@ -1943,6 +2080,7 @@ app.patch(
   }
 );
 
+
 /* =========================================================
    ADMIN CUSTOMERS
 ========================================================= */
@@ -2019,6 +2157,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    ADMIN STORE CREDIT
@@ -2097,6 +2236,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    ADMIN STORE CREDIT ADJUST
@@ -2201,6 +2341,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    ADMIN PAYMENTS
 ========================================================= */
@@ -2259,6 +2400,7 @@ app.get(
   }
 );
 
+
 /* =========================================================
    ADMIN REFUNDS
 ========================================================= */
@@ -2316,6 +2458,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    CREATE REFUND
@@ -2443,6 +2586,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    UPDATE REFUND
 ========================================================= */
@@ -2536,6 +2680,7 @@ app.patch(
   }
 );
 
+
 /* =========================================================
    ADMIN SETTINGS GET
 ========================================================= */
@@ -2587,6 +2732,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    ADMIN SETTINGS UPDATE
@@ -2705,6 +2851,7 @@ app.put(
     }
   }
 );
+
 
 /* =========================================================
    CUSTOMER SIGN UP
@@ -2851,6 +2998,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    CUSTOMER LOGIN
 ========================================================= */
@@ -2949,6 +3097,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    CUSTOMER LOGOUT
 ========================================================= */
@@ -2967,6 +3116,7 @@ app.post(
     });
   }
 );
+
 
 /* =========================================================
    CUSTOMER PROFILE
@@ -3025,6 +3175,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    CUSTOMER PROFILE UPDATE
@@ -3100,6 +3251,7 @@ app.put(
     }
   }
 );
+
 
 /* =========================================================
    CUSTOMER ADDRESSES
@@ -3254,6 +3406,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    CUSTOMER ORDERS
 ========================================================= */
@@ -3312,6 +3465,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    CUSTOMER STORE CREDIT
@@ -3393,6 +3547,7 @@ app.get(
   }
 );
 
+
 /* =========================================================
    CUSTOMER REFUND HISTORY
 ========================================================= */
@@ -3442,6 +3597,7 @@ app.get(
     }
   }
 );
+
 
 /* =========================================================
    ORDER TRACKING
@@ -3515,9 +3671,10 @@ app.get(
   }
 );
 
+
 /* =========================================================
    MANUAL ORDER
-   Bank Transfer
+   BANK TRANSFER
 ========================================================= */
 
 app.post(
@@ -3738,6 +3895,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    BUILD ORDER FROM CART
 ========================================================= */
@@ -3853,14 +4011,30 @@ async function buildOrderFromCart(
       };
     }
 
+    /*
+       OUT OF STOCK PROTECTION
+    */
+    const availableStock =
+      Math.max(
+        0,
+        Number(product.stock) || 0
+      );
+
     if (
-      Number(
-        product.stock
-      ) < quantity
+      availableStock <= 0
     ) {
       return {
         error:
-          `${product.name} does not have enough stock.`
+          `${product.name} is out of stock.`
+      };
+    }
+
+    if (
+      availableStock < quantity
+    ) {
+      return {
+        error:
+          `${product.name} does not have enough stock. Only ${availableStock} item(s) available.`
       };
     }
 
@@ -3893,6 +4067,7 @@ async function buildOrderFromCart(
       ) / 100
   };
 }
+
 
 /* =========================================================
    PAYSTACK INITIALIZE
@@ -4077,6 +4252,7 @@ app.post(
           const item
           of calculated.items
         ) {
+
           await client.query(
             `
             INSERT INTO order_items
@@ -4243,6 +4419,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    PAYSTACK VERIFY
 ========================================================= */
@@ -4383,6 +4560,7 @@ app.get(
   }
 );
 
+
 /* =========================================================
    COMPLETE PAID ORDER
 ========================================================= */
@@ -4459,7 +4637,7 @@ async function completePaidOrder(
           WHERE id = $2
             AND active = TRUE
             AND stock >= $1
-          RETURNING id
+          RETURNING id,stock
           `,
           [
             item.quantity,
@@ -4509,6 +4687,7 @@ async function completePaidOrder(
     client.release();
   }
 }
+
 
 /* =========================================================
    PAYSTACK WEBHOOK
@@ -4666,6 +4845,7 @@ app.post(
   }
 );
 
+
 /* =========================================================
    HEALTH
 ========================================================= */
@@ -4715,10 +4895,15 @@ app.get(
   }
 );
 
+
 /* =========================================================
    FRONTEND ROUTES
 ========================================================= */
 
+/*
+   CUSTOMER PORTAL
+   Main storefront
+*/
 app.get(
   "/",
   (req, res) => {
@@ -4747,6 +4932,43 @@ app.get(
   }
 );
 
+/*
+   CUSTOMER ALIASES
+   These make Admin -> Customer Portal
+   navigation reliable.
+*/
+app.get(
+  "/customer",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "index.html"
+      )
+    );
+  }
+);
+
+app.get(
+  "/customer.html",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "index.html"
+      )
+    );
+  }
+);
+
+
+/*
+   ADMIN PORTAL
+*/
 app.get(
   "/admin",
   (req, res) => {
@@ -4775,6 +4997,10 @@ app.get(
   }
 );
 
+
+/*
+   PAYMENT SUCCESS
+*/
 app.get(
   "/payment-success",
   (req, res) => {
@@ -4803,6 +5029,7 @@ app.get(
   }
 );
 
+
 /* =========================================================
    API 404
 ========================================================= */
@@ -4818,6 +5045,7 @@ app.use(
     });
   }
 );
+
 
 /* =========================================================
    ERROR HANDLER
@@ -4849,6 +5077,7 @@ app.use(
     });
   }
 );
+
 
 /* =========================================================
    START SERVER
