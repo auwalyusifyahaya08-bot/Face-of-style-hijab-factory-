@@ -327,6 +327,7 @@ textarea{
   padding:11px 17px;
   border-radius:22px;
   font-weight:bold;
+  cursor:pointer;
 }
 
 .previewGrid{
@@ -342,6 +343,52 @@ textarea{
   object-fit:cover;
   border-radius:10px;
   border:1px solid var(--line);
+}
+
+.logoPreviewBox{
+  margin:10px 0 14px;
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fcfaf7;
+  text-align:center;
+}
+
+.logoPreviewBox img{
+  max-width:220px;
+  max-height:150px;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  border-radius:10px;
+}
+
+.colorPickerBox{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:7px 0 14px;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fff;
+}
+
+.colorPickerBox input[type="color"]{
+  width:65px;
+  height:45px;
+  padding:3px;
+  margin:0;
+  border:1px solid var(--line);
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.colorValue{
+  font-weight:bold;
+  color:var(--text);
+  font-size:14px;
+  text-transform:uppercase;
 }
 
 .tableWrap{
@@ -556,6 +603,10 @@ th{
 
   .previewGrid{
     grid-template-columns:repeat(2,1fr);
+  }
+
+  .colorPickerBox{
+    padding:8px;
   }
 
 }
@@ -2515,6 +2566,155 @@ async function deleteProduct(
 }
 
 
+function updateColorValue(
+  inputId,
+  labelId
+){
+
+  const input =
+    document.getElementById(
+      inputId
+    );
+
+  const label =
+    document.getElementById(
+      labelId
+    );
+
+
+  if(
+    input &&
+    label
+  ){
+
+    label.textContent =
+      input.value.toUpperCase();
+
+  }
+
+}
+
+
+function previewLogo(
+  input
+){
+
+  const file =
+    input.files?.[0];
+
+
+  if(!file){
+    return;
+  }
+
+
+  if(
+    !file.type.startsWith(
+      "image/"
+    )
+  ){
+
+    alert(
+      "Please choose an image file."
+    );
+
+    input.value =
+      "";
+
+    return;
+
+  }
+
+
+  if(
+    file.size >
+    5000000
+  ){
+
+    alert(
+      "Logo is too large. Please choose an image under 5MB."
+    );
+
+    input.value =
+      "";
+
+    return;
+
+  }
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload =
+    event => {
+
+      const imageData =
+        event.target.result;
+
+
+      const logoInput =
+        document.getElementById(
+          "settingLogo"
+        );
+
+
+      if(logoInput){
+
+        logoInput.value =
+          imageData;
+
+      }
+
+
+      const preview =
+        document.getElementById(
+          "logoPreview"
+        );
+
+
+      if(!preview){
+        return;
+      }
+
+
+      preview.innerHTML = `
+
+        <div
+          class="logoPreviewBox"
+        >
+
+          <img
+            src="${imageData}"
+            alt="Logo Preview"
+          >
+
+          <div
+            style="
+              margin-top:8px;
+              color:#16803c;
+              font-size:13px;
+              font-weight:bold;
+            "
+          >
+            ✓ New logo selected
+          </div>
+
+        </div>
+
+      `;
+
+    };
+
+
+  reader.readAsDataURL(
+    file
+  );
+
+}
+
+
 async function showSettings(){
 
   activeTab(
@@ -2558,6 +2758,51 @@ async function showSettings(){
 
   const settings =
     data.settings || {};
+
+
+  const primaryColor =
+    /^#[0-9A-Fa-f]{6}$/.test(
+      settings.primaryColor ||
+      ""
+    )
+      ? settings.primaryColor
+      : "#651630";
+
+
+  const secondaryColor =
+    /^#[0-9A-Fa-f]{6}$/.test(
+      settings.secondaryColor ||
+      ""
+    )
+      ? settings.secondaryColor
+      : "#4d1024";
+
+
+  const goldColor =
+    /^#[0-9A-Fa-f]{6}$/.test(
+      settings.goldColor ||
+      ""
+    )
+      ? settings.goldColor
+      : "#c9a45b";
+
+
+  const backgroundColor =
+    /^#[0-9A-Fa-f]{6}$/.test(
+      settings.backgroundColor ||
+      ""
+    )
+      ? settings.backgroundColor
+      : "#fcf8f1";
+
+
+  const textColor =
+    /^#[0-9A-Fa-f]{6}$/.test(
+      settings.textColor ||
+      ""
+    )
+      ? settings.textColor
+      : "#251c20";
 
 
   content.innerHTML = `
@@ -2644,7 +2889,7 @@ async function showSettings(){
           </label>
 
           <input
-            id="settingWhatsapp"
+            id="settingWhatsappNumber"
             value="${esc(
               settings.whatsapp ||
               ""
@@ -2894,19 +3139,56 @@ async function showSettings(){
         </div>
 
 
+        <!-- LOGO UPLOAD -->
+
         <div>
 
           <label>
-            Logo
+            🖼️ Logo
           </label>
+
+          <div class="uploadBox">
+
+            <label
+              for="logoInput"
+              class="uploadBtn"
+            >
+              📷 Upload Logo
+            </label>
+
+            <input
+              id="logoInput"
+              type="file"
+              accept="image/*"
+              onchange="previewLogo(this)"
+            >
+
+            <p
+              style="
+                margin:9px 0 0;
+                color:#756a6f;
+                font-size:12px;
+              "
+            >
+              Choose your logo from your phone.
+            </p>
+
+          </div>
+
 
           <input
             id="settingLogo"
+            type="hidden"
             value="${esc(
               settings.logo ||
-              "/logo.png"
+              ""
             )}"
           >
+
+
+          <div
+            id="logoPreview"
+          ></div>
 
         </div>
 
@@ -2928,87 +3210,162 @@ async function showSettings(){
         </div>
 
 
+        <!-- PRIMARY COLOR -->
+
         <div>
 
           <label>
-            Primary Color
+            🎨 Primary Color
           </label>
 
-          <input
-            id="settingPrimaryColor"
-            value="${esc(
-              settings.primaryColor ||
-              "#651630"
-            )}"
-          >
+          <div class="colorPickerBox">
+
+            <input
+              id="settingPrimaryColor"
+              type="color"
+              value="${primaryColor}"
+              oninput="updateColorValue(
+                'settingPrimaryColor',
+                'primaryColorValue'
+              )"
+            >
+
+            <span
+              id="primaryColorValue"
+              class="colorValue"
+            >
+              ${primaryColor.toUpperCase()}
+            </span>
+
+          </div>
 
         </div>
 
 
+        <!-- SECONDARY COLOR -->
+
         <div>
 
           <label>
-            Secondary Color
+            🎨 Secondary Color
           </label>
 
-          <input
-            id="settingSecondaryColor"
-            value="${esc(
-              settings.secondaryColor ||
-              "#4d1024"
-            )}"
-          >
+          <div class="colorPickerBox">
+
+            <input
+              id="settingSecondaryColor"
+              type="color"
+              value="${secondaryColor}"
+              oninput="updateColorValue(
+                'settingSecondaryColor',
+                'secondaryColorValue'
+              )"
+            >
+
+            <span
+              id="secondaryColorValue"
+              class="colorValue"
+            >
+              ${secondaryColor.toUpperCase()}
+            </span>
+
+          </div>
 
         </div>
 
 
+        <!-- GOLD COLOR -->
+
         <div>
 
           <label>
-            Gold Color
+            🎨 Gold Color
           </label>
 
-          <input
-            id="settingGoldColor"
-            value="${esc(
-              settings.goldColor ||
-              "#c9a45b"
-            )}"
-          >
+          <div class="colorPickerBox">
+
+            <input
+              id="settingGoldColor"
+              type="color"
+              value="${goldColor}"
+              oninput="updateColorValue(
+                'settingGoldColor',
+                'goldColorValue'
+              )"
+            >
+
+            <span
+              id="goldColorValue"
+              class="colorValue"
+            >
+              ${goldColor.toUpperCase()}
+            </span>
+
+          </div>
 
         </div>
 
 
+        <!-- BACKGROUND COLOR -->
+
         <div>
 
           <label>
-            Background Color
+            🎨 Background Color
           </label>
 
-          <input
-            id="settingBackgroundColor"
-            value="${esc(
-              settings.backgroundColor ||
-              "#fcf8f1"
-            )}"
-          >
+          <div class="colorPickerBox">
+
+            <input
+              id="settingBackgroundColor"
+              type="color"
+              value="${backgroundColor}"
+              oninput="updateColorValue(
+                'settingBackgroundColor',
+                'backgroundColorValue'
+              )"
+            >
+
+            <span
+              id="backgroundColorValue"
+              class="colorValue"
+            >
+              ${backgroundColor.toUpperCase()}
+            </span>
+
+          </div>
 
         </div>
 
 
+        <!-- TEXT COLOR -->
+
         <div>
 
           <label>
-            Text Color
+            🎨 Text Color
           </label>
 
-          <input
-            id="settingTextColor"
-            value="${esc(
-              settings.textColor ||
-              "#251c20"
-            )}"
-          >
+          <div class="colorPickerBox">
+
+            <input
+              id="settingTextColor"
+              type="color"
+              value="${textColor}"
+              oninput="updateColorValue(
+                'settingTextColor',
+                'textColorValue'
+              )"
+            >
+
+            <span
+              id="textColorValue"
+              class="colorValue"
+            >
+              ${textColor.toUpperCase()}
+            </span>
+
+          </div>
 
         </div>
 
@@ -3040,7 +3397,7 @@ async function showSettings(){
           <div class="switchRow">
 
             <input
-              id="settingWhatsapp"
+              id="settingEnableWhatsapp"
               type="checkbox"
               ${
                 settings.enableWhatsapp !==
@@ -3051,7 +3408,7 @@ async function showSettings(){
             >
 
             <label
-              for="settingWhatsapp"
+              for="settingEnableWhatsapp"
             >
               Enable WhatsApp
             </label>
@@ -3102,6 +3459,54 @@ async function showSettings(){
 
   `;
 
+
+  /*
+    SHOW CURRENT LOGO
+  */
+
+  const logoPreview =
+    document.getElementById(
+      "logoPreview"
+    );
+
+
+  if(
+    logoPreview &&
+    settings.logo
+  ){
+
+    logoPreview.innerHTML = `
+
+      <div
+        class="logoPreviewBox"
+      >
+
+        <img
+          src="${esc(
+            settings.logo
+          )}"
+          alt="Current Logo"
+          onerror="
+            this.style.display='none'
+          "
+        >
+
+        <div
+          style="
+            margin-top:8px;
+            color:#756a6f;
+            font-size:12px;
+          "
+        >
+          Current Logo
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
 }
 
 
@@ -3127,7 +3532,7 @@ async function saveSettings(){
 
     whatsapp:
       document.getElementById(
-        "settingWhatsapp"
+        "settingWhatsappNumber"
       ).value.trim(),
 
     phone:
@@ -3212,27 +3617,27 @@ async function saveSettings(){
     primaryColor:
       document.getElementById(
         "settingPrimaryColor"
-      ).value.trim(),
+      ).value,
 
     secondaryColor:
       document.getElementById(
         "settingSecondaryColor"
-      ).value.trim(),
+      ).value,
 
     goldColor:
       document.getElementById(
         "settingGoldColor"
-      ).value.trim(),
+      ).value,
 
     backgroundColor:
       document.getElementById(
         "settingBackgroundColor"
-      ).value.trim(),
+      ).value,
 
     textColor:
       document.getElementById(
         "settingTextColor"
-      ).value.trim(),
+      ).value,
 
     lowStockLimit:
       Number(
@@ -3248,7 +3653,7 @@ async function saveSettings(){
 
     enableWhatsapp:
       document.getElementById(
-        "settingWhatsapp"
+        "settingEnableWhatsapp"
       ).checked,
 
     showStock:
