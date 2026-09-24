@@ -2,25 +2,13 @@
 <html lang="en">
 
 <head>
-
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#651630">
 
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
->
-
-<meta
-  name="theme-color"
-  content="#651630"
->
-
-<title>
-Admin Dashboard | Face of Style
-</title>
+<title>Admin Dashboard | Face of Style</title>
 
 <style>
-
 :root{
   --wine:#651630;
   --wine2:#4d1024;
@@ -45,10 +33,7 @@ body{
   color:var(--text);
 }
 
-button,
-input,
-select,
-textarea{
+button,input,select,textarea{
   font:inherit;
 }
 
@@ -95,13 +80,9 @@ button{
   box-shadow:0 12px 35px #32121b16;
 }
 
-.login h1,
-.panel h2{
+.login h1{
   font-family:Georgia,serif;
   color:var(--wine);
-}
-
-.login h1{
   font-size:31px;
   margin:0 0 8px;
 }
@@ -113,9 +94,7 @@ label{
   margin-top:4px;
 }
 
-input,
-select,
-textarea{
+input,select,textarea{
   width:100%;
   padding:12px;
   border:1px solid var(--line);
@@ -130,8 +109,7 @@ textarea{
   resize:vertical;
 }
 
-.primary,
-.addBtn{
+.primary,.addBtn{
   background:var(--wine);
   color:#fff;
   border:0;
@@ -140,8 +118,7 @@ textarea{
   font-weight:bold;
 }
 
-.primary:hover,
-.addBtn:hover{
+.primary:hover,.addBtn:hover{
   background:var(--wine2);
 }
 
@@ -162,6 +139,7 @@ textarea{
   color:#665d60;
   font-size:13px;
   line-height:1.6;
+  margin-bottom:15px;
 }
 
 .cards{
@@ -224,6 +202,8 @@ textarea{
 }
 
 .panel h2{
+  font-family:Georgia,serif;
+  color:var(--wine);
   font-size:25px;
   margin:0;
 }
@@ -345,52 +325,6 @@ textarea{
   border:1px solid var(--line);
 }
 
-.logoPreviewBox{
-  margin:10px 0 14px;
-  padding:15px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#fcfaf7;
-  text-align:center;
-}
-
-.logoPreviewBox img{
-  max-width:220px;
-  max-height:150px;
-  width:auto;
-  height:auto;
-  object-fit:contain;
-  border-radius:10px;
-}
-
-.colorPickerBox{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin:7px 0 14px;
-  padding:8px;
-  border:1px solid var(--line);
-  border-radius:11px;
-  background:#fff;
-}
-
-.colorPickerBox input[type="color"]{
-  width:65px;
-  height:45px;
-  padding:3px;
-  margin:0;
-  border:1px solid var(--line);
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.colorValue{
-  font-weight:bold;
-  color:var(--text);
-  font-size:14px;
-  text-transform:uppercase;
-}
-
 .tableWrap{
   overflow-x:auto;
 }
@@ -398,11 +332,10 @@ textarea{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:950px;
+  min-width:1100px;
 }
 
-th,
-td{
+th,td{
   text-align:left;
   padding:12px 10px;
   border-bottom:1px solid var(--line);
@@ -432,25 +365,19 @@ th{
   color:#8a5a00;
 }
 
-.failed,
-.cancelled{
+.failed,.cancelled{
   background:#fde7e7;
   color:#9a2222;
 }
 
-.new{
-  background:#e8eefc;
-  color:#294f9b;
+.refunded{
+  background:#eee6fb;
+  color:#63349a;
 }
 
 .processing{
   background:#fff1cf;
   color:#8a5a00;
-}
-
-.ready{
-  background:#eee6fb;
-  color:#63349a;
 }
 
 .shipped{
@@ -466,6 +393,12 @@ th{
 .empty{
   text-align:center;
   padding:30px;
+  color:var(--muted);
+}
+
+.loading{
+  padding:20px;
+  text-align:center;
   color:var(--muted);
 }
 
@@ -493,6 +426,7 @@ th{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  margin-bottom:15px;
 }
 
 .close{
@@ -504,48 +438,35 @@ th{
   font-size:20px;
 }
 
-.loading{
-  padding:20px;
-  text-align:center;
-  color:var(--muted);
-}
-
-.settingsGrid{
+.infoGrid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:0 18px;
+  gap:12px;
 }
 
-.settingFull{
-  grid-column:1/-1;
+.infoBox{
+  background:#fcf8f1;
+  border-radius:12px;
+  padding:12px;
 }
 
-.switchRow{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 0;
-}
-
-.switchRow input{
-  width:auto;
-  margin:0;
-}
-
-.orderAction{
-  border:1px solid var(--line);
-  background:#fff;
-  padding:7px 10px;
-  border-radius:15px;
+.infoBox small{
+  color:var(--muted);
+  display:block;
+  margin-bottom:4px;
 }
 
 .statusSelect{
-  min-width:130px;
+  min-width:140px;
+  margin:0;
+}
+
+.paymentSelect{
+  min-width:120px;
   margin:0;
 }
 
 @media(max-width:1100px){
-
   .cards{
     grid-template-columns:repeat(3,1fr);
   }
@@ -553,11 +474,9 @@ th{
   .productGrid{
     grid-template-columns:1fr 1fr;
   }
-
 }
 
 @media(max-width:700px){
-
   .cards{
     grid-template-columns:1fr 1fr;
   }
@@ -566,13 +485,11 @@ th{
     grid-template-columns:1fr;
   }
 
-  .formGrid,
-  .settingsGrid{
+  .formGrid,.infoGrid{
     grid-template-columns:1fr;
   }
 
-  .full,
-  .settingFull{
+  .full{
     grid-column:auto;
   }
 
@@ -604,15 +521,8 @@ th{
   .previewGrid{
     grid-template-columns:repeat(2,1fr);
   }
-
-  .colorPickerBox{
-    padding:8px;
-  }
-
 }
-
 </style>
-
 </head>
 
 <body>
@@ -632,52 +542,35 @@ th{
 
 </div>
 
-
 <div id="app"></div>
-
 
 <script>
 
 const app =
-  document.getElementById(
-    "app"
-  );
+  document.getElementById("app");
 
 let token =
-  sessionStorage.getItem(
-    "adminToken"
-  ) || "";
+  sessionStorage.getItem("adminToken") || "";
 
 let allProducts = [];
 
-let selectedImages = [];
+let allOrders = [];
 
+let selectedImage = "";
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function esc(value){
 
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
@@ -685,11 +578,8 @@ function esc(value){
 function money(value){
 
   return "₦" +
-    Number(
-      value || 0
-    ).toLocaleString(
-      "en-NG"
-    );
+    Number(value || 0)
+      .toLocaleString("en-NG");
 
 }
 
@@ -697,44 +587,75 @@ function money(value){
 function normalizeImage(value){
 
   let image =
-    String(
-      value || ""
-    ).trim();
+    String(value || "").trim();
 
   if(!image){
-    return "/product-1.jpg";
+    return "";
   }
 
   if(
     /^https?:\/\//i.test(image) ||
-    image.startsWith(
-      "data:image/"
-    )
+    /^data:image\//i.test(image)
   ){
-
     return image;
-
   }
 
   image =
-    image.replace(
-      /^\.?\/?assets\//i,
-      "/"
-    );
+    image.replace(/\\/g,"/");
+
+  image =
+    image.replace(/^\/+/,"");
 
   if(
-    !image.startsWith("/")
+    image.startsWith("assets/")
   ){
-
-    image =
-      "/" + image;
-
+    return "/" + image;
   }
 
-  return image;
+  return "/assets/" + image;
 
 }
 
+
+function statusClass(status){
+
+  const value =
+    String(status || "")
+      .toLowerCase();
+
+  return value
+    .replace(/[^a-z]/g,"");
+
+}
+
+
+function formatDate(value){
+
+  if(!value){
+    return "-";
+  }
+
+  const date =
+    new Date(value);
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+    return "-";
+  }
+
+  return date.toLocaleString(
+    "en-NG"
+  );
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
 
 function login(){
 
@@ -768,6 +689,11 @@ function login(){
         id="password"
         type="password"
         autocomplete="current-password"
+        onkeydown="
+          if(event.key==='Enter'){
+            doLogin();
+          }
+        "
       >
 
       <button
@@ -797,8 +723,7 @@ async function doLogin(){
       "loginError"
     );
 
-  error.textContent =
-    "";
+  error.textContent = "";
 
   try{
 
@@ -817,14 +742,19 @@ async function doLogin(){
             JSON.stringify({
 
               username:
-                document.getElementById(
-                  "username"
-                ).value.trim(),
+                document
+                  .getElementById(
+                    "username"
+                  )
+                  .value
+                  .trim(),
 
               password:
-                document.getElementById(
-                  "password"
-                ).value
+                document
+                  .getElementById(
+                    "password"
+                  )
+                  .value
 
             })
 
@@ -836,7 +766,11 @@ async function doLogin(){
       await response.json();
 
 
-    if(data.token){
+    if(
+      response.ok &&
+      data.ok &&
+      data.token
+    ){
 
       token =
         data.token;
@@ -848,13 +782,14 @@ async function doLogin(){
 
       dashboard();
 
-    }else{
-
-      error.textContent =
-        data.message ||
-        "Login failed.";
+      return;
 
     }
+
+
+    error.textContent =
+      data.message ||
+      "Login failed.";
 
   }catch(errorObject){
 
@@ -870,51 +805,69 @@ async function doLogin(){
 }
 
 
-function logout(){
+/* =========================================================
+   LOGOUT
+========================================================= */
 
-  if(token){
+async function logout(){
 
-    fetch(
-      "/api/admin/logout",
-      {
-        method:"POST",
-        headers:{
-          Authorization:
-            "Bearer " +
-            token
-        }
-      }
-    ).catch(
-      () => {}
-    );
+  const oldToken =
+    token;
 
-  }
+  token = "";
 
   sessionStorage.removeItem(
     "adminToken"
   );
 
-  token =
-    "";
+  if(oldToken){
+
+    try{
+
+      await fetch(
+        "/api/admin/logout",
+        {
+          method:"POST",
+
+          headers:{
+            Authorization:
+              "Bearer " +
+              oldToken
+          }
+        }
+      );
+
+    }catch{}
+
+  }
 
   login();
 
 }
 
 
+/* =========================================================
+   API
+========================================================= */
+
 async function api(
   url,
   options={}
 ){
 
-  options.headers = {
+  if(!token){
 
+    login();
+
+    return null;
+
+  }
+
+
+  const headers = {
     ...(options.headers || {}),
-
     Authorization:
-      "Bearer " +
-      token
-
+      "Bearer " + token
   };
 
 
@@ -923,16 +876,24 @@ async function api(
     const response =
       await fetch(
         url,
-        options
+        {
+          ...options,
+          headers
+        }
       );
 
 
     if(
-      response.status ===
-      401
+      response.status === 401
     ){
 
-      logout();
+      sessionStorage.removeItem(
+        "adminToken"
+      );
+
+      token = "";
+
+      login();
 
       return null;
 
@@ -943,35 +904,49 @@ async function api(
       await response.text();
 
 
+    let data;
+
     try{
 
-      return JSON.parse(
+      data =
         text
-      );
+          ? JSON.parse(text)
+          : {};
 
     }catch{
 
-      return {
-
+      data = {
         error:
           text ||
-          "Server returned an invalid response."
-
+          "Invalid server response."
       };
 
     }
 
-  }catch(error){
+
+    if(
+      !response.ok &&
+      !data.error
+    ){
+
+      data.error =
+        data.message ||
+        "Request failed.";
+
+    }
+
+
+    return data;
+
+  }catch(errorObject){
 
     console.error(
-      error
+      errorObject
     );
 
     return {
-
       error:
         "Unable to connect to server."
-
     };
 
   }
@@ -979,21 +954,92 @@ async function api(
 }
 
 
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
 async function dashboard(){
 
-  const data =
-    await api(
-      "/api/admin/dashboard"
-    );
+  const contentData =
+    await Promise.all([
+      api("/api/admin/orders"),
+      api("/api/admin/products")
+    ]);
 
 
-  if(!data){
+  if(
+    !contentData[0] ||
+    !contentData[1]
+  ){
+
     return;
+
   }
 
 
-  const stats =
-    data.stats || {};
+  allOrders =
+    Array.isArray(
+      contentData[0].orders
+    )
+      ? contentData[0].orders
+      : [];
+
+
+  allProducts =
+    Array.isArray(
+      contentData[1].products
+    )
+      ? contentData[1].products
+      : [];
+
+
+  renderDashboard();
+
+}
+
+
+function renderDashboard(){
+
+  const paidOrders =
+    allOrders.filter(
+      order =>
+        String(
+          order.payment_status || ""
+        ).toUpperCase() === "PAID"
+    );
+
+
+  const pendingOrders =
+    allOrders.filter(
+      order =>
+        String(
+          order.payment_status || ""
+        ).toUpperCase() === "PENDING"
+    );
+
+
+  const processingOrders =
+    allOrders.filter(
+      order =>
+        String(
+          order.order_status || ""
+        ).toUpperCase() ===
+        "PROCESSING"
+    );
+
+
+  const revenue =
+    paidOrders.reduce(
+      (
+        total,
+        order
+      ) =>
+        total +
+        Number(
+          order.total || 0
+        ),
+      0
+    );
 
 
   app.innerHTML = `
@@ -1004,27 +1050,27 @@ async function dashboard(){
 
         <div class="stat">
           <small>Total Orders</small>
-          <b>${stats.orders || 0}</b>
+          <b>${allOrders.length}</b>
         </div>
 
         <div class="stat">
           <small>Paid Orders</small>
-          <b>${stats.paid || 0}</b>
+          <b>${paidOrders.length}</b>
         </div>
 
         <div class="stat">
-          <small>Pending Orders</small>
-          <b>${stats.pending || 0}</b>
+          <small>Pending Payments</small>
+          <b>${pendingOrders.length}</b>
         </div>
 
         <div class="stat">
           <small>Processing</small>
-          <b>${stats.processing || 0}</b>
+          <b>${processingOrders.length}</b>
         </div>
 
         <div class="stat">
           <small>Revenue</small>
-          <b>${money(stats.revenue)}</b>
+          <b>${money(revenue)}</b>
         </div>
 
       </div>
@@ -1048,14 +1094,6 @@ async function dashboard(){
           Products
         </button>
 
-        <button
-          id="tabSettings"
-          class="tab"
-          onclick="showSettings()"
-        >
-          Settings
-        </button>
-
       </div>
 
 
@@ -1071,12 +1109,14 @@ async function dashboard(){
 }
 
 
+/* =========================================================
+   TABS
+========================================================= */
+
 function activeTab(id){
 
   document
-    .querySelectorAll(
-      ".tab"
-    )
+    .querySelectorAll(".tab")
     .forEach(
       item =>
         item.classList.remove(
@@ -1086,9 +1126,7 @@ function activeTab(id){
 
 
   const element =
-    document.getElementById(
-      id
-    );
+    document.getElementById(id);
 
 
   if(element){
@@ -1102,11 +1140,13 @@ function activeTab(id){
 }
 
 
+/* =========================================================
+   ORDERS
+========================================================= */
+
 async function showOrders(){
 
-  activeTab(
-    "tabOrders"
-  );
+  activeTab("tabOrders");
 
 
   const content =
@@ -1120,7 +1160,7 @@ async function showOrders(){
     <div class="panel">
 
       <h2>
-        Orders
+        Customer Orders
       </h2>
 
       <div class="loading">
@@ -1139,16 +1179,58 @@ async function showOrders(){
 
 
   if(!data){
+
     return;
+
   }
 
 
-  const orders =
+  if(data.error){
+
+    content.innerHTML = `
+
+      <div class="panel">
+
+        <h2>
+          Customer Orders
+        </h2>
+
+        <p class="error">
+          ${esc(data.error)}
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  allOrders =
     Array.isArray(
       data.orders
     )
       ? data.orders
       : [];
+
+
+  renderOrders(
+    allOrders
+  );
+
+}
+
+
+function renderOrders(
+  orders
+){
+
+  const content =
+    document.getElementById(
+      "content"
+    );
 
 
   content.innerHTML = `
@@ -1173,9 +1255,13 @@ async function showOrders(){
 
       <div class="notice">
 
-        Payment status is controlled by
-        Paystack verification.
-        Order status is your delivery workflow.
+        <b>Payment status:</b>
+        Paystack verification controls normal payment status.
+
+        <br>
+
+        <b>Order status:</b>
+        Use the order workflow below to manage delivery.
 
       </div>
 
@@ -1183,270 +1269,360 @@ async function showOrders(){
       ${
         orders.length
 
-        ?
+          ? `
 
-        `
+            <div class="tableWrap">
 
-        <div class="tableWrap"
-             style="margin-top:15px">
+              <table>
 
-          <table>
+                <thead>
 
-            <thead>
+                  <tr>
 
-              <tr>
+                    <th>
+                      Reference
+                    </th>
 
-                <th>
-                  Reference
-                </th>
+                    <th>
+                      Customer
+                    </th>
 
-                <th>
-                  Customer
-                </th>
+                    <th>
+                      Address
+                    </th>
 
-                <th>
-                  Items
-                </th>
+                    <th>
+                      Items
+                    </th>
 
-                <th>
-                  Total
-                </th>
+                    <th>
+                      Total
+                    </th>
 
-                <th>
-                  Payment
-                </th>
+                    <th>
+                      Payment
+                    </th>
 
-                <th>
-                  Order Status
-                </th>
+                    <th>
+                      Order Status
+                    </th>
 
-                <th>
-                  Date
-                </th>
+                    <th>
+                      Date
+                    </th>
 
-              </tr>
+                  </tr>
 
-            </thead>
-
-
-            <tbody>
-
-              ${
-                orders
-                  .map(
-                    order => {
-
-                      const payment =
-                        order.status ||
-                        "pending";
-
-                      const orderStatus =
-                        order.orderStatus ||
-                        "new";
+                </thead>
 
 
-                      const customer =
-                        order.customer ||
-                        {};
+                <tbody>
+
+                  ${
+                    orders
+                      .map(
+                        order => {
+
+                          const payment =
+                            String(
+                              order.payment_status ||
+                              "PENDING"
+                            ).toUpperCase();
 
 
-                      const items =
-                        Array.isArray(
-                          order.items
-                        )
-                          ? order.items
-                          : [];
+                          const orderStatus =
+                            String(
+                              order.order_status ||
+                              "PENDING"
+                            ).toUpperCase();
 
 
-                      return `
-
-                        <tr>
-
-                          <td>
-
-                            <b>
-                              ${esc(
-                                order.reference ||
-                                "-"
-                              )}
-                            </b>
-
-                          </td>
+                          const items =
+                            Array.isArray(
+                              order.items
+                            )
+                              ? order.items
+                              : [];
 
 
-                          <td>
+                          return `
 
-                            ${esc(
-                              customer.name ||
-                              "-"
-                            )}
+                            <tr>
 
-                            <br>
+                              <td>
 
-                            <small>
-                              ${esc(
-                                customer.phone ||
-                                "-"
-                              )}
-                            </small>
+                                <b>
+                                  ${esc(
+                                    order.reference ||
+                                    "-"
+                                  )}
+                                </b>
 
-                            <br>
-
-                            <small>
-                              ${esc(
-                                customer.email ||
-                                ""
-                              )}
-                            </small>
-
-                          </td>
-
-
-                          <td>
-
-                            ${
-                              items
-                                .map(
-                                  item =>
-                                    `${esc(
-                                      item.name ||
-                                      "Product"
-                                    )} × ${Number(
-                                      item.qty ||
-                                      0
-                                    )}`
-                                )
-                                .join(
-                                  "<br>"
-                                )
-                            }
-
-                          </td>
-
-
-                          <td>
-                            ${money(
-                              order.total
-                            )}
-                          </td>
-
-
-                          <td>
-
-                            <span
-                              class="pill ${
-                                payment ===
-                                "paid"
-
-                                  ? "paid"
-
-                                  : payment ===
-                                    "failed"
-
-                                    ? "failed"
-
-                                    : "pending"
-                              }"
-                            >
-                              ${esc(
-                                payment
-                              )}
-                            </span>
-
-                            <br>
-
-                            <small>
-                              ${esc(
-                                order.payment?.provider ||
-                                "-"
-                              )}
-                            </small>
-
-                          </td>
-
-
-                          <td>
-
-                            <select
-                              class="statusSelect"
-                              onchange="changeOrderStatus('${esc(order.id)}',this.value)"
-                            >
-
-                              ${
-                                [
-                                  "new",
-                                  "processing",
-                                  "ready",
-                                  "shipped",
-                                  "delivered",
-                                  "cancelled"
-                                ]
-                                  .map(
-                                    status => `
-
-                                      <option
-                                        value="${status}"
-                                        ${
-                                          status ===
-                                          orderStatus
-                                            ? "selected"
-                                            : ""
-                                        }
-                                      >
-                                        ${status}
-                                      </option>
-
+                                ${
+                                  order.paystack_reference
+                                    ? `
+                                      <br>
+                                      <small>
+                                        Paystack:
+                                        ${esc(
+                                          order.paystack_reference
+                                        )}
+                                      </small>
                                     `
-                                  )
-                                  .join("")
-                              }
+                                    : ""
+                                }
 
-                            </select>
-
-                          </td>
+                              </td>
 
 
-                          <td>
+                              <td>
 
-                            ${
-                              order.createdAt
+                                <b>
+                                  ${esc(
+                                    order.customer_name ||
+                                    "-"
+                                  )}
+                                </b>
 
-                                ? new Date(
-                                    order.createdAt
-                                  ).toLocaleString(
-                                    "en-NG"
-                                  )
+                                <br>
 
-                                : "-"
-                            }
+                                <small>
+                                  ${esc(
+                                    order.customer_phone ||
+                                    "-"
+                                  )}
+                                </small>
 
-                          </td>
+                                <br>
 
-                        </tr>
+                                <small>
+                                  ${esc(
+                                    order.customer_email ||
+                                    "-"
+                                  )}
+                                </small>
 
-                      `;
+                              </td>
 
-                    }
-                  )
-                  .join("")
-              }
 
-            </tbody>
+                              <td>
 
-          </table>
+                                ${esc(
+                                  order.delivery_address ||
+                                  "-"
+                                )}
 
-        </div>
+                              </td>
 
-        `
 
-        :
+                              <td>
 
-        `
-          <div class="empty">
-            No orders found.
-          </div>
-        `
+                                ${
+                                  items.length
 
+                                    ? items
+                                      .map(
+                                        item => `
+
+                                          <div
+                                            style="
+                                              margin-bottom:5px;
+                                            "
+                                          >
+
+                                            ${esc(
+                                              item.product_name ||
+                                              "Product"
+                                            )}
+
+                                            ×
+
+                                            ${Number(
+                                              item.quantity || 0
+                                            )}
+
+                                            <br>
+
+                                            <small>
+                                              ${money(
+                                                item.subtotal
+                                              )}
+                                            </small>
+
+                                          </div>
+
+                                        `
+                                      )
+                                      .join("")
+
+                                    : "-"
+                                }
+
+                              </td>
+
+
+                              <td>
+                                <b>
+                                  ${money(
+                                    order.total
+                                  )}
+                                </b>
+                              </td>
+
+
+                              <td>
+
+                                <span
+                                  class="pill ${
+                                    payment === "PAID"
+                                      ? "paid"
+                                      : payment === "FAILED"
+                                        ? "failed"
+                                        : payment === "REFUNDED"
+                                          ? "refunded"
+                                          : "pending"
+                                  }"
+                                >
+                                  ${esc(
+                                    payment
+                                  )}
+                                </span>
+
+
+                                <br><br>
+
+
+                                <select
+                                  class="paymentSelect"
+                                  onchange="
+                                    changePaymentStatus(
+                                      ${Number(order.id)},
+                                      this.value
+                                    )
+                                  "
+                                >
+
+                                  ${[
+                                    "PENDING",
+                                    "PAID",
+                                    "FAILED",
+                                    "REFUNDED"
+                                  ]
+                                    .map(
+                                      status => `
+
+                                        <option
+                                          value="${status}"
+                                          ${
+                                            status ===
+                                            payment
+                                              ? "selected"
+                                              : ""
+                                          }
+                                        >
+                                          ${status}
+                                        </option>
+
+                                      `
+                                    )
+                                    .join("")
+                                  }
+
+                                </select>
+
+                              </td>
+
+
+                              <td>
+
+                                <span
+                                  class="pill ${
+                                    statusClass(
+                                      orderStatus
+                                    )
+                                  }"
+                                >
+                                  ${esc(
+                                    orderStatus
+                                  )}
+                                </span>
+
+                                <br><br>
+
+                                <select
+                                  class="statusSelect"
+                                  onchange="
+                                    changeOrderStatus(
+                                      ${Number(order.id)},
+                                      this.value
+                                    )
+                                  "
+                                >
+
+                                  ${[
+                                    "PENDING",
+                                    "PROCESSING",
+                                    "SHIPPED",
+                                    "DELIVERED",
+                                    "CANCELLED"
+                                  ]
+                                    .map(
+                                      status => `
+
+                                        <option
+                                          value="${status}"
+                                          ${
+                                            status ===
+                                            orderStatus
+                                              ? "selected"
+                                              : ""
+                                          }
+                                        >
+                                          ${status}
+                                        </option>
+
+                                      `
+                                    )
+                                    .join("")
+                                  }
+
+                                </select>
+
+                              </td>
+
+
+                              <td>
+
+                                ${formatDate(
+                                  order.created_at
+                                )}
+
+                              </td>
+
+                            </tr>
+
+                          `;
+
+                        }
+                      )
+                      .join("")
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          `
+
+          : `
+
+            <div class="empty">
+              No orders found.
+            </div>
+
+          `
       }
 
     </div>
@@ -1456,6 +1632,10 @@ async function showOrders(){
 }
 
 
+/* =========================================================
+   CHANGE ORDER STATUS
+========================================================= */
+
 async function changeOrderStatus(
   id,
   status
@@ -1464,12 +1644,9 @@ async function changeOrderStatus(
   const data =
     await api(
       "/api/admin/orders/" +
-      encodeURIComponent(
-        id
-      ) +
-      "/status",
+      encodeURIComponent(id),
       {
-        method:"PUT",
+        method:"PATCH",
 
         headers:{
           "Content-Type":
@@ -1478,40 +1655,150 @@ async function changeOrderStatus(
 
         body:
           JSON.stringify({
-            status
+            order_status:
+              String(
+                status
+              ).toUpperCase()
           })
-
       }
     );
 
 
   if(
-    data?.error ||
-    data?.message &&
-    !data.ok
+    !data ||
+    data.error ||
+    data.ok !== true
   ){
 
     alert(
-      data.message ||
-      data.error ||
-      "Unable to update order."
+      data?.message ||
+      data?.error ||
+      "Unable to update order status."
     );
+
+    showOrders();
 
     return;
 
   }
 
 
+  await refreshStats();
+
   showOrders();
 
 }
 
 
+/* =========================================================
+   CHANGE PAYMENT STATUS
+========================================================= */
+
+async function changePaymentStatus(
+  id,
+  status
+){
+
+  const confirmed =
+    confirm(
+      "Change payment status to " +
+      status +
+      "?"
+    );
+
+
+  if(!confirmed){
+
+    showOrders();
+
+    return;
+
+  }
+
+
+  const data =
+    await api(
+      "/api/admin/orders/" +
+      encodeURIComponent(id) +
+      "/payment",
+      {
+        method:"PATCH",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify({
+            payment_status:
+              String(
+                status
+              ).toUpperCase()
+          })
+      }
+    );
+
+
+  if(
+    !data ||
+    data.error ||
+    data.ok !== true
+  ){
+
+    alert(
+      data?.message ||
+      data?.error ||
+      "Unable to update payment status."
+    );
+
+  }
+
+
+  await refreshStats();
+
+  showOrders();
+
+}
+
+
+/* =========================================================
+   REFRESH DASHBOARD DATA
+========================================================= */
+
+async function refreshStats(){
+
+  const data =
+    await api(
+      "/api/admin/orders"
+    );
+
+
+  if(
+    data &&
+    Array.isArray(
+      data.orders
+    )
+  ){
+
+    allOrders =
+      data.orders;
+
+  }
+
+
+  renderDashboard();
+
+}
+
+
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
 async function showProducts(){
 
-  activeTab(
-    "tabProducts"
-  );
+  activeTab("tabProducts");
 
 
   const content =
@@ -1544,7 +1831,32 @@ async function showProducts(){
 
 
   if(!data){
+
     return;
+
+  }
+
+
+  if(data.error){
+
+    content.innerHTML = `
+
+      <div class="panel">
+
+        <h2>
+          Products
+        </h2>
+
+        <p class="error">
+          ${esc(data.error)}
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
   }
 
 
@@ -1637,24 +1949,29 @@ function filterProducts(
 
         const name =
           String(
-            product.name ||
-            ""
+            product.name || ""
           ).toLowerCase();
+
 
         const category =
           String(
-            product.cat ||
             product.category ||
+            product.cat ||
             ""
           ).toLowerCase();
 
+
+        const color =
+          String(
+            product.color ||
+            ""
+          ).toLowerCase();
+
+
         return (
-          name.includes(
-            query
-          ) ||
-          category.includes(
-            query
-          )
+          name.includes(query) ||
+          category.includes(query) ||
+          color.includes(query)
         );
 
       }
@@ -1679,7 +1996,9 @@ function drawProductCards(
 
 
   if(!container){
+
     return;
+
   }
 
 
@@ -1714,29 +2033,66 @@ function drawProductCards(
 
 
           const category =
-            product.cat ||
             product.category ||
-            "Custom";
+            product.cat ||
+            "Fashion";
 
 
           const description =
-            product.desc ||
             product.description ||
+            product.desc ||
             "";
+
+
+          const stock =
+            Number(
+              product.stock || 0
+            );
 
 
           return `
 
             <div class="productCard">
 
-              <img
-                class="productImage"
-                src="${esc(image)}"
-                alt="${esc(
-                  product.name
-                )}"
-                onerror="this.src='/product-1.jpg'"
-              >
+              ${
+                image
+
+                  ? `
+
+                    <img
+                      class="productImage"
+                      src="${esc(image)}"
+                      alt="${esc(product.name)}"
+                      onerror="
+                        this.onerror=null;
+                        this.style.display='none';
+                        this.parentElement
+                          .insertAdjacentHTML(
+                            'afterbegin',
+                            '<div style=&quot;height:235px;display:flex;align-items:center;justify-content:center;background:#f4eee7;color:#756a6f&quot;>Image unavailable</div>'
+                          );
+                      "
+                    >
+
+                  `
+
+                  : `
+
+                    <div
+                      style="
+                        height:235px;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        background:#f4eee7;
+                        color:#756a6f;
+                      "
+                    >
+                      No Image
+                    </div>
+
+                  `
+              }
 
 
               <div class="productInfo">
@@ -1764,19 +2120,16 @@ function drawProductCards(
                   <br>
 
                   Stock:
-                  ${Number(
-                    product.stock ||
-                    0
-                  )}
+                  <b>
+                    ${stock}
+                  </b>
 
                   <br>
 
+                  Status:
                   ${
-                    product.active ===
-                    false
-
-                      ? "Inactive"
-
+                    product.active === false
+                      ? "Hidden"
                       : "Active"
                   }
 
@@ -1807,18 +2160,22 @@ function drawProductCards(
 
                   <button
                     class="edit"
-                    onclick="editProduct(${Number(
-                      product.id
-                    )})"
+                    onclick="
+                      editProduct(
+                        ${Number(product.id)}
+                      )
+                    "
                   >
                     Edit
                   </button>
 
                   <button
                     class="delete"
-                    onclick="deleteProduct(${Number(
-                      product.id
-                    )})"
+                    onclick="
+                      deleteProduct(
+                        ${Number(product.id)}
+                      )
+                    "
                   >
                     Delete
                   </button>
@@ -1838,17 +2195,20 @@ function drawProductCards(
 }
 
 
+/* =========================================================
+   PRODUCT MODAL
+========================================================= */
+
 function openProductModal(
   product=null
 ){
 
   const editing =
-    Boolean(
-      product
-    );
+    Boolean(product);
 
 
-  selectedImages = [];
+  selectedImage =
+    "";
 
 
   document.body.insertAdjacentHTML(
@@ -1895,8 +2255,7 @@ function openProductModal(
               <input
                 id="productName"
                 value="${esc(
-                  product?.name ||
-                  ""
+                  product?.name || ""
                 )}"
                 placeholder="Elegant Zip Abaya"
               >
@@ -1910,46 +2269,15 @@ function openProductModal(
                 Category
               </label>
 
-              <select
+              <input
                 id="productCategory"
+                value="${esc(
+                  product?.category ||
+                  product?.cat ||
+                  "Fashion"
+                )}"
+                placeholder="Hijab, Abaya, Gown..."
               >
-
-                ${
-                  [
-                    "Hijab",
-                    "Abaya",
-                    "Gown",
-                    "Caps",
-                    "Modest Outfit",
-                    "Accessories",
-                    "Custom",
-                    "Fashion"
-                  ]
-                    .map(
-                      category => `
-
-                        <option
-                          value="${category}"
-                          ${
-                            category ===
-                            (
-                              product?.cat ||
-                              product?.category ||
-                              "Custom"
-                            )
-                              ? "selected"
-                              : ""
-                          }
-                        >
-                          ${category}
-                        </option>
-
-                      `
-                    )
-                    .join("")
-                }
-
-              </select>
 
             </div>
 
@@ -1964,9 +2292,9 @@ function openProductModal(
                 id="productPrice"
                 type="number"
                 min="0"
+                step="0.01"
                 value="${Number(
-                  product?.price ||
-                  0
+                  product?.price || 0
                 )}"
               >
 
@@ -1982,8 +2310,7 @@ function openProductModal(
               <input
                 id="productColor"
                 value="${esc(
-                  product?.color ||
-                  ""
+                  product?.color || ""
                 )}"
                 placeholder="Wine"
               >
@@ -2001,9 +2328,9 @@ function openProductModal(
                 id="productStock"
                 type="number"
                 min="0"
+                step="1"
                 value="${Number(
-                  product?.stock ??
-                  0
+                  product?.stock ?? 0
                 )}"
               >
 
@@ -2013,7 +2340,7 @@ function openProductModal(
             <div>
 
               <label>
-                Active
+                Product Status
               </label>
 
               <select
@@ -2023,8 +2350,7 @@ function openProductModal(
                 <option
                   value="true"
                   ${
-                    product?.active !==
-                    false
+                    product?.active !== false
                       ? "selected"
                       : ""
                   }
@@ -2035,8 +2361,7 @@ function openProductModal(
                 <option
                   value="false"
                   ${
-                    product?.active ===
-                    false
+                    product?.active === false
                       ? "selected"
                       : ""
                   }
@@ -2052,7 +2377,7 @@ function openProductModal(
             <div class="full">
 
               <label>
-                Image URL
+                Image URL / File
               </label>
 
               <input
@@ -2062,18 +2387,8 @@ function openProductModal(
                   product?.img ||
                   ""
                 )}"
-                placeholder="/product-1.jpg"
+                placeholder="product-1.jpg or https://..."
               >
-
-            </div>
-
-
-            <div class="full">
-
-              <label>
-                Product Photo
-              </label>
-
 
               <div class="uploadBox">
 
@@ -2088,7 +2403,7 @@ function openProductModal(
                   id="galleryInput"
                   type="file"
                   accept="image/*"
-                  onchange="previewImage(this)"
+                  onchange="previewProductImage(this)"
                 >
 
                 <p
@@ -2098,7 +2413,7 @@ function openProductModal(
                     font-size:12px;
                   "
                 >
-                  Choose an image from your phone.
+                  Choose a product image from your phone.
                 </p>
 
               </div>
@@ -2122,8 +2437,8 @@ function openProductModal(
                 id="productDescription"
                 placeholder="Describe the product..."
               >${esc(
-                product?.desc ||
                 product?.description ||
+                product?.desc ||
                 ""
               )}</textarea>
 
@@ -2135,11 +2450,15 @@ function openProductModal(
           <button
             class="primary"
             style="width:100%"
-            onclick="saveProduct(${
-              editing
-                ? Number(product.id)
-                : "null"
-            })"
+            onclick="
+              saveProduct(
+                ${
+                  editing
+                    ? Number(product.id)
+                    : "null"
+                }
+              )
+            "
           >
             ${
               editing
@@ -2158,7 +2477,6 @@ function openProductModal(
       </div>
 
     `
-
   );
 
 
@@ -2167,32 +2485,44 @@ function openProductModal(
     product?.img
   ){
 
+    const image =
+      normalizeImage(
+        product.image ||
+        product.img
+      );
+
+
     const preview =
       document.getElementById(
         "previewGrid"
       );
 
-    preview.innerHTML = `
 
-      <img
-        src="${esc(
-          normalizeImage(
-            product.image ||
-            product.img
-          )
-        )}"
-        onerror="this.style.display='none'"
-        alt="Current product image"
-      >
+    if(
+      preview &&
+      image
+    ){
 
-    `;
+      preview.innerHTML = `
+
+        <img
+          src="${esc(image)}"
+          alt="Current product image"
+          onerror="
+            this.style.display='none'
+          "
+        >
+
+      `;
+
+    }
 
   }
 
 }
 
 
-function previewImage(
+function previewProductImage(
   input
 ){
 
@@ -2201,21 +2531,39 @@ function previewImage(
 
 
   if(!file){
+
     return;
+
+  }
+
+
+  if(
+    !file.type.startsWith(
+      "image/"
+    )
+  ){
+
+    alert(
+      "Please choose an image file."
+    );
+
+    input.value = "";
+
+    return;
+
   }
 
 
   if(
     file.size >
-    7000000
+    1500000
   ){
 
     alert(
-      "Image is too large. Please choose an image under about 5MB."
+      "Image is too large. Please choose an image under 1.5MB."
     );
 
-    input.value =
-      "";
+    input.value = "";
 
     return;
 
@@ -2229,10 +2577,8 @@ function previewImage(
   reader.onload =
     event => {
 
-      selectedImages =
-        [
-          event.target.result
-        ];
+      selectedImage =
+        event.target.result;
 
 
       const preview =
@@ -2241,14 +2587,18 @@ function previewImage(
         );
 
 
-      preview.innerHTML = `
+      if(preview){
 
-        <img
-          src="${event.target.result}"
-          alt="Preview"
-        >
+        preview.innerHTML = `
 
-      `;
+          <img
+            src="${event.target.result}"
+            alt="New product image"
+          >
+
+        `;
+
+      }
 
     };
 
@@ -2268,11 +2618,15 @@ function closeProductModal(){
     )
     ?.remove();
 
-  selectedImages =
-    [];
+  selectedImage =
+    "";
 
 }
 
+
+/* =========================================================
+   SAVE PRODUCT
+========================================================= */
 
 async function saveProduct(
   id
@@ -2290,14 +2644,13 @@ async function saveProduct(
     );
 
 
-  const imageUrl =
+  const typedImage =
     imageInput.value.trim();
 
 
   const image =
-    imageUrl ||
-    selectedImages[0] ||
-    "";
+    selectedImage ||
+    typedImage;
 
 
   const data = {
@@ -2310,12 +2663,21 @@ async function saveProduct(
         .value
         .trim(),
 
-    cat:
+    category:
       document
         .getElementById(
           "productCategory"
         )
-        .value,
+        .value
+        .trim(),
+
+    description:
+      document
+        .getElementById(
+          "productDescription"
+        )
+        .value
+        .trim(),
 
     price:
       Number(
@@ -2351,15 +2713,7 @@ async function saveProduct(
         .value ===
       "true",
 
-    image,
-
-    desc:
-      document
-        .getElementById(
-          "productDescription"
-        )
-        .value
-        .trim()
+    image
 
   };
 
@@ -2413,8 +2767,23 @@ async function saveProduct(
   }
 
 
-  message.className =
-    "";
+  if(
+    image.length >
+    1000000
+  ){
+
+    message.className =
+      "error";
+
+    message.textContent =
+      "The selected image is too large for the server.";
+
+    return;
+
+  }
+
+
+  message.className = "";
 
   message.textContent =
     "Saving...";
@@ -2445,9 +2814,7 @@ async function saveProduct(
         },
 
         body:
-          JSON.stringify(
-            data
-          )
+          JSON.stringify(data)
 
       }
     );
@@ -2455,9 +2822,7 @@ async function saveProduct(
 
   if(
     response &&
-    !response.error &&
-    response.message !==
-      "Product name and valid price are required."
+    response.ok
   ){
 
     message.className =
@@ -2468,33 +2833,67 @@ async function saveProduct(
 
 
     setTimeout(
-      () => {
+      async () => {
 
         closeProductModal();
+
+        await loadProducts();
 
         showProducts();
 
       },
-      600
+      500
     );
 
 
-  }else{
+    return;
 
-    message.className =
-      "error";
+  }
 
-    message.textContent =
-      response?.message ||
-      response?.error ||
-      "Unable to save product.";
+
+  message.className =
+    "error";
+
+  message.textContent =
+    response?.message ||
+    response?.error ||
+    "Unable to save product.";
+
+}
+
+
+/* =========================================================
+   LOAD PRODUCTS
+========================================================= */
+
+async function loadProducts(){
+
+  const data =
+    await api(
+      "/api/admin/products"
+    );
+
+
+  if(
+    data &&
+    Array.isArray(
+      data.products
+    )
+  ){
+
+    allProducts =
+      data.products;
 
   }
 
 }
 
 
-async function editProduct(
+/* =========================================================
+   EDIT PRODUCT
+========================================================= */
+
+function editProduct(
   id
 ){
 
@@ -2507,7 +2906,13 @@ async function editProduct(
 
 
   if(!product){
+
+    alert(
+      "Product not found."
+    );
+
     return;
+
   }
 
 
@@ -2518,13 +2923,34 @@ async function editProduct(
 }
 
 
+/* =========================================================
+   DELETE PRODUCT
+========================================================= */
+
 async function deleteProduct(
   id
 ){
 
+  const product =
+    allProducts.find(
+      item =>
+        Number(item.id) ===
+        Number(id)
+    );
+
+
+  if(!product){
+
+    return;
+
+  }
+
+
   if(
     !confirm(
-      "Delete this product?"
+      "Remove \"" +
+      product.name +
+      "\" from the store?"
     )
   ){
 
@@ -2536,12 +2962,9 @@ async function deleteProduct(
   const data =
     await api(
       "/api/admin/products/" +
-      encodeURIComponent(
-        id
-      ),
+      encodeURIComponent(id),
       {
-        method:
-          "DELETE"
+        method:"DELETE"
       }
     );
 
@@ -2551,1180 +2974,68 @@ async function deleteProduct(
     data.ok
   ){
 
+    await loadProducts();
+
     showProducts();
 
-  }else{
-
-    alert(
-      data?.message ||
-      data?.error ||
-      "Unable to delete product."
-    );
-
-  }
-
-}
-
-
-function updateColorValue(
-  inputId,
-  labelId
-){
-
-  const input =
-    document.getElementById(
-      inputId
-    );
-
-  const label =
-    document.getElementById(
-      labelId
-    );
-
-
-  if(
-    input &&
-    label
-  ){
-
-    label.textContent =
-      input.value.toUpperCase();
-
-  }
-
-}
-
-
-function previewLogo(
-  input
-){
-
-  const file =
-    input.files?.[0];
-
-
-  if(!file){
-    return;
-  }
-
-
-  if(
-    !file.type.startsWith(
-      "image/"
-    )
-  ){
-
-    alert(
-      "Please choose an image file."
-    );
-
-    input.value =
-      "";
-
     return;
 
   }
 
 
-  if(
-    file.size >
-    5000000
-  ){
-
-    alert(
-      "Logo is too large. Please choose an image under 5MB."
-    );
-
-    input.value =
-      "";
-
-    return;
-
-  }
-
-
-  const reader =
-    new FileReader();
-
-
-  reader.onload =
-    event => {
-
-      const imageData =
-        event.target.result;
-
-
-      const logoInput =
-        document.getElementById(
-          "settingLogo"
-        );
-
-
-      if(logoInput){
-
-        logoInput.value =
-          imageData;
-
-      }
-
-
-      const preview =
-        document.getElementById(
-          "logoPreview"
-        );
-
-
-      if(!preview){
-        return;
-      }
-
-
-      preview.innerHTML = `
-
-        <div
-          class="logoPreviewBox"
-        >
-
-          <img
-            src="${imageData}"
-            alt="Logo Preview"
-          >
-
-          <div
-            style="
-              margin-top:8px;
-              color:#16803c;
-              font-size:13px;
-              font-weight:bold;
-            "
-          >
-            ✓ New logo selected
-          </div>
-
-        </div>
-
-      `;
-
-    };
-
-
-  reader.readAsDataURL(
-    file
+  alert(
+    data?.message ||
+    data?.error ||
+    "Unable to remove product."
   );
 
 }
 
 
-async function showSettings(){
+/* =========================================================
+   INITIAL SESSION CHECK
+========================================================= */
 
-  activeTab(
-    "tabSettings"
-  );
+async function checkSession(){
 
+  if(!token){
 
-  const content =
-    document.getElementById(
-      "content"
-    );
+    login();
 
+    return;
 
-  content.innerHTML = `
-
-    <div class="panel">
-
-      <h2>
-        Store Settings
-      </h2>
-
-      <div class="loading">
-        Loading settings...
-      </div>
-
-    </div>
-
-  `;
+  }
 
 
   const data =
     await api(
-      "/api/admin/settings"
-    );
-
-
-  if(!data){
-    return;
-  }
-
-
-  const settings =
-    data.settings || {};
-
-
-  const primaryColor =
-    /^#[0-9A-Fa-f]{6}$/.test(
-      settings.primaryColor ||
-      ""
-    )
-      ? settings.primaryColor
-      : "#651630";
-
-
-  const secondaryColor =
-    /^#[0-9A-Fa-f]{6}$/.test(
-      settings.secondaryColor ||
-      ""
-    )
-      ? settings.secondaryColor
-      : "#4d1024";
-
-
-  const goldColor =
-    /^#[0-9A-Fa-f]{6}$/.test(
-      settings.goldColor ||
-      ""
-    )
-      ? settings.goldColor
-      : "#c9a45b";
-
-
-  const backgroundColor =
-    /^#[0-9A-Fa-f]{6}$/.test(
-      settings.backgroundColor ||
-      ""
-    )
-      ? settings.backgroundColor
-      : "#fcf8f1";
-
-
-  const textColor =
-    /^#[0-9A-Fa-f]{6}$/.test(
-      settings.textColor ||
-      ""
-    )
-      ? settings.textColor
-      : "#251c20";
-
-
-  content.innerHTML = `
-
-    <div class="panel">
-
-      <div class="panelHead">
-
-        <h2>
-          Store Settings
-        </h2>
-
-      </div>
-
-
-      <div class="notice">
-
-        <b>Payment:</b>
-
-        ${
-          data.paystackConfigured
-            ? "Paystack is configured."
-            : "Paystack is not configured yet."
-        }
-
-        <br><br>
-
-        <b>WhatsApp:</b>
-        ${esc(
-          data.whatsapp ||
-          settings.whatsapp ||
-          "-"
-        )}
-
-      </div>
-
-
-      <div
-        style="height:15px"
-      ></div>
-
-
-      <div class="settingsGrid">
-
-
-        <div>
-
-          <label>
-            Store Name
-          </label>
-
-          <input
-            id="settingStoreName"
-            value="${esc(
-              settings.storeName ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Tagline
-          </label>
-
-          <input
-            id="settingTagline"
-            value="${esc(
-              settings.tagline ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            WhatsApp Number
-          </label>
-
-          <input
-            id="settingWhatsappNumber"
-            value="${esc(
-              settings.whatsapp ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Phone
-          </label>
-
-          <input
-            id="settingPhone"
-            value="${esc(
-              settings.phone ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Email
-          </label>
-
-          <input
-            id="settingEmail"
-            value="${esc(
-              settings.email ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Address
-          </label>
-
-          <input
-            id="settingAddress"
-            value="${esc(
-              settings.address ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div class="settingFull">
-
-          <label>
-            Hero Title
-          </label>
-
-          <input
-            id="settingHeroTitle"
-            value="${esc(
-              settings.heroTitle ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div class="settingFull">
-
-          <label>
-            Hero Text
-          </label>
-
-          <textarea
-            id="settingHeroText"
-          >${esc(
-            settings.heroText ||
-            ""
-          )}</textarea>
-
-        </div>
-
-
-        <div class="settingFull">
-
-          <label>
-            About Text
-          </label>
-
-          <textarea
-            id="settingAboutText"
-          >${esc(
-            settings.aboutText ||
-            ""
-          )}</textarea>
-
-        </div>
-
-
-        <div class="settingFull">
-
-          <label>
-            Delivery Text
-          </label>
-
-          <textarea
-            id="settingDeliveryText"
-          >${esc(
-            settings.deliveryText ||
-            ""
-          )}</textarea>
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Delivery Fee (₦)
-          </label>
-
-          <input
-            id="settingDeliveryFee"
-            type="number"
-            min="0"
-            value="${Number(
-              settings.deliveryFee ||
-              0
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Free Delivery From (₦)
-          </label>
-
-          <input
-            id="settingFreeDelivery"
-            type="number"
-            min="0"
-            value="${Number(
-              settings.freeDeliveryFrom ||
-              0
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Bank Name
-          </label>
-
-          <input
-            id="settingBankName"
-            value="${esc(
-              settings.bankName ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Account Name
-          </label>
-
-          <input
-            id="settingAccountName"
-            value="${esc(
-              settings.accountName ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Account Number
-          </label>
-
-          <input
-            id="settingAccountNumber"
-            value="${esc(
-              settings.accountNumber ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Low Stock Limit
-          </label>
-
-          <input
-            id="settingLowStock"
-            type="number"
-            min="0"
-            value="${Number(
-              settings.lowStockLimit ||
-              5
-            )}"
-          >
-
-        </div>
-
-
-        <div class="settingFull">
-
-          <label>
-            Bank Instructions
-          </label>
-
-          <textarea
-            id="settingBankInstructions"
-          >${esc(
-            settings.bankInstructions ||
-            ""
-          )}</textarea>
-
-        </div>
-
-
-        <!-- LOGO UPLOAD -->
-
-        <div>
-
-          <label>
-            🖼️ Logo
-          </label>
-
-          <div class="uploadBox">
-
-            <label
-              for="logoInput"
-              class="uploadBtn"
-            >
-              📷 Upload Logo
-            </label>
-
-            <input
-              id="logoInput"
-              type="file"
-              accept="image/*"
-              onchange="previewLogo(this)"
-            >
-
-            <p
-              style="
-                margin:9px 0 0;
-                color:#756a6f;
-                font-size:12px;
-              "
-            >
-              Choose your logo from your phone.
-            </p>
-
-          </div>
-
-
-          <input
-            id="settingLogo"
-            type="hidden"
-            value="${esc(
-              settings.logo ||
-              ""
-            )}"
-          >
-
-
-          <div
-            id="logoPreview"
-          ></div>
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Hero Image
-          </label>
-
-          <input
-            id="settingHeroImage"
-            value="${esc(
-              settings.heroImage ||
-              "/product-1.jpg"
-            )}"
-          >
-
-        </div>
-
-
-        <!-- PRIMARY COLOR -->
-
-        <div>
-
-          <label>
-            🎨 Primary Color
-          </label>
-
-          <div class="colorPickerBox">
-
-            <input
-              id="settingPrimaryColor"
-              type="color"
-              value="${primaryColor}"
-              oninput="updateColorValue(
-                'settingPrimaryColor',
-                'primaryColorValue'
-              )"
-            >
-
-            <span
-              id="primaryColorValue"
-              class="colorValue"
-            >
-              ${primaryColor.toUpperCase()}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <!-- SECONDARY COLOR -->
-
-        <div>
-
-          <label>
-            🎨 Secondary Color
-          </label>
-
-          <div class="colorPickerBox">
-
-            <input
-              id="settingSecondaryColor"
-              type="color"
-              value="${secondaryColor}"
-              oninput="updateColorValue(
-                'settingSecondaryColor',
-                'secondaryColorValue'
-              )"
-            >
-
-            <span
-              id="secondaryColorValue"
-              class="colorValue"
-            >
-              ${secondaryColor.toUpperCase()}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <!-- GOLD COLOR -->
-
-        <div>
-
-          <label>
-            🎨 Gold Color
-          </label>
-
-          <div class="colorPickerBox">
-
-            <input
-              id="settingGoldColor"
-              type="color"
-              value="${goldColor}"
-              oninput="updateColorValue(
-                'settingGoldColor',
-                'goldColorValue'
-              )"
-            >
-
-            <span
-              id="goldColorValue"
-              class="colorValue"
-            >
-              ${goldColor.toUpperCase()}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <!-- BACKGROUND COLOR -->
-
-        <div>
-
-          <label>
-            🎨 Background Color
-          </label>
-
-          <div class="colorPickerBox">
-
-            <input
-              id="settingBackgroundColor"
-              type="color"
-              value="${backgroundColor}"
-              oninput="updateColorValue(
-                'settingBackgroundColor',
-                'backgroundColorValue'
-              )"
-            >
-
-            <span
-              id="backgroundColorValue"
-              class="colorValue"
-            >
-              ${backgroundColor.toUpperCase()}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <!-- TEXT COLOR -->
-
-        <div>
-
-          <label>
-            🎨 Text Color
-          </label>
-
-          <div class="colorPickerBox">
-
-            <input
-              id="settingTextColor"
-              type="color"
-              value="${textColor}"
-              oninput="updateColorValue(
-                'settingTextColor',
-                'textColorValue'
-              )"
-            >
-
-            <span
-              id="textColorValue"
-              class="colorValue"
-            >
-              ${textColor.toUpperCase()}
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="settingFull">
-
-          <div class="switchRow">
-
-            <input
-              id="settingCart"
-              type="checkbox"
-              ${
-                settings.enableCart !==
-                false
-                  ? "checked"
-                  : ""
-              }
-            >
-
-            <label
-              for="settingCart"
-            >
-              Enable Cart
-            </label>
-
-          </div>
-
-
-          <div class="switchRow">
-
-            <input
-              id="settingEnableWhatsapp"
-              type="checkbox"
-              ${
-                settings.enableWhatsapp !==
-                false
-                  ? "checked"
-                  : ""
-              }
-            >
-
-            <label
-              for="settingEnableWhatsapp"
-            >
-              Enable WhatsApp
-            </label>
-
-          </div>
-
-
-          <div class="switchRow">
-
-            <input
-              id="settingShowStock"
-              type="checkbox"
-              ${
-                settings.showStock !==
-                false
-                  ? "checked"
-                  : ""
-              }
-            >
-
-            <label
-              for="settingShowStock"
-            >
-              Show Stock
-            </label>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <button
-        class="primary"
-        style="width:100%;margin-top:10px"
-        onclick="saveSettings()"
-      >
-        SAVE STORE SETTINGS
-      </button>
-
-
-      <p
-        id="settingsMessage"
-      ></p>
-
-    </div>
-
-  `;
-
-
-  /*
-    SHOW CURRENT LOGO
-  */
-
-  const logoPreview =
-    document.getElementById(
-      "logoPreview"
+      "/api/admin/me"
     );
 
 
   if(
-    logoPreview &&
-    settings.logo
+    data &&
+    data.ok
   ){
 
-    logoPreview.innerHTML = `
-
-      <div
-        class="logoPreviewBox"
-      >
-
-        <img
-          src="${esc(
-            settings.logo
-          )}"
-          alt="Current Logo"
-          onerror="
-            this.style.display='none'
-          "
-        >
-
-        <div
-          style="
-            margin-top:8px;
-            color:#756a6f;
-            font-size:12px;
-          "
-        >
-          Current Logo
-        </div>
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-async function saveSettings(){
-
-  const message =
-    document.getElementById(
-      "settingsMessage"
-    );
-
-
-  const data = {
-
-    storeName:
-      document.getElementById(
-        "settingStoreName"
-      ).value.trim(),
-
-    tagline:
-      document.getElementById(
-        "settingTagline"
-      ).value.trim(),
-
-    whatsapp:
-      document.getElementById(
-        "settingWhatsappNumber"
-      ).value.trim(),
-
-    phone:
-      document.getElementById(
-        "settingPhone"
-      ).value.trim(),
-
-    email:
-      document.getElementById(
-        "settingEmail"
-      ).value.trim(),
-
-    address:
-      document.getElementById(
-        "settingAddress"
-      ).value.trim(),
-
-    heroTitle:
-      document.getElementById(
-        "settingHeroTitle"
-      ).value.trim(),
-
-    heroText:
-      document.getElementById(
-        "settingHeroText"
-      ).value.trim(),
-
-    aboutText:
-      document.getElementById(
-        "settingAboutText"
-      ).value.trim(),
-
-    deliveryText:
-      document.getElementById(
-        "settingDeliveryText"
-      ).value.trim(),
-
-    deliveryFee:
-      Number(
-        document.getElementById(
-          "settingDeliveryFee"
-        ).value || 0
-      ),
-
-    freeDeliveryFrom:
-      Number(
-        document.getElementById(
-          "settingFreeDelivery"
-        ).value || 0
-      ),
-
-    bankName:
-      document.getElementById(
-        "settingBankName"
-      ).value.trim(),
-
-    accountName:
-      document.getElementById(
-        "settingAccountName"
-      ).value.trim(),
-
-    accountNumber:
-      document.getElementById(
-        "settingAccountNumber"
-      ).value.trim(),
-
-    bankInstructions:
-      document.getElementById(
-        "settingBankInstructions"
-      ).value.trim(),
-
-    logo:
-      document.getElementById(
-        "settingLogo"
-      ).value.trim(),
-
-    heroImage:
-      document.getElementById(
-        "settingHeroImage"
-      ).value.trim(),
-
-    primaryColor:
-      document.getElementById(
-        "settingPrimaryColor"
-      ).value,
-
-    secondaryColor:
-      document.getElementById(
-        "settingSecondaryColor"
-      ).value,
-
-    goldColor:
-      document.getElementById(
-        "settingGoldColor"
-      ).value,
-
-    backgroundColor:
-      document.getElementById(
-        "settingBackgroundColor"
-      ).value,
-
-    textColor:
-      document.getElementById(
-        "settingTextColor"
-      ).value,
-
-    lowStockLimit:
-      Number(
-        document.getElementById(
-          "settingLowStock"
-        ).value || 5
-      ),
-
-    enableCart:
-      document.getElementById(
-        "settingCart"
-      ).checked,
-
-    enableWhatsapp:
-      document.getElementById(
-        "settingEnableWhatsapp"
-      ).checked,
-
-    showStock:
-      document.getElementById(
-        "settingShowStock"
-      ).checked
-
-  };
-
-
-  message.className =
-    "";
-
-  message.textContent =
-    "Saving...";
-
-
-  const response =
-    await api(
-      "/api/admin/settings",
-      {
-        method:"PUT",
-
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
-
-        body:
-          JSON.stringify(
-            data
-          )
-      }
-    );
-
-
-  if(
-    response &&
-    response.settings
-  ){
-
-    message.className =
-      "success";
-
-    message.textContent =
-      "Store settings saved successfully.";
+    dashboard();
 
   }else{
 
-    message.className =
-      "error";
+    sessionStorage.removeItem(
+      "adminToken"
+    );
 
-    message.textContent =
-      response?.message ||
-      response?.error ||
-      "Unable to save settings.";
+    token = "";
+
+    login();
 
   }
 
 }
 
 
-if(token){
-
-  dashboard();
-
-}else{
-
-  login();
-
-}
+checkSession();
 
 </script>
 
