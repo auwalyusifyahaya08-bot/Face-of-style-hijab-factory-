@@ -316,6 +316,141 @@ function writeSettings(settings) {
 
 
 /* =========================================================
+   COLOR HELPERS
+   IMPORTANT FIX FOR ADMIN COLOR PICKER
+========================================================= */
+
+/*
+   Accept only valid HEX colors.
+
+   Supports:
+   #RRGGBB
+   #RGB
+
+   Invalid colors automatically use fallback.
+*/
+function normalizeColor(value, fallback) {
+  const color =
+    String(
+      value || ''
+    ).trim();
+
+  if (
+    /^#[0-9a-fA-F]{6}$/.test(
+      color
+    )
+  ) {
+    return color.toUpperCase();
+  }
+
+  if (
+    /^#[0-9a-fA-F]{3}$/.test(
+      color
+    )
+  ) {
+    const r = color[1];
+    const g = color[2];
+    const b = color[3];
+
+    return (
+      `#${r}${r}${g}${g}${b}${b}`
+    ).toUpperCase();
+  }
+
+  return fallback;
+}
+
+
+/*
+   IMPORTANT:
+
+   Version 2 frontend may use either:
+
+   textColor
+   or
+   text_color
+
+   So the API now sends BOTH.
+
+   Same thing for all store colors.
+*/
+function settingsForApi(settings) {
+  const primaryColor =
+    normalizeColor(
+      settings.primaryColor ||
+      settings.primary_color,
+      '#651630'
+    );
+
+  const secondaryColor =
+    normalizeColor(
+      settings.secondaryColor ||
+      settings.secondary_color,
+      '#4D1024'
+    );
+
+  const goldColor =
+    normalizeColor(
+      settings.goldColor ||
+      settings.gold_color,
+      '#C9A45B'
+    );
+
+  const backgroundColor =
+    normalizeColor(
+      settings.backgroundColor ||
+      settings.background_color,
+      '#FCF8F1'
+    );
+
+  const textColor =
+    normalizeColor(
+      settings.textColor ||
+      settings.text_color,
+      '#251C20'
+    );
+
+  return {
+    ...settings,
+
+    /* =========================================
+       CAMEL CASE
+    ========================================= */
+
+    primaryColor,
+
+    secondaryColor,
+
+    goldColor,
+
+    backgroundColor,
+
+    textColor,
+
+    /* =========================================
+       SNAKE CASE
+       VERSION 2 FRONTEND COMPATIBILITY
+    ========================================= */
+
+    primary_color:
+      primaryColor,
+
+    secondary_color:
+      secondaryColor,
+
+    gold_color:
+      goldColor,
+
+    background_color:
+      backgroundColor,
+
+    text_color:
+      textColor
+  };
+}
+
+
+/* =========================================================
    ENVIRONMENT
 ========================================================= */
 
@@ -1080,16 +1215,17 @@ app.get(
 
 /* =========================================================
    PUBLIC CONFIG
+   IMPORTANT COLOR FIX
 ========================================================= */
 
 app.get(
   '/api/config',
   (req, res) => {
-    const settings =
+    let settings =
       readSettings();
 
     /*
-       Always normalize settings images.
+       Normalize settings images.
     */
     settings.logo =
       normalizeImage(
@@ -1101,6 +1237,17 @@ app.get(
       normalizeImage(
         settings.heroImage,
         '/assets/product-1.jpg'
+      );
+
+    /*
+       IMPORTANT:
+
+       Return both camelCase and snake_case
+       so Version 2 frontend can read colors.
+    */
+    settings =
+      settingsForApi(
+        settings
       );
 
     res.json({
@@ -2462,7 +2609,7 @@ app.get(
   '/api/admin/settings',
   adminAuth,
   (req, res) => {
-    const settings =
+    let settings =
       readSettings();
 
     settings.logo =
@@ -2475,6 +2622,16 @@ app.get(
       normalizeImage(
         settings.heroImage,
         '/assets/product-1.jpg'
+      );
+
+    /*
+       IMPORTANT:
+       Return both camelCase and snake_case
+       colors for Version 2 frontend.
+    */
+    settings =
+      settingsForApi(
+        settings
       );
 
     res.json({
@@ -2494,6 +2651,7 @@ app.get(
 
 /* =========================================================
    SAVE SETTINGS
+   IMPORTANT COLOR PICKER FIX
 ========================================================= */
 
 app.put(
@@ -2547,34 +2705,57 @@ app.put(
           300
         ),
 
+      /*
+         IMPORTANT COLOR FIX
+      */
       primaryColor:
-        clean(
-          body.primaryColor,
-          20
+        normalizeColor(
+          body.primaryColor ||
+          body.primary_color,
+
+          old.primaryColor ||
+          old.primary_color ||
+          '#651630'
         ),
 
       secondaryColor:
-        clean(
-          body.secondaryColor,
-          20
+        normalizeColor(
+          body.secondaryColor ||
+          body.secondary_color,
+
+          old.secondaryColor ||
+          old.secondary_color ||
+          '#4D1024'
         ),
 
       goldColor:
-        clean(
-          body.goldColor,
-          20
+        normalizeColor(
+          body.goldColor ||
+          body.gold_color,
+
+          old.goldColor ||
+          old.gold_color ||
+          '#C9A45B'
         ),
 
       backgroundColor:
-        clean(
-          body.backgroundColor,
-          20
+        normalizeColor(
+          body.backgroundColor ||
+          body.background_color,
+
+          old.backgroundColor ||
+          old.background_color ||
+          '#FCF8F1'
         ),
 
       textColor:
-        clean(
-          body.textColor,
-          20
+        normalizeColor(
+          body.textColor ||
+          body.text_color,
+
+          old.textColor ||
+          old.text_color ||
+          '#251C20'
         ),
 
       logo:
@@ -2686,9 +2867,15 @@ app.put(
       next
     );
 
+    /*
+       Return normalized settings
+       to frontend immediately.
+    */
     res.json({
       settings:
-        next
+        settingsForApi(
+          next
+        )
     });
   }
 );
