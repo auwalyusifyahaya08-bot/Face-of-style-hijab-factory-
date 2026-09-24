@@ -24,17 +24,12 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 const ASSETS_DIR = path.join(PUBLIC_DIR, 'assets');
 const DATA_DIR = path.join(__dirname, 'data');
 
-const ORDERS_FILE =
-  path.join(DATA_DIR, 'orders.json');
-
-const PRODUCTS_FILE =
-  path.join(DATA_DIR, 'products.json');
-
-const CUSTOMERS_FILE =
-  path.join(DATA_DIR, 'customers.json');
-
-const SETTINGS_FILE =
-  path.join(DATA_DIR, 'settings.json');
+const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
+const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
+const CUSTOMERS_FILE = path.join(DATA_DIR, 'customers.json');
+const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
+const WALLET_FILE = path.join(DATA_DIR, 'wallets.json');
+const REFUNDS_FILE = path.join(DATA_DIR, 'refunds.json');
 
 
 /* =========================================================
@@ -161,11 +156,6 @@ ensureJson(SETTINGS_FILE, {
   textColor: '#251c20',
 
   logo: '/assets/logo.png',
-
-  /*
-     IMPORTANT:
-     Hero image now points to /assets/
-  */
   heroImage: '/assets/product-1.jpg',
 
   heroTitle: 'Modesty, Elegance & Style.',
@@ -201,6 +191,8 @@ ensureJson(SETTINGS_FILE, {
 
 ensureJson(ORDERS_FILE, []);
 ensureJson(CUSTOMERS_FILE, []);
+ensureJson(WALLET_FILE, []);
+ensureJson(REFUNDS_FILE, []);
 
 
 /* =========================================================
@@ -213,8 +205,7 @@ function readJson(file, fallback) {
       return fallback;
     }
 
-    const content =
-      fs.readFileSync(file, 'utf8');
+    const content = fs.readFileSync(file, 'utf8');
 
     if (!content.trim()) {
       return fallback;
@@ -233,8 +224,7 @@ function readJson(file, fallback) {
 
 
 function writeJson(file, value) {
-  const tempFile =
-    `${file}.tmp`;
+  const tempFile = `${file}.tmp`;
 
   fs.writeFileSync(
     tempFile,
@@ -250,104 +240,80 @@ function writeJson(file, value) {
 
 
 function readProducts() {
-  return readJson(
-    PRODUCTS_FILE,
-    []
-  );
+  return readJson(PRODUCTS_FILE, []);
 }
 
 
 function writeProducts(products) {
-  writeJson(
-    PRODUCTS_FILE,
-    products
-  );
+  writeJson(PRODUCTS_FILE, products);
 }
 
 
 function readOrders() {
-  return readJson(
-    ORDERS_FILE,
-    []
-  );
+  return readJson(ORDERS_FILE, []);
 }
 
 
 function writeOrders(orders) {
-  writeJson(
-    ORDERS_FILE,
-    orders
-  );
+  writeJson(ORDERS_FILE, orders);
 }
 
 
 function readCustomers() {
-  return readJson(
-    CUSTOMERS_FILE,
-    []
-  );
+  return readJson(CUSTOMERS_FILE, []);
 }
 
 
 function writeCustomers(customers) {
-  writeJson(
-    CUSTOMERS_FILE,
-    customers
-  );
+  writeJson(CUSTOMERS_FILE, customers);
 }
 
 
 function readSettings() {
   return {
-    ...readJson(
-      SETTINGS_FILE,
-      {}
-    )
+    ...readJson(SETTINGS_FILE, {})
   };
 }
 
 
 function writeSettings(settings) {
-  writeJson(
-    SETTINGS_FILE,
-    settings
-  );
+  writeJson(SETTINGS_FILE, settings);
+}
+
+
+function readWallets() {
+  return readJson(WALLET_FILE, []);
+}
+
+
+function writeWallets(wallets) {
+  writeJson(WALLET_FILE, wallets);
+}
+
+
+function readRefunds() {
+  return readJson(REFUNDS_FILE, []);
+}
+
+
+function writeRefunds(refunds) {
+  writeJson(REFUNDS_FILE, refunds);
 }
 
 
 /* =========================================================
    COLOR HELPERS
-   IMPORTANT FIX FOR ADMIN COLOR PICKER
 ========================================================= */
 
-/*
-   Accept only valid HEX colors.
-
-   Supports:
-   #RRGGBB
-   #RGB
-
-   Invalid colors automatically use fallback.
-*/
 function normalizeColor(value, fallback) {
   const color =
-    String(
-      value || ''
-    ).trim();
+    String(value || '').trim();
 
-  if (
-    /^#[0-9a-fA-F]{6}$/.test(
-      color
-    )
-  ) {
+  if (/^#[0-9a-fA-F]{6}$/.test(color)) {
     return color.toUpperCase();
   }
 
-  if (
-    /^#[0-9a-fA-F]{3}$/.test(
-      color
-    )
-  ) {
+  if (/^#[0-9a-fA-F]{3}$/.test(color)) {
     const r = color[1];
     const g = color[2];
     const b = color[3];
@@ -361,19 +327,6 @@ function normalizeColor(value, fallback) {
 }
 
 
-/*
-   IMPORTANT:
-
-   Version 2 frontend may use either:
-
-   textColor
-   or
-   text_color
-
-   So the API now sends BOTH.
-
-   Same thing for all store colors.
-*/
 function settingsForApi(settings) {
   const primaryColor =
     normalizeColor(
@@ -413,39 +366,17 @@ function settingsForApi(settings) {
   return {
     ...settings,
 
-    /* =========================================
-       CAMEL CASE
-    ========================================= */
-
     primaryColor,
-
     secondaryColor,
-
     goldColor,
-
     backgroundColor,
-
     textColor,
 
-    /* =========================================
-       SNAKE CASE
-       VERSION 2 FRONTEND COMPATIBILITY
-    ========================================= */
-
-    primary_color:
-      primaryColor,
-
-    secondary_color:
-      secondaryColor,
-
-    gold_color:
-      goldColor,
-
-    background_color:
-      backgroundColor,
-
-    text_color:
-      textColor
+    primary_color: primaryColor,
+    secondary_color: secondaryColor,
+    gold_color: goldColor,
+    background_color: backgroundColor,
+    text_color: textColor
   };
 }
 
@@ -511,7 +442,7 @@ app.use(
 
 
 /* =========================================================
-   HELPERS
+   BASIC HELPERS
 ========================================================= */
 
 function clean(value, max = 500) {
@@ -524,8 +455,7 @@ function clean(value, max = 500) {
 
 
 function positiveInt(value, fallback = 0) {
-  const number =
-    Number(value);
+  const number = Number(value);
 
   return (
     Number.isInteger(number) &&
@@ -537,8 +467,7 @@ function positiveInt(value, fallback = 0) {
 
 
 function safePrice(value) {
-  const number =
-    Number(value);
+  const number = Number(value);
 
   if (
     !Number.isFinite(number) ||
@@ -547,9 +476,7 @@ function safePrice(value) {
     return NaN;
   }
 
-  return Math.round(
-    number * 100
-  ) / 100;
+  return Math.round(number * 100) / 100;
 }
 
 
@@ -561,19 +488,13 @@ function validEmail(value) {
 
 
 function validPhone(value) {
-  return String(
-    value || ''
-  )
-    .trim()
-    .length >= 7;
+  return String(value || '').trim().length >= 7;
 }
 
 
 function passwordHash(password) {
   const salt =
-    crypto
-      .randomBytes(16)
-      .toString('hex');
+    crypto.randomBytes(16).toString('hex');
 
   const hash =
     crypto.scryptSync(
@@ -591,10 +512,7 @@ function verifyPassword(password, stored) {
     const [
       salt,
       hashHex
-    ] =
-      String(
-        stored || ''
-      ).split(':');
+    ] = String(stored || '').split(':');
 
     if (!salt || !hashHex) {
       return false;
@@ -614,8 +532,7 @@ function verifyPassword(password, stored) {
       );
 
     return (
-      actual.length ===
-        expected.length &&
+      actual.length === expected.length &&
       crypto.timingSafeEqual(
         actual,
         expected
@@ -643,9 +560,26 @@ function orderReference() {
 }
 
 
+function refundReference() {
+  return (
+    `REF-${Date.now()}-${crypto
+      .randomBytes(3)
+      .toString('hex')}`
+  ).toUpperCase();
+}
+
+
+function walletTransactionReference() {
+  return (
+    `WAL-${Date.now()}-${crypto
+      .randomBytes(3)
+      .toString('hex')}`
+  ).toUpperCase();
+}
+
+
 /* =========================================================
    IMAGE NORMALIZATION
-   IMPORTANT FIX FOR /assets/ PATH
 ========================================================= */
 
 function normalizeImage(
@@ -653,88 +587,45 @@ function normalizeImage(
   fallback = '/assets/product-1.jpg'
 ) {
   let v =
-    clean(
-      value,
-      8000000
-    );
+    clean(value, 8000000);
 
   if (!v) {
     return fallback;
   }
 
-  /*
-     Convert Windows/backslash paths.
-  */
   v = v.replace(/\\/g, '/');
 
-  /*
-     Remove ./ at beginning.
-  */
   v = v.replace(/^\.\/+/i, '');
 
-  /*
-     Existing assets path remains unchanged.
-  */
-  if (
-    /^\/assets\//i.test(v)
-  ) {
+  if (/^\/assets\//i.test(v)) {
     return v;
   }
 
-  /*
-     Convert assets/product-x.jpg
-     to /assets/product-x.jpg
-  */
-  if (
-    /^assets\//i.test(v)
-  ) {
+  if (/^assets\//i.test(v)) {
     return `/${v}`;
   }
 
-  /*
-     Convert /product-x.jpg
-     to /assets/product-x.jpg
-  */
   if (
     /^\/[^/]+\.(jpg|jpeg|png|webp|gif|svg)$/i.test(v)
   ) {
     return `/assets${v}`;
   }
 
-  /*
-     Convert product-x.jpg
-     to /assets/product-x.jpg
-  */
   if (
     /^[^/]+\.(jpg|jpeg|png|webp|gif|svg)$/i.test(v)
   ) {
     return `/assets/${v}`;
   }
 
-  /*
-     External image.
-  */
-  if (
-    /^https?:\/\//i.test(v)
-  ) {
+  if (/^https?:\/\//i.test(v)) {
     return v;
   }
 
-  /*
-     Base64 image.
-  */
-  if (
-    /^data:image\//i.test(v)
-  ) {
+  if (/^data:image\//i.test(v)) {
     return v;
   }
 
-  /*
-     Other absolute paths.
-  */
-  if (
-    v.startsWith('/')
-  ) {
+  if (v.startsWith('/')) {
     return v;
   }
 
@@ -778,10 +669,7 @@ function publicProduct(product) {
       product.color || '',
 
     stock:
-      positiveInt(
-        product.stock,
-        0
-      ),
+      positiveInt(product.stock, 0),
 
     active:
       product.active !== false,
@@ -825,16 +713,14 @@ function publicCustomer(customer) {
 
 
 /* =========================================================
-   AUTH MIDDLEWARE
+   AUTH
 ========================================================= */
 
 function getBearerToken(req) {
   const header =
     req.headers.authorization || '';
 
-  if (
-    !header.startsWith('Bearer ')
-  ) {
+  if (!header.startsWith('Bearer ')) {
     return '';
   }
 
@@ -850,11 +736,9 @@ function adminAuth(req, res, next) {
     !sessionToken ||
     !adminSessions.has(sessionToken)
   ) {
-    return res
-      .status(401)
-      .json({
-        message: 'Unauthorized'
-      });
+    return res.status(401).json({
+      message: 'Unauthorized'
+    });
   }
 
   next();
@@ -866,24 +750,16 @@ function customerAuth(req, res, next) {
     getBearerToken(req);
 
   const customerId =
-    customerSessions.get(
-      sessionToken
-    );
+    customerSessions.get(sessionToken);
 
   if (!customerId) {
-    return res
-      .status(401)
-      .json({
-        message:
-          'Please login first.'
-      });
+    return res.status(401).json({
+      message: 'Please login first.'
+    });
   }
 
-  req.customerId =
-    customerId;
-
-  req.customerToken =
-    sessionToken;
+  req.customerId = customerId;
+  req.customerToken = sessionToken;
 
   next();
 }
@@ -894,21 +770,259 @@ function customerAuth(req, res, next) {
 ========================================================= */
 
 function getCustomer(id) {
-  return readCustomers()
-    .find(
-      customer =>
-        customer.id === id
-    );
+  return readCustomers().find(
+    customer =>
+      String(customer.id) === String(id)
+  );
 }
 
 
 function getOrder(id) {
-  return readOrders()
-    .find(
-      order =>
-        String(order.id) ===
-        String(id)
+  return readOrders().find(
+    order =>
+      String(order.id) === String(id)
+  );
+}
+
+
+/* =========================================================
+   WALLET HELPERS
+========================================================= */
+
+function getWallet(customerId) {
+  const wallets =
+    readWallets();
+
+  let wallet =
+    wallets.find(
+      item =>
+        String(item.customerId) ===
+        String(customerId)
     );
+
+  if (!wallet) {
+    wallet = {
+      customerId,
+      balance: 0,
+      currency: 'NGN',
+      transactions: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    wallets.push(wallet);
+
+    writeWallets(wallets);
+  }
+
+  return wallet;
+}
+
+
+function walletBalance(customerId) {
+  const wallet =
+    getWallet(customerId);
+
+  return safePrice(wallet.balance) || 0;
+}
+
+
+function addWalletCredit(
+  customerId,
+  amount,
+  details = {}
+) {
+  const numericAmount =
+    safePrice(amount);
+
+  if (
+    !Number.isFinite(numericAmount) ||
+    numericAmount <= 0
+  ) {
+    throw new Error(
+      'Invalid wallet credit amount.'
+    );
+  }
+
+  const wallets =
+    readWallets();
+
+  let wallet =
+    wallets.find(
+      item =>
+        String(item.customerId) ===
+        String(customerId)
+    );
+
+  if (!wallet) {
+    wallet = {
+      customerId,
+      balance: 0,
+      currency: 'NGN',
+      transactions: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    wallets.push(wallet);
+  }
+
+  wallet.balance =
+    Math.round(
+      (
+        Number(wallet.balance || 0) +
+        numericAmount
+      ) * 100
+    ) / 100;
+
+  const transaction = {
+    id: crypto.randomUUID(),
+
+    reference:
+      walletTransactionReference(),
+
+    type: 'credit',
+
+    amount:
+      numericAmount,
+
+    balanceAfter:
+      wallet.balance,
+
+    reason:
+      details.reason ||
+      'Wallet credit',
+
+    refundId:
+      details.refundId || null,
+
+    orderId:
+      details.orderId || null,
+
+    orderReference:
+      details.orderReference || null,
+
+    createdAt:
+      new Date().toISOString()
+  };
+
+  wallet.transactions =
+    Array.isArray(wallet.transactions)
+      ? wallet.transactions
+      : [];
+
+  wallet.transactions.unshift(
+    transaction
+  );
+
+  wallet.updatedAt =
+    new Date().toISOString();
+
+  writeWallets(wallets);
+
+  return {
+    wallet,
+    transaction
+  };
+}
+
+
+function addWalletDebit(
+  customerId,
+  amount,
+  details = {}
+) {
+  const numericAmount =
+    safePrice(amount);
+
+  if (
+    !Number.isFinite(numericAmount) ||
+    numericAmount <= 0
+  ) {
+    throw new Error(
+      'Invalid wallet debit amount.'
+    );
+  }
+
+  const wallets =
+    readWallets();
+
+  let wallet =
+    wallets.find(
+      item =>
+        String(item.customerId) ===
+        String(customerId)
+    );
+
+  if (!wallet) {
+    return {
+      error: 'Wallet not found.'
+    };
+  }
+
+  if (
+    Number(wallet.balance || 0) <
+    numericAmount
+  ) {
+    return {
+      error: 'Insufficient wallet balance.'
+    };
+  }
+
+  wallet.balance =
+    Math.round(
+      (
+        Number(wallet.balance || 0) -
+        numericAmount
+      ) * 100
+    ) / 100;
+
+  const transaction = {
+    id: crypto.randomUUID(),
+
+    reference:
+      walletTransactionReference(),
+
+    type: 'debit',
+
+    amount:
+      numericAmount,
+
+    balanceAfter:
+      wallet.balance,
+
+    reason:
+      details.reason ||
+      'Wallet debit',
+
+    orderId:
+      details.orderId || null,
+
+    orderReference:
+      details.orderReference || null,
+
+    createdAt:
+      new Date().toISOString()
+  };
+
+  wallet.transactions =
+    Array.isArray(wallet.transactions)
+      ? wallet.transactions
+      : [];
+
+  wallet.transactions.unshift(
+    transaction
+  );
+
+  wallet.updatedAt =
+    new Date().toISOString();
+
+  writeWallets(wallets);
+
+  return {
+    wallet,
+    transaction
+  };
 }
 
 
@@ -931,9 +1045,7 @@ function calculateItems(items) {
 
   let total = 0;
 
-  for (
-    const raw of items
-  ) {
+  for (const raw of items) {
     const product =
       products.find(
         item =>
@@ -970,11 +1082,7 @@ function calculateItems(items) {
     const productPrice =
       safePrice(product.price);
 
-    if (
-      !Number.isFinite(
-        productPrice
-      )
-    ) {
+    if (!Number.isFinite(productPrice)) {
       return {
         error:
           `Invalid price for ${product.name}.`
@@ -985,8 +1093,7 @@ function calculateItems(items) {
       productPrice * qty;
 
     cleanItems.push({
-      id:
-        product.id,
+      id: product.id,
 
       name:
         product.name,
@@ -1006,28 +1113,23 @@ function calculateItems(items) {
   }
 
   return {
-    items:
-      cleanItems,
+    items: cleanItems,
 
     total:
-      Math.round(
-        total * 100
-      ) / 100
+      Math.round(total * 100) / 100
   };
 }
 
 
 /* =========================================================
-   STOCK DECREASE
+   STOCK
 ========================================================= */
 
 function decrementStock(items) {
   const products =
     readProducts();
 
-  for (
-    const item of items
-  ) {
+  for (const item of items) {
     const product =
       products.find(
         product =>
@@ -1042,37 +1144,23 @@ function decrementStock(items) {
     product.stock =
       Math.max(
         0,
-        positiveInt(
-          product.stock,
-          0
-        ) -
-        positiveInt(
-          item.qty,
-          0
-        )
+        positiveInt(product.stock, 0) -
+        positiveInt(item.qty, 0)
       );
 
     product.updatedAt =
       new Date().toISOString();
   }
 
-  writeProducts(
-    products
-  );
+  writeProducts(products);
 }
 
-
-/* =========================================================
-   CHECK STOCK AGAIN
-========================================================= */
 
 function validateStock(items) {
   const products =
     readProducts();
 
-  for (
-    const item of items
-  ) {
+  for (const item of items) {
     const product =
       products.find(
         p =>
@@ -1089,16 +1177,10 @@ function validateStock(items) {
     }
 
     const stock =
-      positiveInt(
-        product.stock,
-        0
-      );
+      positiveInt(product.stock, 0);
 
     const qty =
-      positiveInt(
-        item.qty,
-        0
-      );
+      positiveInt(item.qty, 0);
 
     if (stock < qty) {
       return {
@@ -1116,631 +1198,7 @@ function validateStock(items) {
 
 
 /* =========================================================
-   PUBLIC HOME
-========================================================= */
-
-app.get(
-  '/',
-  (req, res) => {
-    const file =
-      path.join(
-        PUBLIC_DIR,
-        'index.html'
-      );
-
-    if (
-      fs.existsSync(file)
-    ) {
-      return res.sendFile(file);
-    }
-
-    res
-      .status(404)
-      .send('index.html not found.');
-  }
-);
-
-
-/* =========================================================
-   ADMIN PAGE
-========================================================= */
-
-app.get(
-  '/admin',
-  (req, res) => {
-    const file =
-      path.join(
-        PUBLIC_DIR,
-        'admin.html'
-      );
-
-    if (
-      fs.existsSync(file)
-    ) {
-      return res.sendFile(file);
-    }
-
-    res
-      .status(404)
-      .send('admin.html not found.');
-  }
-);
-
-
-app.get(
-  '/admin.html',
-  (req, res) => {
-    const file =
-      path.join(
-        PUBLIC_DIR,
-        'admin.html'
-      );
-
-    if (
-      fs.existsSync(file)
-    ) {
-      return res.sendFile(file);
-    }
-
-    res
-      .status(404)
-      .send('admin.html not found.');
-  }
-);
-
-
-/* =========================================================
-   PUBLIC PRODUCTS
-========================================================= */
-
-app.get(
-  '/api/products',
-  (req, res) => {
-    const products =
-      readProducts()
-        .filter(
-          product =>
-            product.active !== false
-        )
-        .map(
-          publicProduct
-        );
-
-    res.json({
-      products
-    });
-  }
-);
-
-
-/* =========================================================
-   PUBLIC CONFIG
-   IMPORTANT COLOR FIX
-========================================================= */
-
-app.get(
-  '/api/config',
-  (req, res) => {
-    let settings =
-      readSettings();
-
-    /*
-       Normalize settings images.
-    */
-    settings.logo =
-      normalizeImage(
-        settings.logo,
-        '/assets/logo.png'
-      );
-
-    settings.heroImage =
-      normalizeImage(
-        settings.heroImage,
-        '/assets/product-1.jpg'
-      );
-
-    /*
-       IMPORTANT:
-
-       Return both camelCase and snake_case
-       so Version 2 frontend can read colors.
-    */
-    settings =
-      settingsForApi(
-        settings
-      );
-
-    res.json({
-      store:
-        settings,
-
-      settings:
-        settings,
-
-      whatsapp:
-        WHATSAPP,
-
-      paystackConfigured:
-        Boolean(PAYSTACK_SECRET),
-
-      customerAuthEnabled:
-        true
-    });
-  }
-);
-
-
-/* =========================================================
-   CUSTOMER SIGNUP
-========================================================= */
-
-app.post(
-  '/api/customer/signup',
-  (req, res) => {
-    const name =
-      clean(
-        req.body?.name,
-        120
-      );
-
-    const email =
-      clean(
-        req.body?.email,
-        200
-      ).toLowerCase();
-
-    const phone =
-      clean(
-        req.body?.phone,
-        40
-      );
-
-    const password =
-      String(
-        req.body?.password || ''
-      );
-
-    if (
-      !name ||
-      !validEmail(email) ||
-      !validPhone(phone) ||
-      password.length < 6
-    ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Name, valid email, phone and a password of at least 6 characters are required.'
-        });
-    }
-
-    const customers =
-      readCustomers();
-
-    if (
-      customers.some(
-        customer =>
-          customer.email ===
-          email
-      )
-    ) {
-      return res
-        .status(409)
-        .json({
-          message:
-            'An account with this email already exists.'
-        });
-    }
-
-    const customer = {
-      id:
-        crypto.randomUUID(),
-
-      name,
-
-      email,
-
-      phone,
-
-      passwordHash:
-        passwordHash(password),
-
-      createdAt:
-        new Date().toISOString()
-    };
-
-    customers.push(
-      customer
-    );
-
-    writeCustomers(
-      customers
-    );
-
-    const sessionToken =
-      token();
-
-    customerSessions.set(
-      sessionToken,
-      customer.id
-    );
-
-    res
-      .status(201)
-      .json({
-        token:
-          sessionToken,
-
-        customer:
-          publicCustomer(
-            customer
-          )
-      });
-  }
-);
-
-
-/* =========================================================
-   CUSTOMER LOGIN
-========================================================= */
-
-app.post(
-  '/api/customer/login',
-  (req, res) => {
-    const email =
-      clean(
-        req.body?.email,
-        200
-      ).toLowerCase();
-
-    const password =
-      String(
-        req.body?.password || ''
-      );
-
-    const customer =
-      readCustomers()
-        .find(
-          item =>
-            item.email ===
-            email
-        );
-
-    if (
-      !customer ||
-      !verifyPassword(
-        password,
-        customer.passwordHash
-      )
-    ) {
-      return res
-        .status(401)
-        .json({
-          message:
-            'Invalid email or password.'
-        });
-    }
-
-    const sessionToken =
-      token();
-
-    customerSessions.set(
-      sessionToken,
-      customer.id
-    );
-
-    res.json({
-      token:
-        sessionToken,
-
-      customer:
-        publicCustomer(
-          customer
-        )
-    });
-  }
-);
-
-
-/* =========================================================
-   CUSTOMER LOGOUT
-========================================================= */
-
-app.post(
-  '/api/customer/logout',
-  customerAuth,
-  (req, res) => {
-    customerSessions.delete(
-      req.customerToken
-    );
-
-    res.json({
-      ok: true
-    });
-  }
-);
-
-
-/* =========================================================
-   CUSTOMER ME
-========================================================= */
-
-app.get(
-  '/api/customer/me',
-  customerAuth,
-  (req, res) => {
-    const customer =
-      getCustomer(
-        req.customerId
-      );
-
-    if (!customer) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Customer account not found.'
-        });
-    }
-
-    res.json({
-      customer:
-        publicCustomer(
-          customer
-        )
-    });
-  }
-);
-
-
-/* =========================================================
-   CUSTOMER PROFILE
-========================================================= */
-
-app.put(
-  '/api/customer/profile',
-  customerAuth,
-  (req, res) => {
-    const customers =
-      readCustomers();
-
-    const index =
-      customers.findIndex(
-        customer =>
-          customer.id ===
-          req.customerId
-      );
-
-    if (index < 0) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Customer account not found.'
-        });
-    }
-
-    const name =
-      clean(
-        req.body?.name,
-        120
-      );
-
-    const phone =
-      clean(
-        req.body?.phone,
-        40
-      );
-
-    if (
-      !name ||
-      !validPhone(phone)
-    ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Name and valid phone are required.'
-        });
-    }
-
-    customers[index].name =
-      name;
-
-    customers[index].phone =
-      phone;
-
-    writeCustomers(
-      customers
-    );
-
-    res.json({
-      customer:
-        publicCustomer(
-          customers[index]
-        )
-    });
-  }
-);
-
-
-/* =========================================================
-   CUSTOMER ORDERS
-========================================================= */
-
-app.get(
-  '/api/customer/orders',
-  customerAuth,
-  (req, res) => {
-    const customer =
-      getCustomer(
-        req.customerId
-      );
-
-    if (!customer) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Customer account not found.'
-        });
-    }
-
-    const orders =
-      readOrders()
-        .filter(
-          order =>
-            order.customer?.customerId ===
-              customer.id ||
-            (
-              !order.customer?.customerId &&
-              order.customer?.email ===
-                customer.email
-            )
-        )
-        .sort(
-          (a, b) =>
-            new Date(
-              b.createdAt
-            ) -
-            new Date(
-              a.createdAt
-            )
-        );
-
-    res.json({
-      orders
-    });
-  }
-);
-
-
-/* =========================================================
-   CUSTOMER SINGLE ORDER
-========================================================= */
-
-app.get(
-  '/api/customer/orders/:reference',
-  customerAuth,
-  (req, res) => {
-    const customer =
-      getCustomer(
-        req.customerId
-      );
-
-    const reference =
-      clean(
-        req.params.reference,
-        100
-      ).toUpperCase();
-
-    const order =
-      readOrders()
-        .find(
-          item =>
-            String(
-              item.reference
-            ).toUpperCase() ===
-              reference &&
-            (
-              item.customer?.customerId ===
-                customer?.id ||
-              item.customer?.email ===
-                customer?.email
-            )
-        );
-
-    if (!order) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Order not found.'
-        });
-    }
-
-    res.json({
-      order
-    });
-  }
-);
-
-
-/* =========================================================
-   PUBLIC ORDER TRACKING
-========================================================= */
-
-app.get(
-  '/api/track-order/:reference',
-  (req, res) => {
-    const reference =
-      clean(
-        req.params.reference,
-        100
-      ).toUpperCase();
-
-    const phone =
-      clean(
-        req.query.phone,
-        40
-      );
-
-    const email =
-      clean(
-        req.query.email,
-        200
-      ).toLowerCase();
-
-    const order =
-      readOrders()
-        .find(
-          item =>
-            String(
-              item.reference
-            ).toUpperCase() ===
-            reference
-        );
-
-    if (!order) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Order not found.'
-        });
-    }
-
-    const phoneMatches =
-      phone &&
-      order.customer?.phone ===
-        phone;
-
-    const emailMatches =
-      email &&
-      order.customer?.email ===
-        email;
-
-    if (
-      !phoneMatches &&
-      !emailMatches
-    ) {
-      return res
-        .status(403)
-        .json({
-          message:
-            'Please provide the phone number or email used for this order.'
-        });
-    }
-
-    res.json({
-      order
-    });
-  }
-);
-
-
-/* =========================================================
-   CREATE PENDING ORDER
+   ORDER CREATION
 ========================================================= */
 
 function createPendingOrder(
@@ -1780,6 +1238,12 @@ function createPendingOrder(
         paymentProvider
     },
 
+    refundStatus:
+      'none',
+
+    refundAmount:
+      0,
+
     createdAt:
       now,
 
@@ -1787,6 +1251,793 @@ function createPendingOrder(
       now
   };
 }
+
+
+/* =========================================================
+   PUBLIC HOME
+========================================================= */
+
+app.get(
+  '/',
+  (req, res) => {
+    const file =
+      path.join(
+        PUBLIC_DIR,
+        'index.html'
+      );
+
+    if (fs.existsSync(file)) {
+      return res.sendFile(file);
+    }
+
+    res.status(404).send(
+      'index.html not found.'
+    );
+  }
+);
+
+
+/* =========================================================
+   ADMIN PAGE
+========================================================= */
+
+app.get(
+  '/admin',
+  (req, res) => {
+    const file =
+      path.join(
+        PUBLIC_DIR,
+        'admin.html'
+      );
+
+    if (fs.existsSync(file)) {
+      return res.sendFile(file);
+    }
+
+    res.status(404).send(
+      'admin.html not found.'
+    );
+  }
+);
+
+
+app.get(
+  '/admin.html',
+  (req, res) => {
+    const file =
+      path.join(
+        PUBLIC_DIR,
+        'admin.html'
+      );
+
+    if (fs.existsSync(file)) {
+      return res.sendFile(file);
+    }
+
+    res.status(404).send(
+      'admin.html not found.'
+    );
+  }
+);
+
+
+/* =========================================================
+   PUBLIC PRODUCTS
+========================================================= */
+
+app.get(
+  '/api/products',
+  (req, res) => {
+    const products =
+      readProducts()
+        .filter(
+          product =>
+            product.active !== false
+        )
+        .map(publicProduct);
+
+    res.json({
+      products
+    });
+  }
+);
+
+
+/* =========================================================
+   PUBLIC CONFIG
+========================================================= */
+
+app.get(
+  '/api/config',
+  (req, res) => {
+    let settings =
+      readSettings();
+
+    settings.logo =
+      normalizeImage(
+        settings.logo,
+        '/assets/logo.png'
+      );
+
+    settings.heroImage =
+      normalizeImage(
+        settings.heroImage,
+        '/assets/product-1.jpg'
+      );
+
+    settings =
+      settingsForApi(settings);
+
+    res.json({
+      store:
+        settings,
+
+      settings:
+        settings,
+
+      whatsapp:
+        WHATSAPP,
+
+      paystackConfigured:
+        Boolean(PAYSTACK_SECRET),
+
+      customerAuthEnabled:
+        true
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER SIGNUP
+========================================================= */
+
+app.post(
+  '/api/customer/signup',
+  (req, res) => {
+    const name =
+      clean(req.body?.name, 120);
+
+    const email =
+      clean(
+        req.body?.email,
+        200
+      ).toLowerCase();
+
+    const phone =
+      clean(req.body?.phone, 40);
+
+    const password =
+      String(
+        req.body?.password || ''
+      );
+
+    if (
+      !name ||
+      !validEmail(email) ||
+      !validPhone(phone) ||
+      password.length < 6
+    ) {
+      return res.status(400).json({
+        message:
+          'Name, valid email, phone and a password of at least 6 characters are required.'
+      });
+    }
+
+    const customers =
+      readCustomers();
+
+    if (
+      customers.some(
+        customer =>
+          customer.email === email
+      )
+    ) {
+      return res.status(409).json({
+        message:
+          'An account with this email already exists.'
+      });
+    }
+
+    const customer = {
+      id:
+        crypto.randomUUID(),
+
+      name,
+
+      email,
+
+      phone,
+
+      passwordHash:
+        passwordHash(password),
+
+      createdAt:
+        new Date().toISOString()
+    };
+
+    customers.push(customer);
+
+    writeCustomers(customers);
+
+    /*
+       Create wallet immediately.
+    */
+    getWallet(customer.id);
+
+    const sessionToken =
+      token();
+
+    customerSessions.set(
+      sessionToken,
+      customer.id
+    );
+
+    res.status(201).json({
+      token:
+        sessionToken,
+
+      customer:
+        publicCustomer(customer),
+
+      wallet: {
+        balance: 0,
+        currency: 'NGN'
+      }
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER LOGIN
+========================================================= */
+
+app.post(
+  '/api/customer/login',
+  (req, res) => {
+    const email =
+      clean(
+        req.body?.email,
+        200
+      ).toLowerCase();
+
+    const password =
+      String(
+        req.body?.password || ''
+      );
+
+    const customer =
+      readCustomers()
+        .find(
+          item =>
+            item.email === email
+        );
+
+    if (
+      !customer ||
+      !verifyPassword(
+        password,
+        customer.passwordHash
+      )
+    ) {
+      return res.status(401).json({
+        message:
+          'Invalid email or password.'
+      });
+    }
+
+    getWallet(customer.id);
+
+    const sessionToken =
+      token();
+
+    customerSessions.set(
+      sessionToken,
+      customer.id
+    );
+
+    res.json({
+      token:
+        sessionToken,
+
+      customer:
+        publicCustomer(customer),
+
+      wallet: {
+        balance:
+          walletBalance(customer.id),
+
+        currency:
+          'NGN'
+      }
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER LOGOUT
+========================================================= */
+
+app.post(
+  '/api/customer/logout',
+  customerAuth,
+  (req, res) => {
+    customerSessions.delete(
+      req.customerToken
+    );
+
+    res.json({
+      ok: true
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER ME
+========================================================= */
+
+app.get(
+  '/api/customer/me',
+  customerAuth,
+  (req, res) => {
+    const customer =
+      getCustomer(req.customerId);
+
+    if (!customer) {
+      return res.status(404).json({
+        message:
+          'Customer account not found.'
+      });
+    }
+
+    res.json({
+      customer:
+        publicCustomer(customer),
+
+      wallet: {
+        balance:
+          walletBalance(customer.id),
+
+        currency:
+          'NGN'
+      }
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER PROFILE
+========================================================= */
+
+app.put(
+  '/api/customer/profile',
+  customerAuth,
+  (req, res) => {
+    const customers =
+      readCustomers();
+
+    const index =
+      customers.findIndex(
+        customer =>
+          String(customer.id) ===
+          String(req.customerId)
+      );
+
+    if (index < 0) {
+      return res.status(404).json({
+        message:
+          'Customer account not found.'
+      });
+    }
+
+    const name =
+      clean(req.body?.name, 120);
+
+    const phone =
+      clean(req.body?.phone, 40);
+
+    if (
+      !name ||
+      !validPhone(phone)
+    ) {
+      return res.status(400).json({
+        message:
+          'Name and valid phone are required.'
+      });
+    }
+
+    customers[index].name =
+      name;
+
+    customers[index].phone =
+      phone;
+
+    writeCustomers(customers);
+
+    res.json({
+      customer:
+        publicCustomer(
+          customers[index]
+        )
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER WALLET
+========================================================= */
+
+app.get(
+  '/api/customer/wallet',
+  customerAuth,
+  (req, res) => {
+    const customer =
+      getCustomer(req.customerId);
+
+    if (!customer) {
+      return res.status(404).json({
+        message:
+          'Customer account not found.'
+      });
+    }
+
+    const wallet =
+      getWallet(customer.id);
+
+    res.json({
+      wallet: {
+        customerId:
+          customer.id,
+
+        balance:
+          Number(wallet.balance || 0),
+
+        currency:
+          wallet.currency || 'NGN',
+
+        transactions:
+          Array.isArray(
+            wallet.transactions
+          )
+            ? wallet.transactions
+            : []
+      }
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER WALLET TRANSACTIONS
+========================================================= */
+
+app.get(
+  '/api/customer/wallet/transactions',
+  customerAuth,
+  (req, res) => {
+    const wallet =
+      getWallet(req.customerId);
+
+    res.json({
+      balance:
+        Number(wallet.balance || 0),
+
+      currency:
+        wallet.currency || 'NGN',
+
+      transactions:
+        Array.isArray(wallet.transactions)
+          ? wallet.transactions
+          : []
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER ORDERS
+========================================================= */
+
+app.get(
+  '/api/customer/orders',
+  customerAuth,
+  (req, res) => {
+    const customer =
+      getCustomer(req.customerId);
+
+    if (!customer) {
+      return res.status(404).json({
+        message:
+          'Customer account not found.'
+      });
+    }
+
+    const orders =
+      readOrders()
+        .filter(
+          order =>
+            order.customer?.customerId ===
+              customer.id ||
+            (
+              !order.customer?.customerId &&
+              order.customer?.email ===
+                customer.email
+            )
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        );
+
+    res.json({
+      orders
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER SINGLE ORDER
+========================================================= */
+
+app.get(
+  '/api/customer/orders/:reference',
+  customerAuth,
+  (req, res) => {
+    const customer =
+      getCustomer(req.customerId);
+
+    const reference =
+      clean(
+        req.params.reference,
+        100
+      ).toUpperCase();
+
+    const order =
+      readOrders()
+        .find(
+          item =>
+            String(item.reference).toUpperCase() ===
+              reference &&
+            (
+              item.customer?.customerId ===
+                customer?.id ||
+              item.customer?.email ===
+                customer?.email
+            )
+        );
+
+    if (!order) {
+      return res.status(404).json({
+        message:
+          'Order not found.'
+      });
+    }
+
+    res.json({
+      order
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER ORDER RECEIPT
+========================================================= */
+
+app.get(
+  '/api/customer/orders/:reference/receipt',
+  customerAuth,
+  (req, res) => {
+    const customer =
+      getCustomer(req.customerId);
+
+    const reference =
+      clean(
+        req.params.reference,
+        100
+      ).toUpperCase();
+
+    const order =
+      readOrders()
+        .find(
+          item =>
+            String(item.reference).toUpperCase() ===
+              reference &&
+            (
+              item.customer?.customerId ===
+                customer?.id ||
+              item.customer?.email ===
+                customer?.email
+            )
+        );
+
+    if (!order) {
+      return res.status(404).json({
+        message:
+          'Order not found.'
+      });
+    }
+
+    const settings =
+      settingsForApi(
+        readSettings()
+      );
+
+    res.json({
+      receipt: {
+        store: {
+          name:
+            settings.storeName,
+
+          tagline:
+            settings.tagline,
+
+          phone:
+            settings.phone,
+
+          whatsapp:
+            WHATSAPP,
+
+          email:
+            settings.email,
+
+          address:
+            settings.address,
+
+          logo:
+            normalizeImage(
+              settings.logo,
+              '/assets/logo.png'
+            )
+        },
+
+        order: {
+          id:
+            order.id,
+
+          reference:
+            order.reference,
+
+          status:
+            order.status,
+
+          orderStatus:
+            order.orderStatus,
+
+          items:
+            order.items,
+
+          total:
+            order.total,
+
+          currency:
+            order.currency || 'NGN',
+
+          payment:
+            order.payment,
+
+          customer:
+            order.customer,
+
+          refundStatus:
+            order.refundStatus || 'none',
+
+          refundAmount:
+            Number(
+              order.refundAmount || 0
+            ),
+
+          createdAt:
+            order.createdAt
+        }
+      }
+    });
+  }
+);
+
+
+/* =========================================================
+   PUBLIC ORDER TRACKING
+========================================================= */
+
+app.get(
+  '/api/track-order/:reference',
+  (req, res) => {
+    const reference =
+      clean(
+        req.params.reference,
+        100
+      ).toUpperCase();
+
+    const phone =
+      clean(
+        req.query.phone,
+        40
+      );
+
+    const email =
+      clean(
+        req.query.email,
+        200
+      ).toLowerCase();
+
+    const order =
+      readOrders()
+        .find(
+          item =>
+            String(item.reference).toUpperCase() ===
+            reference
+        );
+
+    if (!order) {
+      return res.status(404).json({
+        message:
+          'Order not found.'
+      });
+    }
+
+    const phoneMatches =
+      phone &&
+      order.customer?.phone === phone;
+
+    const emailMatches =
+      email &&
+      order.customer?.email === email;
+
+    if (
+      !phoneMatches &&
+      !emailMatches
+    ) {
+      return res.status(403).json({
+        message:
+          'Please provide the phone number or email used for this order.'
+      });
+    }
+
+    res.json({
+      order: {
+        reference:
+          order.reference,
+
+        status:
+          order.status,
+
+        orderStatus:
+          order.orderStatus,
+
+        total:
+          order.total,
+
+        currency:
+          order.currency || 'NGN',
+
+        items:
+          order.items,
+
+        createdAt:
+          order.createdAt,
+
+        updatedAt:
+          order.updatedAt,
+
+        refundStatus:
+          order.refundStatus || 'none',
+
+        refundAmount:
+          Number(
+            order.refundAmount || 0
+          )
+      }
+    });
+  }
+);
 
 
 /* =========================================================
@@ -1798,9 +2049,7 @@ app.post(
   customerAuth,
   (req, res) => {
     const customer =
-      getCustomer(
-        req.customerId
-      );
+      getCustomer(req.customerId);
 
     const calculated =
       calculateItems(
@@ -1808,25 +2057,21 @@ app.post(
       );
 
     if (!customer) {
-      return res
-        .status(401)
-        .json({
-          message:
-            'Customer account not found.'
-        });
+      return res.status(401).json({
+        message:
+          'Customer account not found.'
+      });
     }
 
     if (
       !calculated ||
       calculated.error
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            calculated?.error ||
-            'Invalid order.'
-        });
+      return res.status(400).json({
+        message:
+          calculated?.error ||
+          'Invalid order.'
+      });
     }
 
     const address =
@@ -1836,12 +2081,10 @@ app.post(
       );
 
     if (!address) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Delivery address is required.'
-        });
+      return res.status(400).json({
+        message:
+          'Delivery address is required.'
+      });
     }
 
     const stockCheck =
@@ -1850,12 +2093,10 @@ app.post(
       );
 
     if (!stockCheck.ok) {
-      return res
-        .status(400)
-        .json({
-          message:
-            stockCheck.message
-        });
+      return res.status(400).json({
+        message:
+          stockCheck.message
+      });
     }
 
     const order =
@@ -1884,22 +2125,210 @@ app.post(
     const orders =
       readOrders();
 
-    orders.push(
-      order
-    );
+    orders.push(order);
 
-    writeOrders(
-      orders
-    );
+    writeOrders(orders);
 
-    res
-      .status(201)
-      .json({
-        order,
+    res.status(201).json({
+      order,
 
-        whatsapp:
-          WHATSAPP
+      whatsapp:
+        WHATSAPP
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER REFUND REQUEST
+========================================================= */
+
+app.post(
+  '/api/customer/refunds',
+  customerAuth,
+  (req, res) => {
+    const reference =
+      clean(
+        req.body?.orderReference,
+        100
+      ).toUpperCase();
+
+    const requestedAmount =
+      safePrice(
+        req.body?.amount
+      );
+
+    const reason =
+      clean(
+        req.body?.reason,
+        1000
+      );
+
+    if (!reference) {
+      return res.status(400).json({
+        message:
+          'Order reference is required.'
       });
+    }
+
+    const orders =
+      readOrders();
+
+    const order =
+      orders.find(
+        item =>
+          String(item.reference).toUpperCase() ===
+            reference &&
+          String(
+            item.customer?.customerId
+          ) ===
+            String(req.customerId)
+      );
+
+    if (!order) {
+      return res.status(404).json({
+        message:
+          'Order not found.'
+      });
+    }
+
+    if (order.status !== 'paid') {
+      return res.status(400).json({
+        message:
+          'Only paid orders can be refunded.'
+      });
+    }
+
+    if (
+      order.orderStatus ===
+        'cancelled' ||
+      order.orderStatus ===
+        'delivered' ||
+      order.orderStatus ===
+        'ready' ||
+      order.orderStatus ===
+        'shipped'
+    ) {
+      /*
+         Store can still approve a refund
+         from admin if desired, but the
+         customer request is kept controlled.
+      */
+    }
+
+    if (
+      order.refundStatus ===
+        'requested' ||
+      order.refundStatus ===
+        'approved' ||
+      order.refundStatus ===
+        'completed'
+    ) {
+      return res.status(409).json({
+        message:
+          'A refund request already exists for this order.'
+      });
+    }
+
+    const amount =
+      Number.isFinite(requestedAmount) &&
+      requestedAmount > 0
+        ? requestedAmount
+        : Number(order.total || 0);
+
+    if (
+      amount <= 0 ||
+      amount > Number(order.total || 0)
+    ) {
+      return res.status(400).json({
+        message:
+          'Invalid refund amount.'
+      });
+    }
+
+    const refund = {
+      id:
+        crypto.randomUUID(),
+
+      reference:
+        refundReference(),
+
+      orderId:
+        order.id,
+
+      orderReference:
+        order.reference,
+
+      customerId:
+        req.customerId,
+
+      amount,
+
+      reason:
+        reason ||
+        'Customer refund request',
+
+      status:
+        'requested',
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString()
+    };
+
+    const refunds =
+      readRefunds();
+
+    refunds.push(refund);
+
+    writeRefunds(refunds);
+
+    order.refundStatus =
+      'requested';
+
+    order.refundAmount =
+      amount;
+
+    order.updatedAt =
+      new Date().toISOString();
+
+    writeOrders(orders);
+
+    res.status(201).json({
+      refund
+    });
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER REFUNDS
+========================================================= */
+
+app.get(
+  '/api/customer/refunds',
+  customerAuth,
+  (req, res) => {
+    const refunds =
+      readRefunds()
+        .filter(
+          refund =>
+            String(
+              refund.customerId
+            ) ===
+            String(req.customerId)
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        );
+
+    res.json({
+      refunds
+    });
   }
 );
 
@@ -1926,24 +2355,20 @@ app.post(
       !ADMIN_USER ||
       !ADMIN_PASSWORD
     ) {
-      return res
-        .status(503)
-        .json({
-          message:
-            'Admin credentials are not configured on the server.'
-        });
+      return res.status(503).json({
+        message:
+          'Admin credentials are not configured on the server.'
+      });
     }
 
     if (
       username !== ADMIN_USER ||
       password !== ADMIN_PASSWORD
     ) {
-      return res
-        .status(401)
-        .json({
-          message:
-            'Invalid username or password.'
-        });
+      return res.status(401).json({
+        message:
+          'Invalid username or password.'
+      });
     }
 
     const sessionToken =
@@ -2010,6 +2435,9 @@ app.get(
     const products =
       readProducts();
 
+    const refunds =
+      readRefunds();
+
     res.json({
       stats: {
         orders:
@@ -2018,22 +2446,19 @@ app.get(
         paid:
           orders.filter(
             order =>
-              order.status ===
-              'paid'
+              order.status === 'paid'
           ).length,
 
         pending:
           orders.filter(
             order =>
-              order.status ===
-              'pending'
+              order.status === 'pending'
           ).length,
 
         failed:
           orders.filter(
             order =>
-              order.status ===
-              'failed'
+              order.status === 'failed'
           ).length,
 
         processing:
@@ -2075,8 +2500,7 @@ app.get(
           orders
             .filter(
               order =>
-                order.status ===
-                'paid'
+                order.status === 'paid'
             )
             .reduce(
               (
@@ -2118,6 +2542,20 @@ app.get(
                 product.stock,
                 0
               ) <= 0
+          ).length,
+
+        refundRequests:
+          refunds.filter(
+            refund =>
+              refund.status ===
+              'requested'
+          ).length,
+
+        refunded:
+          refunds.filter(
+            refund =>
+              refund.status ===
+              'completed'
           ).length
       }
     });
@@ -2138,12 +2576,8 @@ app.get(
         readOrders()
           .sort(
             (a, b) =>
-              new Date(
-                b.createdAt
-              ) -
-              new Date(
-                a.createdAt
-              )
+              new Date(b.createdAt) -
+              new Date(a.createdAt)
           )
     });
   }
@@ -2159,17 +2593,13 @@ app.get(
   adminAuth,
   (req, res) => {
     const order =
-      getOrder(
-        req.params.id
-      );
+      getOrder(req.params.id);
 
     if (!order) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Order not found.'
-        });
+      return res.status(404).json({
+        message:
+          'Order not found.'
+      });
     }
 
     res.json({
@@ -2202,15 +2632,11 @@ app.put(
         30
       ).toLowerCase();
 
-    if (
-      !allowed.includes(status)
-    ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Invalid order status.'
-        });
+    if (!allowed.includes(status)) {
+      return res.status(400).json({
+        message:
+          'Invalid order status.'
+      });
     }
 
     const orders =
@@ -2224,12 +2650,10 @@ app.put(
       );
 
     if (!order) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Order not found.'
-        });
+      return res.status(404).json({
+        message:
+          'Order not found.'
+      });
     }
 
     order.orderStatus =
@@ -2238,9 +2662,103 @@ app.put(
     order.updatedAt =
       new Date().toISOString();
 
-    writeOrders(
-      orders
-    );
+    writeOrders(orders);
+
+    res.json({
+      ok: true,
+      order
+    });
+  }
+);
+
+
+/* =========================================================
+   ADMIN PAYMENT STATUS
+========================================================= */
+
+app.put(
+  '/api/admin/orders/:id/payment-status',
+  adminAuth,
+  (req, res) => {
+    const allowed = [
+      'pending',
+      'paid',
+      'failed'
+    ];
+
+    const status =
+      clean(
+        req.body?.status,
+        30
+      ).toLowerCase();
+
+    if (!allowed.includes(status)) {
+      return res.status(400).json({
+        message:
+          'Invalid payment status.'
+      });
+    }
+
+    const orders =
+      readOrders();
+
+    const order =
+      orders.find(
+        item =>
+          String(item.id) ===
+          String(req.params.id)
+      );
+
+    if (!order) {
+      return res.status(404).json({
+        message:
+          'Order not found.'
+      });
+    }
+
+    const wasPaid =
+      order.status === 'paid';
+
+    order.status =
+      status;
+
+    order.payment =
+      order.payment || {};
+
+    order.payment.updatedByAdmin =
+      true;
+
+    order.payment.updatedAt =
+      new Date().toISOString();
+
+    /*
+       Only decrease stock when changing
+       from unpaid to paid.
+    */
+    if (
+      status === 'paid' &&
+      !wasPaid
+    ) {
+      const stockCheck =
+        validateStock(order.items);
+
+      if (!stockCheck.ok) {
+        return res.status(400).json({
+          message:
+            stockCheck.message
+        });
+      }
+
+      decrementStock(order.items);
+
+      order.payment.paidAt =
+        new Date().toISOString();
+    }
+
+    order.updatedAt =
+      new Date().toISOString();
+
+    writeOrders(orders);
 
     res.json({
       ok: true,
@@ -2261,9 +2779,7 @@ app.get(
     res.json({
       products:
         readProducts()
-          .map(
-            publicProduct
-          )
+          .map(publicProduct)
     });
   }
 );
@@ -2298,9 +2814,7 @@ function productPayload(
 
   if (
     !name ||
-    !Number.isFinite(
-      productPrice
-    )
+    !Number.isFinite(productPrice)
   ) {
     return {
       error:
@@ -2311,45 +2825,28 @@ function productPayload(
   const stock =
     positiveInt(
       body?.stock,
-      positiveInt(
-        old.stock,
-        0
-      )
+      positiveInt(old.stock, 0)
     );
 
   let active;
 
-  if (
-    body?.active ===
-    undefined
-  ) {
+  if (body?.active === undefined) {
     active =
       old.active !== false;
   } else {
-    /*
-       Support boolean and string values.
-    */
-    if (
-      typeof body.active ===
-      'string'
-    ) {
+    if (typeof body.active === 'string') {
       active =
         body.active !== 'false' &&
         body.active !== '0';
     } else {
       active =
-        Boolean(
-          body.active
-        );
+        Boolean(body.active);
     }
   }
 
   let image;
 
-  if (
-    body?.image ===
-    undefined
-  ) {
+  if (body?.image === undefined) {
     image =
       old.image ||
       old.img ||
@@ -2365,15 +2862,9 @@ function productPayload(
       `/assets/product-${old.id || 1}.jpg`
     );
 
-  /*
-     Base64 image size protection.
-  */
   if (
-    image.startsWith(
-      'data:image/'
-    ) &&
-    image.length >
-      7000000
+    image.startsWith('data:image/') &&
+    image.length > 7000000
   ) {
     return {
       error:
@@ -2430,19 +2921,13 @@ app.post(
       readProducts();
 
     const payload =
-      productPayload(
-        req.body
-      );
+      productPayload(req.body);
 
-    if (
-      payload.error
-    ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            payload.error
-        });
+    if (payload.error) {
+      return res.status(400).json({
+        message:
+          payload.error
+      });
     }
 
     const id =
@@ -2450,17 +2935,11 @@ app.post(
         ? Math.max(
             ...products.map(
               item =>
-                Number(
-                  item.id
-                ) || 0
+                Number(item.id) || 0
             )
           ) + 1
         : 1;
 
-    /*
-       If admin uploads image as base64,
-       keep it. If normal path, normalize it.
-    */
     const product = {
       id,
 
@@ -2473,22 +2952,14 @@ app.post(
         new Date().toISOString()
     };
 
-    products.push(
-      product
-    );
+    products.push(product);
 
-    writeProducts(
-      products
-    );
+    writeProducts(products);
 
-    res
-      .status(201)
-      .json({
-        product:
-          publicProduct(
-            product
-          )
-      });
+    res.status(201).json({
+      product:
+        publicProduct(product)
+    });
   }
 );
 
@@ -2512,12 +2983,10 @@ app.put(
       );
 
     if (index < 0) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Product not found.'
-        });
+      return res.status(404).json({
+        message:
+          'Product not found.'
+      });
     }
 
     const payload =
@@ -2526,15 +2995,11 @@ app.put(
         products[index]
       );
 
-    if (
-      payload.error
-    ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            payload.error
-        });
+    if (payload.error) {
+      return res.status(400).json({
+        message:
+          payload.error
+      });
     }
 
     products[index] = {
@@ -2546,9 +3011,7 @@ app.put(
         new Date().toISOString()
     };
 
-    writeProducts(
-      products
-    );
+    writeProducts(products);
 
     res.json({
       product:
@@ -2579,20 +3042,15 @@ app.delete(
       );
 
     if (
-      next.length ===
-      products.length
+      next.length === products.length
     ) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Product not found.'
-        });
+      return res.status(404).json({
+        message:
+          'Product not found.'
+      });
     }
 
-    writeProducts(
-      next
-    );
+    writeProducts(next);
 
     res.json({
       ok: true
@@ -2624,23 +3082,14 @@ app.get(
         '/assets/product-1.jpg'
       );
 
-    /*
-       IMPORTANT:
-       Return both camelCase and snake_case
-       colors for Version 2 frontend.
-    */
     settings =
-      settingsForApi(
-        settings
-      );
+      settingsForApi(settings);
 
     res.json({
       settings,
 
       paystackConfigured:
-        Boolean(
-          PAYSTACK_SECRET
-        ),
+        Boolean(PAYSTACK_SECRET),
 
       whatsapp:
         WHATSAPP
@@ -2651,7 +3100,6 @@ app.get(
 
 /* =========================================================
    SAVE SETTINGS
-   IMPORTANT COLOR PICKER FIX
 ========================================================= */
 
 app.put(
@@ -2705,9 +3153,6 @@ app.put(
           300
         ),
 
-      /*
-         IMPORTANT COLOR FIX
-      */
       primaryColor:
         normalizeColor(
           body.primaryColor ||
@@ -2833,28 +3278,19 @@ app.put(
         ),
 
       enableCart:
-        body.enableCart ===
-        undefined
+        body.enableCart === undefined
           ? old.enableCart !== false
-          : Boolean(
-              body.enableCart
-            ),
+          : Boolean(body.enableCart),
 
       enableWhatsapp:
-        body.enableWhatsapp ===
-        undefined
+        body.enableWhatsapp === undefined
           ? old.enableWhatsapp !== false
-          : Boolean(
-              body.enableWhatsapp
-            ),
+          : Boolean(body.enableWhatsapp),
 
       showStock:
-        body.showStock ===
-        undefined
+        body.showStock === undefined
           ? old.showStock !== false
-          : Boolean(
-              body.showStock
-            ),
+          : Boolean(body.showStock),
 
       lowStockLimit:
         positiveInt(
@@ -2863,19 +3299,327 @@ app.put(
         )
     };
 
-    writeSettings(
-      next
-    );
+    writeSettings(next);
 
-    /*
-       Return normalized settings
-       to frontend immediately.
-    */
     res.json({
       settings:
-        settingsForApi(
-          next
-        )
+        settingsForApi(next)
+    });
+  }
+);
+
+
+/* =========================================================
+   ADMIN REFUNDS
+========================================================= */
+
+app.get(
+  '/api/admin/refunds',
+  adminAuth,
+  (req, res) => {
+    const refunds =
+      readRefunds()
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        );
+
+    res.json({
+      refunds
+    });
+  }
+);
+
+
+/* =========================================================
+   ADMIN SINGLE REFUND
+========================================================= */
+
+app.get(
+  '/api/admin/refunds/:id',
+  adminAuth,
+  (req, res) => {
+    const refund =
+      readRefunds()
+        .find(
+          item =>
+            String(item.id) ===
+            String(req.params.id)
+        );
+
+    if (!refund) {
+      return res.status(404).json({
+        message:
+          'Refund not found.'
+      });
+    }
+
+    res.json({
+      refund
+    });
+  }
+);
+
+
+/* =========================================================
+   ADMIN APPROVE REFUND
+========================================================= */
+
+app.put(
+  '/api/admin/refunds/:id/approve',
+  adminAuth,
+  (req, res) => {
+    const refunds =
+      readRefunds();
+
+    const refundIndex =
+      refunds.findIndex(
+        item =>
+          String(item.id) ===
+          String(req.params.id)
+      );
+
+    if (refundIndex < 0) {
+      return res.status(404).json({
+        message:
+          'Refund not found.'
+      });
+    }
+
+    const refund =
+      refunds[refundIndex];
+
+    if (
+      refund.status ===
+      'completed'
+    ) {
+      return res.status(409).json({
+        message:
+          'This refund has already been completed.'
+      });
+    }
+
+    if (
+      refund.status ===
+      'rejected'
+    ) {
+      return res.status(409).json({
+        message:
+          'This refund was already rejected.'
+      });
+    }
+
+    const orders =
+      readOrders();
+
+    const order =
+      orders.find(
+        item =>
+          String(item.id) ===
+          String(refund.orderId)
+      );
+
+    if (!order) {
+      return res.status(404).json({
+        message:
+          'Related order not found.'
+      });
+    }
+
+    /*
+       Double-credit protection:
+       Check wallet transactions for this
+       exact refund ID before adding money.
+    */
+    const wallet =
+      getWallet(
+        refund.customerId
+      );
+
+    const alreadyCredited =
+      Array.isArray(
+        wallet.transactions
+      ) &&
+      wallet.transactions.some(
+        transaction =>
+          transaction.refundId ===
+          refund.id
+      );
+
+    if (alreadyCredited) {
+      refund.status =
+        'completed';
+
+      refund.updatedAt =
+        new Date().toISOString();
+
+      refunds[refundIndex] =
+        refund;
+
+      writeRefunds(refunds);
+
+      return res.json({
+        ok: true,
+        refund,
+        message:
+          'Refund was already credited to the wallet.'
+      });
+    }
+
+    const result =
+      addWalletCredit(
+        refund.customerId,
+        refund.amount,
+        {
+          reason:
+            `Refund for order ${order.reference}`,
+
+          refundId:
+            refund.id,
+
+          orderId:
+            order.id,
+
+          orderReference:
+            order.reference
+        }
+      );
+
+    refund.status =
+      'completed';
+
+    refund.approvedAt =
+      new Date().toISOString();
+
+    refund.completedAt =
+      new Date().toISOString();
+
+    refund.updatedAt =
+      new Date().toISOString();
+
+    refund.walletTransactionReference =
+      result.transaction.reference;
+
+    refunds[refundIndex] =
+      refund;
+
+    writeRefunds(refunds);
+
+    order.refundStatus =
+      'completed';
+
+    order.refundAmount =
+      Number(refund.amount);
+
+    order.updatedAt =
+      new Date().toISOString();
+
+    writeOrders(orders);
+
+    res.json({
+      ok: true,
+
+      refund,
+
+      wallet: {
+        balance:
+          result.wallet.balance,
+
+        currency:
+          result.wallet.currency
+      }
+    });
+  }
+);
+
+
+/* =========================================================
+   ADMIN REJECT REFUND
+========================================================= */
+
+app.put(
+  '/api/admin/refunds/:id/reject',
+  adminAuth,
+  (req, res) => {
+    const refunds =
+      readRefunds();
+
+    const refundIndex =
+      refunds.findIndex(
+        item =>
+          String(item.id) ===
+          String(req.params.id)
+      );
+
+    if (refundIndex < 0) {
+      return res.status(404).json({
+        message:
+          'Refund not found.'
+      });
+    }
+
+    const refund =
+      refunds[refundIndex];
+
+    if (
+      refund.status ===
+      'completed'
+    ) {
+      return res.status(409).json({
+        message:
+          'Completed refunds cannot be rejected.'
+      });
+    }
+
+    const reason =
+      clean(
+        req.body?.reason,
+        1000
+      );
+
+    refund.status =
+      'rejected';
+
+    refund.rejectionReason =
+      reason ||
+      'Refund request rejected by store.';
+
+    refund.rejectedAt =
+      new Date().toISOString();
+
+    refund.updatedAt =
+      new Date().toISOString();
+
+    refunds[refundIndex] =
+      refund;
+
+    writeRefunds(refunds);
+
+    const orders =
+      readOrders();
+
+    const order =
+      orders.find(
+        item =>
+          String(item.id) ===
+          String(refund.orderId)
+      );
+
+    if (order) {
+      order.refundStatus =
+        'rejected';
+
+      order.updatedAt =
+        new Date().toISOString();
+
+      writeOrders(orders);
+    }
+
+    res.json({
+      ok: true,
+
+      refund
     });
   }
 );
@@ -2890,12 +3634,10 @@ app.post(
   async (req, res) => {
     try {
       if (!PAYSTACK_SECRET) {
-        return res
-          .status(500)
-          .json({
-            message:
-              'Paystack is not configured. Add PAYSTACK_SECRET_KEY on the server.'
-          });
+        return res.status(500).json({
+          message:
+            'Paystack is not configured. Add PAYSTACK_SECRET_KEY on the server.'
+        });
       }
 
       const customer =
@@ -2908,23 +3650,17 @@ app.post(
 
       if (
         !customer?.name ||
-        !validEmail(
-          customer?.email
-        ) ||
-        !validPhone(
-          customer?.phone
-        ) ||
+        !validEmail(customer?.email) ||
+        !validPhone(customer?.phone) ||
         !customer?.address ||
         !calculated ||
         calculated.error
       ) {
-        return res
-          .status(400)
-          .json({
-            message:
-              calculated?.error ||
-              'Incomplete order details.'
-          });
+        return res.status(400).json({
+          message:
+            calculated?.error ||
+            'Incomplete order details.'
+        });
       }
 
       const stockCheck =
@@ -2933,12 +3669,10 @@ app.post(
         );
 
       if (!stockCheck.ok) {
-        return res
-          .status(400)
-          .json({
-            message:
-              stockCheck.message
-          });
+        return res.status(400).json({
+          message:
+            stockCheck.message
+        });
       }
 
       const customerId =
@@ -2983,20 +3717,15 @@ app.post(
       const orders =
         readOrders();
 
-      orders.push(
-        order
-      );
+      orders.push(order);
 
-      writeOrders(
-        orders
-      );
+      writeOrders(orders);
 
       const response =
         await fetch(
           'https://api.paystack.co/transaction/initialize',
           {
-            method:
-              'POST',
+            method: 'POST',
 
             headers: {
               Authorization:
@@ -3027,7 +3756,10 @@ app.post(
 
                 metadata: {
                   order_id:
-                    order.id
+                    order.id,
+
+                  customer_id:
+                    customerId
                 }
               })
           }
@@ -3050,17 +3782,13 @@ app.post(
         order.updatedAt =
           new Date().toISOString();
 
-        writeOrders(
-          orders
-        );
+        writeOrders(orders);
 
-        return res
-          .status(400)
-          .json({
-            message:
-              data.message ||
-              'Paystack initialization failed.'
-          });
+        return res.status(400).json({
+          message:
+            data.message ||
+            'Paystack initialization failed.'
+        });
       }
 
       res.json({
@@ -3077,12 +3805,10 @@ app.post(
         error
       );
 
-      res
-        .status(500)
-        .json({
-          message:
-            'Payment service error.'
-        });
+      res.status(500).json({
+        message:
+          'Payment service error.'
+      });
     }
   }
 );
@@ -3097,12 +3823,10 @@ app.get(
   async (req, res) => {
     try {
       if (!PAYSTACK_SECRET) {
-        return res
-          .status(500)
-          .json({
-            message:
-              'Paystack is not configured.'
-          });
+        return res.status(500).json({
+          message:
+            'Paystack is not configured.'
+        });
       }
 
       const reference =
@@ -3122,12 +3846,10 @@ app.get(
         );
 
       if (!order) {
-        return res
-          .status(404)
-          .json({
-            message:
-              'Order not found.'
-          });
+        return res.status(404).json({
+          message:
+            'Order not found.'
+        });
       }
 
       const response =
@@ -3149,21 +3871,22 @@ app.get(
 
       if (
         data.status &&
-        transaction?.status ===
-          'success' &&
-        Number(
-          transaction.amount
-        ) ===
-          Math.round(
-            order.total * 100
-          ) &&
-        transaction.currency ===
-          'NGN'
+        transaction?.status === 'success' &&
+        Number(transaction.amount) ===
+          Math.round(order.total * 100) &&
+        transaction.currency === 'NGN'
       ) {
-        if (
-          order.status !==
-          'paid'
-        ) {
+        if (order.status !== 'paid') {
+          const stockCheck =
+            validateStock(order.items);
+
+          if (!stockCheck.ok) {
+            return res.status(400).json({
+              message:
+                stockCheck.message
+            });
+          }
+
           order.status =
             'paid';
 
@@ -3187,13 +3910,10 @@ app.get(
         order.updatedAt =
           new Date().toISOString();
 
-        writeOrders(
-          orders
-        );
+        writeOrders(orders);
 
         return res.json({
-          success:
-            true,
+          success: true,
 
           reference,
 
@@ -3213,13 +3933,10 @@ app.get(
       order.updatedAt =
         new Date().toISOString();
 
-      writeOrders(
-        orders
-      );
+      writeOrders(orders);
 
       res.json({
-        success:
-          false,
+        success: false,
 
         message:
           'Payment has not been verified as successful.'
@@ -3231,12 +3948,10 @@ app.get(
         error
       );
 
-      res
-        .status(500)
-        .json({
-          message:
-            'Verification error.'
-        });
+      res.status(500).json({
+        message:
+          'Verification error.'
+      });
     }
   }
 );
@@ -3260,9 +3975,7 @@ app.post(
         !PAYSTACK_SECRET ||
         !req.rawBody
       ) {
-        return res.sendStatus(
-          401
-        );
+        return res.sendStatus(401);
       }
 
       const expected =
@@ -3271,9 +3984,7 @@ app.post(
             'sha512',
             PAYSTACK_SECRET
           )
-          .update(
-            req.rawBody
-          )
+          .update(req.rawBody)
           .digest('hex');
 
       const actualBuffer =
@@ -3282,9 +3993,7 @@ app.post(
         );
 
       const expectedBuffer =
-        Buffer.from(
-          expected
-        );
+        Buffer.from(expected);
 
       if (
         actualBuffer.length !==
@@ -3294,9 +4003,7 @@ app.post(
           expectedBuffer
         )
       ) {
-        return res.sendStatus(
-          401
-        );
+        return res.sendStatus(401);
       }
 
       const event =
@@ -3321,17 +4028,20 @@ app.post(
 
         if (
           order &&
-          Number(
-            transaction.amount
-          ) ===
+          Number(transaction.amount) ===
             Math.round(
               order.total * 100
             ) &&
-          transaction.currency ===
-            'NGN' &&
-          order.status !==
-            'paid'
+          transaction.currency === 'NGN' &&
+          order.status !== 'paid'
         ) {
+          const stockCheck =
+            validateStock(order.items);
+
+          if (!stockCheck.ok) {
+            return res.sendStatus(400);
+          }
+
           order.status =
             'paid';
 
@@ -3354,15 +4064,11 @@ app.post(
           order.updatedAt =
             new Date().toISOString();
 
-          writeOrders(
-            orders
-          );
+          writeOrders(orders);
         }
       }
 
-      res.sendStatus(
-        200
-      );
+      res.sendStatus(200);
 
     } catch (error) {
       console.error(
@@ -3370,9 +4076,7 @@ app.post(
         error
       );
 
-      res.sendStatus(
-        500
-      );
+      res.sendStatus(500);
     }
   }
 );
@@ -3391,19 +4095,10 @@ app.get(
         'payment-success.html'
       );
 
-    /*
-       If the custom page exists,
-       serve it.
-    */
-    if (
-      fs.existsSync(file)
-    ) {
+    if (fs.existsSync(file)) {
       return res.sendFile(file);
     }
 
-    /*
-       Otherwise use built-in page.
-    */
     res
       .type('html')
       .send(`
@@ -3446,16 +4141,27 @@ a{
 </style>
 </head>
 <body>
+
 <div class="box">
-<h1 id="title">Checking payment…</h1>
+
+<h1 id="title">
+Checking payment…
+</h1>
+
 <p id="msg">
 Please wait while we verify your payment.
 </p>
-<a href="/">Return to store</a>
+
+<a href="/">
+Return to store
+</a>
+
 </div>
 
 <script>
+
 (async()=>{
+
   const params =
     new URLSearchParams(
       location.search
@@ -3472,15 +4178,18 @@ Please wait while we verify your payment.
     document.getElementById('msg');
 
   if(!reference){
+
     title.textContent =
       'Payment reference missing';
 
     msg.textContent =
       'Please contact the store.';
+
     return;
   }
 
   try{
+
     const response =
       await fetch(
         '/api/paystack/verify/' +
@@ -3493,6 +4202,7 @@ Please wait while we verify your payment.
       await response.json();
 
     if(data.success){
+
       title.textContent =
         'Payment Successful';
 
@@ -3502,6 +4212,7 @@ Please wait while we verify your payment.
         ' has been received.';
 
     }else{
+
       title.textContent =
         'Payment Not Confirmed';
 
@@ -3511,13 +4222,16 @@ Please wait while we verify your payment.
     }
 
   }catch(error){
+
     title.textContent =
       'Verification Error';
 
     msg.textContent =
       'Please check your order again shortly.';
   }
+
 })();
+
 </script>
 
 </body>
@@ -3538,14 +4252,21 @@ app.get(
       ok: true,
 
       paystackConfigured:
-        Boolean(
-          PAYSTACK_SECRET
-        ),
+        Boolean(PAYSTACK_SECRET),
 
       customerAuth:
         true,
 
       orderTracking:
+        true,
+
+      orderReceipt:
+        true,
+
+      wallet:
+        true,
+
+      refunds:
         true,
 
       products:
@@ -3565,16 +4286,12 @@ app.get(
 app.use(
   (req, res, next) => {
     if (
-      req.path.startsWith(
-        '/api/'
-      )
+      req.path.startsWith('/api/')
     ) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'API route not found.'
-        });
+      return res.status(404).json({
+        message:
+          'API route not found.'
+      });
     }
 
     next();
@@ -3584,8 +4301,6 @@ app.use(
 
 /* =========================================================
    STATIC FILES
-   IMPORTANT:
-   index.html/admin.html are inside public/
 ========================================================= */
 
 app.use(
@@ -3606,20 +4321,16 @@ app.use(
 
 app.use(
   (req, res) => {
-    if (
-      req.accepts('html')
-    ) {
+
+    if (req.accepts('html')) {
+
       const indexFile =
         path.join(
           PUBLIC_DIR,
           'index.html'
         );
 
-      if (
-        fs.existsSync(
-          indexFile
-        )
-      ) {
+      if (fs.existsSync(indexFile)) {
         return res.sendFile(
           indexFile
         );
@@ -3642,6 +4353,7 @@ app.use(
 app.listen(
   PORT,
   () => {
+
     console.log(
       `Face of Style Hijab Factory running at ${BASE_URL}`
     );
@@ -3658,6 +4370,26 @@ app.listen(
       `Paystack configured: ${Boolean(
         PAYSTACK_SECRET
       )}`
+    );
+
+    console.log(
+      `Customer dashboard: enabled`
+    );
+
+    console.log(
+      `Order receipt: enabled`
+    );
+
+    console.log(
+      `Order tracking: enabled`
+    );
+
+    console.log(
+      `Wallet: enabled`
+    );
+
+    console.log(
+      `Refund system: enabled`
     );
   }
 );
