@@ -6,9 +6,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#651630">
 
-<title>Admin Dashboard | Face of Style</title>
+<title>Admin Dashboard | Face of Style Hijab Factory</title>
 
 <style>
+
 :root{
   --wine:#651630;
   --wine2:#4d1024;
@@ -20,20 +21,28 @@
   --white:#fff;
   --green:#16803c;
   --red:#a32626;
+  --orange:#8a5a00;
 }
 
 *{
   box-sizing:border-box;
 }
 
+html{
+  scroll-behavior:smooth;
+}
+
 body{
   margin:0;
   background:var(--bg);
-  font-family:Arial,sans-serif;
   color:var(--text);
+  font-family:Arial,sans-serif;
 }
 
-button,input,select,textarea{
+button,
+input,
+select,
+textarea{
   font:inherit;
 }
 
@@ -50,51 +59,64 @@ button{
   justify-content:space-between;
   position:sticky;
   top:0;
-  z-index:20;
+  z-index:100;
 }
 
 .brand{
-  font:22px Georgia,serif;
+  margin:0;
   color:var(--wine);
+  font:22px Georgia,serif;
 }
 
 .logout{
   background:#fff;
   border:1px solid var(--line);
-  padding:9px 15px;
+  padding:9px 16px;
   border-radius:22px;
+  color:var(--wine);
+  font-weight:bold;
+}
+
+.logout:hover{
+  background:#f8f1eb;
 }
 
 .layout{
+  width:100%;
   max-width:1450px;
   margin:auto;
-  padding:22px 18px 50px;
+  padding:22px 18px 60px;
 }
 
 .login{
-  max-width:410px;
-  margin:9vh auto;
+  width:min(410px,calc(100% - 24px));
+  margin:10vh auto;
   background:#fff;
   padding:32px;
   border-radius:22px;
-  box-shadow:0 12px 35px #32121b16;
+  box-shadow:0 12px 35px #32121b18;
 }
 
 .login h1{
-  font-family:Georgia,serif;
-  color:var(--wine);
-  font-size:31px;
   margin:0 0 8px;
+  color:var(--wine);
+  font:32px Georgia,serif;
+}
+
+.login p{
+  color:var(--muted);
 }
 
 label{
   display:block;
   font-weight:bold;
   font-size:13px;
-  margin-top:4px;
+  margin-top:7px;
 }
 
-input,select,textarea{
+input,
+select,
+textarea{
   width:100%;
   padding:12px;
   border:1px solid var(--line);
@@ -102,14 +124,22 @@ input,select,textarea{
   margin:7px 0 14px;
   background:#fff;
   color:var(--text);
+  outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--gold);
 }
 
 textarea{
-  min-height:105px;
+  min-height:110px;
   resize:vertical;
 }
 
-.primary,.addBtn{
+.primary,
+.addBtn{
   background:var(--wine);
   color:#fff;
   border:0;
@@ -118,17 +148,18 @@ textarea{
   font-weight:bold;
 }
 
-.primary:hover,.addBtn:hover{
+.primary:hover,
+.addBtn:hover{
   background:var(--wine2);
 }
 
 .error{
-  color:var(--red);
+  color:var(--red)!important;
   font-size:13px;
 }
 
 .success{
-  color:var(--green);
+  color:var(--green)!important;
   font-size:13px;
 }
 
@@ -157,6 +188,7 @@ textarea{
 
 .stat small{
   color:var(--muted);
+  display:block;
 }
 
 .stat b{
@@ -174,15 +206,17 @@ textarea{
 }
 
 .tab{
-  padding:10px 17px;
+  padding:10px 18px;
   border:1px solid var(--line);
   background:#fff;
   border-radius:22px;
+  color:var(--text);
 }
 
 .tab.active{
   background:var(--wine);
   color:#fff;
+  border-color:var(--wine);
 }
 
 .panel{
@@ -202,20 +236,20 @@ textarea{
 }
 
 .panel h2{
-  font-family:Georgia,serif;
-  color:var(--wine);
-  font-size:25px;
   margin:0;
+  color:var(--wine);
+  font:25px Georgia,serif;
 }
 
 .search{
-  max-width:360px;
+  max-width:380px;
 }
 
 .productGrid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:17px;
+  margin-top:16px;
 }
 
 .productCard{
@@ -233,14 +267,24 @@ textarea{
   display:block;
 }
 
+.noImage{
+  width:100%;
+  height:235px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#f4eee7;
+  color:var(--muted);
+}
+
 .productInfo{
   padding:15px;
 }
 
 .productInfo h3{
-  margin:0 0 7px;
+  margin:0 0 8px;
   color:var(--wine);
-  font-family:Georgia,serif;
+  font:20px Georgia,serif;
 }
 
 .productMeta{
@@ -250,10 +294,10 @@ textarea{
 }
 
 .productPrice{
-  font-weight:bold;
-  font-size:19px;
-  margin:9px 0;
   color:var(--wine);
+  font-size:19px;
+  font-weight:bold;
+  margin:9px 0;
 }
 
 .productActions{
@@ -287,42 +331,23 @@ textarea{
   grid-column:1/-1;
 }
 
-.uploadBox{
-  border:2px dashed var(--line);
-  border-radius:14px;
-  padding:18px;
-  text-align:center;
-  background:#fcfaf7;
-  margin:7px 0 14px;
+.imageHelp{
+  background:#fcf8f1;
+  padding:12px;
+  border-radius:11px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:12px;
 }
 
-.uploadBox input{
-  display:none;
-}
-
-.uploadBtn{
-  display:inline-block;
-  background:var(--wine);
-  color:#fff;
-  padding:11px 17px;
-  border-radius:22px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.previewGrid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:9px;
-  margin:10px 0;
-}
-
-.previewGrid img{
+.preview{
   width:100%;
-  height:110px;
-  object-fit:cover;
-  border-radius:10px;
-  border:1px solid var(--line);
+  max-height:250px;
+  object-fit:contain;
+  background:#f4eee7;
+  border-radius:12px;
+  margin:5px 0 14px;
 }
 
 .tableWrap{
@@ -332,10 +357,11 @@ textarea{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:1100px;
+  min-width:1150px;
 }
 
-th,td{
+th,
+td{
   text-align:left;
   padding:12px 10px;
   border-bottom:1px solid var(--line);
@@ -345,6 +371,10 @@ th,td{
 th{
   color:var(--wine);
   font-family:Georgia,serif;
+}
+
+td small{
+  color:var(--muted);
 }
 
 .pill{
@@ -365,7 +395,8 @@ th{
   color:#8a5a00;
 }
 
-.failed,.cancelled{
+.failed,
+.cancelled{
   background:#fde7e7;
   color:#9a2222;
 }
@@ -390,14 +421,20 @@ th{
   color:#176a35;
 }
 
+.statusSelect,
+.paymentSelect{
+  min-width:135px;
+  margin:6px 0 0;
+}
+
 .empty{
   text-align:center;
-  padding:30px;
+  padding:35px;
   color:var(--muted);
 }
 
 .loading{
-  padding:20px;
+  padding:25px;
   text-align:center;
   color:var(--muted);
 }
@@ -410,32 +447,43 @@ th{
   align-items:center;
   justify-content:center;
   padding:18px;
-  z-index:50;
+  z-index:500;
 }
 
 .modalBox{
-  background:#fff;
-  width:min(750px,100%);
+  width:min(760px,100%);
   max-height:92vh;
   overflow:auto;
+  background:#fff;
   border-radius:20px;
   padding:22px;
 }
 
 .modalHead{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  gap:15px;
   margin-bottom:15px;
 }
 
+.modalHead h2{
+  margin:0;
+  color:var(--wine);
+  font:25px Georgia,serif;
+}
+
 .close{
-  border:0;
-  background:#f4eee7;
-  border-radius:50%;
   width:38px;
   height:38px;
-  font-size:20px;
+  border:0;
+  border-radius:50%;
+  background:#f4eee7;
+  font-size:21px;
+}
+
+.close:hover{
+  background:#eadfd5;
 }
 
 .infoGrid{
@@ -446,27 +494,31 @@ th{
 
 .infoBox{
   background:#fcf8f1;
+  padding:13px;
   border-radius:12px;
-  padding:12px;
 }
 
 .infoBox small{
-  color:var(--muted);
   display:block;
-  margin-bottom:4px;
+  color:var(--muted);
+  margin-bottom:5px;
 }
 
-.statusSelect{
-  min-width:140px;
-  margin:0;
+.refreshBtn{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:10px 15px;
+  border-radius:20px;
+  color:var(--wine);
+  font-weight:bold;
 }
 
-.paymentSelect{
-  min-width:120px;
-  margin:0;
+.refreshBtn:hover{
+  background:#f8f1eb;
 }
 
-@media(max-width:1100px){
+@media(max-width:1150px){
+
   .cards{
     grid-template-columns:repeat(3,1fr);
   }
@@ -474,9 +526,23 @@ th{
   .productGrid{
     grid-template-columns:1fr 1fr;
   }
+
 }
 
 @media(max-width:700px){
+
+  .top{
+    padding:12px 14px;
+  }
+
+  .brand{
+    font-size:17px;
+  }
+
+  .layout{
+    padding:15px 11px 40px;
+  }
+
   .cards{
     grid-template-columns:1fr 1fr;
   }
@@ -485,24 +551,13 @@ th{
     grid-template-columns:1fr;
   }
 
-  .formGrid,.infoGrid{
+  .formGrid,
+  .infoGrid{
     grid-template-columns:1fr;
   }
 
   .full{
     grid-column:auto;
-  }
-
-  .top{
-    padding:12px 14px;
-  }
-
-  .brand{
-    font-size:18px;
-  }
-
-  .layout{
-    padding:16px 11px 40px;
   }
 
   .panel{
@@ -518,10 +573,29 @@ th{
     max-width:none;
   }
 
-  .previewGrid{
-    grid-template-columns:repeat(2,1fr);
+  .login{
+    padding:25px;
   }
+
 }
+
+@media(max-width:430px){
+
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  .tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+
+  .tab{
+    width:100%;
+  }
+
+}
+
 </style>
 </head>
 
@@ -544,7 +618,12 @@ th{
 
 <div id="app"></div>
 
+
 <script>
+
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
 
 const app =
   document.getElementById("app");
@@ -619,11 +698,8 @@ function normalizeImage(value){
 
 function statusClass(status){
 
-  const value =
-    String(status || "")
-      .toLowerCase();
-
-  return value
+  return String(status || "")
+    .toLowerCase()
     .replace(/[^a-z]/g,"");
 
 }
@@ -679,6 +755,7 @@ function login(){
         id="username"
         value="admin"
         autocomplete="username"
+        placeholder="Admin username"
       >
 
       <label>
@@ -689,6 +766,7 @@ function login(){
         id="password"
         type="password"
         autocomplete="current-password"
+        placeholder="Admin password"
         onkeydown="
           if(event.key==='Enter'){
             doLogin();
@@ -709,6 +787,11 @@ function login(){
         class="error"
       ></p>
 
+      <div class="notice">
+        Use the ADMIN_USERNAME and ADMIN_PASSWORD
+        values configured in Render.
+      </div>
+
     </div>
 
   `;
@@ -725,6 +808,26 @@ async function doLogin(){
 
   error.textContent = "";
 
+  const username =
+    document
+      .getElementById("username")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("password")
+      .value;
+
+  if(!username || !password){
+
+    error.textContent =
+      "Enter username and password.";
+
+    return;
+
+  }
+
   try{
 
     const response =
@@ -740,31 +843,14 @@ async function doLogin(){
 
           body:
             JSON.stringify({
-
-              username:
-                document
-                  .getElementById(
-                    "username"
-                  )
-                  .value
-                  .trim(),
-
-              password:
-                document
-                  .getElementById(
-                    "password"
-                  )
-                  .value
-
+              username,
+              password
             })
-
         }
       );
 
-
     const data =
       await response.json();
-
 
     if(
       response.ok &&
@@ -780,16 +866,15 @@ async function doLogin(){
         token
       );
 
-      dashboard();
+      await dashboard();
 
       return;
 
     }
 
-
     error.textContent =
       data.message ||
-      "Login failed.";
+      "Invalid admin credentials.";
 
   }catch(errorObject){
 
@@ -847,7 +932,7 @@ async function logout(){
 
 
 /* =========================================================
-   API
+   API HELPER
 ========================================================= */
 
 async function api(
@@ -863,13 +948,11 @@ async function api(
 
   }
 
-
   const headers = {
     ...(options.headers || {}),
     Authorization:
       "Bearer " + token
   };
-
 
   try{
 
@@ -881,7 +964,6 @@ async function api(
           headers
         }
       );
-
 
     if(
       response.status === 401
@@ -899,12 +981,10 @@ async function api(
 
     }
 
-
     const text =
       await response.text();
 
-
-    let data;
+    let data = {};
 
     try{
 
@@ -923,7 +1003,6 @@ async function api(
 
     }
 
-
     if(
       !response.ok &&
       !data.error
@@ -934,7 +1013,6 @@ async function api(
         "Request failed.";
 
     }
-
 
     return data;
 
@@ -960,38 +1038,36 @@ async function api(
 
 async function dashboard(){
 
-  const contentData =
-    await Promise.all([
-      api("/api/admin/orders"),
-      api("/api/admin/products")
-    ]);
+  const ordersData =
+    await api(
+      "/api/admin/orders"
+    );
 
+  const productsData =
+    await api(
+      "/api/admin/products"
+    );
 
   if(
-    !contentData[0] ||
-    !contentData[1]
+    !ordersData ||
+    !productsData
   ){
-
     return;
-
   }
-
 
   allOrders =
     Array.isArray(
-      contentData[0].orders
+      ordersData.orders
     )
-      ? contentData[0].orders
+      ? ordersData.orders
       : [];
-
 
   allProducts =
     Array.isArray(
-      contentData[1].products
+      productsData.products
     )
-      ? contentData[1].products
+      ? productsData.products
       : [];
-
 
   renderDashboard();
 
@@ -1008,7 +1084,6 @@ function renderDashboard(){
         ).toUpperCase() === "PAID"
     );
 
-
   const pendingOrders =
     allOrders.filter(
       order =>
@@ -1017,16 +1092,13 @@ function renderDashboard(){
         ).toUpperCase() === "PENDING"
     );
 
-
   const processingOrders =
     allOrders.filter(
       order =>
         String(
           order.order_status || ""
-        ).toUpperCase() ===
-        "PROCESSING"
+        ).toUpperCase() === "PROCESSING"
     );
-
 
   const revenue =
     paidOrders.reduce(
@@ -1040,7 +1112,6 @@ function renderDashboard(){
         ),
       0
     );
-
 
   app.innerHTML = `
 
@@ -1103,14 +1174,13 @@ function renderDashboard(){
 
   `;
 
-
   showOrders();
 
 }
 
 
 /* =========================================================
-   TABS
+   TAB
 ========================================================= */
 
 function activeTab(id){
@@ -1118,16 +1188,14 @@ function activeTab(id){
   document
     .querySelectorAll(".tab")
     .forEach(
-      item =>
-        item.classList.remove(
+      button =>
+        button.classList.remove(
           "active"
         )
     );
 
-
   const element =
     document.getElementById(id);
-
 
   if(element){
 
@@ -1148,20 +1216,33 @@ async function showOrders(){
 
   activeTab("tabOrders");
 
-
   const content =
     document.getElementById(
       "content"
     );
 
+  if(!content){
+    return;
+  }
 
   content.innerHTML = `
 
     <div class="panel">
 
-      <h2>
-        Customer Orders
-      </h2>
+      <div class="panelHead">
+
+        <h2>
+          Customer Orders
+        </h2>
+
+        <button
+          class="refreshBtn"
+          onclick="showOrders()"
+        >
+          Refresh
+        </button>
+
+      </div>
 
       <div class="loading">
         Loading orders...
@@ -1171,19 +1252,14 @@ async function showOrders(){
 
   `;
 
-
   const data =
     await api(
       "/api/admin/orders"
     );
 
-
   if(!data){
-
     return;
-
   }
-
 
   if(data.error){
 
@@ -1207,14 +1283,12 @@ async function showOrders(){
 
   }
 
-
   allOrders =
     Array.isArray(
       data.orders
     )
       ? data.orders
       : [];
-
 
   renderOrders(
     allOrders
@@ -1232,6 +1306,9 @@ function renderOrders(
       "content"
     );
 
+  if(!content){
+    return;
+  }
 
   content.innerHTML = `
 
@@ -1244,7 +1321,7 @@ function renderOrders(
         </h2>
 
         <button
-          class="addBtn"
+          class="refreshBtn"
           onclick="showOrders()"
         >
           Refresh
@@ -1252,19 +1329,17 @@ function renderOrders(
 
       </div>
 
-
       <div class="notice">
 
-        <b>Payment status:</b>
-        Paystack verification controls normal payment status.
+        <b>Payment:</b>
+        Paystack verification normally controls payment status.
 
         <br>
 
-        <b>Order status:</b>
-        Use the order workflow below to manage delivery.
+        <b>Order:</b>
+        Use Order Status to manage the delivery workflow.
 
       </div>
-
 
       ${
         orders.length
@@ -1315,7 +1390,6 @@ function renderOrders(
 
                 </thead>
 
-
                 <tbody>
 
                   ${
@@ -1329,13 +1403,11 @@ function renderOrders(
                               "PENDING"
                             ).toUpperCase();
 
-
                           const orderStatus =
                             String(
                               order.order_status ||
                               "PENDING"
                             ).toUpperCase();
-
 
                           const items =
                             Array.isArray(
@@ -1343,7 +1415,6 @@ function renderOrders(
                             )
                               ? order.items
                               : [];
-
 
                           return `
 
@@ -1360,15 +1431,20 @@ function renderOrders(
 
                                 ${
                                   order.paystack_reference
+
                                     ? `
+
                                       <br>
+
                                       <small>
                                         Paystack:
                                         ${esc(
                                           order.paystack_reference
                                         )}
                                       </small>
+
                                     `
+
                                     : ""
                                 }
 
@@ -1406,12 +1482,10 @@ function renderOrders(
 
 
                               <td>
-
                                 ${esc(
                                   order.delivery_address ||
                                   "-"
                                 )}
-
                               </td>
 
 
@@ -1426,17 +1500,18 @@ function renderOrders(
 
                                           <div
                                             style="
-                                              margin-bottom:5px;
+                                              margin-bottom:8px;
                                             "
                                           >
 
-                                            ${esc(
-                                              item.product_name ||
-                                              "Product"
-                                            )}
+                                            <b>
+                                              ${esc(
+                                                item.product_name ||
+                                                "Product"
+                                              )}
+                                            </b>
 
                                             ×
-
                                             ${Number(
                                               item.quantity || 0
                                             )}
@@ -1462,11 +1537,13 @@ function renderOrders(
 
 
                               <td>
+
                                 <b>
                                   ${money(
                                     order.total
                                   )}
                                 </b>
+
                               </td>
 
 
@@ -1488,9 +1565,7 @@ function renderOrders(
                                   )}
                                 </span>
 
-
-                                <br><br>
-
+                                <br>
 
                                 <select
                                   class="paymentSelect"
@@ -1502,20 +1577,20 @@ function renderOrders(
                                   "
                                 >
 
-                                  ${[
-                                    "PENDING",
-                                    "PAID",
-                                    "FAILED",
-                                    "REFUNDED"
-                                  ]
+                                  ${
+                                    [
+                                      "PENDING",
+                                      "PAID",
+                                      "FAILED",
+                                      "REFUNDED"
+                                    ]
                                     .map(
                                       status => `
 
                                         <option
                                           value="${status}"
                                           ${
-                                            status ===
-                                            payment
+                                            status === payment
                                               ? "selected"
                                               : ""
                                           }
@@ -1547,7 +1622,7 @@ function renderOrders(
                                   )}
                                 </span>
 
-                                <br><br>
+                                <br>
 
                                 <select
                                   class="statusSelect"
@@ -1559,21 +1634,21 @@ function renderOrders(
                                   "
                                 >
 
-                                  ${[
-                                    "PENDING",
-                                    "PROCESSING",
-                                    "SHIPPED",
-                                    "DELIVERED",
-                                    "CANCELLED"
-                                  ]
+                                  ${
+                                    [
+                                      "PENDING",
+                                      "PROCESSING",
+                                      "SHIPPED",
+                                      "DELIVERED",
+                                      "CANCELLED"
+                                    ]
                                     .map(
                                       status => `
 
                                         <option
                                           value="${status}"
                                           ${
-                                            status ===
-                                            orderStatus
+                                            status === orderStatus
                                               ? "selected"
                                               : ""
                                           }
@@ -1592,11 +1667,9 @@ function renderOrders(
 
 
                               <td>
-
                                 ${formatDate(
                                   order.created_at
                                 )}
-
                               </td>
 
                             </tr>
@@ -1663,7 +1736,6 @@ async function changeOrderStatus(
       }
     );
 
-
   if(
     !data ||
     data.error ||
@@ -1682,10 +1754,7 @@ async function changeOrderStatus(
 
   }
 
-
-  await refreshStats();
-
-  showOrders();
+  await refreshDashboardData();
 
 }
 
@@ -1706,7 +1775,6 @@ async function changePaymentStatus(
       "?"
     );
 
-
   if(!confirmed){
 
     showOrders();
@@ -1714,7 +1782,6 @@ async function changePaymentStatus(
     return;
 
   }
-
 
   const data =
     await api(
@@ -1739,7 +1806,6 @@ async function changePaymentStatus(
       }
     );
 
-
   if(
     !data ||
     data.error ||
@@ -1752,12 +1818,13 @@ async function changePaymentStatus(
       "Unable to update payment status."
     );
 
+    showOrders();
+
+    return;
+
   }
 
-
-  await refreshStats();
-
-  showOrders();
+  await refreshDashboardData();
 
 }
 
@@ -1766,26 +1833,41 @@ async function changePaymentStatus(
    REFRESH DASHBOARD DATA
 ========================================================= */
 
-async function refreshStats(){
+async function refreshDashboardData(){
 
-  const data =
+  const ordersData =
     await api(
       "/api/admin/orders"
     );
 
+  const productsData =
+    await api(
+      "/api/admin/products"
+    );
 
   if(
-    data &&
+    ordersData &&
     Array.isArray(
-      data.orders
+      ordersData.orders
     )
   ){
 
     allOrders =
-      data.orders;
+      ordersData.orders;
 
   }
 
+  if(
+    productsData &&
+    Array.isArray(
+      productsData.products
+    )
+  ){
+
+    allProducts =
+      productsData.products;
+
+  }
 
   renderDashboard();
 
@@ -1800,20 +1882,29 @@ async function showProducts(){
 
   activeTab("tabProducts");
 
-
   const content =
     document.getElementById(
       "content"
     );
 
-
   content.innerHTML = `
 
     <div class="panel">
 
-      <h2>
-        Products
-      </h2>
+      <div class="panelHead">
+
+        <h2>
+          Products
+        </h2>
+
+        <button
+          class="addBtn"
+          onclick="openProductModal()"
+        >
+          + Add Product
+        </button>
+
+      </div>
 
       <div class="loading">
         Loading products...
@@ -1823,19 +1914,14 @@ async function showProducts(){
 
   `;
 
-
   const data =
     await api(
       "/api/admin/products"
     );
 
-
   if(!data){
-
     return;
-
   }
-
 
   if(data.error){
 
@@ -1859,14 +1945,12 @@ async function showProducts(){
 
   }
 
-
   allProducts =
     Array.isArray(
       data.products
     )
       ? data.products
       : [];
-
 
   renderProducts(
     allProducts
@@ -1883,7 +1967,6 @@ function renderProducts(
     document.getElementById(
       "content"
     );
-
 
   content.innerHTML = `
 
@@ -1904,7 +1987,6 @@ function renderProducts(
 
       </div>
 
-
       <input
         class="search"
         id="productSearch"
@@ -1912,17 +1994,14 @@ function renderProducts(
         oninput="filterProducts(this.value)"
       >
 
-
       <div
         id="productsList"
         class="productGrid"
-        style="margin-top:15px"
       ></div>
 
     </div>
 
   `;
-
 
   drawProductCards(
     products
@@ -1939,9 +2018,8 @@ function filterProducts(
     String(
       value || ""
     )
-      .toLowerCase()
-      .trim();
-
+    .toLowerCase()
+    .trim();
 
   const filtered =
     allProducts.filter(
@@ -1952,7 +2030,6 @@ function filterProducts(
             product.name || ""
           ).toLowerCase();
 
-
         const category =
           String(
             product.category ||
@@ -1960,13 +2037,11 @@ function filterProducts(
             ""
           ).toLowerCase();
 
-
         const color =
           String(
             product.color ||
             ""
           ).toLowerCase();
-
 
         return (
           name.includes(query) ||
@@ -1976,7 +2051,6 @@ function filterProducts(
 
       }
     );
-
 
   drawProductCards(
     filtered
@@ -1994,13 +2068,9 @@ function drawProductCards(
       "productsList"
     );
 
-
   if(!container){
-
     return;
-
   }
-
 
   if(!products.length){
 
@@ -2019,7 +2089,6 @@ function drawProductCards(
 
   }
 
-
   container.innerHTML =
     products
       .map(
@@ -2031,24 +2100,23 @@ function drawProductCards(
               product.img
             );
 
-
           const category =
             product.category ||
             product.cat ||
             "Fashion";
-
 
           const description =
             product.description ||
             product.desc ||
             "";
 
-
           const stock =
             Number(
               product.stock || 0
             );
 
+          const active =
+            product.active !== false;
 
           return `
 
@@ -2062,32 +2130,28 @@ function drawProductCards(
                     <img
                       class="productImage"
                       src="${esc(image)}"
-                      alt="${esc(product.name)}"
+                      alt="${esc(
+                        product.name
+                      )}"
                       onerror="
                         this.onerror=null;
                         this.style.display='none';
-                        this.parentElement
-                          .insertAdjacentHTML(
-                            'afterbegin',
-                            '<div style=&quot;height:235px;display:flex;align-items:center;justify-content:center;background:#f4eee7;color:#756a6f&quot;>Image unavailable</div>'
-                          );
+                        this.nextElementSibling.style.display='flex';
                       "
                     >
+
+                    <div
+                      class="noImage"
+                      style="display:none"
+                    >
+                      Image unavailable
+                    </div>
 
                   `
 
                   : `
 
-                    <div
-                      style="
-                        height:235px;
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        background:#f4eee7;
-                        color:#756a6f;
-                      "
-                    >
+                    <div class="noImage">
                       No Image
                     </div>
 
@@ -2102,7 +2166,6 @@ function drawProductCards(
                     product.name
                   )}
                 </h3>
-
 
                 <div class="productMeta">
 
@@ -2127,11 +2190,13 @@ function drawProductCards(
                   <br>
 
                   Status:
-                  ${
-                    product.active === false
-                      ? "Hidden"
-                      : "Active"
-                  }
+                  <b>
+                    ${
+                      active
+                        ? "Active"
+                        : "Hidden"
+                    }
+                  </b>
 
                 </div>
 
@@ -2147,7 +2212,8 @@ function drawProductCards(
                   style="
                     font-size:12px;
                     color:#756a6f;
-                    margin-bottom:10px;
+                    margin-bottom:12px;
+                    line-height:1.5;
                   "
                 >
                   ${esc(
@@ -2177,7 +2243,7 @@ function drawProductCards(
                       )
                     "
                   >
-                    Delete
+                    Remove
                   </button>
 
                 </div>
@@ -2206,10 +2272,13 @@ function openProductModal(
   const editing =
     Boolean(product);
 
+  selectedImage = "";
 
-  selectedImage =
-    "";
-
+  document
+    .getElementById(
+      "productModal"
+    )
+    ?.remove();
 
   document.body.insertAdjacentHTML(
     "beforeend",
@@ -2255,7 +2324,8 @@ function openProductModal(
               <input
                 id="productName"
                 value="${esc(
-                  product?.name || ""
+                  product?.name ||
+                  ""
                 )}"
                 placeholder="Elegant Zip Abaya"
               >
@@ -2276,7 +2346,7 @@ function openProductModal(
                   product?.cat ||
                   "Fashion"
                 )}"
-                placeholder="Hijab, Abaya, Gown..."
+                placeholder="Hijab, Abaya, Gown"
               >
 
             </div>
@@ -2310,9 +2380,10 @@ function openProductModal(
               <input
                 id="productColor"
                 value="${esc(
-                  product?.color || ""
+                  product?.color ||
+                  ""
                 )}"
-                placeholder="Wine"
+                placeholder="Black, Wine, Rose..."
               >
 
             </div>
@@ -2321,7 +2392,7 @@ function openProductModal(
             <div>
 
               <label>
-                Stock
+                Stock Quantity
               </label>
 
               <input
@@ -2377,7 +2448,7 @@ function openProductModal(
             <div class="full">
 
               <label>
-                Image URL / File
+                Product Image
               </label>
 
               <input
@@ -2387,42 +2458,42 @@ function openProductModal(
                   product?.img ||
                   ""
                 )}"
-                placeholder="product-1.jpg or https://..."
+                placeholder="product-1.jpg"
+                oninput="previewImageFromText(this.value)"
               >
 
-              <div class="uploadBox">
+              <div class="imageHelp">
 
-                <label
-                  for="galleryInput"
-                  class="uploadBtn"
-                >
-                  📷 Choose Image
-                </label>
+                <b>Image path:</b>
+                use the filename inside
+                <b>public/assets</b>.
 
-                <input
-                  id="galleryInput"
-                  type="file"
-                  accept="image/*"
-                  onchange="previewProductImage(this)"
-                >
+                <br>
 
-                <p
-                  style="
-                    margin:9px 0 0;
-                    color:#756a6f;
-                    font-size:12px;
-                  "
-                >
-                  Choose a product image from your phone.
-                </p>
+                Example:
+                <b>product-1.jpg</b>
+
+                <br>
+
+                You can also use a complete HTTPS image URL.
+
+                <br><br>
+
+                This keeps the image compatible with the current
+                Version 2 server/database structure.
 
               </div>
 
-
-              <div
-                id="previewGrid"
-                class="previewGrid"
-              ></div>
+              <img
+                id="imagePreview"
+                class="preview"
+                src=""
+                alt="Product preview"
+                style="display:none"
+                onerror="
+                  this.style.display='none'
+                "
+              >
 
             </div>
 
@@ -2479,136 +2550,65 @@ function openProductModal(
     `
   );
 
-
-  if(
+  const initialImage =
     product?.image ||
-    product?.img
-  ){
+    product?.img ||
+    "";
 
-    const image =
-      normalizeImage(
-        product.image ||
-        product.img
-      );
+  if(initialImage){
 
-
-    const preview =
-      document.getElementById(
-        "previewGrid"
-      );
-
-
-    if(
-      preview &&
-      image
-    ){
-
-      preview.innerHTML = `
-
-        <img
-          src="${esc(image)}"
-          alt="Current product image"
-          onerror="
-            this.style.display='none'
-          "
-        >
-
-      `;
-
-    }
+    previewImageFromText(
+      initialImage
+    );
 
   }
 
 }
 
 
-function previewProductImage(
-  input
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+function previewImageFromText(
+  value
 ){
 
-  const file =
-    input.files?.[0];
-
-
-  if(!file){
-
-    return;
-
-  }
-
-
-  if(
-    !file.type.startsWith(
-      "image/"
-    )
-  ){
-
-    alert(
-      "Please choose an image file."
+  const image =
+    normalizeImage(
+      value
     );
 
-    input.value = "";
-
-    return;
-
-  }
-
-
-  if(
-    file.size >
-    1500000
-  ){
-
-    alert(
-      "Image is too large. Please choose an image under 1.5MB."
+  const preview =
+    document.getElementById(
+      "imagePreview"
     );
 
-    input.value = "";
+  if(!preview){
+    return;
+  }
+
+  if(!image){
+
+    preview.style.display =
+      "none";
 
     return;
 
   }
 
+  preview.src =
+    image;
 
-  const reader =
-    new FileReader();
-
-
-  reader.onload =
-    event => {
-
-      selectedImage =
-        event.target.result;
-
-
-      const preview =
-        document.getElementById(
-          "previewGrid"
-        );
-
-
-      if(preview){
-
-        preview.innerHTML = `
-
-          <img
-            src="${event.target.result}"
-            alt="New product image"
-          >
-
-        `;
-
-      }
-
-    };
-
-
-  reader.readAsDataURL(
-    file
-  );
+  preview.style.display =
+    "block";
 
 }
 
+
+/* =========================================================
+   CLOSE PRODUCT MODAL
+========================================================= */
 
 function closeProductModal(){
 
@@ -2618,8 +2618,7 @@ function closeProductModal(){
     )
     ?.remove();
 
-  selectedImage =
-    "";
+  selectedImage = "";
 
 }
 
@@ -2637,88 +2636,73 @@ async function saveProduct(
       "productMessage"
     );
 
+  const name =
+    document
+      .getElementById(
+        "productName"
+      )
+      .value
+      .trim();
 
-  const imageInput =
-    document.getElementById(
-      "productImage"
+  const category =
+    document
+      .getElementById(
+        "productCategory"
+      )
+      .value
+      .trim();
+
+  const description =
+    document
+      .getElementById(
+        "productDescription"
+      )
+      .value
+      .trim();
+
+  const price =
+    Number(
+      document
+        .getElementById(
+          "productPrice"
+        )
+        .value
     );
 
+  const color =
+    document
+      .getElementById(
+        "productColor"
+      )
+      .value
+      .trim();
 
-  const typedImage =
-    imageInput.value.trim();
+  const stock =
+    Number(
+      document
+        .getElementById(
+          "productStock"
+        )
+        .value
+    );
 
+  const active =
+    document
+      .getElementById(
+        "productActive"
+      )
+      .value === "true";
 
   const image =
-    selectedImage ||
-    typedImage;
+    document
+      .getElementById(
+        "productImage"
+      )
+      .value
+      .trim();
 
 
-  const data = {
-
-    name:
-      document
-        .getElementById(
-          "productName"
-        )
-        .value
-        .trim(),
-
-    category:
-      document
-        .getElementById(
-          "productCategory"
-        )
-        .value
-        .trim(),
-
-    description:
-      document
-        .getElementById(
-          "productDescription"
-        )
-        .value
-        .trim(),
-
-    price:
-      Number(
-        document
-          .getElementById(
-            "productPrice"
-          )
-          .value
-      ),
-
-    color:
-      document
-        .getElementById(
-          "productColor"
-        )
-        .value
-        .trim(),
-
-    stock:
-      Number(
-        document
-          .getElementById(
-            "productStock"
-          )
-          .value
-      ),
-
-    active:
-      document
-        .getElementById(
-          "productActive"
-        )
-        .value ===
-      "true",
-
-    image
-
-  };
-
-
-  if(!data.name){
+  if(!name){
 
     message.className =
       "error";
@@ -2732,10 +2716,8 @@ async function saveProduct(
 
 
   if(
-    !Number.isFinite(
-      data.price
-    ) ||
-    data.price < 0
+    !Number.isFinite(price) ||
+    price < 0
   ){
 
     message.className =
@@ -2750,10 +2732,8 @@ async function saveProduct(
 
 
   if(
-    !Number.isInteger(
-      data.stock
-    ) ||
-    data.stock < 0
+    !Number.isInteger(stock) ||
+    stock < 0
   ){
 
     message.className =
@@ -2768,25 +2748,46 @@ async function saveProduct(
 
 
   if(
-    image.length >
-    1000000
+    image.length > 1000
   ){
 
     message.className =
       "error";
 
     message.textContent =
-      "The selected image is too large for the server.";
+      "Image path is too long.";
 
     return;
 
   }
 
 
-  message.className = "";
+  const payload = {
+
+    name,
+
+    category,
+
+    description,
+
+    price,
+
+    color,
+
+    stock,
+
+    active,
+
+    image
+
+  };
+
+
+  message.className =
+    "";
 
   message.textContent =
-    "Saving...";
+    "Saving product...";
 
 
   const url =
@@ -2814,7 +2815,9 @@ async function saveProduct(
         },
 
         body:
-          JSON.stringify(data)
+          JSON.stringify(
+            payload
+          )
 
       }
     );
@@ -2831,7 +2834,6 @@ async function saveProduct(
     message.textContent =
       "Product saved successfully.";
 
-
     setTimeout(
       async () => {
 
@@ -2844,7 +2846,6 @@ async function saveProduct(
       },
       500
     );
-
 
     return;
 
@@ -2872,7 +2873,6 @@ async function loadProducts(){
     await api(
       "/api/admin/products"
     );
-
 
   if(
     data &&
@@ -2904,7 +2904,6 @@ function editProduct(
         Number(id)
     );
 
-
   if(!product){
 
     alert(
@@ -2915,7 +2914,6 @@ function editProduct(
 
   }
 
-
   openProductModal(
     product
   );
@@ -2924,7 +2922,7 @@ function editProduct(
 
 
 /* =========================================================
-   DELETE PRODUCT
+   REMOVE PRODUCT
 ========================================================= */
 
 async function deleteProduct(
@@ -2938,26 +2936,20 @@ async function deleteProduct(
         Number(id)
     );
 
-
   if(!product){
-
     return;
-
   }
 
-
-  if(
-    !confirm(
-      "Remove \"" +
+  const confirmed =
+    confirm(
+      'Remove "' +
       product.name +
-      "\" from the store?"
-    )
-  ){
+      '" from the store?'
+    );
 
+  if(!confirmed){
     return;
-
   }
-
 
   const data =
     await api(
@@ -2967,7 +2959,6 @@ async function deleteProduct(
         method:"DELETE"
       }
     );
-
 
   if(
     data &&
@@ -2981,7 +2972,6 @@ async function deleteProduct(
     return;
 
   }
-
 
   alert(
     data?.message ||
@@ -3006,19 +2996,17 @@ async function checkSession(){
 
   }
 
-
   const data =
     await api(
       "/api/admin/me"
     );
-
 
   if(
     data &&
     data.ok
   ){
 
-    dashboard();
+    await dashboard();
 
   }else{
 
@@ -3034,6 +3022,10 @@ async function checkSession(){
 
 }
 
+
+/* =========================================================
+   START
+========================================================= */
 
 checkSession();
 
