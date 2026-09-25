@@ -1,18 +1,16 @@
 <!doctype html>
 <html lang="en">
-
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#651630">
 
-<title>Admin Dashboard | Face of Style Hijab Factory</title>
+<title>Admin Dashboard | Face of Style</title>
 
 <style>
-
 :root{
   --wine:#651630;
-  --wine2:#4d1024;
+  --wine2:#7d1e3b;
   --gold:#c9a45b;
   --bg:#f7f2eb;
   --line:#e6dacf;
@@ -28,15 +26,11 @@
   box-sizing:border-box;
 }
 
-html{
-  scroll-behavior:smooth;
-}
-
 body{
   margin:0;
   background:var(--bg);
-  color:var(--text);
   font-family:Arial,sans-serif;
+  color:var(--text);
 }
 
 button,
@@ -59,59 +53,54 @@ button{
   justify-content:space-between;
   position:sticky;
   top:0;
-  z-index:100;
+  z-index:20;
 }
 
 .brand{
-  margin:0;
+  font:22px Georgia;
   color:var(--wine);
-  font:22px Georgia,serif;
 }
 
 .logout{
   background:#fff;
   border:1px solid var(--line);
-  padding:9px 16px;
+  padding:9px 15px;
   border-radius:22px;
-  color:var(--wine);
-  font-weight:bold;
-}
-
-.logout:hover{
-  background:#f8f1eb;
 }
 
 .layout{
-  width:100%;
-  max-width:1450px;
+  max-width:1440px;
   margin:auto;
-  padding:22px 18px 60px;
+  padding:22px 18px 50px;
 }
 
+/* LOGIN */
+
 .login{
-  width:min(410px,calc(100% - 24px));
-  margin:10vh auto;
+  max-width:410px;
+  margin:9vh auto;
   background:#fff;
   padding:32px;
   border-radius:22px;
-  box-shadow:0 12px 35px #32121b18;
+  box-shadow:0 12px 35px #32121b16;
+}
+
+.login h1,
+.panel h2{
+  font-family:Georgia;
+  color:var(--wine);
 }
 
 .login h1{
+  font-size:31px;
   margin:0 0 8px;
-  color:var(--wine);
-  font:32px Georgia,serif;
-}
-
-.login p{
-  color:var(--muted);
 }
 
 label{
   display:block;
   font-weight:bold;
   font-size:13px;
-  margin-top:7px;
+  margin-top:4px;
 }
 
 input,
@@ -124,17 +113,10 @@ textarea{
   margin:7px 0 14px;
   background:#fff;
   color:var(--text);
-  outline:none;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-  border-color:var(--gold);
 }
 
 textarea{
-  min-height:110px;
+  min-height:105px;
   resize:vertical;
 }
 
@@ -153,13 +135,22 @@ textarea{
   background:var(--wine2);
 }
 
+.secondary{
+  background:#fff;
+  color:var(--wine);
+  border:1px solid var(--line);
+  padding:10px 15px;
+  border-radius:20px;
+  font-weight:bold;
+}
+
 .error{
-  color:var(--red)!important;
+  color:var(--red);
   font-size:13px;
 }
 
 .success{
-  color:var(--green)!important;
+  color:var(--green);
   font-size:13px;
 }
 
@@ -170,8 +161,19 @@ textarea{
   color:#665d60;
   font-size:13px;
   line-height:1.6;
-  margin-bottom:15px;
 }
+
+.warning{
+  background:#fff4d8;
+  border:1px solid #efd28b;
+  color:#795000;
+  padding:13px;
+  border-radius:11px;
+  font-size:13px;
+  line-height:1.6;
+}
+
+/* STATS */
 
 .cards{
   display:grid;
@@ -188,7 +190,6 @@ textarea{
 
 .stat small{
   color:var(--muted);
-  display:block;
 }
 
 .stat b{
@@ -198,6 +199,8 @@ textarea{
   margin-top:6px;
 }
 
+/* TABS */
+
 .tabs{
   display:flex;
   gap:8px;
@@ -206,18 +209,18 @@ textarea{
 }
 
 .tab{
-  padding:10px 18px;
+  padding:10px 17px;
   border:1px solid var(--line);
   background:#fff;
   border-radius:22px;
-  color:var(--text);
 }
 
 .tab.active{
   background:var(--wine);
   color:#fff;
-  border-color:var(--wine);
 }
+
+/* PANELS */
 
 .panel{
   background:#fff;
@@ -236,20 +239,20 @@ textarea{
 }
 
 .panel h2{
+  font-size:25px;
   margin:0;
-  color:var(--wine);
-  font:25px Georgia,serif;
 }
 
 .search{
-  max-width:380px;
+  max-width:360px;
 }
+
+/* PRODUCTS */
 
 .productGrid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:17px;
-  margin-top:16px;
 }
 
 .productCard{
@@ -267,14 +270,15 @@ textarea{
   display:block;
 }
 
-.noImage{
+.imageFallback{
   width:100%;
   height:235px;
+  background:#f4eee7;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:#f4eee7;
-  color:var(--muted);
+  color:#999;
+  font-size:13px;
 }
 
 .productInfo{
@@ -282,9 +286,9 @@ textarea{
 }
 
 .productInfo h3{
-  margin:0 0 8px;
+  margin:0 0 7px;
   color:var(--wine);
-  font:20px Georgia,serif;
+  font-family:Georgia;
 }
 
 .productMeta{
@@ -294,10 +298,10 @@ textarea{
 }
 
 .productPrice{
-  color:var(--wine);
-  font-size:19px;
   font-weight:bold;
+  font-size:19px;
   margin:9px 0;
+  color:var(--wine);
 }
 
 .productActions{
@@ -321,6 +325,8 @@ textarea{
   color:#9a2222!important;
 }
 
+/* FORMS */
+
 .formGrid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -331,24 +337,24 @@ textarea{
   grid-column:1/-1;
 }
 
-.imageHelp{
-  background:#fcf8f1;
-  padding:12px;
-  border-radius:11px;
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.6;
-  margin-bottom:12px;
+.imageBox{
+  border:1px dashed var(--line);
+  background:#fcfaf7;
+  border-radius:13px;
+  padding:14px;
+  margin-bottom:14px;
 }
 
-.preview{
+.imagePreview{
   width:100%;
   max-height:250px;
   object-fit:contain;
   background:#f4eee7;
   border-radius:12px;
-  margin:5px 0 14px;
+  margin-top:10px;
 }
+
+/* TABLE */
 
 .tableWrap{
   overflow-x:auto;
@@ -357,7 +363,7 @@ textarea{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:1150px;
+  min-width:1050px;
 }
 
 th,
@@ -370,11 +376,7 @@ td{
 
 th{
   color:var(--wine);
-  font-family:Georgia,serif;
-}
-
-td small{
-  color:var(--muted);
+  font-family:Georgia;
 }
 
 .pill{
@@ -395,25 +397,24 @@ td small{
   color:#8a5a00;
 }
 
-.failed,
-.cancelled{
+.failed{
   background:#fde7e7;
   color:#9a2222;
 }
 
-.refunded{
-  background:#eee6fb;
-  color:#63349a;
+.cancelled{
+  background:#eee;
+  color:#555;
 }
 
 .processing{
-  background:#fff1cf;
-  color:#8a5a00;
+  background:#e8eefc;
+  color:#284f9b;
 }
 
 .shipped{
-  background:#e6f6f6;
-  color:#176b6b;
+  background:#eee8fb;
+  color:#633d99;
 }
 
 .delivered{
@@ -421,23 +422,7 @@ td small{
   color:#176a35;
 }
 
-.statusSelect,
-.paymentSelect{
-  min-width:135px;
-  margin:6px 0 0;
-}
-
-.empty{
-  text-align:center;
-  padding:35px;
-  color:var(--muted);
-}
-
-.loading{
-  padding:25px;
-  text-align:center;
-  color:var(--muted);
-}
+/* MODAL */
 
 .modal{
   position:fixed;
@@ -447,117 +432,118 @@ td small{
   align-items:center;
   justify-content:center;
   padding:18px;
-  z-index:500;
+  z-index:50;
 }
 
 .modalBox{
-  width:min(760px,100%);
+  background:#fff;
+  width:min(720px,100%);
   max-height:92vh;
   overflow:auto;
-  background:#fff;
   border-radius:20px;
   padding:22px;
 }
 
 .modalHead{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  gap:15px;
+  align-items:center;
   margin-bottom:15px;
 }
 
-.modalHead h2{
-  margin:0;
-  color:var(--wine);
-  font:25px Georgia,serif;
-}
-
 .close{
+  border:0;
+  background:#f4eee7;
+  border-radius:50%;
   width:38px;
   height:38px;
-  border:0;
-  border-radius:50%;
-  background:#f4eee7;
-  font-size:21px;
+  font-size:22px;
 }
 
-.close:hover{
-  background:#eadfd5;
+.loading{
+  padding:20px;
+  text-align:center;
+  color:var(--muted);
 }
 
-.infoGrid{
+.empty{
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
+}
+
+.small{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.settingGrid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:12px;
+  gap:15px;
 }
 
-.infoBox{
-  background:#fcf8f1;
-  padding:13px;
-  border-radius:12px;
-}
-
-.infoBox small{
-  display:block;
-  color:var(--muted);
-  margin-bottom:5px;
-}
-
-.refreshBtn{
+.settingCard{
   border:1px solid var(--line);
+  border-radius:15px;
+  padding:16px;
   background:#fff;
-  padding:10px 15px;
-  border-radius:20px;
+}
+
+.settingCard h3{
+  margin-top:0;
   color:var(--wine);
-  font-weight:bold;
+  font-family:Georgia;
 }
 
-.refreshBtn:hover{
-  background:#f8f1eb;
-}
+/* MOBILE */
 
-@media(max-width:1150px){
+@media(max-width:1100px){
 
   .cards{
     grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:850px){
+
+  .cards{
+    grid-template-columns:1fr 1fr;
   }
 
   .productGrid{
     grid-template-columns:1fr 1fr;
   }
 
+  .settingGrid{
+    grid-template-columns:1fr;
+  }
+
 }
 
-@media(max-width:700px){
+@media(max-width:650px){
+
+  .cards,
+  .productGrid,
+  .formGrid{
+    grid-template-columns:1fr;
+  }
+
+  .full{
+    grid-column:auto;
+  }
 
   .top{
     padding:12px 14px;
   }
 
   .brand{
-    font-size:17px;
+    font-size:18px;
   }
 
   .layout{
-    padding:15px 11px 40px;
-  }
-
-  .cards{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .productGrid{
-    grid-template-columns:1fr;
-  }
-
-  .formGrid,
-  .infoGrid{
-    grid-template-columns:1fr;
-  }
-
-  .full{
-    grid-column:auto;
+    padding:16px 11px 40px;
   }
 
   .panel{
@@ -572,70 +558,27 @@ td small{
   .search{
     max-width:none;
   }
-
-  .login{
-    padding:25px;
-  }
-
 }
-
-@media(max-width:430px){
-
-  .cards{
-    grid-template-columns:1fr;
-  }
-
-  .tabs{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-  }
-
-  .tab{
-    width:100%;
-  }
-
-}
-
 </style>
 </head>
 
 <body>
 
 <div class="top">
-
-  <b class="brand">
-    FACE OF STYLE — ADMIN
-  </b>
-
-  <button
-    class="logout"
-    onclick="logout()"
-  >
-    Logout
-  </button>
-
+  <b class="brand">FACE OF STYLE — ADMIN</b>
+  <button class="logout" onclick="logout()">Logout</button>
 </div>
 
 <div id="app"></div>
 
-
 <script>
 
-/* =========================================================
-   GLOBAL STATE
-========================================================= */
-
-const app =
-  document.getElementById("app");
+const app = document.getElementById("app");
 
 let token =
   sessionStorage.getItem("adminToken") || "";
 
 let allProducts = [];
-
-let allOrders = [];
-
-let selectedImage = "";
 
 
 /* =========================================================
@@ -663,68 +606,82 @@ function money(value){
 }
 
 
+/*
+   IMPORTANT:
+   The server can return:
+   image
+   img
+   /assets/product-1.jpg
+   assets/product-1.jpg
+   /product-1.jpg
+*/
 function normalizeImage(value){
 
-  let image =
-    String(value || "").trim();
+  if(!value){
+    return "";
+  }
 
-  if(!image){
+  let src = String(value).trim();
+
+  if(!src){
+    return "";
+  }
+
+  /*
+     Do not display data URLs as product images.
+     They were one of the causes of broken images.
+  */
+  if(src.startsWith("data:image/")){
     return "";
   }
 
   if(
-    /^https?:\/\//i.test(image) ||
-    /^data:image\//i.test(image)
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("/")
   ){
-    return image;
+    return src;
   }
 
-  image =
-    image.replace(/\\/g,"/");
-
-  image =
-    image.replace(/^\/+/,"");
-
-  if(
-    image.startsWith("assets/")
-  ){
-    return "/" + image;
+  if(src.startsWith("assets/")){
+    return "/" + src;
   }
 
-  return "/assets/" + image;
+  if(src.startsWith("uploads/")){
+    return "/" + src;
+  }
 
+  return "/" + src;
 }
 
 
-function statusClass(status){
+function imageHtml(product){
 
-  return String(status || "")
-    .toLowerCase()
-    .replace(/[^a-z]/g,"");
+  const src =
+    normalizeImage(
+      product.image ||
+      product.img
+    );
 
-}
+  if(!src){
 
+    return `
+      <div class="imageFallback">
+        No Product Image
+      </div>
+    `;
 
-function formatDate(value){
-
-  if(!value){
-    return "-";
   }
 
-  const date =
-    new Date(value);
-
-  if(
-    Number.isNaN(
-      date.getTime()
-    )
-  ){
-    return "-";
-  }
-
-  return date.toLocaleString(
-    "en-NG"
-  );
+  return `
+    <img
+      class="productImage"
+      src="${esc(src)}"
+      alt="${esc(product.name || "Product")}"
+      loading="lazy"
+      onerror="this.outerHTML='<div class=&quot;imageFallback&quot;>Image Not Found</div>'"
+    >
+  `;
 
 }
 
@@ -739,39 +696,26 @@ function login(){
 
     <div class="login">
 
-      <h1>
-        Admin Login
-      </h1>
+      <h1>Admin Login</h1>
 
       <p>
         Face of Style Hijab Factory
       </p>
 
-      <label>
-        Username
-      </label>
+      <label>Username</label>
 
       <input
         id="username"
         value="admin"
         autocomplete="username"
-        placeholder="Admin username"
       >
 
-      <label>
-        Password
-      </label>
+      <label>Password</label>
 
       <input
         id="password"
         type="password"
         autocomplete="current-password"
-        placeholder="Admin password"
-        onkeydown="
-          if(event.key==='Enter'){
-            doLogin();
-          }
-        "
       >
 
       <button
@@ -787,11 +731,6 @@ function login(){
         class="error"
       ></p>
 
-      <div class="notice">
-        Use the ADMIN_USERNAME and ADMIN_PASSWORD
-        values configured in Render.
-      </div>
-
     </div>
 
   `;
@@ -802,31 +741,9 @@ function login(){
 async function doLogin(){
 
   const error =
-    document.getElementById(
-      "loginError"
-    );
+    document.getElementById("loginError");
 
   error.textContent = "";
-
-  const username =
-    document
-      .getElementById("username")
-      .value
-      .trim();
-
-  const password =
-    document
-      .getElementById("password")
-      .value;
-
-  if(!username || !password){
-
-    error.textContent =
-      "Enter username and password.";
-
-    return;
-
-  }
 
   try{
 
@@ -835,52 +752,52 @@ async function doLogin(){
         "/api/admin/login",
         {
           method:"POST",
-
           headers:{
             "Content-Type":
               "application/json"
           },
+          body:JSON.stringify({
 
-          body:
-            JSON.stringify({
-              username,
-              password
-            })
+            username:
+              document
+                .getElementById("username")
+                .value
+                .trim(),
+
+            password:
+              document
+                .getElementById("password")
+                .value
+
+          })
         }
       );
 
     const data =
       await response.json();
 
-    if(
-      response.ok &&
-      data.ok &&
-      data.token
-    ){
+    if(data.token){
 
-      token =
-        data.token;
+      token = data.token;
 
       sessionStorage.setItem(
         "adminToken",
         token
       );
 
-      await dashboard();
+      dashboard();
 
-      return;
+    }else{
+
+      error.textContent =
+        data.message ||
+        "Login failed.";
 
     }
 
-    error.textContent =
-      data.message ||
-      "Invalid admin credentials.";
+  }catch(error){
 
-  }catch(errorObject){
-
-    console.error(
-      errorObject
-    );
+    console.error(error);
 
     error.textContent =
       "Unable to connect to server.";
@@ -896,35 +813,30 @@ async function doLogin(){
 
 async function logout(){
 
-  const oldToken =
-    token;
+  try{
 
-  token = "";
-
-  sessionStorage.removeItem(
-    "adminToken"
-  );
-
-  if(oldToken){
-
-    try{
+    if(token){
 
       await fetch(
         "/api/admin/logout",
         {
           method:"POST",
-
           headers:{
             Authorization:
-              "Bearer " +
-              oldToken
+              "Bearer " + token
           }
         }
       );
 
-    }catch{}
+    }
 
-  }
+  }catch(e){}
+
+  sessionStorage.removeItem(
+    "adminToken"
+  );
+
+  token = "";
 
   login();
 
@@ -935,47 +847,25 @@ async function logout(){
    API HELPER
 ========================================================= */
 
-async function api(
-  url,
-  options={}
-){
+async function api(url,options={}){
 
-  if(!token){
+  options.headers = {
 
-    login();
-
-    return null;
-
-  }
-
-  const headers = {
     ...(options.headers || {}),
+
     Authorization:
       "Bearer " + token
+
   };
 
   try{
 
     const response =
-      await fetch(
-        url,
-        {
-          ...options,
-          headers
-        }
-      );
+      await fetch(url,options);
 
-    if(
-      response.status === 401
-    ){
+    if(response.status === 401){
 
-      sessionStorage.removeItem(
-        "adminToken"
-      );
-
-      token = "";
-
-      login();
+      logout();
 
       return null;
 
@@ -984,43 +874,45 @@ async function api(
     const text =
       await response.text();
 
-    let data = {};
+    let data;
 
     try{
 
       data =
-        text
-          ? JSON.parse(text)
-          : {};
+        JSON.parse(text);
 
-    }catch{
+    }catch(e){
 
       data = {
+
         error:
           text ||
-          "Invalid server response."
+          "Server returned invalid response."
+
       };
 
     }
 
-    if(
-      !response.ok &&
-      !data.error
-    ){
+    if(!response.ok){
 
-      data.error =
-        data.message ||
-        "Request failed.";
+      return {
+
+        ...(data || {}),
+
+        error:
+          data?.message ||
+          data?.error ||
+          "Request failed."
+
+      };
 
     }
 
     return data;
 
-  }catch(errorObject){
+  }catch(error){
 
-    console.error(
-      errorObject
-    );
+    console.error(error);
 
     return {
       error:
@@ -1038,80 +930,62 @@ async function api(
 
 async function dashboard(){
 
-  const ordersData =
+  app.innerHTML = `
+
+    <div class="layout">
+
+      <div class="loading">
+        Loading Admin Dashboard...
+      </div>
+
+    </div>
+
+  `;
+
+  const data =
     await api(
-      "/api/admin/orders"
+      "/api/admin/dashboard"
     );
 
-  const productsData =
-    await api(
-      "/api/admin/products"
-    );
+  if(!data){
 
-  if(
-    !ordersData ||
-    !productsData
-  ){
     return;
+
   }
 
-  allOrders =
-    Array.isArray(
-      ordersData.orders
-    )
-      ? ordersData.orders
-      : [];
+  if(data.error){
 
-  allProducts =
-    Array.isArray(
-      productsData.products
-    )
-      ? productsData.products
-      : [];
+    app.innerHTML = `
 
-  renderDashboard();
+      <div class="layout">
 
-}
+        <div class="panel">
 
+          <h2>Dashboard Error</h2>
 
-function renderDashboard(){
+          <p class="error">
+            ${esc(data.error)}
+          </p>
 
-  const paidOrders =
-    allOrders.filter(
-      order =>
-        String(
-          order.payment_status || ""
-        ).toUpperCase() === "PAID"
-    );
+          <button
+            class="primary"
+            onclick="dashboard()"
+          >
+            TRY AGAIN
+          </button>
 
-  const pendingOrders =
-    allOrders.filter(
-      order =>
-        String(
-          order.payment_status || ""
-        ).toUpperCase() === "PENDING"
-    );
+        </div>
 
-  const processingOrders =
-    allOrders.filter(
-      order =>
-        String(
-          order.order_status || ""
-        ).toUpperCase() === "PROCESSING"
-    );
+      </div>
 
-  const revenue =
-    paidOrders.reduce(
-      (
-        total,
-        order
-      ) =>
-        total +
-        Number(
-          order.total || 0
-        ),
-      0
-    );
+    `;
+
+    return;
+
+  }
+
+  const s =
+    data.stats || {};
 
   app.innerHTML = `
 
@@ -1121,27 +995,27 @@ function renderDashboard(){
 
         <div class="stat">
           <small>Total Orders</small>
-          <b>${allOrders.length}</b>
+          <b>${Number(s.orders || 0)}</b>
         </div>
 
         <div class="stat">
           <small>Paid Orders</small>
-          <b>${paidOrders.length}</b>
+          <b>${Number(s.paid || 0)}</b>
         </div>
 
         <div class="stat">
-          <small>Pending Payments</small>
-          <b>${pendingOrders.length}</b>
+          <small>Pending Orders</small>
+          <b>${Number(s.pending || 0)}</b>
         </div>
 
         <div class="stat">
           <small>Processing</small>
-          <b>${processingOrders.length}</b>
+          <b>${Number(s.processing || 0)}</b>
         </div>
 
         <div class="stat">
           <small>Revenue</small>
-          <b>${money(revenue)}</b>
+          <b>${money(s.revenue)}</b>
         </div>
 
       </div>
@@ -1165,6 +1039,14 @@ function renderDashboard(){
           Products
         </button>
 
+        <button
+          id="tabSettings"
+          class="tab"
+          onclick="showSettings()"
+        >
+          Settings
+        </button>
+
       </div>
 
 
@@ -1180,7 +1062,7 @@ function renderDashboard(){
 
 
 /* =========================================================
-   TAB
+   ACTIVE TAB
 ========================================================= */
 
 function activeTab(id){
@@ -1194,12 +1076,12 @@ function activeTab(id){
         )
     );
 
-  const element =
+  const button =
     document.getElementById(id);
 
-  if(element){
+  if(button){
 
-    element.classList.add(
+    button.classList.add(
       "active"
     );
 
@@ -1221,22 +1103,16 @@ async function showOrders(){
       "content"
     );
 
-  if(!content){
-    return;
-  }
-
   content.innerHTML = `
 
     <div class="panel">
 
       <div class="panelHead">
 
-        <h2>
-          Customer Orders
-        </h2>
+        <h2>Customer Orders</h2>
 
         <button
-          class="refreshBtn"
+          class="addBtn"
           onclick="showOrders()"
         >
           Refresh
@@ -1258,7 +1134,9 @@ async function showOrders(){
     );
 
   if(!data){
+
     return;
+
   }
 
   if(data.error){
@@ -1267,9 +1145,7 @@ async function showOrders(){
 
       <div class="panel">
 
-        <h2>
-          Customer Orders
-        </h2>
+        <h2>Orders</h2>
 
         <p class="error">
           ${esc(data.error)}
@@ -1283,32 +1159,43 @@ async function showOrders(){
 
   }
 
-  allOrders =
-    Array.isArray(
-      data.orders
-    )
-      ? data.orders
-      : [];
-
-  renderOrders(
-    allOrders
-  );
-
-}
+  const orders =
+    Array.isArray(data)
+      ? data
+      : (data.orders || []);
 
 
-function renderOrders(
-  orders
-){
+  if(!orders.length){
 
-  const content =
-    document.getElementById(
-      "content"
-    );
+    content.innerHTML = `
 
-  if(!content){
+      <div class="panel">
+
+        <div class="panelHead">
+
+          <h2>Customer Orders</h2>
+
+          <button
+            class="addBtn"
+            onclick="showOrders()"
+          >
+            Refresh
+          </button>
+
+        </div>
+
+        <div class="empty">
+          No orders found.
+        </div>
+
+      </div>
+
+    `;
+
     return;
+
   }
+
 
   content.innerHTML = `
 
@@ -1316,12 +1203,10 @@ function renderOrders(
 
       <div class="panelHead">
 
-        <h2>
-          Customer Orders
-        </h2>
+        <h2>Customer Orders</h2>
 
         <button
-          class="refreshBtn"
+          class="addBtn"
           onclick="showOrders()"
         >
           Refresh
@@ -1329,374 +1214,224 @@ function renderOrders(
 
       </div>
 
-      <div class="notice">
+      <div class="tableWrap">
 
-        <b>Payment:</b>
-        Paystack verification normally controls payment status.
+        <table>
 
-        <br>
+          <thead>
 
-        <b>Order:</b>
-        Use Order Status to manage the delivery workflow.
+            <tr>
+
+              <th>Reference</th>
+
+              <th>Customer</th>
+
+              <th>Contact</th>
+
+              <th>Total</th>
+
+              <th>Payment</th>
+
+              <th>Order Status</th>
+
+              <th>Date</th>
+
+              <th>Action</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${orders.map(order => {
+
+              const payment =
+                String(
+                  order.payment_status ||
+                  order.status ||
+                  "PENDING"
+                ).toUpperCase();
+
+              const orderStatus =
+                String(
+                  order.order_status ||
+                  order.orderStatus ||
+                  "PENDING"
+                ).toUpperCase();
+
+              const paymentClass =
+                payment === "PAID"
+                  ? "paid"
+                  : payment === "FAILED"
+                    ? "failed"
+                    : "pending";
+
+              const statusClass =
+                orderStatus.toLowerCase();
+
+              return `
+
+                <tr>
+
+                  <td>
+
+                    <b>
+                      ${esc(
+                        order.reference ||
+                        "-"
+                      )}
+                    </b>
+
+                    <br>
+
+                    <span class="small">
+                      Paystack:
+                      ${esc(
+                        order.paystack_reference ||
+                        order.payment?.reference ||
+                        "-"
+                      )}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    ${esc(
+                      order.customer_name ||
+                      order.customer?.name ||
+                      "-"
+                    )}
+
+                    <br>
+
+                    <span class="small">
+                      ${esc(
+                        order.customer_email ||
+                        order.customer?.email ||
+                        ""
+                      )}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    ${esc(
+                      order.customer_phone ||
+                      order.customer?.phone ||
+                      "-"
+                    )}
+
+                    <br>
+
+                    <span class="small">
+                      ${esc(
+                        order.delivery_address ||
+                        order.customer?.address ||
+                        ""
+                      )}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <b>
+                      ${money(order.total)}
+                    </b>
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="pill ${paymentClass}"
+                    >
+                      ${esc(payment)}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="pill ${statusClass}"
+                    >
+                      ${esc(orderStatus)}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    ${
+                      order.created_at ||
+                      order.createdAt
+                        ? new Date(
+                            order.created_at ||
+                            order.createdAt
+                          ).toLocaleString(
+                            "en-NG"
+                          )
+                        : "-"
+                    }
+
+                  </td>
+
+
+                  <td>
+
+                    <select
+                      onchange="updateOrderStatus(
+                        ${Number(order.id)},
+                        this.value
+                      )"
+                    >
+
+                      ${[
+                        "PENDING",
+                        "PROCESSING",
+                        "SHIPPED",
+                        "DELIVERED",
+                        "CANCELLED"
+                      ].map(status => `
+
+                        <option
+                          value="${status}"
+                          ${
+                            status === orderStatus
+                              ? "selected"
+                              : ""
+                          }
+                        >
+                          ${status}
+                        </option>
+
+                      `).join("")}
+
+                    </select>
+
+                  </td>
+
+                </tr>
+
+              `;
+
+            }).join("")}
+
+          </tbody>
+
+        </table>
 
       </div>
-
-      ${
-        orders.length
-
-          ? `
-
-            <div class="tableWrap">
-
-              <table>
-
-                <thead>
-
-                  <tr>
-
-                    <th>
-                      Reference
-                    </th>
-
-                    <th>
-                      Customer
-                    </th>
-
-                    <th>
-                      Address
-                    </th>
-
-                    <th>
-                      Items
-                    </th>
-
-                    <th>
-                      Total
-                    </th>
-
-                    <th>
-                      Payment
-                    </th>
-
-                    <th>
-                      Order Status
-                    </th>
-
-                    <th>
-                      Date
-                    </th>
-
-                  </tr>
-
-                </thead>
-
-                <tbody>
-
-                  ${
-                    orders
-                      .map(
-                        order => {
-
-                          const payment =
-                            String(
-                              order.payment_status ||
-                              "PENDING"
-                            ).toUpperCase();
-
-                          const orderStatus =
-                            String(
-                              order.order_status ||
-                              "PENDING"
-                            ).toUpperCase();
-
-                          const items =
-                            Array.isArray(
-                              order.items
-                            )
-                              ? order.items
-                              : [];
-
-                          return `
-
-                            <tr>
-
-                              <td>
-
-                                <b>
-                                  ${esc(
-                                    order.reference ||
-                                    "-"
-                                  )}
-                                </b>
-
-                                ${
-                                  order.paystack_reference
-
-                                    ? `
-
-                                      <br>
-
-                                      <small>
-                                        Paystack:
-                                        ${esc(
-                                          order.paystack_reference
-                                        )}
-                                      </small>
-
-                                    `
-
-                                    : ""
-                                }
-
-                              </td>
-
-
-                              <td>
-
-                                <b>
-                                  ${esc(
-                                    order.customer_name ||
-                                    "-"
-                                  )}
-                                </b>
-
-                                <br>
-
-                                <small>
-                                  ${esc(
-                                    order.customer_phone ||
-                                    "-"
-                                  )}
-                                </small>
-
-                                <br>
-
-                                <small>
-                                  ${esc(
-                                    order.customer_email ||
-                                    "-"
-                                  )}
-                                </small>
-
-                              </td>
-
-
-                              <td>
-                                ${esc(
-                                  order.delivery_address ||
-                                  "-"
-                                )}
-                              </td>
-
-
-                              <td>
-
-                                ${
-                                  items.length
-
-                                    ? items
-                                      .map(
-                                        item => `
-
-                                          <div
-                                            style="
-                                              margin-bottom:8px;
-                                            "
-                                          >
-
-                                            <b>
-                                              ${esc(
-                                                item.product_name ||
-                                                "Product"
-                                              )}
-                                            </b>
-
-                                            ×
-                                            ${Number(
-                                              item.quantity || 0
-                                            )}
-
-                                            <br>
-
-                                            <small>
-                                              ${money(
-                                                item.subtotal
-                                              )}
-                                            </small>
-
-                                          </div>
-
-                                        `
-                                      )
-                                      .join("")
-
-                                    : "-"
-                                }
-
-                              </td>
-
-
-                              <td>
-
-                                <b>
-                                  ${money(
-                                    order.total
-                                  )}
-                                </b>
-
-                              </td>
-
-
-                              <td>
-
-                                <span
-                                  class="pill ${
-                                    payment === "PAID"
-                                      ? "paid"
-                                      : payment === "FAILED"
-                                        ? "failed"
-                                        : payment === "REFUNDED"
-                                          ? "refunded"
-                                          : "pending"
-                                  }"
-                                >
-                                  ${esc(
-                                    payment
-                                  )}
-                                </span>
-
-                                <br>
-
-                                <select
-                                  class="paymentSelect"
-                                  onchange="
-                                    changePaymentStatus(
-                                      ${Number(order.id)},
-                                      this.value
-                                    )
-                                  "
-                                >
-
-                                  ${
-                                    [
-                                      "PENDING",
-                                      "PAID",
-                                      "FAILED",
-                                      "REFUNDED"
-                                    ]
-                                    .map(
-                                      status => `
-
-                                        <option
-                                          value="${status}"
-                                          ${
-                                            status === payment
-                                              ? "selected"
-                                              : ""
-                                          }
-                                        >
-                                          ${status}
-                                        </option>
-
-                                      `
-                                    )
-                                    .join("")
-                                  }
-
-                                </select>
-
-                              </td>
-
-
-                              <td>
-
-                                <span
-                                  class="pill ${
-                                    statusClass(
-                                      orderStatus
-                                    )
-                                  }"
-                                >
-                                  ${esc(
-                                    orderStatus
-                                  )}
-                                </span>
-
-                                <br>
-
-                                <select
-                                  class="statusSelect"
-                                  onchange="
-                                    changeOrderStatus(
-                                      ${Number(order.id)},
-                                      this.value
-                                    )
-                                  "
-                                >
-
-                                  ${
-                                    [
-                                      "PENDING",
-                                      "PROCESSING",
-                                      "SHIPPED",
-                                      "DELIVERED",
-                                      "CANCELLED"
-                                    ]
-                                    .map(
-                                      status => `
-
-                                        <option
-                                          value="${status}"
-                                          ${
-                                            status === orderStatus
-                                              ? "selected"
-                                              : ""
-                                          }
-                                        >
-                                          ${status}
-                                        </option>
-
-                                      `
-                                    )
-                                    .join("")
-                                  }
-
-                                </select>
-
-                              </td>
-
-
-                              <td>
-                                ${formatDate(
-                                  order.created_at
-                                )}
-                              </td>
-
-                            </tr>
-
-                          `;
-
-                        }
-                      )
-                      .join("")
-                  }
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          `
-
-          : `
-
-            <div class="empty">
-              No orders found.
-            </div>
-
-          `
-      }
 
     </div>
 
@@ -1706,78 +1441,15 @@ function renderOrders(
 
 
 /* =========================================================
-   CHANGE ORDER STATUS
+   UPDATE ORDER STATUS
 ========================================================= */
 
-async function changeOrderStatus(
+async function updateOrderStatus(
   id,
   status
 ){
 
-  const data =
-    await api(
-      "/api/admin/orders/" +
-      encodeURIComponent(id),
-      {
-        method:"PATCH",
-
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
-
-        body:
-          JSON.stringify({
-            order_status:
-              String(
-                status
-              ).toUpperCase()
-          })
-      }
-    );
-
-  if(
-    !data ||
-    data.error ||
-    data.ok !== true
-  ){
-
-    alert(
-      data?.message ||
-      data?.error ||
-      "Unable to update order status."
-    );
-
-    showOrders();
-
-    return;
-
-  }
-
-  await refreshDashboardData();
-
-}
-
-
-/* =========================================================
-   CHANGE PAYMENT STATUS
-========================================================= */
-
-async function changePaymentStatus(
-  id,
-  status
-){
-
-  const confirmed =
-    confirm(
-      "Change payment status to " +
-      status +
-      "?"
-    );
-
-  if(!confirmed){
-
-    showOrders();
+  if(!id){
 
     return;
 
@@ -1785,37 +1457,26 @@ async function changePaymentStatus(
 
   const data =
     await api(
-      "/api/admin/orders/" +
-      encodeURIComponent(id) +
-      "/payment",
+      "/api/admin/orders/" + id,
       {
         method:"PATCH",
-
         headers:{
           "Content-Type":
             "application/json"
         },
+        body:JSON.stringify({
 
-        body:
-          JSON.stringify({
-            payment_status:
-              String(
-                status
-              ).toUpperCase()
-          })
+          order_status:
+            status
+
+        })
       }
     );
 
-  if(
-    !data ||
-    data.error ||
-    data.ok !== true
-  ){
+  if(data?.error){
 
     alert(
-      data?.message ||
-      data?.error ||
-      "Unable to update payment status."
+      data.error
     );
 
     showOrders();
@@ -1824,52 +1485,7 @@ async function changePaymentStatus(
 
   }
 
-  await refreshDashboardData();
-
-}
-
-
-/* =========================================================
-   REFRESH DASHBOARD DATA
-========================================================= */
-
-async function refreshDashboardData(){
-
-  const ordersData =
-    await api(
-      "/api/admin/orders"
-    );
-
-  const productsData =
-    await api(
-      "/api/admin/products"
-    );
-
-  if(
-    ordersData &&
-    Array.isArray(
-      ordersData.orders
-    )
-  ){
-
-    allOrders =
-      ordersData.orders;
-
-  }
-
-  if(
-    productsData &&
-    Array.isArray(
-      productsData.products
-    )
-  ){
-
-    allProducts =
-      productsData.products;
-
-  }
-
-  renderDashboard();
+  showOrders();
 
 }
 
@@ -1893,13 +1509,11 @@ async function showProducts(){
 
       <div class="panelHead">
 
-        <h2>
-          Products
-        </h2>
+        <h2>Products</h2>
 
         <button
           class="addBtn"
-          onclick="openProductModal()"
+          onclick="showAddProduct()"
         >
           + Add Product
         </button>
@@ -1914,14 +1528,18 @@ async function showProducts(){
 
   `;
 
+
   const data =
     await api(
       "/api/admin/products"
     );
 
   if(!data){
+
     return;
+
   }
+
 
   if(data.error){
 
@@ -1929,9 +1547,7 @@ async function showProducts(){
 
       <div class="panel">
 
-        <h2>
-          Products
-        </h2>
+        <h2>Products</h2>
 
         <p class="error">
           ${esc(data.error)}
@@ -1945,12 +1561,12 @@ async function showProducts(){
 
   }
 
+
   allProducts =
-    Array.isArray(
-      data.products
-    )
-      ? data.products
-      : [];
+    Array.isArray(data)
+      ? data
+      : (data.products || []);
+
 
   renderProducts(
     allProducts
@@ -1958,6 +1574,10 @@ async function showProducts(){
 
 }
 
+
+/* =========================================================
+   RENDER PRODUCTS
+========================================================= */
 
 function renderProducts(
   products
@@ -1974,13 +1594,11 @@ function renderProducts(
 
       <div class="panelHead">
 
-        <h2>
-          Products
-        </h2>
+        <h2>Products</h2>
 
         <button
           class="addBtn"
-          onclick="openProductModal()"
+          onclick="showAddProduct()"
         >
           + Add Product
         </button>
@@ -1997,6 +1615,7 @@ function renderProducts(
       <div
         id="productsList"
         class="productGrid"
+        style="margin-top:15px"
       ></div>
 
     </div>
@@ -2010,16 +1629,18 @@ function renderProducts(
 }
 
 
+/* =========================================================
+   FILTER PRODUCTS
+========================================================= */
+
 function filterProducts(
-  value
+  query
 ){
 
-  const query =
-    String(
-      value || ""
-    )
-    .toLowerCase()
-    .trim();
+  const q =
+    String(query || "")
+      .toLowerCase()
+      .trim();
 
   const filtered =
     allProducts.filter(
@@ -2039,14 +1660,13 @@ function filterProducts(
 
         const color =
           String(
-            product.color ||
-            ""
+            product.color || ""
           ).toLowerCase();
 
         return (
-          name.includes(query) ||
-          category.includes(query) ||
-          color.includes(query)
+          name.includes(q) ||
+          category.includes(q) ||
+          color.includes(q)
         );
 
       }
@@ -2059,22 +1679,29 @@ function filterProducts(
 }
 
 
+/* =========================================================
+   PRODUCT CARDS
+========================================================= */
+
 function drawProductCards(
   products
 ){
 
-  const container =
+  const list =
     document.getElementById(
       "productsList"
     );
 
-  if(!container){
+  if(!list){
+
     return;
+
   }
+
 
   if(!products.length){
 
-    container.innerHTML = `
+    list.innerHTML = `
 
       <div
         class="empty"
@@ -2089,200 +1716,144 @@ function drawProductCards(
 
   }
 
-  container.innerHTML =
-    products
-      .map(
-        product => {
 
-          const image =
-            normalizeImage(
-              product.image ||
-              product.img
-            );
+  list.innerHTML =
+    products.map(product => {
 
-          const category =
-            product.category ||
-            product.cat ||
-            "Fashion";
+      const category =
+        product.category ||
+        product.cat ||
+        "Fashion";
 
-          const description =
-            product.description ||
-            product.desc ||
-            "";
+      const description =
+        product.description ||
+        product.desc ||
+        "";
 
-          const stock =
-            Number(
-              product.stock || 0
-            );
+      const stock =
+        Number(
+          product.stock || 0
+        );
 
-          const active =
-            product.active !== false;
+      return `
 
-          return `
+        <div class="productCard">
 
-            <div class="productCard">
+          ${imageHtml(product)}
 
-              ${
-                image
+          <div class="productInfo">
 
-                  ? `
+            <h3>
+              ${esc(
+                product.name ||
+                "Unnamed Product"
+              )}
+            </h3>
 
-                    <img
-                      class="productImage"
-                      src="${esc(image)}"
-                      alt="${esc(
-                        product.name
-                      )}"
-                      onerror="
-                        this.onerror=null;
-                        this.style.display='none';
-                        this.nextElementSibling.style.display='flex';
-                      "
-                    >
+            <div class="productMeta">
 
-                    <div
-                      class="noImage"
-                      style="display:none"
-                    >
-                      Image unavailable
-                    </div>
+              Category:
+              ${esc(category)}
 
-                  `
+              <br>
 
-                  : `
+              Color:
+              ${esc(
+                product.color ||
+                "-"
+              )}
 
-                    <div class="noImage">
-                      No Image
-                    </div>
+              <br>
 
-                  `
-              }
-
-
-              <div class="productInfo">
-
-                <h3>
-                  ${esc(
-                    product.name
-                  )}
-                </h3>
-
-                <div class="productMeta">
-
-                  Category:
-                  ${esc(category)}
-
-                  <br>
-
-                  Color:
-                  ${esc(
-                    product.color ||
-                    "-"
-                  )}
-
-                  <br>
-
-                  Stock:
-                  <b>
-                    ${stock}
-                  </b>
-
-                  <br>
-
-                  Status:
-                  <b>
-                    ${
-                      active
-                        ? "Active"
-                        : "Hidden"
-                    }
-                  </b>
-
-                </div>
-
-
-                <div class="productPrice">
-                  ${money(
-                    product.price
-                  )}
-                </div>
-
-
-                <div
-                  style="
-                    font-size:12px;
-                    color:#756a6f;
-                    margin-bottom:12px;
-                    line-height:1.5;
-                  "
-                >
-                  ${esc(
-                    description
-                  )}
-                </div>
-
-
-                <div class="productActions">
-
-                  <button
-                    class="edit"
-                    onclick="
-                      editProduct(
-                        ${Number(product.id)}
-                      )
-                    "
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    class="delete"
-                    onclick="
-                      deleteProduct(
-                        ${Number(product.id)}
-                      )
-                    "
-                  >
-                    Remove
-                  </button>
-
-                </div>
-
-              </div>
+              Stock:
+              ${stock}
 
             </div>
 
-          `;
+            <div class="productPrice">
 
-        }
-      )
-      .join("");
+              ${money(
+                product.price
+              )}
+
+            </div>
+
+            ${
+              description
+                ? `
+                  <div
+                    class="small"
+                    style="margin-bottom:10px"
+                  >
+                    ${esc(
+                      description
+                    )}
+                  </div>
+                `
+                : ""
+            }
+
+            <div class="productActions">
+
+              <button
+                class="edit"
+                onclick="editProduct(
+                  ${Number(product.id)}
+                )"
+              >
+                Edit
+              </button>
+
+              <button
+                class="delete"
+                onclick="deleteProduct(
+                  ${Number(product.id)}
+                )"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
 
 }
 
 
 /* =========================================================
-   PRODUCT MODAL
+   ADD / EDIT PRODUCT MODAL
 ========================================================= */
 
-function openProductModal(
-  product=null
+function showAddProduct(
+  product = null
 ){
 
   const editing =
-    Boolean(product);
+    !!product;
 
-  selectedImage = "";
+  const category =
+    product?.category ||
+    product?.cat ||
+    "Hijab";
 
-  document
-    .getElementById(
-      "productModal"
-    )
-    ?.remove();
+  const description =
+    product?.description ||
+    product?.desc ||
+    "";
+
+  const image =
+    product?.image ||
+    product?.img ||
+    "";
 
   document.body.insertAdjacentHTML(
     "beforeend",
-
     `
 
       <div
@@ -2304,7 +1875,7 @@ function openProductModal(
 
             <button
               class="close"
-              onclick="closeProductModal()"
+              onclick="closeModal()"
             >
               ×
             </button>
@@ -2313,7 +1884,6 @@ function openProductModal(
 
 
           <div class="formGrid">
-
 
             <div>
 
@@ -2324,8 +1894,7 @@ function openProductModal(
               <input
                 id="productName"
                 value="${esc(
-                  product?.name ||
-                  ""
+                  product?.name || ""
                 )}"
                 placeholder="Elegant Zip Abaya"
               >
@@ -2339,15 +1908,37 @@ function openProductModal(
                 Category
               </label>
 
-              <input
+              <select
                 id="productCategory"
-                value="${esc(
-                  product?.category ||
-                  product?.cat ||
-                  "Fashion"
-                )}"
-                placeholder="Hijab, Abaya, Gown"
               >
+
+                ${
+                  [
+                    "Hijab",
+                    "Abaya",
+                    "Gown",
+                    "Caps",
+                    "Modest Outfit",
+                    "Accessories",
+                    "Custom",
+                    "Fashion"
+                  ].map(item => `
+
+                    <option
+                      value="${item}"
+                      ${
+                        item === category
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      ${item}
+                    </option>
+
+                  `).join("")
+                }
+
+              </select>
 
             </div>
 
@@ -2361,10 +1952,27 @@ function openProductModal(
               <input
                 id="productPrice"
                 type="number"
-                min="0"
-                step="0.01"
+                min="1"
                 value="${Number(
                   product?.price || 0
+                )}"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Stock
+              </label>
+
+              <input
+                id="productStock"
+                type="number"
+                min="0"
+                value="${Number(
+                  product?.stock ?? 0
                 )}"
               >
 
@@ -2380,10 +1988,9 @@ function openProductModal(
               <input
                 id="productColor"
                 value="${esc(
-                  product?.color ||
-                  ""
+                  product?.color || ""
                 )}"
-                placeholder="Black, Wine, Rose..."
+                placeholder="Wine"
               >
 
             </div>
@@ -2392,108 +1999,57 @@ function openProductModal(
             <div>
 
               <label>
-                Stock Quantity
+                Image URL
               </label>
 
               <input
-                id="productStock"
-                type="number"
-                min="0"
-                step="1"
-                value="${Number(
-                  product?.stock ?? 0
+                id="productImage"
+                value="${esc(
+                  image
                 )}"
+                placeholder="/assets/product-1.jpg"
+                oninput="previewProductImage()"
               >
-
-            </div>
-
-
-            <div>
-
-              <label>
-                Product Status
-              </label>
-
-              <select
-                id="productActive"
-              >
-
-                <option
-                  value="true"
-                  ${
-                    product?.active !== false
-                      ? "selected"
-                      : ""
-                  }
-                >
-                  Active
-                </option>
-
-                <option
-                  value="false"
-                  ${
-                    product?.active === false
-                      ? "selected"
-                      : ""
-                  }
-                >
-                  Hidden
-                </option>
-
-              </select>
 
             </div>
 
 
             <div class="full">
 
-              <label>
-                Product Image
-              </label>
+              <div class="imageBox">
 
-              <input
-                id="productImage"
-                value="${esc(
-                  product?.image ||
-                  product?.img ||
-                  ""
-                )}"
-                placeholder="product-1.jpg"
-                oninput="previewImageFromText(this.value)"
-              >
+                <b>
+                  Product Image
+                </b>
 
-              <div class="imageHelp">
+                <p class="small">
+                  Use the actual image path from
+                  <b>public/assets</b>.
+                  Example:
+                  /assets/product-1.jpg
+                </p>
 
-                <b>Image path:</b>
-                use the filename inside
-                <b>public/assets</b>.
+                <div id="productImagePreview">
 
-                <br>
+                  ${
+                    image
+                      ? `
+                        <img
+                          class="imagePreview"
+                          src="${esc(
+                            normalizeImage(
+                              image
+                            )
+                          )}"
+                          onerror="this.style.display='none'"
+                        >
+                      `
+                      : ""
+                  }
 
-                Example:
-                <b>product-1.jpg</b>
-
-                <br>
-
-                You can also use a complete HTTPS image URL.
-
-                <br><br>
-
-                This keeps the image compatible with the current
-                Version 2 server/database structure.
+                </div>
 
               </div>
-
-              <img
-                id="imagePreview"
-                class="preview"
-                src=""
-                alt="Product preview"
-                style="display:none"
-                onerror="
-                  this.style.display='none'
-                "
-              >
 
             </div>
 
@@ -2508,9 +2064,7 @@ function openProductModal(
                 id="productDescription"
                 placeholder="Describe the product..."
               >${esc(
-                product?.description ||
-                product?.desc ||
-                ""
+                description
               )}</textarea>
 
             </div>
@@ -2521,15 +2075,13 @@ function openProductModal(
           <button
             class="primary"
             style="width:100%"
-            onclick="
-              saveProduct(
-                ${
-                  editing
-                    ? Number(product.id)
-                    : "null"
-                }
-              )
-            "
+            onclick="saveProduct(
+              ${
+                editing
+                  ? Number(product.id)
+                  : "null"
+              }
+            )"
           >
             ${
               editing
@@ -2550,75 +2102,69 @@ function openProductModal(
     `
   );
 
-  const initialImage =
-    product?.image ||
-    product?.img ||
-    "";
-
-  if(initialImage){
-
-    previewImageFromText(
-      initialImage
-    );
-
-  }
-
 }
 
 
 /* =========================================================
-   IMAGE PREVIEW
+   PREVIEW IMAGE
 ========================================================= */
 
-function previewImageFromText(
-  value
-){
+function previewProductImage(){
 
-  const image =
-    normalizeImage(
-      value
-    );
+  const value =
+    document
+      .getElementById(
+        "productImage"
+      )
+      .value
+      .trim();
 
-  const preview =
+  const box =
     document.getElementById(
-      "imagePreview"
+      "productImagePreview"
     );
 
-  if(!preview){
-    return;
-  }
+  if(!value){
 
-  if(!image){
-
-    preview.style.display =
-      "none";
+    box.innerHTML = "";
 
     return;
 
   }
 
-  preview.src =
-    image;
+  const src =
+    normalizeImage(value);
 
-  preview.style.display =
-    "block";
+  box.innerHTML = `
+
+    <img
+      class="imagePreview"
+      src="${esc(src)}"
+      onerror="
+        this.style.display='none';
+        document.getElementById('productImagePreview').insertAdjacentHTML(
+          'beforeend',
+          '<p class=&quot;error&quot;>Image URL not found.</p>'
+        )
+      "
+    >
+
+  `;
 
 }
 
 
 /* =========================================================
-   CLOSE PRODUCT MODAL
+   CLOSE MODAL
 ========================================================= */
 
-function closeProductModal(){
+function closeModal(){
 
   document
     .getElementById(
       "productModal"
     )
     ?.remove();
-
-  selectedImage = "";
 
 }
 
@@ -2649,22 +2195,22 @@ async function saveProduct(
       .getElementById(
         "productCategory"
       )
-      .value
-      .trim();
-
-  const description =
-    document
-      .getElementById(
-        "productDescription"
-      )
-      .value
-      .trim();
+      .value;
 
   const price =
     Number(
       document
         .getElementById(
           "productPrice"
+        )
+        .value
+    );
+
+  const stock =
+    Number(
+      document
+        .getElementById(
+          "productStock"
         )
         .value
     );
@@ -2677,26 +2223,18 @@ async function saveProduct(
       .value
       .trim();
 
-  const stock =
-    Number(
-      document
-        .getElementById(
-          "productStock"
-        )
-        .value
-    );
-
-  const active =
-    document
-      .getElementById(
-        "productActive"
-      )
-      .value === "true";
-
   const image =
     document
       .getElementById(
         "productImage"
+      )
+      .value
+      .trim();
+
+  const description =
+    document
+      .getElementById(
+        "productDescription"
       )
       .value
       .trim();
@@ -2715,54 +2253,41 @@ async function saveProduct(
   }
 
 
-  if(
-    !Number.isFinite(price) ||
-    price < 0
-  ){
+  if(!Number.isFinite(price) ||
+     price <= 0){
 
     message.className =
       "error";
 
     message.textContent =
-      "Please enter a valid price.";
+      "Enter a valid product price.";
 
     return;
 
   }
 
 
-  if(
-    !Number.isInteger(stock) ||
-    stock < 0
-  ){
+  if(!Number.isInteger(stock) ||
+     stock < 0){
 
     message.className =
       "error";
 
     message.textContent =
-      "Please enter a valid stock quantity.";
+      "Enter a valid stock quantity.";
 
     return;
 
   }
 
 
-  if(
-    image.length > 1000
-  ){
+  message.className = "";
 
-    message.className =
-      "error";
-
-    message.textContent =
-      "Image path is too long.";
-
-    return;
-
-  }
+  message.textContent =
+    "Saving product...";
 
 
-  const payload = {
+  const body = {
 
     name,
 
@@ -2774,36 +2299,26 @@ async function saveProduct(
 
     color,
 
+    image,
+
     stock,
 
-    active,
-
-    image
+    active:true
 
   };
 
 
-  message.className =
-    "";
-
-  message.textContent =
-    "Saving product...";
-
-
   const url =
     id
-
       ? "/api/admin/products/" +
-        encodeURIComponent(id)
-
+        id
       : "/api/admin/products";
 
 
-  const response =
+  const data =
     await api(
       url,
       {
-
         method:
           id
             ? "PUT"
@@ -2815,37 +2330,19 @@ async function saveProduct(
         },
 
         body:
-          JSON.stringify(
-            payload
-          )
+          JSON.stringify(body)
 
       }
     );
 
 
-  if(
-    response &&
-    response.ok
-  ){
+  if(data?.error){
 
     message.className =
-      "success";
+      "error";
 
     message.textContent =
-      "Product saved successfully.";
-
-    setTimeout(
-      async () => {
-
-        closeProductModal();
-
-        await loadProducts();
-
-        showProducts();
-
-      },
-      500
-    );
+      data.error;
 
     return;
 
@@ -2853,38 +2350,22 @@ async function saveProduct(
 
 
   message.className =
-    "error";
+    "success";
 
   message.textContent =
-    response?.message ||
-    response?.error ||
-    "Unable to save product.";
-
-}
+    "Product saved successfully.";
 
 
-/* =========================================================
-   LOAD PRODUCTS
-========================================================= */
+  setTimeout(
+    () => {
 
-async function loadProducts(){
+      closeModal();
 
-  const data =
-    await api(
-      "/api/admin/products"
-    );
+      showProducts();
 
-  if(
-    data &&
-    Array.isArray(
-      data.products
-    )
-  ){
-
-    allProducts =
-      data.products;
-
-  }
+    },
+    700
+  );
 
 }
 
@@ -2914,7 +2395,7 @@ function editProduct(
 
   }
 
-  openProductModal(
+  showAddProduct(
     product
   );
 
@@ -2922,103 +2403,301 @@ function editProduct(
 
 
 /* =========================================================
-   REMOVE PRODUCT
+   DELETE PRODUCT
 ========================================================= */
 
 async function deleteProduct(
   id
 ){
 
-  const product =
-    allProducts.find(
-      item =>
-        Number(item.id) ===
-        Number(id)
-    );
+  if(!confirm(
+    "Delete this product from the store?"
+  )){
 
-  if(!product){
     return;
+
   }
 
-  const confirmed =
-    confirm(
-      'Remove "' +
-      product.name +
-      '" from the store?'
-    );
-
-  if(!confirmed){
-    return;
-  }
 
   const data =
     await api(
       "/api/admin/products/" +
-      encodeURIComponent(id),
+      id,
       {
         method:"DELETE"
       }
     );
 
-  if(
-    data &&
-    data.ok
-  ){
 
-    await loadProducts();
+  if(data?.error){
 
-    showProducts();
+    alert(
+      data.error
+    );
 
     return;
 
   }
 
-  alert(
-    data?.message ||
-    data?.error ||
-    "Unable to remove product."
-  );
+
+  showProducts();
 
 }
 
 
 /* =========================================================
-   INITIAL SESSION CHECK
+   SETTINGS
 ========================================================= */
 
-async function checkSession(){
+async function showSettings(){
 
-  if(!token){
+  activeTab(
+    "tabSettings"
+  );
 
-    login();
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <div class="panelHead">
+
+        <h2>Settings</h2>
+
+        <button
+          class="addBtn"
+          onclick="showSettings()"
+        >
+          Refresh
+        </button>
+
+      </div>
+
+      <div class="loading">
+        Loading settings...
+      </div>
+
+    </div>
+
+  `;
+
+
+  const data =
+    await api(
+      "/api/admin/settings"
+    );
+
+
+  if(!data){
 
     return;
 
   }
 
-  const data =
-    await api(
-      "/api/admin/me"
-    );
 
-  if(
-    data &&
-    data.ok
-  ){
+  if(data.error){
 
-    await dashboard();
+    content.innerHTML = `
 
-  }else{
+      <div class="panel">
 
-    sessionStorage.removeItem(
-      "adminToken"
-    );
+        <h2>Settings</h2>
 
-    token = "";
+        <p class="error">
+          ${esc(data.error)}
+        </p>
 
-    login();
+      </div>
+
+    `;
+
+    return;
 
   }
+
+
+  content.innerHTML = `
+
+    <div class="panel">
+
+      <div class="panelHead">
+
+        <h2>Store Settings</h2>
+
+        <button
+          class="addBtn"
+          onclick="showSettings()"
+        >
+          Refresh
+        </button>
+
+      </div>
+
+
+      <div class="settingGrid">
+
+
+        <div class="settingCard">
+
+          <h3>
+            Store Information
+          </h3>
+
+          <p>
+            <b>
+              Store:
+            </b>
+            Face of Style Hijab Factory
+          </p>
+
+          <p>
+            <b>
+              WhatsApp:
+            </b>
+            ${esc(
+              data.whatsapp ||
+              "09065828886"
+            )}
+          </p>
+
+          <p>
+            <b>
+              Customer Authentication:
+            </b>
+            Enabled
+          </p>
+
+        </div>
+
+
+        <div class="settingCard">
+
+          <h3>
+            Payment
+          </h3>
+
+          <p>
+
+            <b>
+              Paystack:
+            </b>
+
+            ${
+              data.paystackConfigured
+                ? `
+                  <span class="pill paid">
+                    CONFIGURED
+                  </span>
+                `
+                : `
+                  <span class="pill failed">
+                    NOT CONFIGURED
+                  </span>
+                `
+            }
+
+          </p>
+
+          <p class="small">
+            Paystack secret key is managed
+            through Render Environment Variables.
+            It must not be placed inside
+            admin.html.
+          </p>
+
+        </div>
+
+
+        <div class="settingCard">
+
+          <h3>
+            Customer System
+          </h3>
+
+          <p>
+            Customer Login:
+            <b>Enabled</b>
+          </p>
+
+          <p>
+            Customer Orders:
+            <b>Enabled</b>
+          </p>
+
+          <p>
+            Customer Addresses:
+            <b>Enabled</b>
+          </p>
+
+        </div>
+
+
+        <div class="settingCard">
+
+          <h3>
+            Database
+          </h3>
+
+          <p>
+            Products:
+            <b>
+              ${allProducts.length || "—"}
+            </b>
+          </p>
+
+          <p class="small">
+            Product data, orders and customer
+            information are stored by the
+            server/database.
+          </p>
+
+        </div>
+
+
+      </div>
+
+
+      <div
+        class="warning"
+        style="margin-top:18px"
+      >
+
+        <b>Render Environment Settings</b>
+
+        <br><br>
+
+        Keep these values inside
+        Render → Environment Variables:
+
+        <br><br>
+
+        PAYSTACK_SECRET_KEY
+        <br>
+
+        DATABASE_URL
+        <br>
+
+        ADMIN_USERNAME
+        <br>
+
+        ADMIN_PASSWORD
+
+        <br><br>
+
+        <b>
+          Kada a saka secret key ko password
+          cikin wannan HTML.
+        </b>
+
+      </div>
+
+    </div>
+
+  `;
 
 }
 
@@ -3027,7 +2706,15 @@ async function checkSession(){
    START
 ========================================================= */
 
-checkSession();
+if(token){
+
+  dashboard();
+
+}else{
+
+  login();
+
+}
 
 </script>
 
