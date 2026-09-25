@@ -3035,24 +3035,23 @@ app.get(
             0
           );
 
-      return res.json({
-        ok: true,
-        customer: {
-                        .get(item.order_id)
-          .push({
-            ...item,
-            product_id:
-              Number(
-                item.product_id
-              ),
-            price:
-              Number(item.price),
-            quantity:
-              Number(item.quantity),
-            subtotal:
-              Number(item.subtotal)
-          });
-      }
+      const itemsByOrder = new Map();
+
+for (const item of items) {
+  const orderId = Number(item.order_id);
+
+  if (!itemsByOrder.has(orderId)) {
+    itemsByOrder.set(orderId, []);
+  }
+
+  itemsByOrder.get(orderId).push({
+    ...item,
+    product_id: Number(item.product_id),
+    price: Number(item.price),
+    quantity: Number(item.quantity),
+    subtotal: Number(item.subtotal)
+  });
+}
 
       const output =
         orders.map(
