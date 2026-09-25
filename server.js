@@ -873,11 +873,19 @@ async function initDatabase() {
     )
   `);
 
+  const settingsCheck = await pool.query(`
+  SELECT id
+  FROM store_settings
+  WHERE id = 1
+  LIMIT 1
+`);
+
+if (settingsCheck.rows.length === 0) {
   await pool.query(`
     INSERT INTO store_settings (id)
     VALUES (1)
-    ON CONFLICT (id) DO NOTHING
   `);
+}
 
   /* -------------------------------------------------------
      ORDER ITEMS
