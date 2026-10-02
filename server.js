@@ -1,9 +1,8 @@
-// PART 1/4
-
 import 'dotenv/config';
 import express from 'express';
 import pg from 'pg';
 import crypto from 'crypto';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -198,6 +197,44 @@ function normalizeImage(value) {
   }
 
   return '/assets/' + image;
+}
+
+function saveDataImage(dataUrl) {
+  const value = String(dataUrl || '').trim();
+
+  const match = value.match(
+    /^data:(image\/(?:png|jpe?g|webp));base64,([A-Za-z0-9+/=\s]+)$/i
+  );
+
+  if (!match) return null;
+
+  const mime = match[1].toLowerCase();
+  const base64 = match[2].replace(/\s+/g, '');
+  const buffer = Buffer.from(base64, 'base64');
+
+  if (!buffer.length || buffer.length > 6 * 1024 * 1024) {
+    return null;
+  }
+
+  const ext =
+    mime.includes('png')
+      ? 'png'
+      : mime.includes('webp')
+        ? 'webp'
+        : 'jpg';
+
+  const dir =
+    path.join(__dirname, 'public', 'assets', 'products');
+
+  fs.mkdirSync(dir, { recursive: true });
+
+  const filename =
+    `product-${Date.now()}-${crypto.randomBytes(6).toString('hex')}.${ext}`;
+
+  const filepath = path.join(dir, filename);
+  fs.writeFileSync(filepath, buffer);
+
+  return `/assets/products/${filename}`;
 }
 
 function createToken() {
@@ -1026,6 +1063,7 @@ app.get(
         );
 
       p.image = p.img;
+      p.image_url = p.img;
 
       res.json({
         ok: true,
@@ -1186,7 +1224,6 @@ app.post(
     }
   }
 );
-// PART 2/4
 
 /* =========================================================
    CUSTOMER LOGIN
@@ -1343,102 +1380,145 @@ app.get(
    CUSTOMER PROFILE
 ========================================================= */
 
-app.put(
+async function handleCustomerProfileUpdate(req, res) {
+  const name =
+    cleanString(req.body?.name, 150);
+
+  const email =
+    cleanString(req.body?.email, 200).toLowerCase();
+
+  const phone =
+    cleanString(req.body?.phone, 40);
+
+  if (!name || !validEmail(email)) {
+    return res.status(400).json({
+      ok: false,
+      message: 'Valid name and email are required.'
+    });
+  }
+
+  try {
+    const duplicate =
+      await pool.query(
+        `
+        SELECT id
+        FROM customers
+        WHERE LOWER(email)=LOWER($1)
+          AND id<>$2
+        LIMIT 1
+        `,
+        [email, req.customer.customerId]
+      );
+
+    if (duplicate.rowCount) {
+      return res.status(409).json({
+        ok: false,
+        message: 'Email is already in use.'
+      });
+    }
+
+    const result =
+      await pool.query(
+        `
+        UPDATE customers
+        SET
+          name=$1,
+          email=$2,
+          phone=$3,
+          updated_at=NOW()
+        WHERE id=$4
+        RETURNING
+          id,
+          name,
+          email,
+          phone,
+          created_at
+        `,
+        [
+          name,
+          email,
+          phone,
+          req.customer.customerId
+        ]
+      );
+
+    if (!result.rowCount) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Customer account not found.'
+      });
+    }
+
+    res.json({
+      ok: true,
+      message: 'Profile updated successfully.',
+      customer: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Customer profile update:', error);
+
+    res.status(500).json({
+      ok: false,
+      message: 'Unable to update profile.'
+    });
+  }
+}
+
+app.get(
   '/api/customer/profile',
   requireCustomer,
   async (req, res) => {
-    const name =
-      cleanString(
-        req.body?.name,
-        150
-      );
-
-    const email =
-      cleanString(
-        req.body?.email,
-        200
-      ).toLowerCase();
-
-    const phone =
-      cleanString(
-        req.body?.phone,
-        40
-      );
-
-    if (!name || !validEmail(email)) {
-      return res.status(400).json({
-        ok: false,
-        message:
-          'Valid name and email are required.'
-      });
-    }
-
     try {
-      const duplicate =
-        await pool.query(
-          `
-          SELECT id
-          FROM customers
-          WHERE LOWER(email)=LOWER($1)
-            AND id<>$2
-          LIMIT 1
-          `,
-          [
-            email,
-            req.customer.customerId
-          ]
-        );
-
-      if (duplicate.rowCount) {
-        return res.status(409).json({
-          ok: false,
-          message:
-            'Email is already in use.'
-        });
-      }
-
       const result =
         await pool.query(
           `
-          UPDATE customers
-          SET
-            name=$1,
-            email=$2,
-            phone=$3,
-            updated_at=NOW()
-          WHERE id=$4
-          RETURNING
-            id,
-            name,
-            email,
-            phone,
-            created_at
+          SELECT id, name, email, phone, created_at, updated_at
+          FROM customers
+          WHERE id=$1
+          LIMIT 1
           `,
-          [
-            name,
-            email,
-            phone,
-            req.customer.customerId
-          ]
+          [req.customer.customerId]
         );
+
+      if (!result.rowCount) {
+        return res.status(404).json({
+          ok: false,
+          message: 'Customer account not found.'
+        });
+      }
 
       res.json({
         ok: true,
-        message:
-          'Profile updated successfully.',
-        customer:
-          result.rows[0]
+        profile: result.rows[0],
+        customer: result.rows[0]
       });
     } catch (error) {
-      console.error(error);
+      console.error('Customer profile GET:', error);
 
       res.status(500).json({
         ok: false,
-        message:
-          'Unable to update profile.'
+        message: 'Unable to load customer profile.'
       });
     }
   }
+);
+
+app.put(
+  '/api/customer/profile',
+  requireCustomer,
+  handleCustomerProfileUpdate
+);
+
+app.patch(
+  '/api/customer/profile',
+  requireCustomer,
+  handleCustomerProfileUpdate
+);
+
+app.post(
+  '/api/customer/profile',
+  requireCustomer,
+  handleCustomerProfileUpdate
 );
 
 /* =========================================================
@@ -1952,6 +2032,47 @@ app.get(
 );
 
 /* =========================================================
+   ADMIN IMAGE UPLOAD
+========================================================= */
+
+app.post(
+  '/api/admin/upload-image',
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const data =
+        req.body?.image ||
+        req.body?.data ||
+        req.body?.file ||
+        '';
+
+      const imageUrl = saveDataImage(data);
+
+      if (!imageUrl) {
+        return res.status(400).json({
+          ok: false,
+          message: 'Please provide a valid PNG, JPG, JPEG or WEBP image as a data URL.'
+        });
+      }
+
+      res.status(201).json({
+        ok: true,
+        image: imageUrl,
+        img: imageUrl,
+        image_url: imageUrl
+      });
+    } catch (error) {
+      console.error('Admin image upload:', error);
+
+      res.status(500).json({
+        ok: false,
+        message: 'Unable to upload product image.'
+      });
+    }
+  }
+);
+
+/* =========================================================
    ADMIN PRODUCTS
 ========================================================= */
 
@@ -1978,6 +2099,10 @@ app.get(
               p.image
             ),
           image:
+            normalizeImage(
+              p.image
+            ),
+          image_url:
             normalizeImage(
               p.image
             )
@@ -2183,12 +2308,19 @@ app.put(
         req.body?.stock || 0
       );
 
+    const hasImageField =
+      Object.prototype.hasOwnProperty.call(req.body || {}, 'image') ||
+      Object.prototype.hasOwnProperty.call(req.body || {}, 'img');
+
+    const imageInput =
+      req.body?.image ??
+      req.body?.img ??
+      '';
+
     const image =
-      cleanString(
-        req.body?.image ||
-        req.body?.img,
-        2500000
-      );
+      hasImageField
+        ? cleanString(imageInput, 2500000)
+        : null;
 
     if (!name || price === null) {
       return res.status(400).json({
@@ -2209,7 +2341,7 @@ app.put(
             description=$3,
             price=$4,
             color=$5,
-            image=$6,
+            image=COALESCE($6, image),
             stock=$7,
             updated_at=NOW()
           WHERE id=$8
@@ -2330,7 +2462,6 @@ app.delete(
     }
   }
 );
-// PART 3/4
 
 /* =========================================================
    ADMIN ORDERS
@@ -3476,12 +3607,12 @@ app.post(
         }
       };
 
-      if (
-        PAYSTACK_CALLBACK_URL
-      ) {
-        payload.callback_url =
-          PAYSTACK_CALLBACK_URL;
-      }
+      const defaultCallbackUrl =
+        `${req.protocol}://${req.get('host')}/api/paystack/callback`;
+
+      payload.callback_url =
+        PAYSTACK_CALLBACK_URL ||
+        defaultCallbackUrl;
 
       const response =
         await fetch(
@@ -3503,7 +3634,6 @@ app.post(
 
       const data =
         await response.json();
-      // PART 4/4 — KARSHEN FILE
 
       if (
         !response.ok ||
@@ -3619,13 +3749,16 @@ async function completePaidOrder(
         100
       );
 
+    const transactionStatus =
+      String(transaction?.status || '').toLowerCase();
+
+    const transactionCurrency =
+      String(transaction?.currency || '').toUpperCase();
+
     if (
-      transaction.status !==
-        'success' ||
-      transaction.currency !==
-        'NGN' ||
-      Number(transaction.amount) !==
-        expectedAmount
+      transactionStatus !== 'success' ||
+      transactionCurrency !== 'NGN' ||
+      Number(transaction?.amount) !== expectedAmount
     ) {
       throw new Error(
         'Payment amount or status does not match the order.'
@@ -3652,33 +3785,82 @@ async function completePaidOrder(
           [order.id]
         );
 
+      /*
+        Check every item before changing any stock so a payment
+        can never leave the order half-updated.
+      */
       for (
         const item
         of items.rows
       ) {
-        const stock =
+        const stockCheck =
           await client.query(
             `
-            UPDATE products
-            SET
-              stock=stock-$1,
-              updated_at=NOW()
-            WHERE id=$2
-              AND active=TRUE
-              AND stock >= $1
-            RETURNING id
+            SELECT id, stock, active
+            FROM products
+            WHERE id=$1
+            FOR UPDATE
             `,
-            [
-              item.quantity,
-              item.product_id
-            ]
+            [item.product_id]
           );
 
-        if (!stock.rowCount) {
-          throw new Error(
-            `Insufficient stock for ${item.product_name}.`
+        if (
+          !stockCheck.rowCount ||
+          !stockCheck.rows[0].active ||
+          Number(stockCheck.rows[0].stock) < Number(item.quantity)
+        ) {
+          /*
+            Payment itself has already succeeded at Paystack.
+            Keep the order paid and leave inventory unchanged so
+            the customer is not shown as unpaid. The admin can
+            resolve the stock issue from the order dashboard.
+          */
+          await client.query(
+            `
+            UPDATE orders
+            SET
+              payment_status='PAID',
+              order_status=
+                CASE
+                  WHEN order_status='PENDING' THEN 'PROCESSING'
+                  ELSE order_status
+                END,
+              paystack_reference=$1,
+              updated_at=NOW()
+            WHERE id=$2
+            `,
+            [transaction.reference || reference, order.id]
           );
+
+          await client.query('COMMIT');
+
+          console.warn(
+            `Payment completed but stock needs admin attention for ${item.product_name}.`
+          );
+
+          return {
+            id: Number(order.id),
+            reference: order.reference,
+            total: Number(order.total),
+            stockAttention: true
+          };
         }
+      }
+
+      for (
+        const item
+        of items.rows
+      ) {
+        await client.query(
+          `
+          UPDATE products
+          SET
+            stock=stock-$1,
+            updated_at=NOW()
+          WHERE id=$2
+          `,
+          [item.quantity, item.product_id]
+        );
       }
     }
 
@@ -3788,7 +3970,7 @@ app.get(
       }
 
       if (
-        data.data.status !==
+        String(data.data.status || '').toLowerCase() !==
         'success'
       ) {
         await pool.query(
@@ -3902,9 +4084,9 @@ app.post(
 
         if (
           tx?.reference &&
-          tx?.status ===
+          String(tx?.status || '').toLowerCase() ===
             'success' &&
-          tx?.currency ===
+          String(tx?.currency || '').toUpperCase() ===
             'NGN'
         ) {
           try {
@@ -3929,6 +4111,65 @@ app.post(
       );
 
       res.sendStatus(500);
+    }
+  }
+);
+
+/* =========================================================
+   PAYSTACK CALLBACK
+========================================================= */
+
+app.get(
+  '/api/paystack/callback',
+  async (req, res) => {
+    const reference =
+      cleanString(
+        req.query?.reference ||
+        req.query?.trxref,
+        200
+      );
+
+    if (!reference) {
+      return res.redirect('/payment-failed');
+    }
+
+    if (!pool || !PAYSTACK_SECRET_KEY) {
+      return res.redirect(
+        `/payment-success?reference=${encodeURIComponent(reference)}`
+      );
+    }
+
+    try {
+      const response =
+        await fetch(
+          `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`
+            }
+          }
+        );
+
+      const data = await response.json();
+
+      if (
+        response.ok &&
+        data.status &&
+        data.data &&
+        String(data.data.status || '').toLowerCase() === 'success'
+      ) {
+        await completePaidOrder(reference, data.data);
+      }
+
+      return res.redirect(
+        `/payment-success?reference=${encodeURIComponent(reference)}`
+      );
+    } catch (error) {
+      console.error('Paystack callback:', error);
+
+      return res.redirect(
+        `/payment-success?reference=${encodeURIComponent(reference)}`
+      );
     }
   }
 );
