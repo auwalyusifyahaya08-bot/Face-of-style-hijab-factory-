@@ -3999,32 +3999,21 @@ app.use(
    FRONTEND FALLBACK
 ========================================================= */
 
-app.get(
-  '*',
-  (req, res, next) => {
-    if (
-      req.path.startsWith('/api/')
-    ) {
-      return next();
-    }
-
-    const indexPath =
-      path.join(
-        __dirname,
-        'public',
-        'index.html'
-      );
-
-    res.sendFile(
-      indexPath,
-      error => {
-        if (error) {
-          next();
-        }
-      }
-    );
+app.use((req, res, next) => {
+  // Kada frontend fallback ya kama API routes
+  if (req.method !== 'GET' || req.path.startsWith('/api/')) {
+    return next();
   }
-);
+
+  res.sendFile(
+    path.join(__dirname, 'public', 'index.html'),
+    error => {
+      if (error) {
+        next(error);
+      }
+    }
+  );
+});
 
 /* =========================================================
    GLOBAL ERROR HANDLER
